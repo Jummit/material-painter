@@ -1,39 +1,46 @@
 extends Tree
 
-class TextureMap:
-	pass
-
-class Layer:
-	var masks := []
-	var name := "Untitled Layer"
-
-class Mask:
-	var texture : TextureMap
-	var name := "Untitled Mask"
-
 var layers := []
+
+func get_drag_data(position : Vector2):
+	var preview = Label.new()
+	preview.text = get_selected().get_text(0)
+	set_drag_preview(preview)
+	return get_item_at_position(position)
+
+
+func can_drop_data(_position : Vector2, data) -> bool:
+	drop_mode_flags = DROP_MODE_INBETWEEN
+	return data is TreeItem
+
+
+func drop_data(position : Vector2, data) -> void:
+	var relative_to := _get_item_index(get_item_at_position(position))
+	var motion := get_drop_section_at_position(position)
+	if motion == -1:
+		motion = 0
+	var tree_item_to_move := data as TreeItem
+	var meta = tree_item_to_move.get_metadata(0)
+	layers.insert(clamp(relative_to + motion, 0, layers.size()), tree_item_to_move.get_metadata(0).duplicate())
+	layers.erase(tree_item_to_move.get_metadata(0))
+	update_tree()
+
 
 func update_tree() -> void:
 	clear()
 	var root = create_item()
 	for layer in layers:
-		layer = layer as Layer
 		var layer_item := create_item(root)
 		layer_item.set_metadata(0, layer)
 		layer_item.set_text(0, layer.name)
-		for mask in layer.masks:
-			mask = mask as Mask
-			var mask_item := create_item(layer_item)
-			mask_item.set_metadata(0, mask)
-			mask_item.set_text(0, mask.name)
 
 
-func _on_AddLayerButton_pressed():
-	layers.append(Layer.new())
-	update_tree()
-
-
-func _on_AddMaskButton_pressed():
-	if get_selected() and get_selected().get_metadata(0) is Layer:
-		(get_selected().get_metadata(0) as Layer).masks.append(Mask.new())
-		update_tree()
+func _get_item_index(item : TreeItem) -> int:
+	var index := 0
+	var tree_item := get_root().get_children()
+	while true:
+		if tree_item == item:
+			break
+		index += 1
+		tree_item = tree_item.get_next_visible()
+	return index
