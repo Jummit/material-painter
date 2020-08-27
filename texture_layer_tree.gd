@@ -30,8 +30,23 @@ class ColorTextureLayer extends TextureLayer:
 		return texture
 
 
-func _on_TextureCreationDialog_texture_creation_confirmed(type):
-	layers.append(ColorTextureLayer.new("New Layer"))
+class BitmapTextureLayer extends TextureLayer:
+	func _init(_name : String):
+		name = _name
+	
+	func get_properties() -> Array:
+		return [PropertyPanel.FilePathProperty.new("image_path")]
+	
+	func get_texture() -> Texture:
+		var image := Image.new()
+		image.load(properties.image_path)
+		var texture := ImageTexture.new()
+		texture.create_from_image(image)
+		return texture
+
+
+func _on_TextureCreationDialog_texture_creation_confirmed(texture_layer : TextureLayer):
+	layers.append(texture_layer)
 	update_tree()
 
 

@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://path_picker_button.gd" type="Script" id=1]
+
+[node name="PathPickerButton" type="Button"]
+margin_right = 12.0
+margin_bottom = 20.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="FileDialog" type="FileDialog" parent="."]
+margin_right = 553.0
+margin_bottom = 317.0
+window_title = "Open a File"
+dialog_hide_on_ok = true
+mode = 0
+access = 2
+filters = PoolStringArray( "*.png ; Images" )
+current_dir = "/home/jummit/Games/MaterialPainter/Layers"
+current_path = "/home/jummit/Games/MaterialPainter/Layers/"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]
