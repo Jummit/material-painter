@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://texture_tool_tip.gd" type="Script" id=1]
+[ext_resource path="res://texture_tooltip/texture_tool_tip.gd" type="Script" id=1]
 
 [node name="TextureToolTip" type="PanelContainer"]
 margin_right = 14.0

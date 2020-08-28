@@ -1,4 +1,4 @@
-extends "res://Tree.gd"
+extends "res://arrangable_tree/arrangable_tree.gd"
 
 onready var texture_layer_property_panel : Panel = $"../TextureLayerPropertyPanel"
 
@@ -116,6 +116,6 @@ func update_icons() -> void:
 
 
 func _make_custom_tooltip(_for_text):
-	var tooltip : PanelContainer = load("res://texture_tool_tip.tscn").instance()
+	var tooltip : PanelContainer = load("res://texture_tooltip/texture_tool_tip.tscn").instance()
 	tooltip.call_deferred("setup", get_item_at_position(get_local_mouse_position()).get_metadata(0))
 	return tooltip
