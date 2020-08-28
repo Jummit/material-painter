@@ -101,7 +101,9 @@ func set_properties(to):
 
 func build() -> void:
 	for property_container in properties_container.get_children():
-		property_container.queue_free()
+		# use ´free´ instead of ´queue_free´ to immediatly remove nodes
+		# because otherwise duplicate properties get automatically renamed
+		property_container.free()
 	
 	for property in properties:
 		property = property as Property

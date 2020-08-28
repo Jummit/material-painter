@@ -114,3 +114,8 @@ func update_icons() -> void:
 		if not tree_item:
 			break
 
+
+func _make_custom_tooltip(_for_text):
+	var tooltip : PanelContainer = load("res://texture_tool_tip.tscn").instance()
+	tooltip.call_deferred("setup", get_item_at_position(get_local_mouse_position()).get_metadata(0))
+	return tooltip

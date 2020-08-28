@@ -106,3 +106,4 @@ __meta__ = {
 [connection signal="values_changed" from="LayerContainer/TextureLayerContainer/TextureLayerPropertyPanel" to="LayerContainer/TextureLayerContainer/TextureLayerTree" method="_on_TextureLayerPropertyPanel_values_changed"]
 [connection signal="confirmed" from="TextureCreationDialog" to="TextureCreationDialog" method="_on_confirmed"]
 [connection signal="texture_creation_confirmed" from="TextureCreationDialog" to="LayerContainer/TextureLayerContainer/TextureLayerTree" method="_on_TextureCreationDialog_texture_creation_confirmed"]
+[connection signal="item_activated" from="TextureCreationDialog/TextureTypeList" to="TextureCreationDialog" method="_on_TextureTypeList_item_activated"]

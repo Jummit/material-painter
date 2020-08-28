@@ -20,3 +20,8 @@ func _on_confirmed():
 		3:
 			texture_layer = TextureLayerTree.ColorTextureLayer.new("New Color Texture")
 	emit_signal("texture_creation_confirmed", texture_layer)
+
+
+func _on_TextureTypeList_item_activated(_index : int):
+	_on_confirmed()
+	hide()
