@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://material_layers/material_layer_tree.gd" type="Script" id=1]
 [ext_resource path="res://addons/arrangable_tree/arrangable_tree.tscn" type="PackedScene" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://icon.png" type="Texture" id=5]
 [ext_resource path="res://texture_layers/texture_creation_dialog.gd" type="Script" id=6]
 [ext_resource path="res://texture_layers/texture_layer_property_panel.gd" type="Script" id=7]
+[ext_resource path="res://addons/blending/texture_blending_viewport.tscn" type="PackedScene" id=8]
 
 [node name="Main" type="Control"]
 anchor_right = 1.0
@@ -18,13 +19,22 @@ __meta__ = {
 [node name="LayerContainer" type="HBoxContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 508.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="ResultTextureRect" type="TextureRect" parent="LayerContainer"]
+margin_right = 716.0
+margin_bottom = 600.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 4.79
+expand = true
+stretch_mode = 6
+
 [node name="MaterialLayerContainer" type="VBoxContainer" parent="LayerContainer"]
-margin_right = 256.0
+margin_left = 720.0
+margin_right = 869.0
 margin_bottom = 600.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -33,42 +43,42 @@ __meta__ = {
 }
 
 [node name="AddMaterialLayerButton" type="Button" parent="LayerContainer/MaterialLayerContainer"]
-margin_right = 256.0
+margin_right = 149.0
 margin_bottom = 20.0
 text = "Add Material Layer"
 
 [node name="MaterialLayerTree" parent="LayerContainer/MaterialLayerContainer" instance=ExtResource( 2 )]
-margin_right = 256.0
+margin_right = 149.0
 margin_bottom = 310.0
 script = ExtResource( 1 )
 
 [node name="MaterialLayerPropertyPanel" parent="LayerContainer/MaterialLayerContainer" instance=ExtResource( 4 )]
 margin_top = 314.0
-margin_right = 256.0
+margin_right = 149.0
 margin_bottom = 600.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="TextureLayerContainer" type="VBoxContainer" parent="LayerContainer"]
-margin_left = 260.0
-margin_right = 516.0
+margin_left = 873.0
+margin_right = 1024.0
 margin_bottom = 600.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="AddTextureLayerButton" type="Button" parent="LayerContainer/TextureLayerContainer"]
-margin_right = 256.0
+margin_right = 151.0
 margin_bottom = 20.0
 text = "Add Texture Layer"
 
 [node name="TextureLayerTree" parent="LayerContainer/TextureLayerContainer" instance=ExtResource( 2 )]
-margin_right = 256.0
+margin_right = 151.0
 margin_bottom = 310.0
 script = ExtResource( 3 )
 
 [node name="TextureLayerPropertyPanel" parent="LayerContainer/TextureLayerContainer" instance=ExtResource( 4 )]
 margin_top = 314.0
-margin_right = 256.0
+margin_right = 151.0
 margin_bottom = 600.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -101,6 +111,9 @@ icon_mode = 0
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="TextureBlendingViewport" parent="." instance=ExtResource( 8 )]
+size = Vector2( 1024, 1024 )
 [connection signal="pressed" from="LayerContainer/TextureLayerContainer/AddTextureLayerButton" to="TextureCreationDialog" method="_on_AddTextureLayerButton_pressed"]
 [connection signal="item_edited" from="LayerContainer/TextureLayerContainer/TextureLayerTree" to="LayerContainer/TextureLayerContainer/TextureLayerTree" method="_on_item_edited"]
 [connection signal="item_selected" from="LayerContainer/TextureLayerContainer/TextureLayerTree" to="LayerContainer/TextureLayerContainer/TextureLayerPropertyPanel" method="_on_TextureLayerTree_item_selected"]

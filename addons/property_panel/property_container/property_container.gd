@@ -27,11 +27,11 @@ func setup(_property : Property) -> void:
 
 
 func get_value():
-	return property_control.get(property.property_variable)
+	return property.get_value(property_control)
 
 
 func set_value(to):
-	property_control.set(property.property_variable, to)
+	property.set_value(property_control, to)
 
 
 func _on_Property_changed(_a, _b, _c, _d, _e):

@@ -16,11 +16,17 @@ class Property:
 	
 	func get_control() -> Control:
 		return Control.new()
+	
+	func get_value(control : Control):
+		return control.get(property_variable)
+	
+	func set_value(control : Control, to) -> void:
+		control.set(property_variable, to)
 
 class EnumProperty extends Property:
 	var choices : PoolStringArray
 	
-	func _init(_name : String, _choices : PoolStringArray).("item_selected", "selected"):
+	func _init(_name : String, _choices : PoolStringArray).("item_selected", ""):
 		name = _name
 		choices = _choices
 	
@@ -30,6 +36,12 @@ class EnumProperty extends Property:
 			option_button.get_popup().add_item(choice)
 		option_button.selected = 0
 		return option_button
+	
+	func get_value(control : Control):
+		return choices[control.selected]
+	
+	func set_value(control : Control, to) -> void:
+		control.selected = (choices as Array).find(to)
 
 class StringProperty extends Property:
 	func _init(_name : String).("text_changed", "text"):

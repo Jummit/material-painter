@@ -1,6 +1,8 @@
 extends "res://addons/arrangable_tree/arrangable_tree.gd"
 
 onready var texture_layer_property_panel : Panel = $"../TextureLayerPropertyPanel"
+onready var texture_blending_viewport : Viewport = $"../../../TextureBlendingViewport"
+onready var result_texture_rect : TextureRect = $"../../ResultTextureRect"
 
 const PropertyPanel = preload("res://addons/property_panel/property_panel.gd")
 
@@ -15,17 +17,23 @@ class TextureLayer:
 	var texture : Texture
 	
 	func get_properties() -> Array:
-		return [PropertyPanel.EnumProperty.new("blend_mode", ["Normal", "Add", "Sub"])]
+		return [
+			PropertyPanel.FloatProperty.new("opacity", 0.0, 1.0),
+			PropertyPanel.EnumProperty.new("blend_mode", ["add", "normal", "subtract"])]
 	
 	func generate_texture():
 		return null
+	
+	func _init():
+		properties = {
+			opacity = .5,
+			blend_mode = "add"
+		}
 
 class ColorTextureLayer extends TextureLayer:
 	func _init(_name : String):
 		name = _name
-		properties = {
-			color = Color()
-		}
+		properties.color = Color()
 	
 	func get_properties() -> Array:
 		return .get_properties() + [PropertyPanel.ColorProperty.new("color")]
@@ -41,9 +49,7 @@ class ColorTextureLayer extends TextureLayer:
 class BitmapTextureLayer extends TextureLayer:
 	func _init(_name : String):
 		name = _name
-		properties = {
-			image_path = ""
-		}
+		properties.image_path = ""
 	
 	func get_properties() -> Array:
 		return .get_properties() + [PropertyPanel.FilePathProperty.new("image_path")]
@@ -59,13 +65,11 @@ class BitmapTextureLayer extends TextureLayer:
 class NoiseTextureLayer extends TextureLayer:
 	func _init(_name : String):
 		name = _name
-		properties = {
-			noise_seed = 0,
-			octaves = 3,
-			period = 64.0,
-			persistence = 0.5,
-			lacunarity = 2.0,
-		}
+		properties.noise_seed = 0
+		properties.octaves = 3
+		properties.period = 64.0
+		properties.persistence = 0.5
+		properties.lacunarity = 2.0
 	
 	func get_properties() -> Array:
 		return .get_properties() + [
@@ -103,6 +107,7 @@ func _on_TextureLayerPropertyPanel_values_changed():
 	get_selected().get_metadata(0).properties = texture_layer_property_panel.get_property_values()
 	get_selected().get_metadata(0).generate_texture()
 	update_icons()
+	result_texture_rect.texture = yield(texture_blending_viewport.blend(layers), "completed")
 
 
 func update_tree():
