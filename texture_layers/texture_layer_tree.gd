@@ -5,91 +5,10 @@ onready var texture_blending_viewport : Viewport = $"../../../TextureBlendingVie
 onready var result_texture_rect : TextureRect = $"../../ResultTextureRect"
 
 const PropertyPanel = preload("res://addons/property_panel/property_panel.gd")
+const TextureLayer = preload("res://texture_layers/texture_layers.gd").TextureLayer
 
 const ICON_COLUMN := 0
 const NAME_COLUMN := 1
-
-class TextureLayer:
-# warning-ignore:unused_class_variable
-	var name : String
-# warning-ignore:unused_class_variable
-	var properties : Dictionary
-	var texture : Texture
-	
-	func get_properties() -> Array:
-		return [
-			PropertyPanel.FloatProperty.new("opacity", 0.0, 1.0),
-			PropertyPanel.EnumProperty.new("blend_mode", ["add", "normal", "subtract"])]
-	
-	func generate_texture():
-		return null
-	
-	func _init():
-		properties = {
-			opacity = .5,
-			blend_mode = "add"
-		}
-
-class ColorTextureLayer extends TextureLayer:
-	func _init(_name : String):
-		name = _name
-		properties.color = Color()
-	
-	func get_properties() -> Array:
-		return .get_properties() + [PropertyPanel.ColorProperty.new("color")]
-	
-	func generate_texture():
-		var image := Image.new()
-		image.create(1028, 1028, false, Image.FORMAT_RGB8)
-		image.fill(properties.color)
-		texture = ImageTexture.new()
-		texture.create_from_image(image)
-
-
-class BitmapTextureLayer extends TextureLayer:
-	func _init(_name : String):
-		name = _name
-		properties.image_path = ""
-	
-	func get_properties() -> Array:
-		return .get_properties() + [PropertyPanel.FilePathProperty.new("image_path")]
-	
-	func generate_texture():
-		if ResourceLoader.exists(properties.image_path, "Texture"):
-			var image := Image.new()
-			if image.load(properties.image_path) == OK:
-				texture = ImageTexture.new()
-				texture.create_from_image(image)
-
-
-class NoiseTextureLayer extends TextureLayer:
-	func _init(_name : String):
-		name = _name
-		properties.noise_seed = 0
-		properties.octaves = 3
-		properties.period = 64.0
-		properties.persistence = 0.5
-		properties.lacunarity = 2.0
-	
-	func get_properties() -> Array:
-		return .get_properties() + [
-				PropertyPanel.IntProperty.new("noise_seed", 0, 1000),
-				PropertyPanel.IntProperty.new("octaves", 1, 9),
-				PropertyPanel.FloatProperty.new("period", 0.1, 256.0),
-				PropertyPanel.FloatProperty.new("persistence", 0.0, 1.0),
-				PropertyPanel.FloatProperty.new("lacunarity", 0.1, 4.0),
-			]
-	
-	func generate_texture():
-		var noise := OpenSimplexNoise.new()
-		noise.seed = properties.noise_seed
-		noise.octaves = properties.octaves
-		noise.period = properties.period
-		noise.persistence = properties.persistence
-		noise.lacunarity = properties.lacunarity
-		texture = NoiseTexture.new()
-		texture.noise = noise
-
 
 func _ready():
 	columns = 2

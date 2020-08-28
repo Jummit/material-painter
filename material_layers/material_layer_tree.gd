@@ -1,6 +1,6 @@
 extends "res://addons/arrangable_tree/arrangable_tree.gd"
 
-const TextureLayer = preload("res://texture_layers/texture_layer_tree.gd").TextureLayer
+const TextureLayer = preload("res://texture_layers/texture_layers.gd").TextureLayer
 
 class MaterialLayer extends Resource:
 # warning-ignore:unused_class_variable

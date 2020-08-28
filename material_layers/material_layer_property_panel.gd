@@ -4,9 +4,9 @@ onready var material_layer_tree : Tree = $"../MaterialLayerTree"
 onready var texture_channel_buttons : GridContainer = $"../TextureChannelButtons"
 
 const MaterialLayer = preload("res://material_layers/material_layer_tree.gd").MaterialLayer
+const Properties = preload("res://addons/property_panel/properties.gd")
 
-# Godot Engine bug: can't use parent class directly
-class TextureProperty extends "res://addons/property_panel/property_panel.gd".Property:
+class TextureProperty extends "res://addons/property_panel/properties.gd".Property:
 	func _init(_name : String).("changed", "selected_texture"):
 		name = _name
 	
@@ -17,8 +17,8 @@ class TextureProperty extends "res://addons/property_panel/property_panel.gd".Pr
 func _on_MaterialLayerTree_item_selected():
 	var material_layer : MaterialLayer = material_layer_tree.get_selected().get_metadata(0)
 	self.properties = [
-		FloatProperty.new("opacity", 0.0, 1.0),
-		TextureProperty.new("mask"),
+		Properties.FloatProperty.new("opacity", 0.0, 1.0),
+		Properties.TextureProperty.new("mask"),
 	]
 	for texture in texture_channel_buttons.enabled_textures.keys():
 		if texture_channel_buttons.enabled_textures[texture]:
