@@ -1,14 +1,6 @@
 extends "res://addons/arrangable_tree/arrangable_tree.gd"
 
-const TextureLayer = preload("res://texture_layers/texture_layers.gd").TextureLayer
-
-class MaterialLayer extends Resource:
-# warning-ignore:unused_class_variable
-	var mask : Texture
-# warning-ignore:unused_class_variable
-	var textures : Dictionary
-	var name := "Untitled Layer"
-
+const MaterialLayer = preload("res://material_layers/material_layer.gd")
 
 func setup_item(layer_item : TreeItem, layer : MaterialLayer) -> void:
 	layer_item.set_text(0, layer.name)
