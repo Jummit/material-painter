@@ -102,6 +102,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 [connection signal="pressed" from="LayerContainer/TextureLayerContainer/AddTextureLayerButton" to="TextureCreationDialog" method="_on_AddTextureLayerButton_pressed"]
+[connection signal="item_edited" from="LayerContainer/TextureLayerContainer/TextureLayerTree" to="LayerContainer/TextureLayerContainer/TextureLayerTree" method="_on_item_edited"]
 [connection signal="item_selected" from="LayerContainer/TextureLayerContainer/TextureLayerTree" to="LayerContainer/TextureLayerContainer/TextureLayerPropertyPanel" method="_on_TextureLayerTree_item_selected"]
 [connection signal="values_changed" from="LayerContainer/TextureLayerContainer/TextureLayerPropertyPanel" to="LayerContainer/TextureLayerContainer/TextureLayerTree" method="_on_TextureLayerPropertyPanel_values_changed"]
 [connection signal="confirmed" from="TextureCreationDialog" to="TextureCreationDialog" method="_on_confirmed"]

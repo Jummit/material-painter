@@ -32,7 +32,7 @@ func update_tree() -> void:
 	for layer in layers:
 		var layer_item := create_item(root)
 		layer_item.set_metadata(0, layer)
-		layer_item.set_text(0, layer.name)
+		setup_item(layer_item, layer)
 
 
 func _get_item_index(item : TreeItem) -> int:
@@ -44,3 +44,11 @@ func _get_item_index(item : TreeItem) -> int:
 		index += 1
 		tree_item = tree_item.get_next_visible()
 	return index
+
+
+func _on_item_activated():
+	var tex
+
+
+func setup_item(layer_item : TreeItem, layer) -> void:
+	pass

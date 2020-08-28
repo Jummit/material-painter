@@ -21,7 +21,6 @@ config/icon="res://icon.png"
 
 [debug]
 
-gdscript/warnings/treat_warnings_as_errors=true
 gdscript/warnings/unused_class_variable=true
 gdscript/warnings/return_value_discarded=false
 
