@@ -1,6 +1,6 @@
 extends ConfirmationDialog
 
-const TextureLayerTree = preload("res://texture_layer_tree.gd")
+const TextureLayerTree = preload("texture_layer_tree.gd")
 
 signal texture_creation_confirmed(type)
 
@@ -24,4 +24,5 @@ func _on_confirmed():
 
 func _on_TextureTypeList_item_activated(_index : int):
 	_on_confirmed()
-	hide()
+	if not Input.is_key_pressed(KEY_CONTROL):
+		hide()

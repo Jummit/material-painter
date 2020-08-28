@@ -1,4 +1,4 @@
-extends "res://arrangable_tree/arrangable_tree.gd"
+extends "res://addons/arrangable_tree/arrangable_tree.gd"
 
 class TextureMap extends Resource:
 #	export var 

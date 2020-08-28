@@ -48,27 +48,26 @@ class BoolProperty extends Property:
 class RangeProperty extends Property:
 	var from : float
 	var to : float
-	func _init().("value_changed", "value"):
-		pass
+	var step : float
+	func _init(_step : float).("value_changed", "value"):
+		_step = step
 	
 	func get_control() -> Control:
 		var slider := HSlider.new()
 		slider.min_value = from
 		slider.max_value = to
+		slider.step = step
+#		slider.tick_count = 100
 		return slider
 
 class IntProperty extends RangeProperty:
-	func _init(_name : String, _from : float, _to : float):
+	func _init(_name : String, _from : float, _to : float).(1):
 		name = _name
 		from = _from
 		to = _to
-	func get_control() -> Control:
-		var slider : HSlider = .get_control()
-		slider.step = 1.0
-		return slider
 
 class FloatProperty extends RangeProperty:
-	func _init(_name : String, _from : float, _to : float):
+	func _init(_name : String, _from : float, _to : float).(0.01):
 		name = _name
 		from = _from
 		to = _to
@@ -85,7 +84,7 @@ class FilePathProperty extends Property:
 		name = _name
 	
 	func get_control() -> Control:
-		return preload("res://property_panel/path_picker_button/path_picker_button.tscn").instance() as Control
+		return load("res://addons/property_panel/path_picker_button/path_picker_button.tscn").instance() as Control
 
 var properties := [] setget set_properties
 
@@ -107,7 +106,7 @@ func build() -> void:
 	
 	for property in properties:
 		property = property as Property
-		var property_container : HBoxContainer = load("res://property_panel/property_container/property_container.tscn").instance()
+		var property_container : HBoxContainer = load("res://addons/property_panel/property_container/property_container.tscn").instance()
 		property_container.name = property.name
 		property_container.connect("property_changed", self, "_on_Property_changed")
 		properties_container.add_child(property_container)

@@ -2,7 +2,7 @@ extends HBoxContainer
 
 onready var name_label : Label = $Name
 
-const Property = preload("res://property_panel/property_panel.gd").Property
+const Property = preload("res://addons/property_panel/property_panel.gd").Property
 
 signal property_changed
 

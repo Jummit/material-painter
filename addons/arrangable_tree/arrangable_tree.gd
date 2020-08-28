@@ -20,6 +20,7 @@ func drop_data(position : Vector2, data) -> void:
 	if motion == -1:
 		motion = 0
 	var tree_item_to_move := data as TreeItem
+	# TODO: fix this
 	layers.insert(int(clamp(relative_to + motion, 0, layers.size())), tree_item_to_move.get_metadata(0).duplicate())
 	layers.erase(tree_item_to_move.get_metadata(0))
 	update_tree()

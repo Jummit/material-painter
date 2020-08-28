@@ -1,6 +1,6 @@
-extends "res://property_panel/property_panel.gd"
+extends "res://addons/property_panel/property_panel.gd"
 
-const TextureLayerTree = preload("res://texture_layer_tree.gd")
+const TextureLayerTree = preload("texture_layer_tree.gd")
 
 onready var texture_layer_tree : Tree = $"../TextureLayerTree"
 

@@ -1,19 +1,20 @@
-extends "res://arrangable_tree/arrangable_tree.gd"
+extends "res://addons/arrangable_tree/arrangable_tree.gd"
 
 onready var texture_layer_property_panel : Panel = $"../TextureLayerPropertyPanel"
 
-const PropertyPanel = preload("res://property_panel/property_panel.gd")
+const PropertyPanel = preload("res://addons/property_panel/property_panel.gd")
 
 class TextureLayer:
 # warning-ignore:unused_class_variable
 	var name : String
 # warning-ignore:unused_class_variable
 	var properties : Dictionary
+	var texture : Texture
 	
 	func get_properties() -> Array:
 		return [PropertyPanel.EnumProperty.new("blend_mode", ["Normal", "Add", "Sub"])]
 	
-	func get_texture() -> Texture:
+	func generate_texture():
 		return null
 
 class ColorTextureLayer extends TextureLayer:
@@ -26,13 +27,12 @@ class ColorTextureLayer extends TextureLayer:
 	func get_properties() -> Array:
 		return .get_properties() + [PropertyPanel.ColorProperty.new("color")]
 	
-	func get_texture() -> Texture:
+	func generate_texture():
 		var image := Image.new()
 		image.create(1028, 1028, false, Image.FORMAT_RGB8)
 		image.fill(properties.color)
-		var texture := ImageTexture.new()
+		texture = ImageTexture.new()
 		texture.create_from_image(image)
-		return texture
 
 
 class BitmapTextureLayer extends TextureLayer:
@@ -45,14 +45,12 @@ class BitmapTextureLayer extends TextureLayer:
 	func get_properties() -> Array:
 		return .get_properties() + [PropertyPanel.FilePathProperty.new("image_path")]
 	
-	func get_texture() -> Texture:
+	func generate_texture():
 		if ResourceLoader.exists(properties.image_path, "Texture"):
 			var image := Image.new()
 			if image.load(properties.image_path) == OK:
-				var texture := ImageTexture.new()
+				texture = ImageTexture.new()
 				texture.create_from_image(image)
-				return texture
-		return null
 
 
 class NoiseTextureLayer extends TextureLayer:
@@ -75,24 +73,26 @@ class NoiseTextureLayer extends TextureLayer:
 				PropertyPanel.FloatProperty.new("lacunarity", 0.1, 4.0),
 			]
 	
-	func get_texture() -> Texture:
-		var noise_texture := NoiseTexture.new()
-		noise_texture.noise = OpenSimplexNoise.new()
-		noise_texture.noise.seed = properties.noise_seed
-		noise_texture.noise.octaves = properties.octaves
-		noise_texture.noise.period = properties.period
-		noise_texture.noise.persistence = properties.persistence
-		noise_texture.noise.lacunarity = properties.lacunarity
-		return noise_texture
+	func generate_texture():
+		var noise := OpenSimplexNoise.new()
+		noise.seed = properties.noise_seed
+		noise.octaves = properties.octaves
+		noise.period = properties.period
+		noise.persistence = properties.persistence
+		noise.lacunarity = properties.lacunarity
+		texture = NoiseTexture.new()
+		texture.noise = noise
 
 
 func _on_TextureCreationDialog_texture_creation_confirmed(texture_layer : TextureLayer):
 	layers.append(texture_layer)
+	texture_layer.generate_texture()
 	update_tree()
 
 
 func _on_TextureLayerPropertyPanel_values_changed():
 	get_selected().get_metadata(0).properties = texture_layer_property_panel.get_property_values()
+	get_selected().get_metadata(0).generate_texture()
 	update_icons()
 
 
@@ -107,7 +107,7 @@ func update_icons() -> void:
 	var tree_item := get_root().get_children()
 	while true:
 		var texture_layer : TextureLayer = tree_item.get_metadata(0)
-		var icon := texture_layer.get_texture()
+		var icon := texture_layer.texture
 		tree_item.set_icon(0, icon)
 		tree_item.set_icon_max_width(0, 16)
 		tree_item = tree_item.get_next_visible()
@@ -116,6 +116,6 @@ func update_icons() -> void:
 
 
 func _make_custom_tooltip(_for_text):
-	var tooltip : PanelContainer = load("res://texture_tooltip/texture_tool_tip.tscn").instance()
+	var tooltip : PanelContainer = load("res://texture_layers/texture_tooltip/texture_tool_tip.tscn").instance()
 	tooltip.call_deferred("setup", get_item_at_position(get_local_mouse_position()).get_metadata(0))
 	return tooltip

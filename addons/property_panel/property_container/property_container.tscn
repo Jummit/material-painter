@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://property_panel/property_container/property_container.gd" type="Script" id=1]
+[ext_resource path="res://addons/property_panel/property_container/property_container.gd" type="Script" id=1]
 
 [node name="PropertyContainer" type="HBoxContainer"]
 margin_right = 40.0
