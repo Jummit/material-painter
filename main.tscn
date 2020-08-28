@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=11 format=2]
 
 [ext_resource path="res://material_layers/material_layer_tree.gd" type="Script" id=1]
 [ext_resource path="res://addons/arrangable_tree/arrangable_tree.tscn" type="PackedScene" id=2]
@@ -8,6 +8,8 @@
 [ext_resource path="res://texture_layers/texture_creation_dialog.gd" type="Script" id=6]
 [ext_resource path="res://texture_layers/texture_layer_property_panel.gd" type="Script" id=7]
 [ext_resource path="res://addons/blending/texture_blending_viewport.tscn" type="PackedScene" id=8]
+[ext_resource path="res://material_layers/material_layer_property_panel.gd" type="Script" id=9]
+[ext_resource path="res://material_layers/texture_channel_buttons/texture_channel_buttons.tscn" type="PackedScene" id=10]
 
 [node name="Main" type="Control"]
 anchor_right = 1.0
@@ -49,15 +51,21 @@ text = "Add Material Layer"
 
 [node name="MaterialLayerTree" parent="LayerContainer/MaterialLayerContainer" instance=ExtResource( 2 )]
 margin_right = 149.0
-margin_bottom = 310.0
+margin_bottom = 274.0
 script = ExtResource( 1 )
 
+[node name="TextureChannelButtons" parent="LayerContainer/MaterialLayerContainer" instance=ExtResource( 10 )]
+margin_top = 278.0
+margin_right = 149.0
+margin_bottom = 346.0
+
 [node name="MaterialLayerPropertyPanel" parent="LayerContainer/MaterialLayerContainer" instance=ExtResource( 4 )]
-margin_top = 314.0
+margin_top = 350.0
 margin_right = 149.0
 margin_bottom = 600.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+script = ExtResource( 9 )
 
 [node name="TextureLayerContainer" type="VBoxContainer" parent="LayerContainer"]
 margin_left = 873.0
@@ -114,6 +122,9 @@ __meta__ = {
 
 [node name="TextureBlendingViewport" parent="." instance=ExtResource( 8 )]
 size = Vector2( 1024, 1024 )
+[connection signal="pressed" from="LayerContainer/MaterialLayerContainer/AddMaterialLayerButton" to="LayerContainer/MaterialLayerContainer/MaterialLayerTree" method="_on_AddMaterialLayerButton_pressed"]
+[connection signal="item_edited" from="LayerContainer/MaterialLayerContainer/MaterialLayerTree" to="LayerContainer/MaterialLayerContainer/MaterialLayerTree" method="_on_item_edited"]
+[connection signal="item_selected" from="LayerContainer/MaterialLayerContainer/MaterialLayerTree" to="LayerContainer/MaterialLayerContainer/MaterialLayerPropertyPanel" method="_on_MaterialLayerTree_item_selected"]
 [connection signal="pressed" from="LayerContainer/TextureLayerContainer/AddTextureLayerButton" to="TextureCreationDialog" method="_on_AddTextureLayerButton_pressed"]
 [connection signal="item_edited" from="LayerContainer/TextureLayerContainer/TextureLayerTree" to="LayerContainer/TextureLayerContainer/TextureLayerTree" method="_on_item_edited"]
 [connection signal="item_selected" from="LayerContainer/TextureLayerContainer/TextureLayerTree" to="LayerContainer/TextureLayerContainer/TextureLayerPropertyPanel" method="_on_TextureLayerTree_item_selected"]

@@ -1,19 +1,25 @@
 extends "res://addons/arrangable_tree/arrangable_tree.gd"
 
-class TextureMap extends Resource:
-#	export var 
-	pass
+const TextureLayer = preload("res://texture_layers/texture_layer_tree.gd").TextureLayer
 
 class MaterialLayer extends Resource:
 # warning-ignore:unused_class_variable
-	export var mask : Resource
+	var mask : Texture
 # warning-ignore:unused_class_variable
-	export var textures : Array
-	export var name := "Untitled Layer"
+	var textures : Dictionary
+	var name := "Untitled Layer"
 
 
-func _on_AddLayerButton_pressed():
+func setup_item(layer_item : TreeItem, layer : MaterialLayer) -> void:
+	layer_item.set_text(0, layer.name)
+	layer_item.set_editable(0, true)
+
+
+func _on_AddMaterialLayerButton_pressed():
 	var new_layer := MaterialLayer.new()
-	new_layer.name = str(rand_range(1, 20))
 	layers.append(new_layer)
 	update_tree()
+
+
+func _on_item_edited():
+	get_selected().get_metadata(0).name = get_selected().get_text(0)

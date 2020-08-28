@@ -12,5 +12,5 @@ vec3 blendNormalO(vec3 base, vec3 blend, float opacity) {
 
 void fragment() {
 	vec3 screen = textureLod(SCREEN_TEXTURE, SCREEN_UV, 0.0).rgb;
-	COLOR = vec4(blendNormalO(texture(TEXTURE, UV).rgb, screen, value), 1.0);
+	COLOR = vec4(blendNormalO(screen, texture(TEXTURE, UV).rgb, value), 1.0);
 }

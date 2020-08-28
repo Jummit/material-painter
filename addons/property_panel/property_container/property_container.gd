@@ -15,6 +15,9 @@ func setup(_property : Property) -> void:
 	property_control = property.get_control()
 	property_control.size_flags_horizontal = SIZE_EXPAND_FILL
 	property_control.size_flags_vertical = SIZE_EXPAND_FILL
+	# this is a little hacky; since the argument count
+	# of signal callbacks have to be a exactly right,
+	# "pad" the call with the ´binds´ argument of ´connect´
 	var arg_count := -1
 	for signal_info in property_control.get_signal_list():
 		if signal_info.name == property.changed_signal:

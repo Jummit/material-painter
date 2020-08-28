@@ -1,12 +1,6 @@
 tool
 extends EditorScript
 
-# SomeButton
-
-# onready var some_button : Button = $SomeButton
-
-# SomeButton -> some_button
-
 func _run():
 	OS.clipboard = ""
 	for selected_node in get_editor_interface().get_selection().get_selected_nodes():

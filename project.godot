@@ -19,6 +19,10 @@ config/name="103605822"
 run/main_scene="res://main.tscn"
 config/icon="res://icon.png"
 
+[autoload]
+
+TextureManager="*res://texture_manager.gd"
+
 [debug]
 
 gdscript/warnings/unused_class_variable=true

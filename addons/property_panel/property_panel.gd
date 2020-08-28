@@ -100,7 +100,6 @@ class FilePathProperty extends Property:
 
 var properties := [] setget set_properties
 
-
 func _ready():
 	build()
 
