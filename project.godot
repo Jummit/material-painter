@@ -19,6 +19,12 @@ config/name="103605822"
 run/main_scene="res://Main.tscn"
 config/icon="res://icon.png"
 
+[debug]
+
+gdscript/warnings/treat_warnings_as_errors=true
+gdscript/warnings/unused_class_variable=true
+gdscript/warnings/return_value_discarded=false
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"

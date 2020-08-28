@@ -5,8 +5,8 @@ onready var properties_container : VBoxContainer = $Properties
 signal values_changed
 
 class Property:
+# warning-ignore:unused_class_variable
 	var name : String
-	var value
 	var changed_signal : String
 	var property_variable : String
 	
@@ -64,7 +64,7 @@ class FilePathProperty extends Property:
 		name = _name
 	
 	func get_control() -> Control:
-		return preload("res://property_panel/path_picker_button.tscn").instance() as Control
+		return preload("res://property_panel/path_picker_button/path_picker_button.tscn").instance() as Control
 
 var properties := [] setget set_properties
 
@@ -84,7 +84,7 @@ func build() -> void:
 	
 	for property in properties:
 		property = property as Property
-		var property_container : HBoxContainer = load("res://property_panel/property_container.tscn").instance()
+		var property_container : HBoxContainer = load("res://property_panel/property_container/property_container.tscn").instance()
 		property_container.name = property.name
 		property_container.connect("property_changed", self, "_on_Property_changed")
 		properties_container.add_child(property_container)

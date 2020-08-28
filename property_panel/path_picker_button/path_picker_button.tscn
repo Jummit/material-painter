@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=2]
 
-[ext_resource path="res://path_picker_button.gd" type="Script" id=1]
+[ext_resource path="res://property_panel/path_picker_button/path_picker_button.gd" type="Script" id=1]
 
 [node name="PathPickerButton" type="Button"]
 margin_right = 12.0

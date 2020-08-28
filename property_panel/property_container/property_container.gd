@@ -34,5 +34,5 @@ func set_value(to):
 	property_control.set(property.property_variable, to)
 
 
-func _on_Property_changed(a, b, c, d, e):
+func _on_Property_changed(_a, _b, _c, _d, _e):
 	emit_signal("property_changed")

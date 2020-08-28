@@ -5,7 +5,9 @@ class TextureMap extends Resource:
 	pass
 
 class MaterialLayer extends Resource:
+# warning-ignore:unused_class_variable
 	export var mask : Resource
+# warning-ignore:unused_class_variable
 	export var textures : Array
 	export var name := "Untitled Layer"
 
