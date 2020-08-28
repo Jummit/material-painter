@@ -9,10 +9,9 @@ class TextureLayer:
 	var name : String
 # warning-ignore:unused_class_variable
 	var properties : Dictionary
-	var blend_mode : int
 	
 	func get_properties() -> Array:
-		return []
+		return [PropertyPanel.EnumProperty.new("blend_mode", ["Normal", "Add", "Sub"])]
 	
 	func get_texture() -> Texture:
 		return null
@@ -25,7 +24,7 @@ class ColorTextureLayer extends TextureLayer:
 		}
 	
 	func get_properties() -> Array:
-		return [PropertyPanel.ColorProperty.new("color")]
+		return .get_properties() + [PropertyPanel.ColorProperty.new("color")]
 	
 	func get_texture() -> Texture:
 		var image := Image.new()
@@ -44,7 +43,7 @@ class BitmapTextureLayer extends TextureLayer:
 		}
 	
 	func get_properties() -> Array:
-		return [PropertyPanel.FilePathProperty.new("image_path")]
+		return .get_properties() + [PropertyPanel.FilePathProperty.new("image_path")]
 	
 	func get_texture() -> Texture:
 		if ResourceLoader.exists(properties.image_path, "Texture"):
@@ -54,6 +53,37 @@ class BitmapTextureLayer extends TextureLayer:
 				texture.create_from_image(image)
 				return texture
 		return null
+
+
+class NoiseTextureLayer extends TextureLayer:
+	func _init(_name : String):
+		name = _name
+		properties = {
+			noise_seed = 0,
+			octaves = 3,
+			period = 64.0,
+			persistence = 0.5,
+			lacunarity = 2.0,
+		}
+	
+	func get_properties() -> Array:
+		return .get_properties() + [
+				PropertyPanel.IntProperty.new("noise_seed", 0, 1000),
+				PropertyPanel.IntProperty.new("octaves", 1, 9),
+				PropertyPanel.FloatProperty.new("period", 0.1, 256.0),
+				PropertyPanel.FloatProperty.new("persistence", 0.0, 1.0),
+				PropertyPanel.FloatProperty.new("lacunarity", 0.1, 4.0),
+			]
+	
+	func get_texture() -> Texture:
+		var noise_texture := NoiseTexture.new()
+		noise_texture.noise = OpenSimplexNoise.new()
+		noise_texture.noise.seed = properties.noise_seed
+		noise_texture.noise.octaves = properties.octaves
+		noise_texture.noise.period = properties.period
+		noise_texture.noise.persistence = properties.persistence
+		noise_texture.noise.lacunarity = properties.lacunarity
+		return noise_texture
 
 
 func _on_TextureCreationDialog_texture_creation_confirmed(texture_layer : TextureLayer):
@@ -83,3 +113,4 @@ func update_icons() -> void:
 		tree_item = tree_item.get_next_visible()
 		if not tree_item:
 			break
+

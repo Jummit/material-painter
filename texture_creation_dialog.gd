@@ -16,7 +16,7 @@ func _on_confirmed():
 		1:
 			texture_layer = TextureLayerTree.ColorTextureLayer.new("New Paint Texture")
 		2:
-			texture_layer = TextureLayerTree.ColorTextureLayer.new("New Noise Texture")
+			texture_layer = TextureLayerTree.NoiseTextureLayer.new("New Noise Texture")
 		3:
 			texture_layer = TextureLayerTree.ColorTextureLayer.new("New Color Texture")
 	emit_signal("texture_creation_confirmed", texture_layer)

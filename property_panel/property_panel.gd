@@ -38,19 +38,40 @@ class StringProperty extends Property:
 	func get_control() -> Control:
 		return LineEdit.new()
 
-class IntProperty extends Property:
-	func _init(_name : String).("changed", "value"):
+class BoolProperty extends Property:
+	func _init(_name : String).("toggled", "pressed"):
 		name = _name
 	
 	func get_control() -> Control:
-		return HSlider.new()
+		return CheckBox.new()
 
-class FloatProperty extends Property:
-	func _init(_name : String).("changed", "value"):
-		name = _name
+class RangeProperty extends Property:
+	var from : float
+	var to : float
+	func _init().("value_changed", "value"):
+		pass
 	
 	func get_control() -> Control:
-		return HSlider.new()
+		var slider := HSlider.new()
+		slider.min_value = from
+		slider.max_value = to
+		return slider
+
+class IntProperty extends RangeProperty:
+	func _init(_name : String, _from : float, _to : float):
+		name = _name
+		from = _from
+		to = _to
+	func get_control() -> Control:
+		var slider : HSlider = .get_control()
+		slider.step = 1.0
+		return slider
+
+class FloatProperty extends RangeProperty:
+	func _init(_name : String, _from : float, _to : float):
+		name = _name
+		from = _from
+		to = _to
 
 class ColorProperty extends Property:
 	func _init(_name : String).("color_changed", "color"):
