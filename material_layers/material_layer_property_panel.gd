@@ -23,9 +23,12 @@ func build_properties(material_layer : MaterialLayer) -> void:
 		Properties.FloatProperty.new("opacity", 0.0, 1.0),
 		TextureProperty.new("mask"),
 	]
-	for texture in material_layer.textures.keys():
-		properties.append(TextureProperty.new(texture))
+	
+	for type in Globals.TEXTURE_MAP_TYPES:
+		if material_layer.properties.has(type):
+			properties.append(TextureProperty.new(type))
 	set_properties(properties)
+	load_values(material_layer.properties)
 
 
 func _on_TextureChannelButtons_changed():

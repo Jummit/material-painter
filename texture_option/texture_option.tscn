@@ -3,7 +3,7 @@
 [ext_resource path="res://texture_option/texture_option.gd" type="Script" id=1]
 
 [node name="TextureOption" type="PanelContainer"]
-margin_right = 214.0
+margin_right = 77.0
 margin_bottom = 34.0
 script = ExtResource( 1 )
 __meta__ = {
@@ -13,7 +13,7 @@ __meta__ = {
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 margin_left = 7.0
 margin_top = 7.0
-margin_right = 207.0
+margin_right = 70.0
 margin_bottom = 27.0
 
 [node name="NameEdit" type="LineEdit" parent="HBoxContainer"]
@@ -24,15 +24,15 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="NewButton" type="Button" parent="HBoxContainer"]
-margin_right = 177.0
+margin_right = 40.0
 margin_bottom = 20.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "New"
 
 [node name="TexturePopupMenu" type="MenuButton" parent="HBoxContainer"]
-margin_left = 181.0
-margin_right = 200.0
+margin_left = 44.0
+margin_right = 63.0
 margin_bottom = 20.0
 text = "v"
 flat = false

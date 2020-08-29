@@ -1,5 +1,6 @@
 extends "res://addons/arrangable_tree/arrangable_tree.gd"
 
+onready var material_layer_property_panel : Panel = $"../MaterialLayerPropertyPanel"
 onready var texture_channel_buttons : GridContainer = $"../TextureChannelButtons"
 
 const MaterialLayer = preload("res://material_layers/material_layer.gd")
@@ -18,3 +19,9 @@ func _on_AddMaterialLayerButton_pressed():
 
 func _on_item_edited():
 	get_selected().get_metadata(0).name = get_selected().get_text(0)
+
+
+func _on_MaterialLayerPropertyPanel_values_changed():
+	var material_layer : MaterialLayer = get_selected().get_metadata(0)
+	var properties : Dictionary = material_layer_property_panel.get_property_values()
+	material_layer.properties = properties

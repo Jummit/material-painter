@@ -7,20 +7,24 @@ const LayerTexture = preload("res://texture_layers/layer_texture.gd")
 signal changed
 
 func _ready():
-	for button in get_children():
-		button.connect("toggled", self, "_on_Button_toggled", [button])
+	for type in Globals.TEXTURE_MAP_TYPES:
+		var new_button := Button.new()
+		new_button.text = type
+		new_button.toggle_mode = true
+		new_button.connect("toggled", self, "_on_Button_toggled", [type])
+		add_child(new_button)
 
 
-func _on_Button_toggled(button_pressed : bool, button : Button):
-	var textures : Dictionary = material_layer_tree.get_selected().get_metadata(0).textures
+func _on_Button_toggled(button_pressed : bool, type : String):
+	var properties : Dictionary = material_layer_tree.get_selected().get_metadata(0).properties
 	if button_pressed:
-		textures[button.name] = null
+		properties[type] = null
 	else:
-		textures.erase(button.name)
+		properties.erase(type)
 	emit_signal("changed")
 
 
 func _on_MaterialLayerTree_item_selected():
-	var textures : Dictionary = material_layer_tree.get_selected().get_metadata(0).textures
+	var properties : Dictionary = material_layer_tree.get_selected().get_metadata(0).properties
 	for button in get_children():
-		button.pressed = textures.has(button.name)
+		button.pressed = properties.has(button.name)
