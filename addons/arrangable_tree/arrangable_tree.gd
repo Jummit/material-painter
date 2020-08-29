@@ -1,6 +1,19 @@
 extends Tree
 
-var layers := []
+var items := []
+
+func setup_item(tree_item : TreeItem, item) -> void:
+	pass
+
+
+func update_tree() -> void:
+	clear()
+	var root = create_item()
+	for item in items:
+		var tree_item := create_item(root)
+		tree_item.set_metadata(0, item)
+		setup_item(tree_item, item)
+
 
 func get_drag_data(position : Vector2):
 	var preview = Label.new()
@@ -20,19 +33,10 @@ func drop_data(position : Vector2, data) -> void:
 	if motion == -1:
 		motion = 0
 	var tree_item_to_move := data as TreeItem
-	# TODO: fix moving layers
-#	layers.insert(int(clamp(relative_to + motion, 0, layers.size())), tree_item_to_move.get_metadata(0).duplicate())
-#	layers.erase(tree_item_to_move.get_metadata(0))
+	# TODO: fix moving items
+#	items.insert(int(clamp(relative_to + motion, 0, items.size())), tree_item_to_move.get_metadata(0).duplicate())
+#	items.erase(tree_item_to_move.get_metadata(0))
 	update_tree()
-
-
-func update_tree() -> void:
-	clear()
-	var root = create_item()
-	for layer in layers:
-		var layer_item := create_item(root)
-		layer_item.set_metadata(0, layer)
-		setup_item(layer_item, layer)
 
 
 func _get_item_index(item : TreeItem) -> int:
@@ -44,11 +48,3 @@ func _get_item_index(item : TreeItem) -> int:
 		index += 1
 		tree_item = tree_item.get_next_visible()
 	return index
-
-
-func _on_item_activated():
-	var tex
-
-
-func setup_item(layer_item : TreeItem, layer) -> void:
-	pass

@@ -7,9 +7,10 @@ onready var model : MeshInstance = $"../../3DViewport/Viewport/Model"
 const MaterialLayer = preload("res://material_layers/material_layer.gd")
 const LayerTexture = preload("res://texture_layers/layer_texture.gd")
 
-func setup_item(layer_item : TreeItem, layer : MaterialLayer) -> void:
-	layer_item.set_text(0, layer.name)
-	layer_item.set_editable(0, true)
+func setup_item(tree_item : TreeItem, item : MaterialLayer) -> void:
+	tree_item.set_text(0, item.name)
+	# todo: make renaming better
+#	tree_item.set_editable(0, true)
 
 
 func update_result() -> void:
@@ -19,7 +20,7 @@ func update_result() -> void:
 	
 	for type in Globals.TEXTURE_MAP_TYPES:
 		var map_layers = []
-		for layer in layers:
+		for layer in items:
 			layer = layer as MaterialLayer
 			if layer.properties.has(type) and layer.properties[type] and layer.properties[type].result:
 				map_layers.append(layer.properties[type].result)
@@ -33,8 +34,7 @@ func _on_item_edited():
 
 
 func _on_AddMaterialLayerButton_pressed():
-	var new_layer := MaterialLayer.new()
-	layers.append(new_layer)
+	items.append(MaterialLayer.new())
 	update_tree()
 
 

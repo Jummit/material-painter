@@ -27,9 +27,9 @@ func _make_custom_tooltip(_for_text : String):
 	return tooltip
 
 
-func setup_item(layer_item : TreeItem, layer) -> void:
-	layer_item.set_text(NAME_COLUMN, layer.name)
-	layer_item.set_editable(NAME_COLUMN, true)
+func setup_item(tree_item : TreeItem, item : TextureLayer) -> void:
+	tree_item.set_text(NAME_COLUMN, item.name)
+	tree_item.set_editable(NAME_COLUMN, true)
 
 
 func load_layer_texture(layer_texture : LayerTexture) -> void:
@@ -65,7 +65,7 @@ func update_result() -> void:
 	var blend_modes : PoolStringArray = []
 	var opacity_values : PoolRealArray = []
 	
-	for layer in layers:
+	for layer in items:
 		layer = layer as TextureLayer
 		textures.append(layer.texture)
 		blend_modes.append(layer.properties.blend_mode)
@@ -81,7 +81,7 @@ func _on_item_edited():
 
 
 func _on_TextureCreationDialog_texture_creation_confirmed(texture_layer : TextureLayer):
-	layers.append(texture_layer)
+	items.append(texture_layer)
 	texture_layer.generate_texture()
 	update_tree()
 	update_result()
