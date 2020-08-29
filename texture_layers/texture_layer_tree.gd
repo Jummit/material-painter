@@ -1,7 +1,7 @@
 extends "res://addons/arrangable_tree/arrangable_tree.gd"
 
 onready var texture_layer_property_panel : Panel = $"../TextureLayerPropertyPanel"
-onready var texture_blending_viewport : Viewport = $"../../../TextureBlendingViewport"
+onready var texture_blending_viewport : Viewport = $"../../../../TextureBlendingViewport"
 onready var result_texture_rect : TextureRect = $"../../ResultTextureRect"
 
 const PropertyPanel = preload("res://addons/property_panel/property_panel.gd")

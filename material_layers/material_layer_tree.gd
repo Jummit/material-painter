@@ -2,8 +2,8 @@ extends "res://addons/arrangable_tree/arrangable_tree.gd"
 
 onready var material_layer_property_panel : Panel = $"../MaterialLayerPropertyPanel"
 onready var texture_layer_tree : Tree = $"../../TextureLayerContainer/TextureLayerTree"
-onready var texture_blending_viewport : Viewport = $"../../../TextureBlendingViewport"
 onready var model : MeshInstance = $"../../3DViewport/Viewport/Model"
+onready var blending_viewport : Viewport = $"../../../../MaskedTextureBlendingViewport"
 
 const MaterialLayer = preload("res://material_layers/material_layer.gd")
 const LayerTexture = preload("res://texture_layers/layer_texture.gd")
@@ -37,7 +37,7 @@ func update_channel(type : String) -> void:
 				mask = layer.properties.mask.result
 			})
 	# todo: use mask and correct blend modes
-	var result : ImageTexture = yield(texture_blending_viewport.blend(textures, options), "completed")
+	var result : ImageTexture = yield(blending_viewport.blend(textures, options), "completed")
 	model.get_surface_material(0).set(type + "_texture", result)
 
 

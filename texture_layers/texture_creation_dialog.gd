@@ -19,6 +19,8 @@ func _on_confirmed():
 			texture_layer = TextureLayers.NoiseTextureLayer.new("New Noise Texture")
 		3:
 			texture_layer = TextureLayers.ColorTextureLayer.new("New Color Texture")
+		4:
+			texture_layer = TextureLayers.ScalarTextureLayer.new("New Scalar Texture")
 	emit_signal("texture_creation_confirmed", texture_layer)
 
 

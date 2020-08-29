@@ -14,7 +14,6 @@ class TextureProperty extends "res://addons/property_panel/properties.gd".Proper
 
 func build_properties(material_layer : MaterialLayer) -> void:
 	properties = [
-		Properties.FloatProperty.new("opacity", 0.0, 1.0),
 		TextureProperty.new("mask"),
 	]
 	
