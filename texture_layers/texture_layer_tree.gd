@@ -34,7 +34,7 @@ func setup_item(tree_item : TreeItem, item : TextureLayer) -> void:
 
 func load_layer_texture(layer_texture : LayerTexture) -> void:
 	# no further setup is needed, as arrays are passed by reference
-	self.layers = layer_texture.layers
+	items = layer_texture.layers
 	update_tree()
 	update_result()
 

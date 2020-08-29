@@ -19,7 +19,8 @@ func _ready():
 func _on_Button_toggled(button_pressed : bool, type : String):
 	var properties : Dictionary = material_layer_tree.get_selected().get_metadata(0).properties
 	if button_pressed:
-		properties[type] = null
+		if not properties.has(type):
+			properties[type] = null
 	else:
 		properties.erase(type)
 	emit_signal("changed")
@@ -27,5 +28,7 @@ func _on_Button_toggled(button_pressed : bool, type : String):
 
 func _on_MaterialLayerTree_item_selected():
 	var properties : Dictionary = material_layer_tree.get_selected().get_metadata(0).properties
+	# warning: setting button.pressed calls ´_on_Button_toggled´,
+	# which can have unpredicatble consequences
 	for button in get_children():
 		button.pressed = properties.has(button.name)
