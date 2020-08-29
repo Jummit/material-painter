@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://material_layers/material_layer_tree.gd" type="Script" id=1]
 [ext_resource path="res://addons/arrangable_tree/arrangable_tree.tscn" type="PackedScene" id=2]
@@ -15,6 +15,7 @@
 [ext_resource path="res://material_layers/masked_texture_blending_viewport/masked_texture_blending_viewport.tscn" type="PackedScene" id=13]
 [ext_resource path="res://texture_layers/texture_layer_panel.gd" type="Script" id=14]
 [ext_resource path="res://3d_viewport/cube.obj" type="ArrayMesh" id=15]
+[ext_resource path="res://3d_viewport/spatialmaterial.tres" type="Material" id=16]
 
 [node name="Main" type="Control"]
 anchor_right = 1.0
@@ -64,7 +65,7 @@ render_target_update_mode = 3
 
 [node name="Model" type="MeshInstance" parent="PanelContainer/LayerContainer/3DViewport/Viewport"]
 mesh = ExtResource( 15 )
-material/0 = null
+material/0 = ExtResource( 16 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="PanelContainer/LayerContainer/3DViewport/Viewport"]
 environment = ExtResource( 12 )

@@ -26,11 +26,6 @@ func _input(event):
 
 
 func update_result() -> void:
-	print("Generating final material")
-	# todo: what does this code do?
-	var properties : Dictionary = material_layer_property_panel.get_property_values()
-	editing_material_layer.properties = properties
-	
 	for type in Globals.TEXTURE_MAP_TYPES:
 		update_channel(type)
 
@@ -45,7 +40,7 @@ func update_channel(type : String) -> void:
 			options.append({
 				mask = layer.properties.mask.result
 			})
-	# todo: use mask and correct blend modes
+	
 	if not textures.empty():
 		var result : ImageTexture = yield(blending_viewport.blend(textures, options), "completed")
 		model.get_surface_material(0).set(type + "_texture", result)
