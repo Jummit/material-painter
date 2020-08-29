@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://material_layers/material_layer_tree.gd" type="Script" id=1]
 [ext_resource path="res://addons/arrangable_tree/arrangable_tree.tscn" type="PackedScene" id=2]
@@ -11,11 +11,10 @@
 [ext_resource path="res://material_layers/material_layer_property_panel.gd" type="Script" id=9]
 [ext_resource path="res://material_layers/texture_channel_buttons/texture_channel_buttons.tscn" type="PackedScene" id=10]
 [ext_resource path="res://rotating_camera/rotating_camera.tscn" type="PackedScene" id=11]
-[ext_resource path="res://environment/environment.tres" type="Environment" id=12]
+[ext_resource path="res://3d_viewport/environment/environment.tres" type="Environment" id=12]
 [ext_resource path="res://material_layers/masked_texture_blending_viewport/masked_texture_blending_viewport.tscn" type="PackedScene" id=13]
 [ext_resource path="res://texture_layers/texture_layer_panel.gd" type="Script" id=14]
-[ext_resource path="res://cube.obj" type="ArrayMesh" id=15]
-[ext_resource path="res://spatialmaterial.tres" type="Material" id=16]
+[ext_resource path="res://3d_viewport/cube.obj" type="ArrayMesh" id=15]
 
 [node name="Main" type="Control"]
 anchor_right = 1.0
@@ -65,7 +64,7 @@ render_target_update_mode = 3
 
 [node name="Model" type="MeshInstance" parent="PanelContainer/LayerContainer/3DViewport/Viewport"]
 mesh = ExtResource( 15 )
-material/0 = ExtResource( 16 )
+material/0 = null
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="PanelContainer/LayerContainer/3DViewport/Viewport"]
 environment = ExtResource( 12 )
@@ -178,8 +177,8 @@ size = Vector2( 1024, 1024 )
 [connection signal="item_edited" from="PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" to="PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" method="_on_item_edited"]
 [connection signal="item_selected" from="PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" to="PanelContainer/LayerContainer/TextureLayerPanel" method="_on_TextureLayerTree_item_selected"]
 [connection signal="nothing_selected" from="PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" to="PanelContainer/LayerContainer/TextureLayerPanel" method="_on_TextureLayerTree_nothing_selected"]
-[connection signal="values_changed" from="PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerPropertyPanel" to="PanelContainer/LayerContainer/TextureLayerPanel" method="_on_TextureLayerPropertyPanel_values_changed"]
 [connection signal="values_changed" from="PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerPropertyPanel" to="PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_TextureLayerPropertyPanel_values_changed"]
+[connection signal="values_changed" from="PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerPropertyPanel" to="PanelContainer/LayerContainer/TextureLayerPanel" method="_on_TextureLayerPropertyPanel_values_changed"]
 [connection signal="confirmed" from="TextureCreationDialog" to="TextureCreationDialog" method="_on_confirmed"]
 [connection signal="texture_creation_confirmed" from="TextureCreationDialog" to="PanelContainer/LayerContainer/TextureLayerPanel" method="_on_TextureCreationDialog_texture_creation_confirmed"]
 [connection signal="item_activated" from="TextureCreationDialog/TextureTypeList" to="TextureCreationDialog" method="_on_TextureTypeList_item_activated"]
