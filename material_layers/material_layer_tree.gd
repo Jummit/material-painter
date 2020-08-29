@@ -1,7 +1,6 @@
 extends "res://addons/arrangable_tree/arrangable_tree.gd"
 
 onready var material_layer_property_panel : Panel = $"../MaterialLayerPropertyPanel"
-onready var texture_channel_buttons : GridContainer = $"../TextureChannelButtons"
 
 const MaterialLayer = preload("res://material_layers/material_layer.gd")
 const LayerTexture = preload("res://texture_layers/layer_texture.gd")

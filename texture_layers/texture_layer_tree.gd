@@ -20,12 +20,17 @@ func _on_TextureCreationDialog_texture_creation_confirmed(texture_layer : Textur
 	layers.append(texture_layer)
 	texture_layer.generate_texture()
 	update_tree()
+	update_result()
 
 
 func _on_TextureLayerPropertyPanel_values_changed():
 	get_selected().get_metadata(0).properties = texture_layer_property_panel.get_property_values()
 	get_selected().get_metadata(0).generate_texture()
 	update_icons()
+	update_result()
+
+
+func update_result() -> void:
 	result_texture_rect.texture = yield(texture_blending_viewport.blend(layers), "completed")
 
 
