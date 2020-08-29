@@ -44,6 +44,7 @@ margin_left = 156.0
 margin_right = 200.0
 margin_bottom = 24.0
 text = "Clear"
+[connection signal="text_changed" from="HBoxContainer/NameEdit" to="." method="_on_NameEdit_text_changed"]
 [connection signal="pressed" from="HBoxContainer/NewButton" to="." method="_on_NewButton_pressed"]
 [connection signal="about_to_show" from="HBoxContainer/TexturePopupMenu" to="." method="_on_TexturePopupMenu_about_to_show"]
 [connection signal="pressed" from="HBoxContainer/ClearButton" to="." method="_on_ClearButton_pressed"]

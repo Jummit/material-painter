@@ -47,3 +47,7 @@ func _on_TexturePopupMenu_about_to_show():
 		texture = texture as TextureMap
 		texture_popup.add_item(texture.name)
 		texture_popup.set_item_metadata(texture_popup.get_item_count() - 1, texture)
+
+
+func _on_NameEdit_text_changed(new_text : String):
+	selected_texture.name = new_text
