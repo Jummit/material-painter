@@ -5,6 +5,8 @@ class TextureLayer:
 	var name : String
 	var properties : Dictionary
 	var texture : Texture setget , get_texture
+# warning-ignore:unused_class_variable
+	var size := Vector2(1024, 1024)
 	
 	func get_properties() -> Array:
 		return [
@@ -13,7 +15,6 @@ class TextureLayer:
 	
 	func get_texture():
 		if not texture:
-			print("Getting a texture, generating it")
 			generate_texture()
 		return texture
 	
@@ -51,7 +52,7 @@ class ColorTextureLayer extends TextureLayer:
 	
 	func generate_texture():
 		var image := Image.new()
-		image.create(1028, 1028, false, Image.FORMAT_RGB8)
+		image.create(int(size.x), int(size.y), false, Image.FORMAT_RGB8)
 		image.fill(properties.color)
 		texture = ImageTexture.new()
 		texture.create_from_image(image)
@@ -68,6 +69,7 @@ class BitmapTextureLayer extends TextureLayer:
 		if ResourceLoader.exists(properties.image_path, "Texture"):
 			var image := Image.new()
 			if image.load(properties.image_path) == OK:
+				image.resize(int(size.x), int(size.y))
 				texture = ImageTexture.new()
 				texture.create_from_image(image)
 
@@ -97,4 +99,6 @@ class NoiseTextureLayer extends TextureLayer:
 		noise.persistence = properties.persistence
 		noise.lacunarity = properties.lacunarity
 		texture = NoiseTexture.new()
+		texture.width = int(size.x)
+		texture.height = int(size.y)
 		texture.noise = noise
