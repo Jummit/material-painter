@@ -5,6 +5,7 @@
 [node name="TextureOption" type="PanelContainer"]
 margin_right = 77.0
 margin_bottom = 34.0
+hint_tooltip = "texture"
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false

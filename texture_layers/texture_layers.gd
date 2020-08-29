@@ -13,6 +13,7 @@ class TextureLayer:
 	
 	func get_texture():
 		if not texture:
+			print("Getting a texture, generating it")
 			generate_texture()
 		return texture
 	

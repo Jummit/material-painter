@@ -29,6 +29,14 @@ Globals="*res://globals.gd"
 gdscript/warnings/unused_class_variable=true
 gdscript/warnings/return_value_discarded=false
 
+[input]
+
+save={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":true,"meta":false,"command":true,"pressed":false,"scancode":83,"unicode":0,"echo":false,"script":null)
+ ]
+}
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"

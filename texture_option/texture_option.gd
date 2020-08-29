@@ -17,6 +17,14 @@ func _ready():
 	texture_popup.connect("id_pressed", self, "_on_TextureMenuPopup_id_pressed")
 
 
+func _make_custom_tooltip(_for_text : String):
+	var tooltip : PanelContainer = preload("res://texture_layers/texture_tooltip/texture_tool_tip.tscn").instance()
+	if selected_texture:
+		tooltip.get_node("VBoxContainer/TextureRect").texture = selected_texture.result
+		tooltip.get_node("VBoxContainer/Name").text = selected_texture.name
+		return tooltip
+
+
 func set_selected_texture(to : LayerTexture):
 	var has_texture := to != null
 	clear_button.visible = has_texture

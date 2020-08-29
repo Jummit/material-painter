@@ -36,11 +36,6 @@ func load_layer_texture(layer_texture : LayerTexture) -> void:
 	# no further setup is needed, as arrays are passed by reference
 	items = layer_texture.layers
 	update_tree()
-	update_result()
-
-
-func update_tree():
-	.update_tree()
 	update_icons()
 
 
@@ -74,6 +69,7 @@ func update_result() -> void:
 	var result : Texture = yield(texture_blending_viewport.blend(textures, blend_modes, opacity_values), "completed")
 	result_texture_rect.texture = result
 	editing_layer_texture.result = result
+	print("A result for layer texture %s generated : %s" % [editing_layer_texture.name, result])
 
 
 func _on_item_edited():
@@ -84,6 +80,7 @@ func _on_TextureCreationDialog_texture_creation_confirmed(texture_layer : Textur
 	items.append(texture_layer)
 	texture_layer.generate_texture()
 	update_tree()
+	update_icons()
 	update_result()
 
 
@@ -98,7 +95,7 @@ func _on_TextureOption_selected(texture_option : TextureOption):
 	editing_layer_texture = texture_option.selected_texture
 	load_layer_texture(editing_layer_texture)
 	update_tree()
-	update_result()
+	update_icons()
 
 
 func _on_SceneTree_node_added(node : Node):
