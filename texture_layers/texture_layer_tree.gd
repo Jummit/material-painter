@@ -22,7 +22,6 @@ func setup_item(tree_item : TreeItem, item : TextureLayer) -> void:
 	tree_item.set_editable(NAME_COLUMN, true)
 
 
-# todo: make icons work again
 func update_icons() -> void:
 	if not get_root():
 		return

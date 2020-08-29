@@ -47,6 +47,7 @@ func _on_TextureLayerTree_item_selected():
 
 func _on_TextureLayerTree_nothing_selected():
 	editing_texture = null
+	release_focus()
 
 
 func _on_TextureCreationDialog_texture_creation_confirmed(texture_layer : TextureLayer):
@@ -58,6 +59,7 @@ func _on_TextureCreationDialog_texture_creation_confirmed(texture_layer : Textur
 
 func _on_TextureLayerPropertyPanel_values_changed():
 	editing_texture.properties = texture_layer_property_panel.get_property_values()
+	editing_texture.generate_texture()
 	update_result()
 	texture_layer_tree.update_icons()
 

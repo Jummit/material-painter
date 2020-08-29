@@ -6,7 +6,7 @@ const Properties = preload("res://addons/property_panel/properties.gd")
 class TextureProperty extends "res://addons/property_panel/properties.gd".Property:
 	func _init(_name : String).("changed", "selected_texture"):
 		name = _name
-
+	
 	func get_control() -> Control:
 		return preload("res://texture_option/texture_option.tscn").instance() as Control
 
@@ -14,10 +14,10 @@ func build_properties(material_layer : MaterialLayer) -> void:
 	properties = [
 		TextureProperty.new("mask"),
 	]
-
+	
 	for type in Globals.TEXTURE_MAP_TYPES:
 		if material_layer.properties.has(type):
 			properties.append(TextureProperty.new(type))
-
+	
 	set_properties(properties)
 	load_values(material_layer.properties)

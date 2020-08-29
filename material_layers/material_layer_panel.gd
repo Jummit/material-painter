@@ -58,6 +58,7 @@ func _on_MaterialLayerTree_item_selected():
 
 
 func _on_MaterialLayerTree_nothing_selected():
+	release_focus()
 	editing_material_layer = null
 
 
