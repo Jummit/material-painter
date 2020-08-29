@@ -6,7 +6,7 @@
 [ext_resource path="res://addons/property_panel/property_panel.tscn" type="PackedScene" id=4]
 [ext_resource path="res://icon.png" type="Texture" id=5]
 [ext_resource path="res://texture_layers/texture_creation_dialog.gd" type="Script" id=6]
-[ext_resource path="res://texture_layers/texture_layer_property_panel.gd" type="Script" id=7]
+[ext_resource path="res://material_layers/material_layer_panel.gd" type="Script" id=7]
 [ext_resource path="res://addons/blending/texture_blending_viewport.tscn" type="PackedScene" id=8]
 [ext_resource path="res://material_layers/material_layer_property_panel.gd" type="Script" id=9]
 [ext_resource path="res://material_layers/texture_channel_buttons/texture_channel_buttons.tscn" type="PackedScene" id=10]
@@ -84,33 +84,34 @@ environment = ExtResource( 12 )
 [node name="DirectionalLight" type="DirectionalLight" parent="PanelContainer/LayerContainer/3DViewport/Viewport"]
 transform = Transform( 0.788462, -0.446122, 0.423442, 0, 0.68843, 0.725302, -0.615084, -0.571873, 0.542801, 0, 3.22287, 0 )
 
-[node name="MaterialLayers" type="VBoxContainer" parent="PanelContainer/LayerContainer"]
+[node name="MaterialLayerPanel" type="VBoxContainer" parent="PanelContainer/LayerContainer"]
 margin_left = 467.0
 margin_right = 736.0
 margin_bottom = 586.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.58
+script = ExtResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="AddMaterialLayerButton" type="Button" parent="PanelContainer/LayerContainer/MaterialLayers"]
+[node name="AddMaterialLayerButton" type="Button" parent="PanelContainer/LayerContainer/MaterialLayerPanel"]
 margin_right = 269.0
 margin_bottom = 20.0
 text = "Add Material Layer"
 
-[node name="MaterialLayerTree" parent="PanelContainer/LayerContainer/MaterialLayers" instance=ExtResource( 2 )]
+[node name="MaterialLayerTree" parent="PanelContainer/LayerContainer/MaterialLayerPanel" instance=ExtResource( 2 )]
 margin_right = 269.0
 margin_bottom = 301.0
 script = ExtResource( 1 )
 
-[node name="TextureChannelButtons" parent="PanelContainer/LayerContainer/MaterialLayers" instance=ExtResource( 10 )]
+[node name="TextureChannelButtons" parent="PanelContainer/LayerContainer/MaterialLayerPanel" instance=ExtResource( 10 )]
 margin_top = 305.0
 margin_right = 269.0
 margin_bottom = 305.0
 
-[node name="MaterialLayerPropertyPanel" parent="PanelContainer/LayerContainer/MaterialLayers" instance=ExtResource( 4 )]
+[node name="MaterialLayerPropertyPanel" parent="PanelContainer/LayerContainer/MaterialLayerPanel" instance=ExtResource( 4 )]
 margin_top = 309.0
 margin_right = 269.0
 margin_bottom = 586.0
@@ -118,7 +119,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 9 )
 
-[node name="TextureLayers" type="VBoxContainer" parent="PanelContainer/LayerContainer"]
+[node name="TextureLayerPanel" type="VBoxContainer" parent="PanelContainer/LayerContainer"]
 margin_left = 740.0
 margin_right = 1010.0
 margin_bottom = 586.0
@@ -127,23 +128,22 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 0.58
 script = ExtResource( 14 )
 
-[node name="AddTextureLayerButton" type="Button" parent="PanelContainer/LayerContainer/TextureLayers"]
+[node name="AddTextureLayerButton" type="Button" parent="PanelContainer/LayerContainer/TextureLayerPanel"]
 margin_right = 270.0
 margin_bottom = 20.0
 text = "Add Texture Layer"
 
-[node name="TextureLayerTree" parent="PanelContainer/LayerContainer/TextureLayers" instance=ExtResource( 2 )]
+[node name="TextureLayerTree" parent="PanelContainer/LayerContainer/TextureLayerPanel" instance=ExtResource( 2 )]
 margin_right = 270.0
 margin_bottom = 303.0
 script = ExtResource( 3 )
 
-[node name="TextureLayerPropertyPanel" parent="PanelContainer/LayerContainer/TextureLayers" instance=ExtResource( 4 )]
+[node name="TextureLayerPropertyPanel" parent="PanelContainer/LayerContainer/TextureLayerPanel" instance=ExtResource( 4 )]
 margin_top = 307.0
 margin_right = 270.0
 margin_bottom = 586.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-script = ExtResource( 7 )
 
 [node name="TextureCreationDialog" type="ConfirmationDialog" parent="."]
 anchor_left = 0.5
@@ -178,19 +178,19 @@ size = Vector2( 1024, 1024 )
 
 [node name="MaskedTextureBlendingViewport" parent="." instance=ExtResource( 13 )]
 size = Vector2( 1024, 1024 )
-[connection signal="pressed" from="PanelContainer/LayerContainer/MaterialLayers/AddMaterialLayerButton" to="PanelContainer/LayerContainer/MaterialLayers/MaterialLayerTree" method="_on_AddMaterialLayerButton_pressed"]
-[connection signal="item_edited" from="PanelContainer/LayerContainer/MaterialLayers/MaterialLayerTree" to="PanelContainer/LayerContainer/MaterialLayers/MaterialLayerTree" method="_on_item_edited"]
-[connection signal="item_selected" from="PanelContainer/LayerContainer/MaterialLayers/MaterialLayerTree" to="PanelContainer/LayerContainer/MaterialLayers/MaterialLayerPropertyPanel" method="_on_MaterialLayerTree_item_selected"]
-[connection signal="item_selected" from="PanelContainer/LayerContainer/MaterialLayers/MaterialLayerTree" to="PanelContainer/LayerContainer/MaterialLayers/TextureChannelButtons" method="_on_MaterialLayerTree_item_selected"]
-[connection signal="changed" from="PanelContainer/LayerContainer/MaterialLayers/TextureChannelButtons" to="PanelContainer/LayerContainer/MaterialLayers/MaterialLayerPropertyPanel" method="_on_TextureChannelButtons_changed"]
-[connection signal="values_changed" from="PanelContainer/LayerContainer/MaterialLayers/MaterialLayerPropertyPanel" to="PanelContainer/LayerContainer/MaterialLayers/MaterialLayerTree" method="_on_MaterialLayerPropertyPanel_values_changed"]
-[connection signal="pressed" from="PanelContainer/LayerContainer/TextureLayers/AddTextureLayerButton" to="TextureCreationDialog" method="_on_AddTextureLayerButton_pressed"]
-[connection signal="item_edited" from="PanelContainer/LayerContainer/TextureLayers/TextureLayerTree" to="PanelContainer/LayerContainer/TextureLayers/TextureLayerTree" method="_on_item_edited"]
-[connection signal="item_selected" from="PanelContainer/LayerContainer/TextureLayers/TextureLayerTree" to="PanelContainer/LayerContainer/TextureLayers" method="_on_TextureLayerTree_item_selected"]
-[connection signal="item_selected" from="PanelContainer/LayerContainer/TextureLayers/TextureLayerTree" to="PanelContainer/LayerContainer/TextureLayers/TextureLayerPropertyPanel" method="_on_TextureLayerTree_item_selected"]
-[connection signal="nothing_selected" from="PanelContainer/LayerContainer/TextureLayers/TextureLayerTree" to="PanelContainer/LayerContainer/TextureLayers" method="_on_TextureLayerTree_nothing_selected"]
-[connection signal="values_changed" from="PanelContainer/LayerContainer/TextureLayers/TextureLayerPropertyPanel" to="PanelContainer/LayerContainer/TextureLayers" method="_on_TextureLayerPropertyPanel_values_changed"]
-[connection signal="values_changed" from="PanelContainer/LayerContainer/TextureLayers/TextureLayerPropertyPanel" to="PanelContainer/LayerContainer/MaterialLayers/MaterialLayerTree" method="_on_TextureLayerPropertyPanel_values_changed"]
+[connection signal="pressed" from="PanelContainer/LayerContainer/MaterialLayerPanel/AddMaterialLayerButton" to="PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_AddMaterialLayerButton_pressed"]
+[connection signal="item_edited" from="PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" method="_on_item_edited"]
+[connection signal="item_selected" from="PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_MaterialLayerTree_item_selected"]
+[connection signal="item_selected" from="PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="PanelContainer/LayerContainer/MaterialLayerPanel/TextureChannelButtons" method="_on_MaterialLayerTree_item_selected"]
+[connection signal="nothing_selected" from="PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_MaterialLayerTree_nothing_selected"]
+[connection signal="changed" from="PanelContainer/LayerContainer/MaterialLayerPanel/TextureChannelButtons" to="PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_TextureChannelButtons_changed"]
+[connection signal="values_changed" from="PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerPropertyPanel" to="PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_MaterialLayerPropertyPanel_values_changed"]
+[connection signal="pressed" from="PanelContainer/LayerContainer/TextureLayerPanel/AddTextureLayerButton" to="TextureCreationDialog" method="_on_AddTextureLayerButton_pressed"]
+[connection signal="item_edited" from="PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" to="PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" method="_on_item_edited"]
+[connection signal="item_selected" from="PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" to="PanelContainer/LayerContainer/TextureLayerPanel" method="_on_TextureLayerTree_item_selected"]
+[connection signal="nothing_selected" from="PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" to="PanelContainer/LayerContainer/TextureLayerPanel" method="_on_TextureLayerTree_nothing_selected"]
+[connection signal="values_changed" from="PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerPropertyPanel" to="PanelContainer/LayerContainer/TextureLayerPanel" method="_on_TextureLayerPropertyPanel_values_changed"]
+[connection signal="values_changed" from="PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerPropertyPanel" to="PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_TextureLayerPropertyPanel_values_changed"]
 [connection signal="confirmed" from="TextureCreationDialog" to="TextureCreationDialog" method="_on_confirmed"]
-[connection signal="texture_creation_confirmed" from="TextureCreationDialog" to="PanelContainer/LayerContainer/TextureLayers" method="_on_TextureCreationDialog_texture_creation_confirmed"]
+[connection signal="texture_creation_confirmed" from="TextureCreationDialog" to="PanelContainer/LayerContainer/TextureLayerPanel" method="_on_TextureCreationDialog_texture_creation_confirmed"]
 [connection signal="item_activated" from="TextureCreationDialog/TextureTypeList" to="TextureCreationDialog" method="_on_TextureTypeList_item_activated"]

@@ -35,10 +35,14 @@ func update_result() -> void:
 		})
 	
 	var result : Texture = yield(texture_blending_viewport.blend(textures, options), "completed")
+	editing_layer_texture.result = result
 
 
 func _on_TextureLayerTree_item_selected():
 	editing_texture = texture_layer_tree.get_selected().get_metadata(0)
+	
+	texture_layer_property_panel.properties = editing_texture.get_properties()
+	texture_layer_property_panel.load_values(editing_texture.properties)
 
 
 func _on_TextureLayerTree_nothing_selected():
