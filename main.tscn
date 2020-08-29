@@ -124,7 +124,10 @@ __meta__ = {
 size = Vector2( 1024, 1024 )
 [connection signal="pressed" from="LayerContainer/MaterialLayerContainer/AddMaterialLayerButton" to="LayerContainer/MaterialLayerContainer/MaterialLayerTree" method="_on_AddMaterialLayerButton_pressed"]
 [connection signal="item_edited" from="LayerContainer/MaterialLayerContainer/MaterialLayerTree" to="LayerContainer/MaterialLayerContainer/MaterialLayerTree" method="_on_item_edited"]
+[connection signal="item_selected" from="LayerContainer/MaterialLayerContainer/MaterialLayerTree" to="LayerContainer/MaterialLayerContainer/TextureChannelButtons" method="_on_MaterialLayerTree_item_selected"]
 [connection signal="item_selected" from="LayerContainer/MaterialLayerContainer/MaterialLayerTree" to="LayerContainer/MaterialLayerContainer/MaterialLayerPropertyPanel" method="_on_MaterialLayerTree_item_selected"]
+[connection signal="changed" from="LayerContainer/MaterialLayerContainer/TextureChannelButtons" to="LayerContainer/MaterialLayerContainer/MaterialLayerTree" method="_on_TextureChannelButtons_changed"]
+[connection signal="changed" from="LayerContainer/MaterialLayerContainer/TextureChannelButtons" to="LayerContainer/MaterialLayerContainer/MaterialLayerPropertyPanel" method="_on_TextureChannelButtons_changed"]
 [connection signal="pressed" from="LayerContainer/TextureLayerContainer/AddTextureLayerButton" to="TextureCreationDialog" method="_on_AddTextureLayerButton_pressed"]
 [connection signal="item_edited" from="LayerContainer/TextureLayerContainer/TextureLayerTree" to="LayerContainer/TextureLayerContainer/TextureLayerTree" method="_on_item_edited"]
 [connection signal="item_selected" from="LayerContainer/TextureLayerContainer/TextureLayerTree" to="LayerContainer/TextureLayerContainer/TextureLayerPropertyPanel" method="_on_TextureLayerTree_item_selected"]

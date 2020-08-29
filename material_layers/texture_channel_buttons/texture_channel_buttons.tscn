@@ -11,27 +11,27 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="AOButton" type="Button" parent="."]
+[node name="AO" type="Button" parent="."]
 margin_right = 59.0
 margin_bottom = 20.0
 toggle_mode = true
 text = "AO"
 
-[node name="AlbedoButton" type="Button" parent="."]
+[node name="Albedo" type="Button" parent="."]
 margin_left = 63.0
 margin_right = 144.0
 margin_bottom = 20.0
 toggle_mode = true
 text = "Albedo"
 
-[node name="MetalicButton" type="Button" parent="."]
+[node name="Metalic" type="Button" parent="."]
 margin_top = 24.0
 margin_right = 59.0
 margin_bottom = 44.0
 toggle_mode = true
 text = "Metalic"
 
-[node name="RoughnessButton" type="Button" parent="."]
+[node name="Roughness" type="Button" parent="."]
 margin_left = 63.0
 margin_top = 24.0
 margin_right = 144.0
@@ -39,7 +39,7 @@ margin_bottom = 44.0
 toggle_mode = true
 text = "Roughness"
 
-[node name="HeightButton" type="Button" parent="."]
+[node name="Height" type="Button" parent="."]
 margin_top = 48.0
 margin_right = 59.0
 margin_bottom = 68.0

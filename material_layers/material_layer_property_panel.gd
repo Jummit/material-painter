@@ -15,11 +15,18 @@ class TextureProperty extends "res://addons/property_panel/properties.gd".Proper
 
 
 func _on_MaterialLayerTree_item_selected():
-	var material_layer : MaterialLayer = material_layer_tree.get_selected().get_metadata(0)
-	self.properties = [
+	build_properties(material_layer_tree.get_selected().get_metadata(0))
+
+
+func build_properties(material_layer : MaterialLayer) -> void:
+	properties = [
 		Properties.FloatProperty.new("opacity", 0.0, 1.0),
 		TextureProperty.new("mask"),
 	]
-	for texture in texture_channel_buttons.enabled_textures.keys():
-		if texture_channel_buttons.enabled_textures[texture]:
-			properties.append(TextureProperty.new(texture))
+	for texture in material_layer.textures.keys():
+		properties.append(TextureProperty.new(texture))
+	set_properties(properties)
+
+
+func _on_TextureChannelButtons_changed():
+	build_properties(material_layer_tree.get_selected().get_metadata(0))
