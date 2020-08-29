@@ -3,22 +3,22 @@ const Properties = preload("res://addons/property_panel/properties.gd")
 class TextureLayer:
 	# warning-ignore:unused_class_variable
 	var name : String
-	# warning-ignore:unused_class_variable
 	var properties : Dictionary
+# warning-ignore:unused_class_variable
 	var texture : Texture
 	
 	func get_properties() -> Array:
 		return [
 			Properties.FloatProperty.new("opacity", 0.0, 1.0),
-			Properties.EnumProperty.new("blend_mode", ["add", "normal", "subtract"])]
+			Properties.EnumProperty.new("blend_mode", Globals.BLEND_MODES)]
 	
 	func generate_texture():
 		return null
 	
 	func _init():
 		properties = {
-			opacity = .5,
-			blend_mode = "add"
+			opacity = 1.0,
+			blend_mode = "normal"
 		}
 
 class ColorTextureLayer extends TextureLayer:
