@@ -3,7 +3,7 @@ extends VBoxContainer
 onready var material_layer_property_panel : Panel = $MaterialLayerPropertyPanel
 onready var texture_layer_panel : VBoxContainer = $"../TextureLayerPanel"
 onready var model : MeshInstance = $"../3DViewport/Viewport/Model"
-onready var blending_viewport : Viewport = $"../../../MaskedTextureBlendingViewport"
+onready var blending_viewport : Viewport = $"../../../../MaskedTextureBlendingViewport"
 onready var material_layer_tree : Tree = $MaterialLayerTree
 
 const MaterialLayer = preload("res://material_layers/material_layer.gd")

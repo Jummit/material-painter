@@ -1,6 +1,7 @@
+extends Resource
 # warning-ignore:unused_class_variable
-var layers := []
+export var layers := []
 # warning-ignore:unused_class_variable
-var name := "Untitled Texture"
+export var name := "Untitled Texture"
 # warning-ignore:unused_class_variable
-var result : Texture
+export var result : Texture

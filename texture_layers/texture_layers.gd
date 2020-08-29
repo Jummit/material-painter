@@ -1,12 +1,12 @@
 const Properties = preload("res://addons/property_panel/properties.gd")
 
-class TextureLayer:
+class TextureLayer extends Resource:
 	# warning-ignore:unused_class_variable
-	var name : String
-	var properties : Dictionary
+	export var name : String
+	export var properties : Dictionary
 	var texture : Texture setget , get_texture
 # warning-ignore:unused_class_variable
-	var size := Vector2(1024, 1024)
+	export var size := Vector2(1024, 1024)
 	
 	func get_properties() -> Array:
 		return [

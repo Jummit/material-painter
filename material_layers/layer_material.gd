@@ -1,2 +1,4 @@
+extends Resource
+
 # warning-ignore:unused_class_variable
-var layers := []
+export var layers := []

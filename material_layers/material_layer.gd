@@ -1,4 +1,4 @@
 # warning-ignore:unused_class_variable
-var properties : Dictionary
+export var properties : Dictionary
 # warning-ignore:unused_class_variable
-var name := "Untitled Layer"
+export var name := "Untitled Layer"
