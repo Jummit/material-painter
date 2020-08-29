@@ -12,11 +12,6 @@ class TextureProperty extends "res://addons/property_panel/properties.gd".Proper
 	func get_control() -> Control:
 		return preload("res://texture_option/texture_option.tscn").instance() as Control
 
-
-func _on_MaterialLayerTree_item_selected():
-	build_properties(material_layer_tree.get_selected().get_metadata(0))
-
-
 func build_properties(material_layer : MaterialLayer) -> void:
 	properties = [
 		Properties.FloatProperty.new("opacity", 0.0, 1.0),
@@ -28,6 +23,10 @@ func build_properties(material_layer : MaterialLayer) -> void:
 			properties.append(TextureProperty.new(type))
 	set_properties(properties)
 	load_values(material_layer.properties)
+
+
+func _on_MaterialLayerTree_item_selected():
+	build_properties(material_layer_tree.get_selected().get_metadata(0))
 
 
 func _on_TextureChannelButtons_changed():

@@ -28,19 +28,19 @@ func update_result() -> void:
 			model.get_surface_material(0).albedo_texture = result
 
 
+func _on_item_edited():
+	get_selected().get_metadata(0).name = get_selected().get_text(0)
+
+
 func _on_AddMaterialLayerButton_pressed():
 	var new_layer := MaterialLayer.new()
 	layers.append(new_layer)
 	update_tree()
 
 
-func _on_item_edited():
-	get_selected().get_metadata(0).name = get_selected().get_text(0)
-
-
 func _on_MaterialLayerPropertyPanel_values_changed():
 	get_selected().get_metadata(0).properties = material_layer_property_panel.get_property_values()
-#	update_result()
+	update_result()
 
 
 func _on_TextureLayerPropertyPanel_values_changed():
