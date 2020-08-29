@@ -1,7 +1,7 @@
 extends "res://addons/arrangable_tree/arrangable_tree.gd"
 
 onready var material_layer_property_panel : Panel = $"../MaterialLayerPropertyPanel"
-onready var texture_layer_tree : Tree = $"../../TextureLayerContainer/TextureLayerTree"
+onready var texture_layers : VBoxContainer = $"../../TextureLayers"
 onready var model : MeshInstance = $"../../3DViewport/Viewport/Model"
 onready var blending_viewport : Viewport = $"../../../../MaskedTextureBlendingViewport"
 
@@ -26,7 +26,6 @@ func update_result() -> void:
 
 
 func update_channel(type : String) -> void:
-	print("Generating channel %s" % type)
 	var textures := []
 	var options := []
 	for layer in items:
@@ -37,8 +36,10 @@ func update_channel(type : String) -> void:
 				mask = layer.properties.mask.result
 			})
 	# todo: use mask and correct blend modes
-	var result : ImageTexture = yield(blending_viewport.blend(textures, options), "completed")
-	model.get_surface_material(0).set(type + "_texture", result)
+	if not textures.empty():
+		print("Creating %s texture" % type)
+		var result : ImageTexture = yield(blending_viewport.blend(textures, options), "completed")
+		model.get_surface_material(0).set(type + "_texture", result)
 
 
 func _on_item_edited():
@@ -56,14 +57,12 @@ func _on_MaterialLayerPropertyPanel_values_changed():
 
 
 func _on_TextureLayerPropertyPanel_values_changed():
-	var editing_layer_texture : LayerTexture = texture_layer_tree.editing_layer_texture
+	var editing_layer_texture : LayerTexture = texture_layers.editing_layer_texture
 	for layer in items:
 		layer = layer as MaterialLayer
 		for channel in layer.properties.keys():
 			if layer.properties[channel] is LayerTexture and layer.properties[channel] == editing_layer_texture:
-				print("Only updating the %s channel" % channel)
 				update_channel(channel)
-				return
 
 
 func _input(event):

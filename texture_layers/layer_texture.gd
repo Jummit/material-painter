@@ -3,4 +3,4 @@ var layers := []
 # warning-ignore:unused_class_variable
 var name := "Untitled Texture"
 # warning-ignore:unused_class_variable
-var result : Texture = preload("res://icon.png")
+var result : Texture
