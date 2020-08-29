@@ -27,13 +27,17 @@ func update_result() -> void:
 
 func update_channel(type : String) -> void:
 	print("Generating channel %s" % type)
-	var map_layers = []
+	var textures := []
+	var options := []
 	for layer in items:
 		layer = layer as MaterialLayer
-		if layer.properties.has(type) and layer.properties[type] and layer.properties[type].result:
-			map_layers.append(layer.properties[type].result)
+		if layer.properties.has(type) and layer.properties[type] and layer.properties[type].result and layer.properties.mask:
+			textures.append(layer.properties[type].result)
+			options.append({
+				mask = layer.properties.mask.result
+			})
 	# todo: use mask and correct blend modes
-	var result : ImageTexture = yield(texture_blending_viewport.blend(map_layers), "completed")
+	var result : ImageTexture = yield(texture_blending_viewport.blend(textures, options), "completed")
 	model.get_surface_material(0).set(type + "_texture", result)
 
 
@@ -56,7 +60,8 @@ func _on_TextureLayerPropertyPanel_values_changed():
 	for layer in items:
 		layer = layer as MaterialLayer
 		for channel in layer.properties.keys():
-			if layer.properties[channel] == editing_layer_texture:
+			if layer.properties[channel] is LayerTexture and layer.properties[channel] == editing_layer_texture:
+				print("Only updating the %s channel" % channel)
 				update_channel(channel)
 				return
 

@@ -57,16 +57,19 @@ func update_icons() -> void:
 
 func update_result() -> void:
 	var textures := []
+	var options := []
 	var blend_modes : PoolStringArray = []
 	var opacity_values : PoolRealArray = []
 	
 	for layer in items:
 		layer = layer as TextureLayer
 		textures.append(layer.texture)
-		blend_modes.append(layer.properties.blend_mode)
-		opacity_values.append(layer.properties.opacity)
+		options.append({
+			blend_mode = layer.properties.blend_mode,
+			opacity = layer.properties.opacity,
+		})
 	
-	var result : Texture = yield(texture_blending_viewport.blend(textures, blend_modes, opacity_values), "completed")
+	var result : Texture = yield(texture_blending_viewport.blend(textures, options), "completed")
 	result_texture_rect.texture = result
 	editing_layer_texture.result = result
 	print("A result for layer texture %s generated : %s" % [editing_layer_texture.name, result])
