@@ -6,17 +6,18 @@ onready var new_button : Button = $HBoxContainer/NewButton
 onready var name_edit : LineEdit = $HBoxContainer/NameEdit
 onready var texture_popup : PopupMenu = texture_popup_menu.get_popup()
 
-const TextureMap = preload("res://texture_map.gd")
+const LayerTexture = preload("res://texture_layers/layer_texture.gd")
 
+signal selected
 signal changed
 
-var selected_texture : TextureMap setget set_selected_texture
+var selected_texture : LayerTexture setget set_selected_texture
 
 func _ready():
 	texture_popup.connect("id_pressed", self, "_on_TextureMenuPopup_id_pressed")
 
 
-func set_selected_texture(to : TextureMap):
+func set_selected_texture(to : LayerTexture):
 	var has_texture := to != null
 	clear_button.visible = has_texture
 	name_edit.visible = has_texture
@@ -28,7 +29,7 @@ func set_selected_texture(to : TextureMap):
 
 
 func _on_NewButton_pressed():
-	var texture := TextureMap.new("Untitled Texture")
+	var texture := LayerTexture.new()
 	TextureManager.textures.append(texture)
 	self.selected_texture = texture
 
@@ -44,10 +45,14 @@ func _on_TextureMenuPopup_id_pressed(id : int):
 func _on_TexturePopupMenu_about_to_show():
 	texture_popup.clear()
 	for texture in TextureManager.textures:
-		texture = texture as TextureMap
+		texture = texture as LayerTexture
 		texture_popup.add_item(texture.name)
 		texture_popup.set_item_metadata(texture_popup.get_item_count() - 1, texture)
 
 
 func _on_NameEdit_text_changed(new_text : String):
 	selected_texture.name = new_text
+
+
+func _on_NameEdit_focus_entered():
+	emit_signal("selected")
