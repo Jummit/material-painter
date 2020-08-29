@@ -4,13 +4,17 @@ class TextureLayer:
 	# warning-ignore:unused_class_variable
 	var name : String
 	var properties : Dictionary
-# warning-ignore:unused_class_variable
-	var texture : Texture
+	var texture : Texture setget , get_texture
 	
 	func get_properties() -> Array:
 		return [
 			Properties.FloatProperty.new("opacity", 0.0, 1.0),
 			Properties.EnumProperty.new("blend_mode", Globals.BLEND_MODES)]
+	
+	func get_texture():
+		if not texture:
+			generate_texture()
+		return texture
 	
 	func generate_texture():
 		return null

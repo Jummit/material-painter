@@ -12,6 +12,8 @@ const LayerTexture = preload("res://texture_layers/layer_texture.gd")
 const ICON_COLUMN := 0
 const NAME_COLUMN := 1
 
+var editing_layer_texture : LayerTexture
+
 func _ready():
 	columns = 2
 	set_column_expand(ICON_COLUMN, false)
@@ -34,7 +36,8 @@ func _on_TextureLayerPropertyPanel_values_changed():
 
 
 func _on_TextureOption_selected(texture_option : TextureOption):
-	load_layer_texture(texture_option.selected_texture)
+	editing_layer_texture = texture_option.selected_texture
+	load_layer_texture(editing_layer_texture)
 	update_tree()
 	update_result()
 
@@ -45,7 +48,19 @@ func _on_SceneTree_node_added(node : Node):
 
 
 func update_result() -> void:
-	result_texture_rect.texture = yield(texture_blending_viewport.blend(layers), "completed")
+	var textures := []
+	var blend_modes : PoolStringArray = []
+	var opacity_values : PoolRealArray = []
+	
+	for layer in layers:
+		layer = layer as TextureLayer
+		textures.append(layer.texture)
+		blend_modes.append(layer.properties.blend_mode)
+		opacity_values.append(layer.properties.opacity)
+	
+	var result : Texture = yield(texture_blending_viewport.blend(textures, blend_modes, opacity_values), "completed")
+	result_texture_rect.texture = result
+	editing_layer_texture.result = result
 
 
 func update_tree():

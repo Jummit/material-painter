@@ -10,6 +10,7 @@ func _ready():
 	for type in Globals.TEXTURE_MAP_TYPES:
 		var new_button := Button.new()
 		new_button.text = type
+		new_button.name = type
 		new_button.toggle_mode = true
 		new_button.connect("toggled", self, "_on_Button_toggled", [type])
 		add_child(new_button)
