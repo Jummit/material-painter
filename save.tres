@@ -1,0 +1,51 @@
+[gd_resource type="Resource" load_steps=12 format=2]
+
+[ext_resource path="res://material_layers/material_layer.gd" type="Script" id=1]
+[ext_resource path="res://material_layers/layer_material.gd" type="Script" id=2]
+[ext_resource path="res://texture_layers/layer_texture.gd" type="Script" id=3]
+[ext_resource path="res://save_file.gd" type="Script" id=4]
+
+[sub_resource type="Resource" id=1]
+script = ExtResource( 2 )
+layers = [ Object(Reference,"script":ExtResource( 1 ),"properties":{
+"mask": null,
+"metalic": null
+},"name":"Untitled Layer")
+, Object(Reference,"script":ExtResource( 1 ),"properties":{
+
+},"name":"Untitled Layer")
+ ]
+
+[sub_resource type="Resource" id=2]
+script = SubResource( 1 )
+
+[sub_resource type="Resource" id=5]
+
+[sub_resource type="Resource" id=6]
+script = ExtResource( 1 )
+properties = {
+"emission": SubResource( 2 ),
+"mask": SubResource( 5 )
+}
+name = "Untitled Layer"
+
+[sub_resource type="Resource" id=4]
+script = ExtResource( 3 )
+layers = [ SubResource( 2 ) ]
+name = "Untitled Texture"
+
+[sub_resource type="Resource" id=7]
+script = ExtResource( 1 )
+properties = {
+"mask": SubResource( 4 ),
+"roughness": SubResource( 2 )
+}
+name = "Untitled Layer"
+
+[sub_resource type="Resource" id=8]
+script = ExtResource( 2 )
+layers = [ SubResource( 6 ), SubResource( 7 ) ]
+
+[resource]
+script = ExtResource( 4 )
+layer_material = SubResource( 8 )
