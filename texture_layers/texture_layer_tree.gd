@@ -1,6 +1,6 @@
 extends "res://addons/arrangable_tree/arrangable_tree.gd"
 
-const TextureLayer = preload("res://texture_layers/texture_layers.gd").TextureLayer
+const TextureLayer = preload("res://texture_layers/texture_layer.gd")
 
 const ICON_COLUMN := 0
 const NAME_COLUMN := 1

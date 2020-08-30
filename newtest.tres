@@ -1,0 +1,82 @@
+[gd_resource type="Resource" load_steps=17 format=2]
+
+[ext_resource path="res://texture_layers/types/color_texture_layer.gd" type="Script" id=1]
+[ext_resource path="res://material_layers/material_layer.gd" type="Script" id=2]
+[ext_resource path="res://texture_layers/types/bitmap_texture_layer.gd" type="Script" id=3]
+[ext_resource path="res://material_layers/layer_material.gd" type="Script" id=4]
+[ext_resource path="res://texture_layers/layer_texture.gd" type="Script" id=5]
+[ext_resource path="res://save_file.gd" type="Script" id=6]
+
+[sub_resource type="Resource" id=1]
+script = ExtResource( 3 )
+name = "Te"
+properties = {
+"blend_mode": "normal",
+"image_path": "",
+"opacity": 1.0
+}
+size = Vector2( 1024, 1024 )
+
+[sub_resource type="Resource" id=2]
+script = ExtResource( 5 )
+layers = [ SubResource( 1 ) ]
+name = "Untitled Texture"
+
+[sub_resource type="Resource" id=3]
+script = ExtResource( 1 )
+name = "New Color Texture"
+properties = {
+"blend_mode": "normal",
+"color": Color( 0.117647, 0.278431, 0.615686, 1 ),
+"opacity": 1.0
+}
+size = Vector2( 1024, 1024 )
+
+[sub_resource type="Resource" id=4]
+script = ExtResource( 5 )
+layers = [ SubResource( 3 ) ]
+name = "Untitled Texture"
+
+[sub_resource type="Resource" id=5]
+script = ExtResource( 2 )
+properties = {
+"albedo": SubResource( 2 ),
+"mask": SubResource( 4 )
+}
+name = "Untitled Layer"
+
+[sub_resource type="Resource" id=6]
+script = ExtResource( 5 )
+layers = [ SubResource( 3 ) ]
+name = "Untitled Texture"
+
+[sub_resource type="Resource" id=7]
+script = ExtResource( 3 )
+name = "Te"
+properties = {
+"blend_mode": "normal",
+"image_path": "",
+"opacity": 1.0
+}
+size = Vector2( 1024, 1024 )
+
+[sub_resource type="Resource" id=8]
+script = ExtResource( 5 )
+layers = [ SubResource( 7 ) ]
+name = "Untitled Texture"
+
+[sub_resource type="Resource" id=9]
+script = ExtResource( 2 )
+properties = {
+"albedo": SubResource( 6 ),
+"mask": SubResource( 8 )
+}
+name = "Untitled Layer"
+
+[sub_resource type="Resource" id=10]
+script = ExtResource( 4 )
+layers = [ SubResource( 5 ), SubResource( 9 ) ]
+
+[resource]
+script = ExtResource( 6 )
+layer_material = SubResource( 10 )

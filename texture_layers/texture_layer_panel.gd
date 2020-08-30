@@ -4,7 +4,7 @@ onready var texture_layer_property_panel : Panel = $TextureLayerPropertyPanel
 onready var texture_blending_viewport : Viewport = $"../../../../TextureBlendingViewport"
 onready var texture_layer_tree : Tree = $TextureLayerTree
 
-const TextureLayer = preload("res://texture_layers/texture_layers.gd").TextureLayer
+const TextureLayer = preload("res://texture_layers/texture_layer.gd")
 const TextureOption = preload("res://texture_option/texture_option.gd")
 const LayerTexture = preload("res://texture_layers/layer_texture.gd")
 

@@ -13,7 +13,7 @@ func get_drag_data(position : Vector2):
 		preview.expand = true
 		preview.texture = icon
 		set_drag_preview(preview)
-		return icon
+		return get_item_metadata(item)
 
 
 func load_textures(path : String) -> Array:
@@ -27,4 +27,5 @@ func load_textures(path : String) -> Array:
 		var file := path.plus_file(file_name)
 		if ResourceLoader.exists(file, "Texture"):
 			add_item(file_name.get_basename(), load(file))
+			set_item_metadata(get_item_count() - 1, file)
 	return textures

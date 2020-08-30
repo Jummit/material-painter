@@ -48,6 +48,7 @@ func update_channel(type : String) -> void:
 
 func set_editing_layer_material(to : LayerMaterial):
 	editing_layer_material = to
+	material_layer_tree.items = editing_layer_material.layers
 	update_result()
 	material_layer_tree.update_tree()
 

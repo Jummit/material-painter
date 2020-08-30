@@ -1,6 +1,10 @@
 extends ConfirmationDialog
 
-const TextureLayers = preload("res://texture_layers/texture_layers.gd")
+const TextureLayer = preload("res://texture_layers/texture_layer.gd")
+const BitmapTextureLayer = preload("res://texture_layers/types/bitmap_texture_layer.gd")
+const ColorTextureLayer = preload("res://texture_layers/types/color_texture_layer.gd")
+const NoiseTextureLayer = preload("res://texture_layers/types/noise_texture_layer.gd")
+const ScalarTextureLayer = preload("res://texture_layers/types/scalar_texture_layer.gd")
 
 signal texture_creation_confirmed(type)
 
@@ -9,18 +13,18 @@ func _on_AddTextureLayerButton_pressed():
 
 
 func _on_confirmed():
-	var texture_layer : TextureLayers.TextureLayer
+	var texture_layer : TextureLayer
 	match $TextureTypeList.get_selected_items()[0]:
 		0:
-			texture_layer = TextureLayers.BitmapTextureLayer.new("New Bitmap Texture")
+			texture_layer = BitmapTextureLayer.new("New Bitmap Texture")
 		1:
-			texture_layer = TextureLayers.ColorTextureLayer.new("New Paint Texture")
+			texture_layer = ColorTextureLayer.new("New Paint Texture")
 		2:
-			texture_layer = TextureLayers.NoiseTextureLayer.new("New Noise Texture")
+			texture_layer = NoiseTextureLayer.new("New Noise Texture")
 		3:
-			texture_layer = TextureLayers.ColorTextureLayer.new("New Color Texture")
+			texture_layer = ColorTextureLayer.new("New Color Texture")
 		4:
-			texture_layer = TextureLayers.ScalarTextureLayer.new("New Scalar Texture")
+			texture_layer = ScalarTextureLayer.new("New Scalar Texture")
 	emit_signal("texture_creation_confirmed", texture_layer)
 
 

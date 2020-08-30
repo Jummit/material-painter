@@ -222,6 +222,23 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="FileDialog" type="FileDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -244.5
+margin_top = -143.5
+margin_right = 244.5
+margin_bottom = 143.5
+access = 2
+filters = PoolStringArray( "*.tres;Material Painter File" )
+current_dir = "/home/jummit/Games/MaterialPainter/Layers"
+current_path = "/home/jummit/Games/MaterialPainter/Layers/"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="TextureBlendingViewport" parent="." instance=ExtResource( 8 )]
 size = Vector2( 1024, 1024 )
 
@@ -245,3 +262,4 @@ world = null
 [connection signal="confirmed" from="TextureCreationDialog" to="TextureCreationDialog" method="_on_confirmed"]
 [connection signal="texture_creation_confirmed" from="TextureCreationDialog" to="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel" method="_on_TextureCreationDialog_texture_creation_confirmed"]
 [connection signal="item_activated" from="TextureCreationDialog/TextureTypeList" to="TextureCreationDialog" method="_on_TextureTypeList_item_activated"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]
