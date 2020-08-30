@@ -7,6 +7,7 @@ onready var name_edit : LineEdit = $HBoxContainer/NameEdit
 onready var texture_popup : PopupMenu = texture_popup_menu.get_popup()
 
 const LayerTexture = preload("res://texture_layers/layer_texture.gd")
+const TextureLayers = preload("res://texture_layers/texture_layers.gd")
 
 signal selected
 signal changed
@@ -15,6 +16,8 @@ var selected_texture : LayerTexture setget set_selected_texture
 
 func _ready():
 	texture_popup.connect("id_pressed", self, "_on_TextureMenuPopup_id_pressed")
+	texture_popup.set_drag_forwarding(self)
+	new_button.set_drag_forwarding(self)
 
 
 func _make_custom_tooltip(_for_text : String):
@@ -23,6 +26,19 @@ func _make_custom_tooltip(_for_text : String):
 		tooltip.get_node("VBoxContainer/TextureRect").texture = selected_texture.result
 		tooltip.get_node("VBoxContainer/Name").text = selected_texture.name
 		return tooltip
+
+
+func can_drop_data_fw(_position : Vector2, data, _from_control : Control) -> bool:
+	return data is Texture
+
+
+func drop_data_fw(_position : Vector2, data, _from_control : Control) -> void:
+	var layer_texture := LayerTexture.new()
+	var texture_layer := TextureLayers.BitmapTextureLayer.new("Te")
+	texture_layer.texture = data
+	layer_texture.layers = [texture_layer]
+	TextureManager.textures.append(layer_texture)
+	self.selected_texture = layer_texture
 
 
 func set_selected_texture(to : LayerTexture):

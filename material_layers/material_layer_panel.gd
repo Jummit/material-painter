@@ -2,7 +2,7 @@ extends VBoxContainer
 
 onready var material_layer_property_panel : Panel = $MaterialLayerPropertyPanel
 onready var texture_layer_panel : VBoxContainer = $"../TextureLayerPanel"
-onready var model : MeshInstance = $"../3DViewport/Viewport/Model"
+onready var model : MeshInstance = $"../VBoxContainer/3DViewport/Viewport/Model"
 onready var blending_viewport : Viewport = $"../../../../MaskedTextureBlendingViewport"
 onready var material_layer_tree : Tree = $MaterialLayerTree
 
@@ -10,7 +10,7 @@ const MaterialLayer = preload("res://material_layers/material_layer.gd")
 const LayerMaterial = preload("res://material_layers/layer_material.gd")
 const LayerTexture = preload("res://texture_layers/layer_texture.gd")
 
-var editing_layer_material : LayerMaterial = LayerMaterial.new()
+var editing_layer_material : LayerMaterial = LayerMaterial.new() setget set_editing_layer_material
 var editing_material_layer : MaterialLayer
 
 func _ready():
@@ -44,6 +44,12 @@ func update_channel(type : String) -> void:
 	if not textures.empty():
 		var result : ImageTexture = yield(blending_viewport.blend(textures, options), "completed")
 		model.get_surface_material(0).set(type + "_texture", result)
+
+
+func set_editing_layer_material(to : LayerMaterial):
+	editing_layer_material = to
+	update_result()
+	material_layer_tree.update_tree()
 
 
 func _on_MaterialLayerTree_item_selected():
