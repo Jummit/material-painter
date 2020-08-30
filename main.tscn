@@ -91,20 +91,20 @@ expand = true
 stretch_mode = 6
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/LayerContainer"]
-margin_right = 463.0
+margin_right = 506.0
 margin_bottom = 562.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="3DViewport" type="ViewportContainer" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer"]
-margin_right = 463.0
-margin_bottom = 279.0
+margin_right = 506.0
+margin_bottom = 379.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 stretch = true
 
 [node name="Viewport" type="Viewport" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/3DViewport"]
-size = Vector2( 463, 279 )
+size = Vector2( 506, 379 )
 handle_input_locally = false
 render_target_update_mode = 3
 
@@ -121,11 +121,12 @@ environment = ExtResource( 12 )
 transform = Transform( 0.788462, -0.446122, 0.423442, 0, 0.68843, 0.725302, -0.615084, -0.571873, 0.542801, 0, 3.22287, 0 )
 
 [node name="TextureList" type="ItemList" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer"]
-margin_top = 283.0
-margin_right = 463.0
+margin_top = 383.0
+margin_right = 506.0
 margin_bottom = 562.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+size_flags_stretch_ratio = 0.47
 max_columns = 7
 same_column_width = true
 icon_mode = 0
@@ -133,62 +134,62 @@ fixed_icon_size = Vector2( 64, 64 )
 script = ExtResource( 20 )
 
 [node name="MaterialLayerPanel" type="VBoxContainer" parent="VBoxContainer/PanelContainer/LayerContainer"]
-margin_left = 467.0
-margin_right = 736.0
+margin_left = 510.0
+margin_right = 757.0
 margin_bottom = 562.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-size_flags_stretch_ratio = 0.58
+size_flags_stretch_ratio = 0.49
 script = ExtResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
 [node name="AddMaterialLayerButton" type="Button" parent="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel"]
-margin_right = 269.0
+margin_right = 247.0
 margin_bottom = 20.0
 text = "Add Material Layer"
 
 [node name="MaterialLayerTree" parent="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" instance=ExtResource( 2 )]
-margin_right = 269.0
+margin_right = 247.0
 margin_bottom = 289.0
 script = ExtResource( 1 )
 
 [node name="TextureChannelButtons" parent="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" instance=ExtResource( 10 )]
 margin_top = 293.0
-margin_right = 269.0
+margin_right = 247.0
 margin_bottom = 293.0
 
 [node name="MaterialLayerPropertyPanel" parent="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" instance=ExtResource( 4 )]
 margin_top = 297.0
-margin_right = 269.0
+margin_right = 247.0
 margin_bottom = 562.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 9 )
 
 [node name="TextureLayerPanel" type="VBoxContainer" parent="VBoxContainer/PanelContainer/LayerContainer"]
-margin_left = 740.0
+margin_left = 761.0
 margin_right = 1010.0
 margin_bottom = 562.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-size_flags_stretch_ratio = 0.58
+size_flags_stretch_ratio = 0.49
 script = ExtResource( 14 )
 
 [node name="AddTextureLayerButton" type="Button" parent="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel"]
-margin_right = 270.0
+margin_right = 249.0
 margin_bottom = 20.0
 text = "Add Texture Layer"
 
 [node name="TextureLayerTree" parent="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel" instance=ExtResource( 2 )]
-margin_right = 270.0
+margin_right = 249.0
 margin_bottom = 291.0
 script = ExtResource( 3 )
 
 [node name="TextureLayerPropertyPanel" parent="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel" instance=ExtResource( 4 )]
 margin_top = 295.0
-margin_right = 270.0
+margin_right = 249.0
 margin_bottom = 562.0
 size_flags_horizontal = 3
 size_flags_vertical = 3

@@ -46,8 +46,8 @@ func _on_TextureLayerTree_item_selected():
 
 
 func _on_TextureLayerTree_nothing_selected():
-	editing_texture = null
-	release_focus()
+	if not texture_layer_tree.get_selected():
+		editing_texture = null
 
 
 func _on_TextureCreationDialog_texture_creation_confirmed(texture_layer : TextureLayer):

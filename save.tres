@@ -1,45 +1,170 @@
-[gd_resource type="Resource" load_steps=11 format=2]
+[gd_resource type="Resource" load_steps=28 format=2]
 
 [ext_resource path="res://material_layers/material_layer.gd" type="Script" id=1]
-[ext_resource path="res://material_layers/layer_material.gd" type="Script" id=2]
-[ext_resource path="res://save_file.gd" type="Script" id=3]
-[ext_resource path="res://texture_layers/layer_texture.gd" type="Script" id=4]
+[ext_resource path="res://texture_layers/layer_texture.gd" type="Script" id=2]
+[ext_resource path="res://material_layers/layer_material.gd" type="Script" id=3]
+[ext_resource path="res://save_file.gd" type="Script" id=4]
+
+[sub_resource type="GDScript" id=1]
+
+[sub_resource type="Resource" id=2]
+script = SubResource( 1 )
+name = "New Color Texture"
+properties = {
+"blend_mode": "normal",
+"color": Color( 0.690196, 0.0823529, 0.0823529, 1 ),
+"opacity": 1.0
+}
+size = Vector2( 1024, 1024 )
+
+[sub_resource type="Resource" id=3]
+script = ExtResource( 2 )
+layers = [ SubResource( 2 ) ]
+name = "Untitled Texture"
 
 [sub_resource type="GDScript" id=4]
 
 [sub_resource type="Resource" id=5]
 script = SubResource( 4 )
-name = "New Paint Texture"
+name = "Te"
 properties = {
 "blend_mode": "normal",
-"color": Color( 0, 0, 0, 1 ),
-"opacity": 1.0
+"image_path": "",
+"opacity": 0.990654
 }
 size = Vector2( 1024, 1024 )
 
 [sub_resource type="Resource" id=6]
-script = ExtResource( 4 )
+script = ExtResource( 2 )
 layers = [ SubResource( 5 ) ]
 name = "Untitled Texture"
 
-[sub_resource type="Resource" id=1]
-script = ExtResource( 1 )
+[sub_resource type="Resource" id=7]
+script = SubResource( 4 )
+name = "Te"
 properties = {
-"mask": SubResource( 6 )
+"blend_mode": "normal",
+"image_path": "",
+"opacity": 1.0
 }
-name = "Untitled Layer"
+size = Vector2( 1024, 1024 )
 
-[sub_resource type="Resource" id=3]
-script = ExtResource( 1 )
+[sub_resource type="GDScript" id=8]
+
+[sub_resource type="Resource" id=9]
+script = SubResource( 8 )
+name = "New Scalar Texture"
 properties = {
-
+"blend_mode": "add",
+"opacity": 0.495327,
+"value": 0.570094
 }
-name = "Untitled Layer"
+size = Vector2( 1024, 1024 )
 
-[sub_resource type="Resource" id=2]
+[sub_resource type="Resource" id=10]
 script = ExtResource( 2 )
-layers = [ SubResource( 1 ), SubResource( 3 ) ]
+layers = [ SubResource( 7 ), SubResource( 9 ) ]
+name = "Untitled Texture"
+
+[sub_resource type="Resource" id=11]
+script = ExtResource( 1 )
+properties = {
+"albedo": SubResource( 6 ),
+"mask": SubResource( 3 ),
+"roughness": SubResource( 10 )
+}
+name = "Untitled Layer"
+
+[sub_resource type="Resource" id=12]
+script = SubResource( 4 )
+name = "Te"
+properties = {
+"blend_mode": "normal",
+"image_path": "",
+"opacity": 1.0
+}
+size = Vector2( 1024, 1024 )
+
+[sub_resource type="Resource" id=13]
+script = ExtResource( 2 )
+layers = [ SubResource( 12 ) ]
+name = "Untitled Texture"
+
+[sub_resource type="Resource" id=14]
+script = ExtResource( 2 )
+layers = [ SubResource( 2 ) ]
+name = "Untitled Texture"
+
+[sub_resource type="Resource" id=15]
+script = ExtResource( 1 )
+properties = {
+"albedo": SubResource( 14 ),
+"mask": SubResource( 13 )
+}
+name = "Untitled Layer"
+
+[sub_resource type="Resource" id=16]
+script = SubResource( 4 )
+name = "Te"
+properties = {
+"blend_mode": "normal",
+"image_path": "",
+"opacity": 1.0
+}
+size = Vector2( 1024, 1024 )
+
+[sub_resource type="Resource" id=17]
+script = SubResource( 8 )
+name = "New Scalar Texture"
+properties = {
+"blend_mode": "normal",
+"opacity": 0.803738,
+"value": 0.0
+}
+size = Vector2( 1024, 1024 )
+
+[sub_resource type="Resource" id=18]
+script = ExtResource( 2 )
+layers = [ SubResource( 16 ), SubResource( 17 ) ]
+name = "Untitled Texture"
+
+[sub_resource type="Resource" id=19]
+script = SubResource( 4 )
+name = "Te"
+properties = {
+"blend_mode": "normal",
+"image_path": "",
+"opacity": 1.0
+}
+size = Vector2( 1024, 1024 )
+
+[sub_resource type="Resource" id=20]
+script = SubResource( 1 )
+name = "New Color Texture"
+properties = {
+"blend_mode": "normal",
+"color": Color( 0, 0, 0, 1 ),
+"opacity": 0.0186916
+}
+size = Vector2( 1024, 1024 )
+
+[sub_resource type="Resource" id=21]
+script = ExtResource( 2 )
+layers = [ SubResource( 19 ), SubResource( 20 ) ]
+name = "Untitled Texture"
+
+[sub_resource type="Resource" id=22]
+script = ExtResource( 1 )
+properties = {
+"albedo": SubResource( 21 ),
+"mask": SubResource( 18 )
+}
+name = "Untitled Layer"
+
+[sub_resource type="Resource" id=23]
+script = ExtResource( 3 )
+layers = [ SubResource( 11 ), SubResource( 15 ), SubResource( 22 ) ]
 
 [resource]
-script = ExtResource( 3 )
-layer_material = SubResource( 2 )
+script = ExtResource( 4 )
+layer_material = SubResource( 23 )

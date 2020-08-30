@@ -59,8 +59,8 @@ func _on_MaterialLayerTree_item_selected():
 
 
 func _on_MaterialLayerTree_nothing_selected():
-	release_focus()
-	editing_material_layer = null
+	if not material_layer_tree.get_selected():
+		editing_material_layer = null
 
 
 func _on_MaterialLayerPropertyPanel_values_changed():
