@@ -1,20 +1,18 @@
-extends Viewport
+extends ViewportContainer
 
-onready var main : Control = $"../../../../../../.."
-onready var model : MeshInstance = $Model
-onready var texture_layer_panel : VBoxContainer = $"../../../../TextureLayerPanel"
+onready var main : Control = $"../../../../../.."
+onready var model : MeshInstance = $Viewport/Model
+onready var texture_layer_panel : VBoxContainer = $"../../../TextureLayerPanel"
 
 const Debug3D = preload("res://addons/debug_3d/debug_3d.gd")
 const PaintTextureLayer = preload("res://texture_layers/types/paint_texture_layer.gd")
 
-func _input(event: InputEvent) -> void:
+func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
 		if texture_layer_panel.editing_texture_layer is PaintTextureLayer:
-			var camera := get_viewport().get_camera()
-			var camera_world_position := camera.project_position(get_mouse_position(), 0.0)
-			var clicked_world_position := camera.project_position(get_mouse_position(), 1000.0)
-			
-			Debug3D.line(camera_world_position, clicked_world_position, Color.red, 3.0, self)
+			var camera : Camera = $Viewport.get_camera()
+			var camera_world_position := camera.project_position(event.position, 0.0)
+			var clicked_world_position := camera.project_position(event.position, 1000.0)
 			
 			var selected_face := get_nearest_intersecting_face(camera_world_position, clicked_world_position, model.mesh)
 			if selected_face != -1:

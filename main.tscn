@@ -18,7 +18,7 @@
 [ext_resource path="res://3d_viewport/spatialmaterial.tres" type="Material" id=16]
 [ext_resource path="res://main.gd" type="Script" id=17]
 [ext_resource path="res://2d_viewport.gd" type="Script" id=18]
-[ext_resource path="res://viewport.gd" type="Script" id=19]
+[ext_resource path="res://3d_viewport.gd" type="Script" id=19]
 [ext_resource path="res://texture_list.gd" type="Script" id=20]
 
 [sub_resource type="ImageTexture" id=1]
@@ -122,12 +122,12 @@ margin_bottom = -4.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 stretch = true
+script = ExtResource( 19 )
 
 [node name="Viewport" type="Viewport" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport"]
 size = Vector2( 594, 334 )
 handle_input_locally = false
 render_target_update_mode = 3
-script = ExtResource( 19 )
 
 [node name="RotatingCamera" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport" instance=ExtResource( 11 )]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.850238, -0.605874 )
