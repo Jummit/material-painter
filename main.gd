@@ -46,8 +46,6 @@ func update_layer_material_channel(layer_material : LayerMaterial, type : String
 
 func load_material(path : String) -> void:
 	current_file = load(path)
-#	print(current_file.layer_material.layers[0].properties.mask.layers[0].script)
-#	print(current_file.layer_material.layers[0].properties.mask.layers[0].name)
 	TextureManager.load_textures_from_layer_material(current_file.layer_material)
 	material_layer_panel.editing_layer_material = current_file.layer_material
 
