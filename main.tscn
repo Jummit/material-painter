@@ -248,8 +248,8 @@ own_world = false
 world = null
 [connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/AddMaterialLayerButton" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_AddMaterialLayerButton_pressed"]
 [connection signal="item_edited" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" method="_on_item_edited"]
-[connection signal="item_selected" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_MaterialLayerTree_item_selected"]
 [connection signal="item_selected" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/TextureChannelButtons" method="_on_MaterialLayerTree_item_selected"]
+[connection signal="item_selected" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_MaterialLayerTree_item_selected"]
 [connection signal="nothing_selected" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_MaterialLayerTree_nothing_selected"]
 [connection signal="changed" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/TextureChannelButtons" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_TextureChannelButtons_changed"]
 [connection signal="values_changed" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerPropertyPanel" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_MaterialLayerPropertyPanel_values_changed"]
@@ -257,7 +257,6 @@ world = null
 [connection signal="item_edited" from="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" method="_on_item_edited"]
 [connection signal="item_selected" from="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel" method="_on_TextureLayerTree_item_selected"]
 [connection signal="nothing_selected" from="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel" method="_on_TextureLayerTree_nothing_selected"]
-[connection signal="values_changed" from="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerPropertyPanel" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_TextureLayerPropertyPanel_values_changed"]
 [connection signal="values_changed" from="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerPropertyPanel" to="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel" method="_on_TextureLayerPropertyPanel_values_changed"]
 [connection signal="confirmed" from="TextureCreationDialog" to="TextureCreationDialog" method="_on_confirmed"]
 [connection signal="texture_creation_confirmed" from="TextureCreationDialog" to="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel" method="_on_TextureCreationDialog_texture_creation_confirmed"]

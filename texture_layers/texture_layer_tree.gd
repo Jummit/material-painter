@@ -17,7 +17,8 @@ func _make_custom_tooltip(_for_text : String):
 	return tooltip
 
 
-func setup_item(tree_item : TreeItem, item : TextureLayer) -> void:
+func setup_item(tree_item : TreeItem, item) -> void:
+#func setup_item(tree_item : TreeItem, item : TextureLayer) -> void:
 	tree_item.set_text(NAME_COLUMN, item.name)
 	tree_item.set_editable(NAME_COLUMN, true)
 

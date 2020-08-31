@@ -1,7 +1,7 @@
 extends ItemList
 
-func _ready():
-	load_textures("res://textures/")
+#func _ready():
+#	load_textures("res://textures/")
 
 
 func get_drag_data(position : Vector2):

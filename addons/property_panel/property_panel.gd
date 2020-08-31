@@ -43,7 +43,8 @@ func get_property_values() -> Dictionary:
 	return values
 
 
-func load_values(values : Dictionary) -> void:
+func load_values(values) -> void:
+#func load_values(values : Dictionary) -> void:
 	for value in values.keys():
 		properties_container.get_node(value).set_value(values[value])
 
