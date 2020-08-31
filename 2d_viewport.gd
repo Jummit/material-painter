@@ -23,11 +23,12 @@ func _draw() -> void:
 
 func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
-		if texture_layer_panel.editing_texture_layer is PaintTextureLayer:
+		var paint_texture := texture_layer_panel.editing_texture_layer as PaintTextureLayer
+		if paint_texture:
 			var selected_face := get_selected_face(get_local_mouse_position())
 			if selected_face != -1:
-				paint_face(selected_face, texture_layer_panel.editing_texture_layer.painted_image, Color.white)
-			(texture as ImageTexture).create_from_image(texture_layer_panel.editing_texture_layer.painted_image)
+				paint_texture.paint_face(selected_face, Color.white, model.mesh)
+			(texture as ImageTexture).create_from_image(paint_texture.painted_image)
 
 
 func get_selected_face(position : Vector2) -> int:
@@ -38,24 +39,3 @@ func get_selected_face(position : Vector2) -> int:
 				mesh_tool.get_vertex_uv(mesh_tool.get_face_vertex(face, 2))):
 			return face
 	return -1
-
-
-func paint_face(face : int, image : Image, color : Color) -> void:
-	var uv_a := mesh_tool.get_vertex_uv(mesh_tool.get_face_vertex(face, 0))
-	var uv_b := mesh_tool.get_vertex_uv(mesh_tool.get_face_vertex(face, 1))
-	var uv_c := mesh_tool.get_vertex_uv(mesh_tool.get_face_vertex(face, 2))
-	var bounds := get_triangle_bounds(uv_a, uv_b, uv_c)
-	bounds.position *= image.get_size()
-	bounds.size *= image.get_size()
-	for x in range(bounds.position.x, bounds.end.x):
-		for y in range(bounds.position.y, bounds.end.y):
-			if Geometry.point_is_inside_triangle(Vector2(x, y) / image.get_size(), uv_a, uv_b, uv_c):
-				image.set_pixel(x, y, color)
-
-
-static func get_triangle_bounds(a : Vector2, b : Vector2, c : Vector2) -> Rect2:
-	var bounds := Rect2()
-	bounds = bounds.expand(a)
-	bounds = bounds.expand(b)
-	bounds = bounds.expand(c)
-	return bounds

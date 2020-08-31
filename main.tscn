@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://material_layers/material_layer_tree.gd" type="Script" id=1]
 [ext_resource path="res://addons/arrangable_tree/arrangable_tree.tscn" type="PackedScene" id=2]
@@ -18,6 +18,7 @@
 [ext_resource path="res://3d_viewport/spatialmaterial.tres" type="Material" id=16]
 [ext_resource path="res://main.gd" type="Script" id=17]
 [ext_resource path="res://2d_viewport.gd" type="Script" id=18]
+[ext_resource path="res://viewport.gd" type="Script" id=19]
 [ext_resource path="res://texture_list.gd" type="Script" id=20]
 
 [sub_resource type="ImageTexture" id=1]
@@ -127,11 +128,12 @@ stretch = true
 size = Vector2( 594, 334 )
 handle_input_locally = false
 render_target_update_mode = 0
+script = ExtResource( 19 )
 
 [node name="RotatingCamera" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport" instance=ExtResource( 11 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.850238, -0.605874 )
 
 [node name="Model" type="MeshInstance" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.925792, 0.411581 )
 mesh = ExtResource( 15 )
 material/0 = ExtResource( 16 )
 
