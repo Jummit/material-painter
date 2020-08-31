@@ -8,7 +8,7 @@ onready var texture_blending_viewport : Viewport = $TextureBlendingViewport
 onready var masked_texture_blending_viewport : Viewport = $MaskedTextureBlendingViewport
 onready var model : MeshInstance = $"VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport/Model"
 
-const SaveFile = preload("res://save_file.gd")
+const SaveFile = preload("res://main/save_file.gd")
 
 const MaterialLayer = preload("res://material_layers/material_layer.gd")
 const LayerMaterial = preload("res://material_layers/layer_material.gd")

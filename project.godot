@@ -16,13 +16,13 @@ _global_script_class_icons={
 [application]
 
 config/name="103605822"
-run/main_scene="res://main.tscn"
+run/main_scene="res://main/main.tscn"
 config/icon="res://icon.png"
 
 [autoload]
 
-TextureManager="*res://texture_manager.gd"
-Globals="*res://globals.gd"
+TextureManager="*res://autoloads/texture_manager.gd"
+Globals="*res://autoloads/globals.gd"
 
 [debug]
 
