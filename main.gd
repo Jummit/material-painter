@@ -47,6 +47,7 @@ func update_layer_material_channel(layer_material : LayerMaterial, type : String
 	
 	if not textures.empty():
 		var result : ImageTexture = yield(masked_texture_blending_viewport.blend(textures, options), "completed")
+		layer_material.results[type] = result
 		model.get_surface_material(0).set(type + "_texture", result)
 
 
@@ -91,6 +92,13 @@ func _on_FileMenu_id_pressed(id : int):
 		2:
 			file_dialog.mode = FileDialog.MODE_SAVE_FILE
 			file_dialog.popup_centered()
+		3:
+			if not current_file.resource_path:
+				return
+			var export_folder := current_file.resource_path.get_base_dir()
+			var results : Dictionary = current_file.layer_material.results
+			for type in results.keys():
+				(results[type] as ImageTexture).get_data().save_png(export_folder.plus_file(type) + ".png")
 
 
 func _on_FileDialog_file_selected(path : String):
