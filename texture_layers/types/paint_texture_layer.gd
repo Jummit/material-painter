@@ -1,6 +1,6 @@
 extends "res://texture_layers/texture_layer.gd"
 
-var painted_image : Image
+export var painted_image : Image
 
 func _init(_name := "Untitled Paint Texture"):
 	name = _name
