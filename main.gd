@@ -2,6 +2,7 @@ extends Control
 
 onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/FileMenuButton
 onready var material_layer_panel : VBoxContainer = $VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel
+onready var texture_layer_panel : VBoxContainer = $VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel
 onready var file_dialog : FileDialog = $FileDialog
 onready var masked_texture_blending_viewport : Viewport = $MaskedTextureBlendingViewport
 onready var model : MeshInstance = $"VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/3DViewport/Viewport/Model"
@@ -12,12 +13,14 @@ const MaterialLayer = preload("res://material_layers/material_layer.gd")
 const LayerMaterial = preload("res://material_layers/layer_material.gd")
 const LayerTexture = preload("res://texture_layers/layer_texture.gd")
 const TextureLayer = preload("res://texture_layers/texture_layer.gd")
+const TextureOption = preload("res://texture_option/texture_option.gd")
 
 var current_file := SaveFile.new()
 
 func _ready():
 	file_menu_button.get_popup().connect("id_pressed", self, "_on_FileMenu_id_pressed")
 	material_layer_panel.editing_layer_material = current_file.layer_material
+	get_tree().connect("node_added", self, "_on_SceneTree_node_added")
 
 
 func update_layer_material(layer_material : LayerMaterial) -> void:
@@ -75,3 +78,12 @@ func _on_FileDialog_file_selected(path : String):
 			save_material(path)
 		FileDialog.MODE_OPEN_FILE:
 			load_material(path)
+
+
+func _on_SceneTree_node_added(node : Node):
+	if node is TextureOption:
+		node.connect("selected", self, "_on_TextureOption_selected", [node])
+
+
+func _on_TextureOption_selected(texture_option : TextureOption):
+	texture_layer_panel.load_layer_texture(texture_option.selected_texture)
