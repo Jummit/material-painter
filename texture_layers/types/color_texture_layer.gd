@@ -9,7 +9,7 @@ func get_properties() -> Array:
 	return .get_properties() + [Properties.ColorProperty.new("color")]
 
 
-func generate_texture():
+func generate_texture() -> void:
 	var image := Image.new()
 	image.create(int(size.x), int(size.y), false, Image.FORMAT_RGB8)
 	image.fill(properties.color)

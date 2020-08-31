@@ -9,9 +9,9 @@ func get_properties() -> Array:
 	return .get_properties() + [Properties.FloatProperty.new("value", 0.0, 1.0)]
 
 
-func generate_texture():
+func generate_texture() -> void:
 	var image := Image.new()
-	image.create(1028, 1028, false, Image.FORMAT_RGB8)
+	image.create(int(size.x), int(size.y), false, Image.FORMAT_RGB8)
 	image.fill(Color.black.lightened(properties.value))
 	texture = ImageTexture.new()
 	texture.create_from_image(image)

@@ -6,7 +6,8 @@ const Properties = preload("res://addons/property_panel/properties.gd")
 export var name : String
 export var properties : Dictionary
 # warning-ignore:unused_class_variable
-export var size := Vector2(1024, 1024)
+export var size := Vector2(64, 64)
+#export var size := Vector2(1024, 1024)
 
 var texture : Texture setget , get_texture
 

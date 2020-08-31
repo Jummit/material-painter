@@ -10,7 +10,7 @@ func get_properties() -> Array:
 	return .get_properties() + [Properties.FilePathProperty.new("image_path")]
 
 
-func generate_texture():
+func generate_texture() -> void:
 	if ResourceLoader.exists(properties.image_path, "Texture"):
 		var image := Image.new()
 		if image.load(properties.image_path) == OK:

@@ -19,7 +19,7 @@ func get_properties() -> Array:
 		]
 
 
-func generate_texture():
+func generate_texture() -> void:
 	var noise := OpenSimplexNoise.new()
 	noise.seed = properties.noise_seed
 	noise.octaves = properties.octaves

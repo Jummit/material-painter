@@ -8,6 +8,9 @@ func blend(textures : Array, options : Array) -> ImageTexture:
 	for back_buffer in get_children():
 		back_buffer.free()
 	
+	if not textures.empty():
+		size = (textures[0] as Texture).get_size()
+	
 	for layer in textures.size():
 		var texture : Texture = textures[layer]
 		
