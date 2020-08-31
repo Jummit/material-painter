@@ -113,7 +113,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="3DViewport" type="ViewportContainer" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer"]
-visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -127,7 +126,7 @@ stretch = true
 [node name="Viewport" type="Viewport" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport"]
 size = Vector2( 594, 334 )
 handle_input_locally = false
-render_target_update_mode = 0
+render_target_update_mode = 3
 script = ExtResource( 19 )
 
 [node name="RotatingCamera" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport" instance=ExtResource( 11 )]
@@ -144,6 +143,7 @@ environment = ExtResource( 12 )
 transform = Transform( 0.788462, -0.446122, 0.423442, 0, 0.68843, 0.725302, -0.615084, -0.571873, 0.542801, 0, 3.22287, 0 )
 
 [node name="2DViewport" type="TextureRect" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer"]
+visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
@@ -277,8 +277,8 @@ size = Vector2( 1024, 1024 )
 size = Vector2( 1024, 1024 )
 [connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/AddMaterialLayerButton" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_AddMaterialLayerButton_pressed"]
 [connection signal="item_edited" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" method="_on_item_edited"]
-[connection signal="item_selected" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/TextureChannelButtons" method="_on_MaterialLayerTree_item_selected"]
 [connection signal="item_selected" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_MaterialLayerTree_item_selected"]
+[connection signal="item_selected" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/TextureChannelButtons" method="_on_MaterialLayerTree_item_selected"]
 [connection signal="nothing_selected" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_MaterialLayerTree_nothing_selected"]
 [connection signal="changed" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/TextureChannelButtons" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_TextureChannelButtons_changed"]
 [connection signal="values_changed" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerPropertyPanel" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_MaterialLayerPropertyPanel_values_changed"]
