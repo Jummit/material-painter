@@ -244,8 +244,6 @@ size = Vector2( 1024, 1024 )
 
 [node name="MaskedTextureBlendingViewport" parent="." instance=ExtResource( 13 )]
 size = Vector2( 1024, 1024 )
-own_world = false
-world = null
 [connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/AddMaterialLayerButton" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_AddMaterialLayerButton_pressed"]
 [connection signal="item_edited" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" method="_on_item_edited"]
 [connection signal="item_selected" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/TextureChannelButtons" method="_on_MaterialLayerTree_item_selected"]

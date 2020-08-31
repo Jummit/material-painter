@@ -43,10 +43,12 @@ func get_property_values() -> Dictionary:
 	return values
 
 
-func load_values(values) -> void:
-#func load_values(values : Dictionary) -> void:
+func load_values(values : Dictionary) -> void:
+	# block signals to not emit `values_changed` and override values
+	set_block_signals(true)
 	for value in values.keys():
 		properties_container.get_node(value).set_value(values[value])
+	set_block_signals(false)
 
 
 func _on_Property_changed():

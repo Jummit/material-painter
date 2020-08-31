@@ -16,15 +16,15 @@ func _on_confirmed():
 	var texture_layer : TextureLayer
 	match $TextureTypeList.get_selected_items()[0]:
 		0:
-			texture_layer = BitmapTextureLayer.new("New Bitmap Texture")
+			texture_layer = BitmapTextureLayer.new()
 		1:
-			texture_layer = ColorTextureLayer.new("New Paint Texture")
+			texture_layer = ColorTextureLayer.new()
 		2:
-			texture_layer = NoiseTextureLayer.new("New Noise Texture")
+			texture_layer = NoiseTextureLayer.new()
 		3:
-			texture_layer = ColorTextureLayer.new("New Color Texture")
+			texture_layer = ColorTextureLayer.new()
 		4:
-			texture_layer = ScalarTextureLayer.new("New Scalar Texture")
+			texture_layer = ScalarTextureLayer.new()
 	emit_signal("texture_creation_confirmed", texture_layer)
 
 

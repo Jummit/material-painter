@@ -36,9 +36,6 @@ func drop_data_fw(_position : Vector2, data : String, _from_control : Control) -
 	var layer_texture := LayerTexture.new()
 	var texture_layer := BitmapTextureLayer.new(data.get_file().get_basename())
 	texture_layer.properties.image_path = data
-	texture_layer.texture = load(data)
-	# kinda hacky, set the result manually
-	layer_texture.result = texture_layer.texture
 	layer_texture.layers = [texture_layer]
 	TextureManager.textures.append(layer_texture)
 	self.selected_texture = layer_texture

@@ -1,7 +1,6 @@
 extends "res://texture_layers/texture_layer.gd"
 
-func _init(_name : String):
-	print("initializing")
+func _init(_name := "Untitled Bitmap Texture"):
 	name = _name
 	properties.image_path = ""
 
@@ -12,8 +11,8 @@ func get_properties() -> Array:
 
 func generate_texture() -> void:
 	if ResourceLoader.exists(properties.image_path, "Texture"):
-		var image := Image.new()
-		if image.load(properties.image_path) == OK:
-			image.resize(int(size.x), int(size.y))
-			texture = ImageTexture.new()
-			texture.create_from_image(image)
+		var loaded_texture : Texture = load(properties.image_path)
+		var image := loaded_texture.get_data()
+		image.resize(int(size.x), int(size.y))
+		texture = ImageTexture.new()
+		texture.create_from_image(image)

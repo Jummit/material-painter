@@ -46,13 +46,10 @@ func update_layer_material_channel(layer_material : LayerMaterial, type : String
 
 func load_material(path : String) -> void:
 	current_file = load(path)
+#	print(current_file.layer_material.layers[0].properties.mask.layers[0].script)
+#	print(current_file.layer_material.layers[0].properties.mask.layers[0].name)
+	TextureManager.load_textures_from_layer_material(current_file.layer_material)
 	material_layer_panel.editing_layer_material = current_file.layer_material
-	for material_layer in current_file.layer_material.layers:
-		for key in material_layer.properties.keys():
-			if material_layer.properties[key] is LayerTexture:
-				var layer_texture : LayerTexture = material_layer.properties[key]
-				if not TextureManager.textures.has(layer_texture):
-					TextureManager.textures.append(layer_texture)
 
 
 func save_material(path : String) -> void:
@@ -87,3 +84,4 @@ func _on_SceneTree_node_added(node : Node):
 
 func _on_TextureOption_selected(texture_option : TextureOption):
 	texture_layer_panel.load_layer_texture(texture_option.selected_texture)
+	update_layer_material(material_layer_panel.editing_layer_material)
