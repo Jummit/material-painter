@@ -4,6 +4,7 @@ onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/FileMenu
 onready var material_layer_panel : VBoxContainer = $VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel
 onready var texture_layer_panel : VBoxContainer = $VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel
 onready var file_dialog : FileDialog = $FileDialog
+onready var texture_blending_viewport : Viewport = $TextureBlendingViewport
 onready var masked_texture_blending_viewport : Viewport = $MaskedTextureBlendingViewport
 onready var model : MeshInstance = $"VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/3DViewport/Viewport/Model"
 
@@ -33,10 +34,15 @@ func update_layer_material_channel(layer_material : LayerMaterial, type : String
 	var options := []
 	for layer in layer_material.layers:
 		layer = layer as MaterialLayer
-		if layer.properties.has(type) and layer.properties[type] and layer.properties[type].result and layer.properties.mask:
+		if layer.properties.has(type) and layer.properties[type]:
+			if not layer.properties[type].result:
+				yield(update_layer_texture(layer.properties[type]), "completed")
+			if layer.properties.mask and not layer.properties.mask.result:
+				yield(update_layer_texture(layer.properties.mask), "completed")
+			
 			textures.append(layer.properties[type].result)
 			options.append({
-				mask = layer.properties.mask.result
+				mask = null if not layer.properties.mask else layer.properties.mask.result
 			})
 	
 	if not textures.empty():
@@ -44,9 +50,29 @@ func update_layer_material_channel(layer_material : LayerMaterial, type : String
 		model.get_surface_material(0).set(type + "_texture", result)
 
 
+func update_layer_texture(layer_texture : LayerTexture) -> void:
+	var textures := []
+	var options := []
+	
+	for layer in layer_texture.layers:
+		layer = layer as TextureLayer
+		textures.append(layer.texture)
+		options.append({
+			blend_mode = layer.properties.blend_mode,
+			opacity = layer.properties.opacity,
+		})
+	
+	var result : Texture = yield(texture_blending_viewport.blend(textures, options), "completed")
+	layer_texture.result = result
+	# todo: only update correct channel
+	update_layer_material(material_layer_panel.editing_layer_material)
+
+
 func load_material(path : String) -> void:
 	current_file = load(path)
 	TextureManager.load_textures_from_layer_material(current_file.layer_material)
+	for layer_texture in TextureManager.textures:
+		update_layer_texture(layer_texture)
 	material_layer_panel.editing_layer_material = current_file.layer_material
 
 
@@ -78,8 +104,12 @@ func _on_FileDialog_file_selected(path : String):
 func _on_SceneTree_node_added(node : Node):
 	if node is TextureOption:
 		node.connect("selected", self, "_on_TextureOption_selected", [node])
+		node.connect("changed", self, "_on_TextureOption_changed")
+
+
+func _on_TextureOption_changed():
+	update_layer_material(material_layer_panel.editing_layer_material)
 
 
 func _on_TextureOption_selected(texture_option : TextureOption):
 	texture_layer_panel.load_layer_texture(texture_option.selected_texture)
-	update_layer_material(material_layer_panel.editing_layer_material)

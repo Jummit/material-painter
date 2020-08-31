@@ -1,7 +1,6 @@
 extends VBoxContainer
 
 onready var texture_layer_property_panel : Panel = $TextureLayerPropertyPanel
-onready var texture_blending_viewport : Viewport = $"../../../../TextureBlendingViewport"
 onready var texture_layer_tree : Tree = $TextureLayerTree
 onready var main : Control = $"../../../.."
 
@@ -11,29 +10,12 @@ const LayerTexture = preload("res://texture_layers/layer_texture.gd")
 var editing_layer_texture : LayerTexture
 var editing_texture_layer : TextureLayer
 
+
 func load_layer_texture(layer_texture : LayerTexture) -> void:
 	editing_layer_texture = layer_texture
 	texture_layer_tree.items = layer_texture.layers
 	texture_layer_tree.update_tree()
 	texture_layer_tree.update_icons()
-
-
-func update_layer_texture_result(layer_texture : LayerTexture) -> void:
-	var textures := []
-	var options := []
-	
-	for layer in layer_texture.layers:
-		layer = layer as TextureLayer
-		textures.append(layer.texture)
-		options.append({
-			blend_mode = layer.properties.blend_mode,
-			opacity = layer.properties.opacity,
-		})
-	
-	var result : Texture = yield(texture_blending_viewport.blend(textures, options), "completed")
-	layer_texture.result = result
-	# todo: only update correct channel
-	main.update_layer_material($"../MaterialLayerPanel".editing_layer_material)
 
 
 func _on_TextureLayerTree_item_selected():
@@ -52,11 +34,11 @@ func _on_TextureCreationDialog_texture_creation_confirmed(texture_layer : Textur
 	editing_layer_texture.layers.append(texture_layer)
 	texture_layer_tree.update_tree()
 	texture_layer_tree.update_icons()
-	update_layer_texture_result(editing_layer_texture)
+	main.update_layer_texture(editing_layer_texture)
 
 
 func _on_TextureLayerPropertyPanel_values_changed():
 	editing_texture_layer.properties = texture_layer_property_panel.get_property_values()
 	editing_texture_layer.generate_texture()
 	texture_layer_tree.update_icons()
-	update_layer_texture_result(editing_layer_texture)
+	main.update_layer_texture(editing_layer_texture)

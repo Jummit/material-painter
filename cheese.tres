@@ -1,0 +1,107 @@
+[gd_resource type="Resource" load_steps=20 format=2]
+
+[ext_resource path="res://material_layers/layer_material.gd" type="Script" id=1]
+[ext_resource path="res://texture_layers/layer_texture.gd" type="Script" id=2]
+[ext_resource path="res://material_layers/material_layer.gd" type="Script" id=3]
+[ext_resource path="res://texture_layers/types/bitmap_texture_layer.gd" type="Script" id=4]
+[ext_resource path="res://texture_layers/types/color_texture_layer.gd" type="Script" id=5]
+[ext_resource path="res://texture_layers/types/noise_texture_layer.gd" type="Script" id=6]
+[ext_resource path="res://save_file.gd" type="Script" id=7]
+
+[sub_resource type="Resource" id=1]
+script = ExtResource( 2 )
+layers = [  ]
+name = "Untitled Texture"
+
+[sub_resource type="Resource" id=2]
+script = ExtResource( 6 )
+name = "Untitled Noise Texture"
+properties = {
+"blend_mode": "normal",
+"lacunarity": 2.0,
+"noise_seed": 691.589,
+"octaves": 5.33645,
+"opacity": 1.0,
+"period": 24.0159,
+"persistence": 0.5
+}
+size = Vector2( 64, 64 )
+
+[sub_resource type="Resource" id=3]
+script = ExtResource( 5 )
+name = "Untitled Color Texture"
+properties = {
+"blend_mode": "multiply",
+"color": Color( 0.988235, 0.992157, 0.423529, 1 ),
+"opacity": 1.0
+}
+size = Vector2( 64, 64 )
+
+[sub_resource type="Resource" id=4]
+script = ExtResource( 2 )
+layers = [ SubResource( 2 ), SubResource( 3 ) ]
+name = "Untitled Texture"
+
+[sub_resource type="Resource" id=5]
+script = ExtResource( 3 )
+properties = {
+"albedo": SubResource( 4 ),
+"mask": SubResource( 1 )
+}
+name = "Untitled Layer"
+
+[sub_resource type="Resource" id=6]
+script = ExtResource( 4 )
+name = "center"
+properties = {
+"blend_mode": "normal",
+"image_path": "res://textures/center.png",
+"opacity": 1.0
+}
+size = Vector2( 64, 64 )
+
+[sub_resource type="Resource" id=7]
+script = ExtResource( 5 )
+name = "Untitled Color Texture"
+properties = {
+"blend_mode": "normal",
+"color": Color( 1, 1, 1, 1 ),
+"opacity": 0.373832
+}
+size = Vector2( 64, 64 )
+
+[sub_resource type="Resource" id=8]
+script = ExtResource( 2 )
+layers = [ SubResource( 6 ), SubResource( 7 ) ]
+name = "Untitled Texture"
+
+[sub_resource type="Resource" id=9]
+script = ExtResource( 4 )
+name = "Wood_albedo"
+properties = {
+"blend_mode": "normal",
+"image_path": "res://textures/Wood_albedo.png",
+"opacity": 1.0
+}
+size = Vector2( 64, 64 )
+
+[sub_resource type="Resource" id=10]
+script = ExtResource( 2 )
+layers = [ SubResource( 9 ) ]
+name = "Untitled Texture"
+
+[sub_resource type="Resource" id=11]
+script = ExtResource( 3 )
+properties = {
+"albedo": SubResource( 10 ),
+"mask": SubResource( 8 )
+}
+name = "Untitled Layer"
+
+[sub_resource type="Resource" id=12]
+script = ExtResource( 1 )
+layers = [ SubResource( 5 ), SubResource( 11 ) ]
+
+[resource]
+script = ExtResource( 7 )
+layer_material = SubResource( 12 )
