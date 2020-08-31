@@ -10,7 +10,6 @@ const LayerTexture = preload("res://texture_layers/layer_texture.gd")
 var editing_layer_texture : LayerTexture
 var editing_texture_layer : TextureLayer
 
-
 func load_layer_texture(layer_texture : LayerTexture) -> void:
 	editing_layer_texture = layer_texture
 	texture_layer_tree.items = layer_texture.layers

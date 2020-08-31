@@ -4,6 +4,7 @@ const TextureLayer = preload("res://texture_layers/texture_layer.gd")
 const BitmapTextureLayer = preload("res://texture_layers/types/bitmap_texture_layer.gd")
 const ColorTextureLayer = preload("res://texture_layers/types/color_texture_layer.gd")
 const NoiseTextureLayer = preload("res://texture_layers/types/noise_texture_layer.gd")
+const PaintTextureLayer = preload("res://texture_layers/types/paint_texture_layer.gd")
 const ScalarTextureLayer = preload("res://texture_layers/types/scalar_texture_layer.gd")
 
 signal texture_creation_confirmed(type)
@@ -18,7 +19,7 @@ func _on_confirmed():
 		0:
 			texture_layer = BitmapTextureLayer.new()
 		1:
-			texture_layer = ColorTextureLayer.new()
+			texture_layer = PaintTextureLayer.new()
 		2:
 			texture_layer = NoiseTextureLayer.new()
 		3:

@@ -12,6 +12,7 @@ func _run():
 		print(load_code)
 		OS.clipboard += load_code + "\n"
 
+
 static func pascal_to_snake_case(string : String) -> String:
 	var words : PoolStringArray = []
 	var word := ""

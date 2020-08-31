@@ -1,12 +1,12 @@
 extends Control
 
-onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/FileMenuButton
+onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/TopButtons/FileMenuButton
 onready var material_layer_panel : VBoxContainer = $VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel
 onready var texture_layer_panel : VBoxContainer = $VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel
 onready var file_dialog : FileDialog = $FileDialog
 onready var texture_blending_viewport : Viewport = $TextureBlendingViewport
 onready var masked_texture_blending_viewport : Viewport = $MaskedTextureBlendingViewport
-onready var model : MeshInstance = $"VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/3DViewport/Viewport/Model"
+onready var model : MeshInstance = $"VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport/Model"
 
 const SaveFile = preload("res://save_file.gd")
 

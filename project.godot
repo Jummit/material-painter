@@ -29,6 +29,10 @@ Globals="*res://globals.gd"
 gdscript/warnings/unused_class_variable=true
 gdscript/warnings/return_value_discarded=false
 
+[editor_plugins]
+
+enabled=PoolStringArray( "node_referencer" )
+
 [input]
 
 save={

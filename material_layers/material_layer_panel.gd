@@ -1,7 +1,6 @@
 extends VBoxContainer
 
 onready var material_layer_property_panel : Panel = $MaterialLayerPropertyPanel
-onready var model : MeshInstance = $"../VBoxContainer/3DViewport/Viewport/Model"
 onready var material_layer_tree : Tree = $MaterialLayerTree
 onready var main : Control = $"../../../.."
 
@@ -14,14 +13,6 @@ var editing_material_layer : MaterialLayer
 
 func _ready():
 	material_layer_tree.items = editing_layer_material.layers
-
-
-func _input(event):
-	if event.is_action_pressed("save"):
-		for type in Globals.TEXTURE_MAP_TYPES:
-			var t = model.get_surface_material(0).get(type + "_texture")
-			if t:
-				t.get_data().save_png("res://export/%s.png" % type)
 
 
 func set_editing_layer_material(to : LayerMaterial):
