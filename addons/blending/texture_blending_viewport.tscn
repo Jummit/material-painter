@@ -2,11 +2,11 @@
 
 [ext_resource path="res://addons/blending/texture_blending_viewport.gd" type="Script" id=1]
 
-[sub_resource type="Environment" id=3]
+[sub_resource type="Environment" id=1]
 background_mode = 1
 
 [sub_resource type="World" id=2]
-environment = SubResource( 3 )
+environment = SubResource( 1 )
 
 [node name="TextureBlendingViewport" type="Viewport"]
 size = Vector2( 100, 100 )
@@ -14,5 +14,5 @@ own_world = true
 world = SubResource( 2 )
 usage = 0
 render_target_v_flip = true
-render_target_update_mode = 3
+render_target_update_mode = 0
 script = ExtResource( 1 )

@@ -6,6 +6,7 @@ onready var texture_layer_panel : VBoxContainer = $VBoxContainer/PanelContainer/
 onready var file_dialog : FileDialog = $FileDialog
 onready var texture_blending_viewport : Viewport = $TextureBlendingViewport
 onready var masked_texture_blending_viewport : Viewport = $MaskedTextureBlendingViewport
+onready var normal_map_generation_viewport : Viewport = $NormalMapGenerationViewport
 onready var model : MeshInstance = $"VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport/Model"
 
 const SaveFile = preload("res://main/save_file.gd")
@@ -48,7 +49,12 @@ func update_layer_material_channel(layer_material : LayerMaterial, type : String
 	if not textures.empty():
 		var result : ImageTexture = yield(masked_texture_blending_viewport.blend(textures, options), "completed")
 		layer_material.results[type] = result
-		model.get_surface_material(0).set(type + "_texture", result)
+		if type == "height":
+			var normal_texture : ImageTexture = yield(normal_map_generation_viewport.get_normal_map(result), "completed")
+			model.get_surface_material(0).normal_texture = normal_texture
+			layer_material.results.normal = normal_texture
+		else:
+			model.get_surface_material(0).set(type + "_texture", result)
 
 
 func update_layer_texture(layer_texture : LayerTexture) -> void:
@@ -57,11 +63,12 @@ func update_layer_texture(layer_texture : LayerTexture) -> void:
 	
 	for layer in layer_texture.layers:
 		layer = layer as TextureLayer
-		textures.append(layer.texture)
-		options.append({
-			blend_mode = layer.properties.blend_mode,
-			opacity = layer.properties.opacity,
-		})
+		if layer.texture:
+			textures.append(layer.texture)
+			options.append({
+				blend_mode = layer.properties.blend_mode,
+				opacity = layer.properties.opacity,
+			})
 	
 	var result : Texture = yield(texture_blending_viewport.blend(textures, options), "completed")
 	layer_texture.result = result
@@ -81,6 +88,12 @@ func save_material(path : String) -> void:
 	ResourceSaver.save(path, current_file)
 
 
+func export_textures(to_folder : String, layer_material : LayerMaterial) -> void:
+	var results : Dictionary = layer_material.results
+	for type in results.keys():
+		(results[type] as ImageTexture).get_data().save_png(to_folder.plus_file(type) + ".png")
+
+
 func _on_FileMenu_id_pressed(id : int):
 	match id:
 		0:
@@ -93,12 +106,9 @@ func _on_FileMenu_id_pressed(id : int):
 			file_dialog.mode = FileDialog.MODE_SAVE_FILE
 			file_dialog.popup_centered()
 		3:
-			if not current_file.resource_path:
-				return
-			var export_folder := current_file.resource_path.get_base_dir()
-			var results : Dictionary = current_file.layer_material.results
-			for type in results.keys():
-				(results[type] as ImageTexture).get_data().save_png(export_folder.plus_file(type) + ".png")
+			if current_file.resource_path:
+				export_textures(current_file.resource_path.get_base_dir(),
+						current_file.layer_material)
 
 
 func _on_FileDialog_file_selected(path : String):
