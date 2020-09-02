@@ -1,6 +1,6 @@
 extends Viewport
 
-onready var height_map_texture_sprite : Sprite = $"HeightMapTexture"
+onready var height_map_texture_sprite : Sprite = $HeightMapTextureSprite
 
 const TextureUtils = preload("res://utils/texture_utils.gd")
 

@@ -1,9 +1,9 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://main/2d_viewport.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
 [ext_resource path="res://main/main.gd" type="Script" id=3]
-[ext_resource path="res://material_layers/material_layer_panel.gd" type="Script" id=4]
+[ext_resource path="res://texture_layers/texture_layer_property_panel.gd" type="Script" id=4]
 [ext_resource path="res://texture_layers/texture_layer_tree.gd" type="Script" id=5]
 [ext_resource path="res://material_layers/material_layer_tree.gd" type="Script" id=6]
 [ext_resource path="res://texture_layers/texture_creation_dialog.gd" type="Script" id=7]
@@ -12,7 +12,7 @@
 [ext_resource path="res://3d_viewport/environment/environment.tres" type="Environment" id=10]
 [ext_resource path="res://main/texture_list.gd" type="Script" id=11]
 [ext_resource path="res://texture_layers/texture_layer_panel.gd" type="Script" id=12]
-[ext_resource path="res://3d_viewport/cube.obj" type="ArrayMesh" id=13]
+[ext_resource path="res://3d_viewport/SciFiLargeBench.obj" type="ArrayMesh" id=13]
 [ext_resource path="res://3d_viewport/spatialmaterial.tres" type="Material" id=14]
 [ext_resource path="res://material_layers/masked_texture_blending_viewport/masked_texture_blending_viewport.tscn" type="PackedScene" id=15]
 [ext_resource path="res://material_layers/texture_channel_buttons/texture_channel_buttons.tscn" type="PackedScene" id=16]
@@ -23,6 +23,8 @@
 [ext_resource path="res://normal_map_generation_viewport/normal_map_generation_viewport.tscn" type="PackedScene" id=21]
 
 [sub_resource type="ImageTexture" id=1]
+
+[sub_resource type="World" id=2]
 
 [node name="Main" type="Control"]
 anchor_right = 1.0
@@ -174,7 +176,6 @@ margin_left = 606.0
 margin_right = 806.0
 margin_bottom = 548.0
 rect_min_size = Vector2( 200, 0 )
-script = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -225,6 +226,7 @@ margin_right = 200.0
 margin_bottom = 548.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+script = ExtResource( 4 )
 
 [node name="TextureCreationDialog" type="ConfirmationDialog" parent="."]
 anchor_left = 0.5
@@ -278,20 +280,26 @@ size = Vector2( 1024, 1024 )
 size = Vector2( 1024, 1024 )
 
 [node name="NormalMapGenerationViewport" parent="." instance=ExtResource( 21 )]
+own_world = true
+world = SubResource( 2 )
 render_target_v_flip = true
-[connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/AddMaterialLayerButton" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_AddMaterialLayerButton_pressed"]
+[connection signal="painted" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport" to="." method="_on_3DViewport_painted"]
+[connection signal="painted" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/2DViewport" to="." method="_on_2DViewport_painted"]
+[connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/AddMaterialLayerButton" to="." method="_on_AddMaterialLayerButton_pressed"]
 [connection signal="item_edited" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" method="_on_item_edited"]
-[connection signal="item_selected" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/TextureChannelButtons" method="_on_MaterialLayerTree_item_selected"]
-[connection signal="item_selected" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_MaterialLayerTree_item_selected"]
-[connection signal="nothing_selected" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_MaterialLayerTree_nothing_selected"]
-[connection signal="changed" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/TextureChannelButtons" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_TextureChannelButtons_changed"]
-[connection signal="values_changed" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerPropertyPanel" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel" method="_on_MaterialLayerPropertyPanel_values_changed"]
+[connection signal="item_selected" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" method="_on_item_selected"]
+[connection signal="layer_selected" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="." method="_on_MaterialLayerTree_layer_selected"]
+[connection signal="layer_selected" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/TextureChannelButtons" method="_on_MaterialLayerTree_layer_selected"]
+[connection signal="nothing_selected" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree" to="." method="_on_MaterialLayerTree_nothing_selected"]
+[connection signal="changed" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/TextureChannelButtons" to="." method="_on_TextureChannelButtons_changed"]
+[connection signal="values_changed" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerPropertyPanel" to="." method="_on_MaterialLayerPropertyPanel_values_changed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/AddTextureLayerButton" to="TextureCreationDialog" method="_on_AddTextureLayerButton_pressed"]
 [connection signal="item_edited" from="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" method="_on_item_edited"]
-[connection signal="item_selected" from="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel" method="_on_TextureLayerTree_item_selected"]
-[connection signal="nothing_selected" from="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel" method="_on_TextureLayerTree_nothing_selected"]
-[connection signal="values_changed" from="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerPropertyPanel" to="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel" method="_on_TextureLayerPropertyPanel_values_changed"]
+[connection signal="item_selected" from="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" to="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" method="_on_item_selected"]
+[connection signal="layer_selected" from="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" to="." method="_on_TextureLayerTree_layer_selected"]
+[connection signal="nothing_selected" from="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree" to="." method="_on_TextureLayerTree_nothing_selected"]
+[connection signal="values_changed" from="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerPropertyPanel" to="." method="_on_TextureLayerPropertyPanel_values_changed"]
 [connection signal="confirmed" from="TextureCreationDialog" to="TextureCreationDialog" method="_on_confirmed"]
-[connection signal="texture_creation_confirmed" from="TextureCreationDialog" to="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel" method="_on_TextureCreationDialog_texture_creation_confirmed"]
+[connection signal="texture_creation_confirmed" from="TextureCreationDialog" to="." method="_on_TextureCreationDialog_texture_creation_confirmed"]
 [connection signal="item_activated" from="TextureCreationDialog/TextureTypeList" to="TextureCreationDialog" method="_on_TextureTypeList_item_activated"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]

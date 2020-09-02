@@ -9,10 +9,10 @@ func _pressed():
 
 
 func _on_FileDialog_file_selected(selected_path : String):
-	self.path = selected_path
+	set_path(selected_path)
 	emit_signal("changed")
 
 
 func set_path(to : String):
-	text = to.get_file()
 	path = to
+	text = path.get_file()

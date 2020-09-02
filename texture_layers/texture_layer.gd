@@ -6,10 +6,17 @@ const Properties = preload("res://addons/property_panel/properties.gd")
 export var name : String
 export var properties : Dictionary
 # warning-ignore:unused_class_variable
-export var size := Vector2(64, 64)
+export var size := Vector2(256, 256)
 #export var size := Vector2(1024, 1024)
 
 var texture : Texture setget , get_texture
+
+func _init():
+	properties = {
+		opacity = 1.0,
+		blend_mode = "normal"
+	}
+
 
 func get_properties() -> Array:
 	return [
@@ -17,18 +24,11 @@ func get_properties() -> Array:
 		Properties.EnumProperty.new("blend_mode", Globals.BLEND_MODES)]
 
 
-func get_texture():
+func get_texture() -> Texture:
 	if not texture:
 		generate_texture()
 	return texture
 
 
-func generate_texture():
-	return null
-
-
-func _init():
-	properties = {
-		opacity = 1.0,
-		blend_mode = "normal"
-	}
+func generate_texture() -> void:
+	pass

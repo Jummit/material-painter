@@ -1,6 +1,8 @@
 tool
 extends EditorPlugin
 
+# todo: make root references work
+
 func _enter_tree() -> void:
 	add_tool_menu_item("Generate Node Reference", self, "_on_ToolMenu_generate_node_reference_pressed")
 	add_tool_menu_item("Generate Class Reference", self, "_on_ToolMenu_generate_class_reference_pressed")

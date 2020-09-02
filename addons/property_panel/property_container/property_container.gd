@@ -2,7 +2,7 @@ extends HBoxContainer
 
 onready var name_label : Label = $Name
 
-const Property = preload("res://addons/property_panel/property_panel.gd").Property
+const Property = preload("res://addons/property_panel/properties.gd").Property
 
 signal property_changed
 
@@ -25,7 +25,7 @@ func setup(_property : Property) -> void:
 	var args := []
 	for i in arg_count:
 		args.append(1)
-	property_control.connect(property.changed_signal, self, "_on_Property_changed", args)
+	property_control.connect(property.changed_signal, self, "_on_PropertyControl_changed", args)
 	add_child(property_control)
 
 
@@ -33,9 +33,9 @@ func get_value():
 	return property.get_value(property_control)
 
 
-func set_value(to):
+func set_value(to) -> void:
 	property.set_value(property_control, to)
 
 
-func _on_Property_changed(_a, _b, _c, _d, _e):
+func _on_PropertyControl_changed(_a, _b, _c, _d, _e):
 	emit_signal("property_changed")

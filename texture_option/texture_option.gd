@@ -33,12 +33,12 @@ func can_drop_data_fw(_position : Vector2, data, _from_control : Control) -> boo
 
 
 func drop_data_fw(_position : Vector2, data : String, _from_control : Control) -> void:
-	var layer_texture := LayerTexture.new()
 	var texture_layer := BitmapTextureLayer.new(data.get_file().get_basename())
 	texture_layer.properties.image_path = data
+	var layer_texture := LayerTexture.new()
 	layer_texture.layers = [texture_layer]
 	TextureManager.textures.append(layer_texture)
-	self.selected_texture = layer_texture
+	set_selected_texture(layer_texture)
 
 
 func set_selected_texture(to : LayerTexture):
@@ -55,15 +55,15 @@ func set_selected_texture(to : LayerTexture):
 func _on_NewButton_pressed():
 	var texture := LayerTexture.new()
 	TextureManager.textures.append(texture)
-	self.selected_texture = texture
+	set_selected_texture(texture)
 
 
 func _on_ClearButton_pressed():
-	self.selected_texture = null
+	set_selected_texture(null)
 
 
 func _on_TextureMenuPopup_id_pressed(id : int):
-	self.selected_texture = texture_popup.get_item_metadata(id)
+	set_selected_texture(texture_popup.get_item_metadata(id))
 
 
 func _on_TexturePopupMenu_about_to_show():

@@ -2,30 +2,28 @@ extends Panel
 
 onready var properties_container : VBoxContainer = $Properties
 
-const Property = preload("res://addons/property_panel/properties.gd").Property
-
 signal values_changed
 
 var properties := [] setget set_properties
 
 func _ready():
-	build()
+	setup_property_containers()
 
 
 func set_properties(to):
 	properties = to
-	build()
+	setup_property_containers()
 
 
-func build() -> void:
+func setup_property_containers() -> void:
 	for property_container in properties_container.get_children():
 		# use ´free´ instead of ´queue_free´ to immediatly remove nodes
 		# because otherwise duplicate properties get automatically renamed
 		property_container.free()
 	
 	for property in properties:
-		property = property as Property
-		var property_container : HBoxContainer = load("res://addons/property_panel/property_container/property_container.tscn").instance()
+		property = property
+		var property_container = load("res://addons/property_panel/property_container/property_container.tscn").instance()
 		property_container.name = property.name
 		property_container.connect("property_changed", self, "_on_Property_changed")
 		properties_container.add_child(property_container)
@@ -44,11 +42,8 @@ func get_property_values() -> Dictionary:
 
 
 func load_values(values : Dictionary) -> void:
-	# block signals to not emit `values_changed` and override values
-	set_block_signals(true)
 	for value in values.keys():
 		properties_container.get_node(value).set_value(values[value])
-	set_block_signals(false)
 
 
 func _on_Property_changed():

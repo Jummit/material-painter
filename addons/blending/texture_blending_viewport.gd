@@ -2,22 +2,24 @@ extends Viewport
 
 const TextureUtils = preload("res://utils/texture_utils.gd")
 
-# todo: use multiple blending viewports to avoid conflicts?
-
-func blend(textures : Array, options : Array) -> ImageTexture:
+func blend(layers : Array, options : Array) -> ImageTexture:
 	for back_buffer in get_children():
 		back_buffer.free()
 	
-	for layer in textures.size():
-		var texture : Texture = textures[layer]
-		size = texture.get_size()
+	size = Vector2.ZERO
+	
+	for layer in layers.size():
+		var layer_texture : Texture = layers[layer]
+		
+		if size < layer_texture.get_size():
+			size = layer_texture.get_size()
 		
 		var back_buffer := BackBufferCopy.new()
 		back_buffer.copy_mode = BackBufferCopy.COPY_MODE_VIEWPORT
 		add_child(back_buffer)
 		
 		var sprite := Sprite.new()
-		sprite.texture = texture
+		sprite.texture = layer_texture
 		sprite.centered = false
 		setup_sprite(sprite, options[layer])
 		back_buffer.add_child(sprite)

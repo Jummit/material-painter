@@ -1,43 +1,19 @@
 extends VBoxContainer
 
-onready var texture_layer_property_panel : Panel = $TextureLayerPropertyPanel
 onready var texture_layer_tree : Tree = $TextureLayerTree
-onready var main : Control = $"../../../.."
+onready var main := $"../../../.."
 
-const TextureLayer = preload("res://texture_layers/texture_layer.gd")
-const LayerTexture = preload("res://texture_layers/layer_texture.gd")
+const BitmapTextureLayer = preload("res://texture_layers/types/bitmap_texture_layer.gd")
 
-var editing_layer_texture : LayerTexture
-var editing_texture_layer : TextureLayer
-
-func load_layer_texture(layer_texture : LayerTexture) -> void:
-	editing_layer_texture = layer_texture
-	texture_layer_tree.items = layer_texture.layers
-	texture_layer_tree.update_tree()
-	texture_layer_tree.update_icons()
+func _ready() -> void:
+	texture_layer_tree.set_drag_forwarding(self)
 
 
-func _on_TextureLayerTree_item_selected():
-	editing_texture_layer = texture_layer_tree.get_selected().get_metadata(0)
-	
-	texture_layer_property_panel.properties = editing_texture_layer.get_properties()
-	texture_layer_property_panel.load_values(editing_texture_layer.properties)
+func can_drop_data_fw(_position : Vector2, data, _from_control : Control) -> bool:
+	return data is String
 
 
-func _on_TextureLayerTree_nothing_selected():
-	if not texture_layer_tree.get_selected():
-		editing_texture_layer = null
-
-
-func _on_TextureCreationDialog_texture_creation_confirmed(texture_layer : TextureLayer):
-	editing_layer_texture.layers.append(texture_layer)
-	texture_layer_tree.update_tree()
-	texture_layer_tree.update_icons()
-	main.update_layer_texture(editing_layer_texture)
-
-
-func _on_TextureLayerPropertyPanel_values_changed():
-	editing_texture_layer.properties = texture_layer_property_panel.get_property_values()
-	editing_texture_layer.generate_texture()
-	texture_layer_tree.update_icons()
-	main.update_layer_texture(editing_layer_texture)
+func drop_data_fw(_position : Vector2, data : String, _from_control : Control) -> void:
+	var texture_layer := BitmapTextureLayer.new(data.get_file().get_basename())
+	texture_layer.properties.image_path = data
+	main.add_texture_layer(texture_layer)

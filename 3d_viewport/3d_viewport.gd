@@ -1,29 +1,30 @@
 extends ViewportContainer
 
-onready var main : Control = $"../../../../../.."
 onready var model : MeshInstance = $Viewport/Model
-onready var texture_layer_panel : VBoxContainer = $"../../../TextureLayerPanel"
+onready var main : Control = $"../../../../../.."
 
-const Debug3D = preload("res://addons/debug_3d/debug_3d.gd")
 const PaintTextureLayer = preload("res://texture_layers/types/paint_texture_layer.gd")
+
+signal painted
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
-		if texture_layer_panel.editing_texture_layer is PaintTextureLayer:
+		if main.editing_texture_layer is PaintTextureLayer:
 			var camera : Camera = $Viewport.get_camera()
 			var camera_world_position := camera.project_position(event.position, 0.0)
 			var clicked_world_position := camera.project_position(event.position, 1000.0)
 			
-			var selected_face := get_nearest_intersecting_face(camera_world_position, clicked_world_position, model.mesh)
+			var selected_face := _get_nearest_intersecting_face(camera_world_position, clicked_world_position, model.mesh)
 			if selected_face != -1:
-				texture_layer_panel.editing_texture_layer.paint_face(selected_face, Color.white, model.mesh)
-				texture_layer_panel.editing_texture_layer.generate_texture()
-				main.update_layer_texture(texture_layer_panel.editing_layer_texture)
+				main.editing_texture_layer.paint_face(selected_face, Color.white, model.mesh)
+				main.editing_texture_layer.generate_texture()
+				emit_signal("painted")
 
 
-func get_nearest_intersecting_face(start : Vector3, direction : Vector3, mesh : Mesh) -> int:
+func _get_nearest_intersecting_face(start : Vector3, direction : Vector3, mesh : Mesh) -> int:
 	var mesh_tool := MeshDataTool.new()
 	mesh_tool.create_from_surface(mesh, 0)
+	
 	var nearest_face := -1
 	var nearest_face_pos := Vector3(INF, INF, INF)
 	for face in mesh_tool.get_face_count():
@@ -37,7 +38,3 @@ func get_nearest_intersecting_face(start : Vector3, direction : Vector3, mesh : 
 			nearest_face = face
 			nearest_face_pos = collision_point
 	return nearest_face
-
-
-static func get_triangle_center(triangle : Basis) -> Vector3:
-	return (triangle.x + triangle.y + triangle.z) / 3.0

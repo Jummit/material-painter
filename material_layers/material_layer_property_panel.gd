@@ -10,7 +10,8 @@ class TextureProperty extends "res://addons/property_panel/properties.gd".Proper
 	func get_control() -> Control:
 		return preload("res://texture_option/texture_option.tscn").instance() as Control
 
-func build_properties(material_layer : MaterialLayer) -> void:
+func load_material_layer(material_layer : MaterialLayer) -> void:
+	# todo: add blend mode
 	properties = [
 		TextureProperty.new("mask"),
 	]

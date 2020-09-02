@@ -3,6 +3,7 @@ extends GridContainer
 onready var material_layer_tree : Tree = $"../MaterialLayerTree"
 
 const LayerTexture = preload("res://texture_layers/layer_texture.gd")
+const MaterialLayer = preload("res://material_layers/material_layer.gd")
 
 signal changed
 
@@ -26,9 +27,10 @@ func _on_Button_toggled(button_pressed : bool, type : String):
 	emit_signal("changed")
 
 
-func _on_MaterialLayerTree_item_selected():
-	var properties : Dictionary = material_layer_tree.get_selected().get_metadata(0).properties
-	# warning: setting button.pressed calls ´_on_Button_toggled´,
-	# which can have unpredicatble consequences
+func _on_MaterialLayerTree_layer_selected(material_layer : MaterialLayer):
+	var properties : Dictionary = material_layer.properties
 	for button in get_children():
+		# block `toggled` signals to avoid emitting the `changed` signal
+		button.set_block_signals(true)
 		button.pressed = properties.has(button.name)
+		button.set_block_signals(false)
