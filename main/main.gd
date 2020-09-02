@@ -101,6 +101,7 @@ func add_texture_layer(texture_layer : TextureLayer) -> void:
 	editing_layer_texture.layers.append(texture_layer)
 	texture_layer_tree.update_tree()
 	texture_layer_tree.update_icons()
+	generate_layer_texture_result(editing_layer_texture)
 
 
 func _on_FileMenu_id_pressed(id : int):
