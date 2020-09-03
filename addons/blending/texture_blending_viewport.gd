@@ -3,11 +3,6 @@ extends Viewport
 const TextureUtils = preload("res://utils/texture_utils.gd")
 
 func blend(layers : Array, options : Array) -> ImageTexture:
-	for back_buffer in get_children():
-		back_buffer.free()
-	
-	size = Vector2.ZERO
-	
 	for layer in layers.size():
 		var layer_texture : Texture = layers[layer]
 		
@@ -27,7 +22,13 @@ func blend(layers : Array, options : Array) -> ImageTexture:
 	yield(get_tree(), "idle_frame")
 	yield(get_tree(), "idle_frame")
 	# todo: this is apparently slow, find out if it is necessary
+	
 	var texture := TextureUtils.viewport_to_image(get_texture())
+	for back_buffer in get_children():
+		back_buffer.free()
+	
+	size = Vector2.ZERO
+	
 	return texture
 
 

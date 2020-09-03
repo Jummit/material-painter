@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://main/2d_viewport.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
@@ -23,8 +23,6 @@
 [ext_resource path="res://normal_map_generation_viewport/normal_map_generation_viewport.tscn" type="PackedScene" id=21]
 
 [sub_resource type="ImageTexture" id=1]
-
-[sub_resource type="World" id=2]
 
 [node name="Main" type="Control"]
 anchor_right = 1.0
@@ -93,15 +91,6 @@ margin_bottom = 555.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="ResultTextureRect" type="TextureRect" parent="VBoxContainer/PanelContainer/LayerContainer"]
-visible = false
-margin_right = 315.0
-margin_bottom = 586.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
-expand = true
-stretch_mode = 6
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/LayerContainer"]
 margin_right = 602.0
@@ -280,9 +269,6 @@ size = Vector2( 1024, 1024 )
 size = Vector2( 1024, 1024 )
 
 [node name="NormalMapGenerationViewport" parent="." instance=ExtResource( 21 )]
-own_world = true
-world = SubResource( 2 )
-render_target_v_flip = true
 [connection signal="painted" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport" to="." method="_on_3DViewport_painted"]
 [connection signal="painted" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/2DViewport" to="." method="_on_2DViewport_painted"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/AddMaterialLayerButton" to="." method="_on_AddMaterialLayerButton_pressed"]

@@ -12,4 +12,6 @@ func get_normal_map(height_map : ImageTexture) -> ImageTexture:
 	yield(get_tree(), "idle_frame")
 	yield(get_tree(), "idle_frame")
 	
+	height_map_texture_sprite.texture = null
+	
 	return TextureUtils.viewport_to_image(get_texture())
