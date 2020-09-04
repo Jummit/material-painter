@@ -1,5 +1,9 @@
 extends Viewport
 
+"""
+A `Viewport` to generate a normal map from a grayscale heightmap
+"""
+
 onready var height_map_texture_sprite : Sprite = $HeightMapTextureSprite
 
 const TextureUtils = preload("res://utils/texture_utils.gd")

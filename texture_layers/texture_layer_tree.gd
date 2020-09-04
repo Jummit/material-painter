@@ -1,5 +1,12 @@
 extends "res://addons/arrangable_tree/arrangable_tree.gd"
 
+"""
+The `ArrangableTree` that represents the layers of the selected LayerTexture
+
+The most left column is used for preview icons.
+Hovering over an item shows a `TextureToolTip`.
+"""
+
 signal layer_selected(layer)
 
 const LayerTexture = preload("res://texture_layers/layer_texture.gd")

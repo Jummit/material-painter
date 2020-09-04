@@ -1,5 +1,11 @@
 extends Tree
 
+"""
+A tree that can be built from `items` by calling `update_tree`
+
+Each created TreeItem has its first metadata set to the object in `items`
+"""
+
 var items := []
 
 # overide this to customize how items are set up
@@ -16,18 +22,19 @@ func update_tree() -> void:
 		setup_item(tree_item, item)
 
 
-func get_drag_data(position : Vector2):
-	var preview := Label.new()
-	preview.text = get_selected().get_text(0)
-	set_drag_preview(preview)
-	return get_item_at_position(position)
+# TODO: fix moving items
+
+# func get_drag_data(position : Vector2):
+# 	var preview := Label.new()
+# 	preview.text = get_selected().get_text(0)
+# 	set_drag_preview(preview)
+# 	return get_item_at_position(position)
 
 
-func can_drop_data(_position : Vector2, data) -> bool:
-	drop_mode_flags = DROP_MODE_INBETWEEN
-	return data is TreeItem
+# func can_drop_data(_position : Vector2, data) -> bool:
+# 	drop_mode_flags = DROP_MODE_INBETWEEN
+# 	return data is TreeItem
 
 
-func drop_data(position : Vector2, data) -> void:
-	# TODO: fix moving items
-	pass
+# func drop_data(position : Vector2, data) -> void:
+# 	pass

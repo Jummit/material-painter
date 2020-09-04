@@ -1,5 +1,9 @@
 extends "res://addons/arrangable_tree/arrangable_tree.gd"
 
+"""
+The `ArrangableTree` that represents the layers of the selected MaterialLayer
+"""
+
 const MaterialLayer = preload("res://material_layers/material_layer.gd")
 
 signal layer_selected(layer)

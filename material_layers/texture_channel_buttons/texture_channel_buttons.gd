@@ -1,5 +1,9 @@
 extends GridContainer
 
+"""
+Buttons used to specify the enabled channels of the selected MaterialLayer
+"""
+
 onready var material_layer_tree : Tree = $"../MaterialLayerTree"
 
 const LayerTexture = preload("res://texture_layers/layer_texture.gd")

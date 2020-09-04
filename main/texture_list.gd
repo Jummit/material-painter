@@ -1,5 +1,9 @@
 extends ItemList
 
+"""
+A list of texture that can be drag and droped onto different UI elements
+"""
+
 func _ready():
 	load_textures("res://textures/")
 

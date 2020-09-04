@@ -1,5 +1,12 @@
 extends Control
 
+"""
+The main script of the Material Painter application
+
+It handles most callbacks and updates the results of the layer stacks when something changes.
+Keeps track of the currently editing objects and manages the menu bar, saving and loading.
+"""
+
 onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/TopButtons/FileMenuButton
 onready var file_dialog : FileDialog = $FileDialog
 onready var material_layer_tree : Tree = $VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree
@@ -24,6 +31,8 @@ var editing_layer_material : LayerMaterial
 var editing_layer_texture : LayerTexture
 var editing_texture_layer : TextureLayer
 var editing_material_layer : MaterialLayer
+
+var result_size := Vector2(64, 64)
 
 func _ready():
 	file_menu_button.get_popup().connect("id_pressed", self, "_on_FileMenu_id_pressed")
@@ -56,12 +65,13 @@ func generate_layer_material_channel_texture(layer_material : LayerMaterial, typ
 			})
 	
 	if not layers.empty():
-		var result : ImageTexture = yield(masked_texture_blending_viewport.blend(layers, options), "completed")
+		var result : ImageTexture = yield(masked_texture_blending_viewport.blend(layers, options, result_size), "completed")
 		layer_material.results[type] = result
 		if type == "height":
-			var normal_texture : ImageTexture = yield(normal_map_generation_viewport.get_normal_map(result), "completed")
-			model.get_surface_material(0).normal_texture = normal_texture
-			layer_material.results.normal = normal_texture
+			if not normal_map_generation_viewport.busy:
+				var normal_texture : ImageTexture = yield(normal_map_generation_viewport.get_normal_map(result), "completed")
+				model.get_surface_material(0).normal_texture = normal_texture
+				layer_material.results.normal = normal_texture
 		else:
 			model.get_surface_material(0).set(type + "_texture", result)
 
@@ -76,9 +86,7 @@ func generate_layer_texture_result(layer_texture : LayerTexture) -> void:
 			layers.append(layer.texture)
 			options.append(layer.properties)
 	
-	layer_texture.result = yield(texture_blending_viewport.blend(layers, options), "completed")
-	# todo: only update correct channel
-	generate_layer_material_textures(editing_layer_material)
+	layer_texture.result = yield(texture_blending_viewport.blend(layers, options, result_size), "completed")
 
 
 func load_file(save_file : SaveFile) -> void:
@@ -101,7 +109,7 @@ func add_texture_layer(texture_layer : TextureLayer) -> void:
 	editing_layer_texture.layers.append(texture_layer)
 	texture_layer_tree.update_tree()
 	texture_layer_tree.update_icons()
-	generate_layer_texture_result(editing_layer_texture)
+	generate_layer_material_textures(editing_layer_material)
 
 
 func _on_FileMenu_id_pressed(id : int):
@@ -164,6 +172,7 @@ func _on_TextureLayerPropertyPanel_values_changed() -> void:
 	editing_texture_layer.generate_texture()
 	texture_layer_tree.update_icons()
 	generate_layer_texture_result(editing_layer_texture)
+	generate_layer_material_textures(editing_layer_material)
 
 
 func _on_AddMaterialLayerButton_pressed() -> void:
@@ -192,7 +201,9 @@ func _on_TextureChannelButtons_changed() -> void:
 
 func _on_3DViewport_painted() -> void:
 	generate_layer_texture_result(editing_layer_texture)
+	generate_layer_material_textures(editing_layer_material)
 
 
 func _on_2DViewport_painted() -> void:
 	generate_layer_texture_result(editing_layer_texture)
+	generate_layer_material_textures(editing_layer_material)

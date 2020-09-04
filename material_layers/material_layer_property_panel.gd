@@ -1,5 +1,9 @@
 extends "res://addons/property_panel/property_panel.gd"
 
+"""
+The `PropertyPanel` that exposes the properties of the selected `MaterialLayer`
+"""
+
 const MaterialLayer = preload("res://material_layers/material_layer.gd")
 const Properties = preload("res://addons/property_panel/properties.gd")
 

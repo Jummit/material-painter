@@ -1,5 +1,12 @@
 extends PanelContainer
 
+"""
+A tooltip for a texture
+
+Used in `TextureLayerTree` to show the result of a `TextureLayer`.
+It consists of a name and a big `TextureRect`.
+"""
+
 onready var texture_rect : TextureRect = $VBoxContainer/TextureRect
 onready var name_label : Label = $VBoxContainer/Name
 

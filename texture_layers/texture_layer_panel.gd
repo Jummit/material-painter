@@ -1,5 +1,11 @@
 extends VBoxContainer
 
+# todo: move this to the TextureLayerTree
+
+"""
+Droping textures onto the `TextureLayerPanel` creates a `BitmapTextureLayer`.
+"""
+
 onready var texture_layer_tree : Tree = $TextureLayerTree
 onready var main := $"../../../.."
 

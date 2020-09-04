@@ -1,5 +1,9 @@
 extends MeshInstance
 
+"""
+A colored line that is drawn ontop of everything
+"""
+
 func setup(from : Vector3, to : Vector3, color := Color.red,
 		life_time := 10.0) -> void:
 	var surface_tool := SurfaceTool.new()

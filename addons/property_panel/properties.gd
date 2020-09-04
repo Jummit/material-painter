@@ -1,3 +1,9 @@
+"""
+All properties used to edit values in the `PropertyPanel`
+
+Each property can create a `Control` and specifies the signal that control emits when it changed. It also specifies which member of the control is the resulting value.
+"""
+
 class Property:
 # warning-ignore:unused_class_variable
 	var name : String

@@ -1,5 +1,11 @@
 extends MeshInstance
 
+"""
+A colored text that is drawn ontop of everything
+
+Uses a viewport to generate the texture for the quad.
+"""
+
 onready var viewport : Viewport = $Viewport
 onready var text_label : Label = $Viewport/Text
 
