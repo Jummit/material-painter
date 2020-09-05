@@ -68,10 +68,9 @@ func generate_layer_material_channel_texture(layer_material : LayerMaterial, typ
 		var result : ImageTexture = yield(masked_texture_blending_viewport.blend(layers, options, result_size), "completed")
 		layer_material.results[type] = result
 		if type == "height":
-			if not normal_map_generation_viewport.busy:
-				var normal_texture : ImageTexture = yield(normal_map_generation_viewport.get_normal_map(result), "completed")
-				model.get_surface_material(0).normal_texture = normal_texture
-				layer_material.results.normal = normal_texture
+			var normal_texture : ImageTexture = yield(normal_map_generation_viewport.get_normal_map(result), "completed")
+			model.get_surface_material(0).normal_texture = normal_texture
+			layer_material.results.normal = normal_texture
 		else:
 			model.get_surface_material(0).set(type + "_texture", result)
 
@@ -106,6 +105,7 @@ func export_textures(to_folder : String, layer_material : LayerMaterial) -> void
 
 
 func add_texture_layer(texture_layer : TextureLayer) -> void:
+	texture_layer.generate_texture()
 	editing_layer_texture.layers.append(texture_layer)
 	texture_layer_tree.update_tree()
 	texture_layer_tree.update_icons()
@@ -158,7 +158,7 @@ func _on_TextureCreationDialog_texture_creation_confirmed(texture_layer : Textur
 
 func _on_TextureLayerTree_layer_selected(texture_layer : TextureLayer) -> void:
 	editing_texture_layer = texture_layer
-	texture_layer_property_panel.load_texture_layer(texture_layer)
+	texture_layer_property_panel.load_texture_layer(editing_texture_layer)
 
 
 func _on_TextureLayerTree_nothing_selected() -> void:

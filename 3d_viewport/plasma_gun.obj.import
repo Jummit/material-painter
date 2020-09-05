@@ -1,0 +1,19 @@
+[remap]
+
+importer="wavefront_obj"
+type="Mesh"
+path="res://.import/plasma_gun.obj-4ff7451b992fd07ade41449c93e6debd.mesh"
+
+[deps]
+
+files=[ "res://.import/plasma_gun.obj-4ff7451b992fd07ade41449c93e6debd.mesh" ]
+
+source_file="res://3d_viewport/plasma_gun.obj"
+dest_files=[ "res://.import/plasma_gun.obj-4ff7451b992fd07ade41449c93e6debd.mesh", "res://.import/plasma_gun.obj-4ff7451b992fd07ade41449c93e6debd.mesh" ]
+
+[params]
+
+generate_tangents=true
+scale_mesh=Vector3( 0.5, 0.5, 0.5 )
+offset_mesh=Vector3( 0, 0, 0 )
+optimize_mesh=true

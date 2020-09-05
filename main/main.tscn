@@ -11,8 +11,8 @@
 [ext_resource path="res://material_layers/material_layer_property_panel.gd" type="Script" id=9]
 [ext_resource path="res://3d_viewport/environment/environment.tres" type="Environment" id=10]
 [ext_resource path="res://main/texture_list.gd" type="Script" id=11]
-[ext_resource path="res://3d_viewport/SciFiLargeBench.obj" type="ArrayMesh" id=13]
-[ext_resource path="res://3d_viewport/spatialmaterial.tres" type="Material" id=14]
+[ext_resource path="res://3d_viewport/plasma_gun.obj" type="ArrayMesh" id=12]
+[ext_resource path="res://3d_viewport/spatialmaterial.tres" type="Material" id=13]
 [ext_resource path="res://material_layers/masked_texture_blending_viewport/masked_texture_blending_viewport.tscn" type="PackedScene" id=15]
 [ext_resource path="res://material_layers/texture_channel_buttons/texture_channel_buttons.tscn" type="PackedScene" id=16]
 [ext_resource path="res://addons/property_panel/property_panel.tscn" type="PackedScene" id=17]
@@ -124,8 +124,8 @@ render_target_update_mode = 3
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.850238, -0.605874 )
 
 [node name="Model" type="MeshInstance" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
-mesh = ExtResource( 13 )
-material/0 = ExtResource( 14 )
+mesh = ExtResource( 12 )
+material/0 = ExtResource( 13 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
 environment = ExtResource( 10 )
@@ -224,6 +224,7 @@ margin_left = -244.0
 margin_top = -199.0
 margin_right = 244.0
 margin_bottom = 199.0
+rect_min_size = Vector2( 100, 35 )
 script = ExtResource( 7 )
 
 [node name="TextureTypeList" type="ItemList" parent="TextureCreationDialog"]
@@ -252,6 +253,7 @@ margin_left = -244.5
 margin_top = -143.5
 margin_right = 244.5
 margin_bottom = 143.5
+rect_min_size = Vector2( 100, 35 )
 access = 2
 filters = PoolStringArray( "*.tres;Material Painter File" )
 current_dir = "/home/jummit/Games/MaterialPainter/Layers"

@@ -11,7 +11,7 @@ class TextureProperty extends "res://addons/property_panel/properties.gd".Proper
 	func _init(_name : String).("changed", "selected_texture"):
 		name = _name
 	
-	func get_control() -> Control:
+	func _get_control() -> Control:
 		return preload("res://texture_option/texture_option.tscn").instance() as Control
 
 func load_material_layer(material_layer : MaterialLayer) -> void:

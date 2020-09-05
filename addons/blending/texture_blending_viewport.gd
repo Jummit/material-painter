@@ -13,6 +13,9 @@ const TextureUtils = preload("res://utils/texture_utils.gd")
 func blend(layers : Array, options : Array, result_size : Vector2) -> ImageTexture:
 	size = result_size
 	
+	while busy:
+		yield(VisualServer, "frame_post_draw")
+	
 	for layer in layers.size():
 		var layer_texture : Texture = layers[layer]
 		
@@ -21,17 +24,16 @@ func blend(layers : Array, options : Array, result_size : Vector2) -> ImageTextu
 		add_child(back_buffer)
 		
 		var texture_rect := TextureRect.new()
-		texture_rect.texture = layer_texture
+		texture_rect.expand = true
 		texture_rect.rect_size = result_size
-		texture_rect.expand = TextureRect.STRETCH_SCALE
+		texture_rect.texture = layer_texture
 		_setup_texture(texture_rect, options[layer])
 		back_buffer.add_child(texture_rect)
 	
 	render_target_update_mode = Viewport.UPDATE_ONCE
 	# todo: wait for frame update instead of process tick
 	busy = true
-	yield(get_tree(), "idle_frame")
-	yield(get_tree(), "idle_frame")
+	yield(VisualServer, "frame_post_draw")
 	busy = false
 	
 	# todo: this is apparently slow, find out if it is necessary
