@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Wood_albedo.png-6768e87a71decdbf3a35dea8ae551d4a.stex"
+path="res://.import/scratch_mask.png-2237c910ac0774a89a10f925fb1f6491.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://textures/Wood_albedo.png"
-dest_files=[ "res://.import/Wood_albedo.png-6768e87a71decdbf3a35dea8ae551d4a.stex" ]
+source_file="res://assets/textures/scratch_mask.png"
+dest_files=[ "res://.import/scratch_mask.png-2237c910ac0774a89a10f925fb1f6491.stex" ]
 
 [params]
 

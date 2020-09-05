@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/MetalFloor_albedo.png-41b707e2160d8179aefbb3b47b37fff2.stex"
+path="res://.import/MetalFloor_albedo.png-ebd090afd14415ce3c06efe583db15aa.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://textures/MetalFloor_albedo.png"
-dest_files=[ "res://.import/MetalFloor_albedo.png-41b707e2160d8179aefbb3b47b37fff2.stex" ]
+source_file="res://assets/textures/MetalFloor_albedo.png"
+dest_files=[ "res://.import/MetalFloor_albedo.png-ebd090afd14415ce3c06efe583db15aa.stex" ]
 
 [params]
 

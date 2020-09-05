@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Concrete_albedo.png-48ce2a971e95c4b43b8245b848961555.stex"
+path="res://.import/Concrete_albedo.png-d1ba4fa484c8055669225105d6bdffc1.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://textures/Concrete_albedo.png"
-dest_files=[ "res://.import/Concrete_albedo.png-48ce2a971e95c4b43b8245b848961555.stex" ]
+source_file="res://assets/textures/Concrete_albedo.png"
+dest_files=[ "res://.import/Concrete_albedo.png-d1ba4fa484c8055669225105d6bdffc1.stex" ]
 
 [params]
 

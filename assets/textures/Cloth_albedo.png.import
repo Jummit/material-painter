@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Blueprint_albedo.png-75baa2ccfd56511ec0a09e3896ecba59.stex"
+path="res://.import/Cloth_albedo.png-504eb6eb22acc3799fe071012d0efb04.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://textures/Blueprint_albedo.png"
-dest_files=[ "res://.import/Blueprint_albedo.png-75baa2ccfd56511ec0a09e3896ecba59.stex" ]
+source_file="res://assets/textures/Cloth_albedo.png"
+dest_files=[ "res://.import/Cloth_albedo.png-504eb6eb22acc3799fe071012d0efb04.stex" ]
 
 [params]
 

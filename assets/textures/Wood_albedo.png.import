@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/center.png-8baff720388a7686eb6bff1b8143640a.stex"
+path="res://.import/Wood_albedo.png-068315b76b55b79ac5f1ff1852fb0fc5.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://textures/center.png"
-dest_files=[ "res://.import/center.png-8baff720388a7686eb6bff1b8143640a.stex" ]
+source_file="res://assets/textures/Wood_albedo.png"
+dest_files=[ "res://.import/Wood_albedo.png-068315b76b55b79ac5f1ff1852fb0fc5.stex" ]
 
 [params]
 

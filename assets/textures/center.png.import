@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/Cloth_albedo.png-038e3141d52ad4a7309570b5d125e61a.stex"
+path="res://.import/center.png-8e0f6f0a11915c9dcb2e724bcd3af596.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://textures/Cloth_albedo.png"
-dest_files=[ "res://.import/Cloth_albedo.png-038e3141d52ad4a7309570b5d125e61a.stex" ]
+source_file="res://assets/textures/center.png"
+dest_files=[ "res://.import/center.png-8e0f6f0a11915c9dcb2e724bcd3af596.stex" ]
 
 [params]
 
