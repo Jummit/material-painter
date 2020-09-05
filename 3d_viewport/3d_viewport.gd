@@ -1,11 +1,11 @@
 extends ViewportContainer
 
-onready var model : MeshInstance = $Viewport/Model
-onready var main : Control = $"../../../../../.."
+signal painted
 
 const PaintTextureLayer = preload("res://texture_layers/types/paint_texture_layer.gd")
 
-signal painted
+onready var model : MeshInstance = $Viewport/Model
+onready var main : Control = $"../../../../../.."
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:

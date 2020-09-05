@@ -6,8 +6,9 @@ A `Viewport` for blending layer-based texture lists using shaders
 Creates a list of `TextureRect`s as children of `BackBufferCopy`s to make the `TEXTURE` variable in shaders work.
 """
 
-const TextureUtils = preload("res://utils/texture_utils.gd")
 var busy := false
+
+const TextureUtils = preload("res://utils/texture_utils.gd")
 
 func blend(layers : Array, options : Array, result_size : Vector2) -> ImageTexture:
 	size = result_size
@@ -23,7 +24,7 @@ func blend(layers : Array, options : Array, result_size : Vector2) -> ImageTextu
 		texture_rect.texture = layer_texture
 		texture_rect.rect_size = result_size
 		texture_rect.expand = TextureRect.STRETCH_SCALE
-		setup_texture(texture_rect, options[layer])
+		_setup_texture(texture_rect, options[layer])
 		back_buffer.add_child(texture_rect)
 	
 	render_target_update_mode = Viewport.UPDATE_ONCE
@@ -42,7 +43,7 @@ func blend(layers : Array, options : Array, result_size : Vector2) -> ImageTextu
 	return texture
 
 
-func setup_texture(texture_rect : TextureRect, options : Dictionary) -> void:
+func _setup_texture(texture_rect : TextureRect, options : Dictionary) -> void:
 	texture_rect.material = ShaderMaterial.new()
 	# todo: cache shaders
 	texture_rect.material.shader = load("res://addons/blending/blend_shaders/%s.shader" % options.blend_mode)

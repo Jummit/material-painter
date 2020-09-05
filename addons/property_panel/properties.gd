@@ -14,13 +14,13 @@ class Property:
 		changed_signal = _changed_signal
 		property_variable = _property_variable
 	
-	func get_control() -> Control:
+	func _get_control() -> Control:
 		return Control.new()
 	
-	func get_value(control : Control):
+	func _get_value(control : Control):
 		return control.get(property_variable)
 	
-	func set_value(control : Control, to) -> void:
+	func _set_value(control : Control, to) -> void:
 		control.set(property_variable, to)
 
 class EnumProperty extends Property:
@@ -30,31 +30,31 @@ class EnumProperty extends Property:
 		name = _name
 		choices = _choices
 	
-	func get_control() -> Control:
+	func _get_control() -> Control:
 		var option_button := OptionButton.new()
 		for choice in choices:
 			option_button.get_popup().add_item(choice)
 		option_button.selected = 0
 		return option_button
 	
-	func get_value(control : Control):
+	func _get_value(control : Control):
 		return choices[control.selected]
 	
-	func set_value(control : Control, to) -> void:
+	func _set_value(control : Control, to) -> void:
 		control.selected = (choices as Array).find(to)
 
 class StringProperty extends Property:
 	func _init(_name : String).("text_changed", "text"):
 		name = _name
 	
-	func get_control() -> Control:
+	func _get_control() -> Control:
 		return LineEdit.new()
 
 class BoolProperty extends Property:
 	func _init(_name : String).("toggled", "pressed"):
 		name = _name
 	
-	func get_control() -> Control:
+	func _get_control() -> Control:
 		return CheckBox.new()
 
 class RangeProperty extends Property:
@@ -64,7 +64,7 @@ class RangeProperty extends Property:
 	func _init(_step : float).("value_changed", "value"):
 		_step = step
 	
-	func get_control() -> Control:
+	func _get_control() -> Control:
 		var slider := HSlider.new()
 		slider.min_value = from
 		slider.max_value = to
@@ -88,12 +88,12 @@ class ColorProperty extends Property:
 	func _init(_name : String).("color_changed", "color"):
 		name = _name
 	
-	func get_control() -> Control:
+	func _get_control() -> Control:
 		return ColorPickerButton.new()
 
 class FilePathProperty extends Property:
 	func _init(_name : String).("changed", "path"):
 		name = _name
 	
-	func get_control() -> Control:
+	func _get_control() -> Control:
 		return load("res://addons/property_panel/path_picker_button/path_picker_button.tscn").instance() as Control

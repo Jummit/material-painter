@@ -7,10 +7,10 @@ Used in `TextureLayerTree` to show the result of a `TextureLayer`.
 It consists of a name and a big `TextureRect`.
 """
 
+const TextureLayer = preload("res://texture_layers/texture_layer.gd")
+
 onready var texture_rect : TextureRect = $VBoxContainer/TextureRect
 onready var name_label : Label = $VBoxContainer/Name
-
-const TextureLayer = preload("res://texture_layers/texture_layer.gd")
 
 func setup(texture_layer : TextureLayer) -> void:
 	texture_rect.texture = texture_layer.texture

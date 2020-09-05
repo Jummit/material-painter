@@ -7,19 +7,19 @@ Contains a `name_label` and the `property_control` the `property` returns.
 Emmits the `property_changed` signal when the `property_control` emitted the `changed_signal` the `property` specified.
 """
 
-onready var name_label : Label = $Name
-
-const Property = preload("res://addons/property_panel/properties.gd").Property
-
 signal property_changed
 
 var property : Property
 var property_control : Control
 
+const Property = preload("res://addons/property_panel/properties.gd").Property
+
+onready var name_label : Label = $Name
+
 func setup(_property : Property) -> void:
 	property = _property
 	name_label.text = property.name
-	property_control = property.get_control()
+	property_control = property._get_control()
 	property_control.size_flags_horizontal = SIZE_EXPAND_FILL
 	property_control.size_flags_vertical = SIZE_EXPAND_FILL
 	# this is a little hacky; since the argument count
@@ -37,11 +37,11 @@ func setup(_property : Property) -> void:
 
 
 func get_value():
-	return property.get_value(property_control)
+	return property._get_value(property_control)
 
 
 func set_value(to) -> void:
-	property.set_value(property_control, to)
+	property._set_value(property_control, to)
 
 
 func _on_PropertyControl_changed(_a, _b, _c, _d, _e):

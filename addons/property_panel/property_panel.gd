@@ -8,11 +8,11 @@ The resulting values can be retrieved using `get_property_value` and `get_proper
 A `Dictionary` similar to the result of `get_property_values` can be fed to `load_values` to update the values of the `PropertyContainers`s.
 """
 
-onready var properties_container : VBoxContainer = $Properties
-
 signal values_changed
 
 var properties := [] setget set_properties
+
+onready var properties_container : VBoxContainer = $Properties
 
 func _ready():
 	setup_property_containers()

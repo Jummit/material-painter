@@ -1,9 +1,9 @@
 extends Node
 
+var textures := []
+
 const LayerMaterial = preload("res://material_layers/layer_material.gd")
 const LayerTexture = preload("res://texture_layers/layer_texture.gd")
-
-var textures := []
 
 func load_textures_from_layer_material(layer_material : LayerMaterial) -> void:
 	textures.clear()

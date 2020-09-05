@@ -7,6 +7,22 @@ It handles most callbacks and updates the results of the layer stacks when somet
 Keeps track of the currently editing objects and manages the menu bar, saving and loading.
 """
 
+var current_file : SaveFile
+
+var editing_layer_material : LayerMaterial
+var editing_layer_texture : LayerTexture
+var editing_texture_layer : TextureLayer
+var editing_material_layer : MaterialLayer
+
+var result_size := Vector2(64, 64)
+
+const SaveFile = preload("res://main/save_file.gd")
+const MaterialLayer = preload("res://material_layers/material_layer.gd")
+const LayerMaterial = preload("res://material_layers/layer_material.gd")
+const LayerTexture = preload("res://texture_layers/layer_texture.gd")
+const TextureLayer = preload("res://texture_layers/texture_layer.gd")
+const TextureOption = preload("res://texture_option/texture_option.gd")
+
 onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/TopButtons/FileMenuButton
 onready var file_dialog : FileDialog = $FileDialog
 onready var material_layer_tree : Tree = $VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree
@@ -17,22 +33,6 @@ onready var texture_blending_viewport : Viewport = $TextureBlendingViewport
 onready var masked_texture_blending_viewport : Viewport = $MaskedTextureBlendingViewport
 onready var normal_map_generation_viewport : Viewport = $NormalMapGenerationViewport
 onready var model : MeshInstance = $"VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport/Model"
-
-const SaveFile = preload("res://main/save_file.gd")
-const MaterialLayer = preload("res://material_layers/material_layer.gd")
-const LayerMaterial = preload("res://material_layers/layer_material.gd")
-const LayerTexture = preload("res://texture_layers/layer_texture.gd")
-const TextureLayer = preload("res://texture_layers/texture_layer.gd")
-const TextureOption = preload("res://texture_option/texture_option.gd")
-
-var current_file : SaveFile
-
-var editing_layer_material : LayerMaterial
-var editing_layer_texture : LayerTexture
-var editing_texture_layer : TextureLayer
-var editing_material_layer : MaterialLayer
-
-var result_size := Vector2(64, 64)
 
 func _ready():
 	file_menu_button.get_popup().connect("id_pressed", self, "_on_FileMenu_id_pressed")
@@ -109,6 +109,7 @@ func add_texture_layer(texture_layer : TextureLayer) -> void:
 	editing_layer_texture.layers.append(texture_layer)
 	texture_layer_tree.update_tree()
 	texture_layer_tree.update_icons()
+	generate_layer_texture_result(editing_layer_texture)
 	generate_layer_material_textures(editing_layer_material)
 
 
@@ -152,9 +153,7 @@ func _on_TextureOption_selected(texture_option : TextureOption):
 
 
 func _on_TextureCreationDialog_texture_creation_confirmed(texture_layer : TextureLayer) -> void:
-	editing_layer_texture.layers.append(texture_layer)
-	texture_layer_tree.update_tree()
-	texture_layer_tree.update_icons()
+	add_texture_layer(texture_layer)
 
 
 func _on_TextureLayerTree_layer_selected(texture_layer : TextureLayer) -> void:
@@ -202,8 +201,10 @@ func _on_TextureChannelButtons_changed() -> void:
 func _on_3DViewport_painted() -> void:
 	generate_layer_texture_result(editing_layer_texture)
 	generate_layer_material_textures(editing_layer_material)
+	texture_layer_tree.update_icons()
 
 
 func _on_2DViewport_painted() -> void:
 	generate_layer_texture_result(editing_layer_texture)
 	generate_layer_material_textures(editing_layer_material)
+	texture_layer_tree.update_icons()

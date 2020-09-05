@@ -4,9 +4,9 @@ extends "res://addons/arrangable_tree/arrangable_tree.gd"
 The `ArrangableTree` that represents the layers of the selected MaterialLayer
 """
 
-const MaterialLayer = preload("res://material_layers/material_layer.gd")
-
 signal layer_selected(layer)
+
+const MaterialLayer = preload("res://material_layers/material_layer.gd")
 
 func setup_item(tree_item : TreeItem, item : MaterialLayer) -> void:
 	tree_item.set_text(0, item.name)

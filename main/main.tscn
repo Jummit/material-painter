@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://main/2d_viewport.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
@@ -11,7 +11,6 @@
 [ext_resource path="res://material_layers/material_layer_property_panel.gd" type="Script" id=9]
 [ext_resource path="res://3d_viewport/environment/environment.tres" type="Environment" id=10]
 [ext_resource path="res://main/texture_list.gd" type="Script" id=11]
-[ext_resource path="res://texture_layers/texture_layer_panel.gd" type="Script" id=12]
 [ext_resource path="res://3d_viewport/SciFiLargeBench.obj" type="ArrayMesh" id=13]
 [ext_resource path="res://3d_viewport/spatialmaterial.tres" type="Material" id=14]
 [ext_resource path="res://material_layers/masked_texture_blending_viewport/masked_texture_blending_viewport.tscn" type="PackedScene" id=15]
@@ -197,7 +196,6 @@ margin_left = 810.0
 margin_right = 1010.0
 margin_bottom = 548.0
 rect_min_size = Vector2( 200, 0 )
-script = ExtResource( 12 )
 
 [node name="AddTextureLayerButton" type="Button" parent="VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel"]
 margin_right = 200.0

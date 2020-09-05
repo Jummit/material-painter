@@ -6,17 +6,17 @@ A dropdown for choosing a texture
 Loads textures from the `TextureManager`. Creation of new textures and clearing of the texture is supported.
 """
 
+signal selected
+signal changed
+
+const LayerTexture = preload("res://texture_layers/layer_texture.gd")
+const BitmapTextureLayer = preload("res://texture_layers/types/bitmap_texture_layer.gd")
+
 onready var clear_button : Button = $HBoxContainer/ClearButton
 onready var texture_popup_menu : MenuButton = $HBoxContainer/TexturePopupMenu
 onready var new_button : Button = $HBoxContainer/NewButton
 onready var name_edit : LineEdit = $HBoxContainer/NameEdit
 onready var texture_popup : PopupMenu = texture_popup_menu.get_popup()
-
-const LayerTexture = preload("res://texture_layers/layer_texture.gd")
-const BitmapTextureLayer = preload("res://texture_layers/types/bitmap_texture_layer.gd")
-
-signal selected
-signal changed
 
 var selected_texture : LayerTexture setget set_selected_texture
 

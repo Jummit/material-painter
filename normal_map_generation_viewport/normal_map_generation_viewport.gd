@@ -4,9 +4,9 @@ extends Viewport
 A `Viewport` to generate a normal map from a grayscale heightmap
 """
 
-onready var height_map_texture_sprite : Sprite = $HeightMapTextureSprite
-
 const TextureUtils = preload("res://utils/texture_utils.gd")
+
+onready var height_map_texture_sprite : Sprite = $HeightMapTextureSprite
 
 func get_normal_map(height_map : ImageTexture) -> ImageTexture:
 	size = height_map.get_size()

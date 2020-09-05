@@ -5,15 +5,19 @@ The `ArrangableTree` that represents the layers of the selected LayerTexture
 
 The most left column is used for preview icons.
 Hovering over an item shows a `TextureToolTip`.
+Droping textures onto the `TextureLayerPanel` creates a `BitmapTextureLayer`.
 """
 
 signal layer_selected(layer)
 
-const LayerTexture = preload("res://texture_layers/layer_texture.gd")
-const TextureLayer = preload("res://texture_layers/texture_layer.gd")
-
 const ICON_COLUMN := 0
 const NAME_COLUMN := 1
+
+const LayerTexture = preload("res://texture_layers/layer_texture.gd")
+const TextureLayer = preload("res://texture_layers/texture_layer.gd")
+const BitmapTextureLayer = preload("res://texture_layers/types/bitmap_texture_layer.gd")
+
+onready var main := $"../../../../.."
 
 func _ready():
 	columns = 2
@@ -43,6 +47,16 @@ func update_icons() -> void:
 		tree_item.set_icon(ICON_COLUMN, icon)
 		tree_item.set_icon_max_width(ICON_COLUMN, 16)
 		tree_item = tree_item.get_next_visible()
+
+
+func can_drop_data(_position : Vector2, data) -> bool:
+	return data is String
+
+
+func drop_data(_position : Vector2, data : String) -> void:
+	var texture_layer := BitmapTextureLayer.new(data.get_file().get_basename())
+	texture_layer.properties.image_path = data
+	main.add_texture_layer(texture_layer)
 
 
 func _make_custom_tooltip(_for_text : String):

@@ -4,12 +4,12 @@ extends GridContainer
 Buttons used to specify the enabled channels of the selected MaterialLayer
 """
 
-onready var material_layer_tree : Tree = $"../MaterialLayerTree"
+signal changed
 
 const LayerTexture = preload("res://texture_layers/layer_texture.gd")
 const MaterialLayer = preload("res://material_layers/material_layer.gd")
 
-signal changed
+onready var material_layer_tree : Tree = $"../MaterialLayerTree"
 
 func _ready():
 	for type in Globals.TEXTURE_MAP_TYPES:
