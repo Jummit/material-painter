@@ -50,8 +50,10 @@ func get_property_values() -> Dictionary:
 
 
 func load_values(values : Dictionary) -> void:
+	set_block_signals(true)
 	for value in values.keys():
 		properties_container.get_node(value).set_value(values[value])
+	set_block_signals(false)
 
 
 func _on_Property_changed():
