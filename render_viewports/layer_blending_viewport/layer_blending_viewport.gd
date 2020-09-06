@@ -160,6 +160,7 @@ void fragment() {
 """
 
 const BLEND_TEMPLATE := "vec4 {result} = blend{mode}({a}, {b}, {opacity})"
+const MASKED_BLEND_TEMPLATE := "vec4 {result} = blend{mode}({a}, {b}, texture({opacity}, UV))"
 
 """
 {result} = {0};
@@ -175,6 +176,7 @@ class Layer:
 	var uniform_values : Array
 	var blend_type : String
 	var opacity : float
+	var mask : Texture
 
 
 func blend(layers : Array, result_size : Vector2) -> Texture:
@@ -195,6 +197,10 @@ static func setup_shader_vars(material : Material, layers : Array) -> void:
 	var uniform_count := 0
 	for layer_num in layers.size():
 		var layer := layers[layer_num] as Layer
+		
+		if layer.mask:
+			material.set_shader_param(mask_var(layer_num), layer.mask)
+		
 		for uniform in layer.uniform_types.size():
 			material.set_shader_param(
 					uniform_var(uniform_count),
@@ -214,6 +220,10 @@ static func generate_blend_shader(layers : Array) -> String:
 		var prepared_shader := layer.code.format({
 			result = result_var(layer_num)
 		})
+		
+		if layer.mask:
+			uniforms += "uniform texture_sampler %s;\n" % mask_var(layer_num)
+		
 		for uniform in layer.uniform_types.size():
 			uniforms += "uniform %s %s;\n" % [
 					layer.uniform_types[uniform],
@@ -225,12 +235,14 @@ static func generate_blend_shader(layers : Array) -> String:
 		
 		preparing_code += prepared_shader + "\n"
 		
-		blending_code += BLEND_TEMPLATE.format({
-			result = blend_result_var(blend_result_count + 1),
-			a = blend_result_var(blend_result_count),
-			b = result_var(layer_num),
-			opacity = layer.opacity,
-		}) + "\n"
+		var template := (MASKED_BLEND_TEMPLATE if layer.mask else BLEND_TEMPLATE)
+		
+		blending_code += template.format({
+				result = blend_result_var(blend_result_count + 1),
+				a = blend_result_var(blend_result_count),
+				b = result_var(layer_num),
+				opacity = layer.mask if layer.mask else layer.opacity,
+			}) + "\n"
 		
 		blend_result_count += 1
 	
@@ -255,3 +267,7 @@ static func result_var(num : int) -> String:
 
 static func blend_result_var(num : int) -> String:
 	return "blend_result_%s" % num
+
+
+static func mask_var(num : int) -> String:
+	return "mask_%s" % num
