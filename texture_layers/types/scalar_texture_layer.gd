@@ -11,7 +11,7 @@ func get_properties() -> Array:
 
 func _get_as_shader_layer() -> Layer:
 	var layer := ._get_as_shader_layer()
-	layer.code = "{result} = vec4({0}, {0}, {0}, 1.0);"
+	layer.code = "vec3({0}, {0}, {0})"
 	layer.uniform_types = ["float"]
 	layer.uniform_values = [properties.value]
 	return layer

@@ -1,7 +1,6 @@
 extends "res://addons/texture_render_viewport/texture_render_viewport.gd"
 
-const BLEND_SHADERS := """
-vec3 blendmultiplyf(vec3 base, vec3 blend) {
+const BLEND_SHADERS := """vec3 blendmultiplyf(vec3 base, vec3 blend) {
 	return base * blend;
 }
 
@@ -147,20 +146,17 @@ vec3 blendoverlay(vec3 base, vec3 blend, float opacity) {
 const SHADER_TEMPLATE := """shader_type canvas_item;
 
 {uniforms}
-
 {blend_shaders}
-
 void fragment() {
 {preparing_code}
-	
 {blending}
-	
-	COLOR = {result};
+	COLOR = vec4({result}, 1.0);
 }
 """
 
-const BLEND_TEMPLATE := "vec4 {result} = blend{mode}({a}, {b}, {opacity})"
-const MASKED_BLEND_TEMPLATE := "vec4 {result} = blend{mode}({a}, {b}, texture({opacity}, UV))"
+const BLEND_TEMPLATE := "	vec3 {result} = blend{mode}({a}, {b}, {opacity});"
+const MASKED_BLEND_TEMPLATE := "	vec3 {result} = blend{mode}({a}, {b}, texture({opacity}, UV));"
+const RESULT_TEMPLATE := "	vec3 {result} = {code};"
 
 """
 {result} = {0};
@@ -174,13 +170,13 @@ class Layer:
 	var code : String
 	var uniform_types : PoolStringArray
 	var uniform_values : Array
-	var blend_type : String
-	var opacity : float
+# warning-ignore:unused_class_variable
+	var blend_mode := "normal"
+	var opacity := 1.0
 	var mask : Texture
 
-
 func blend(layers : Array, result_size : Vector2) -> Texture:
-	var shader = Shader.new()
+	var shader := Shader.new()
 	shader.code = generate_blend_shader(layers)
 	var material := ShaderMaterial.new()
 	material.shader = shader
@@ -204,7 +200,7 @@ static func setup_shader_vars(material : Material, layers : Array) -> void:
 		for uniform in layer.uniform_types.size():
 			material.set_shader_param(
 					uniform_var(uniform_count),
-					layer.uniform_values[uniform_count])
+					layer.uniform_values[uniform])
 			uniform_count += 1
 
 
@@ -217,8 +213,9 @@ static func generate_blend_shader(layers : Array) -> String:
 	
 	for layer_num in layers.size():
 		var layer := layers[layer_num] as Layer
-		var prepared_shader := layer.code.format({
-			result = result_var(layer_num)
+		var prepared_shader := RESULT_TEMPLATE.format({
+			result = result_var(layer_num),
+			code = layer.code,
 		})
 		
 		if layer.mask:
@@ -228,30 +225,45 @@ static func generate_blend_shader(layers : Array) -> String:
 			uniforms += "uniform %s %s;\n" % [
 					layer.uniform_types[uniform],
 					uniform_var(uniform_count)]
-			prepared_shader.replace(
+			prepared_shader = prepared_shader.replace(
 					"{%s}" % uniform,
 					uniform_var(uniform_count))
 			uniform_count += 1
 		
 		preparing_code += prepared_shader + "\n"
 		
-		var template := (MASKED_BLEND_TEMPLATE if layer.mask else BLEND_TEMPLATE)
-		
-		blending_code += template.format({
-				result = blend_result_var(blend_result_count + 1),
-				a = blend_result_var(blend_result_count),
-				b = result_var(layer_num),
-				opacity = layer.mask if layer.mask else layer.opacity,
-			}) + "\n"
-		
-		blend_result_count += 1
+		if layer_num > 0:
+			var template := (MASKED_BLEND_TEMPLATE if layer.mask else BLEND_TEMPLATE)
+			
+			print(layer.opacity)
+			print("%s" % layer.opacity)
+			print("{opacity}".format({opacity = layer.opacity}))
+			blending_code += template.format({
+					result = blend_result_var(blend_result_count + 1),
+					a = result_var(0) if layer_num == 1 else blend_result_var(blend_result_count),
+					b = result_var(layer_num),
+					mode = layer.blend_mode,
+	# warning-ignore:incompatible_ternary
+	# warning-ignore:incompatible_ternary
+					opacity = layer.mask if layer.mask else layer.opacity,
+				}) + "\n"
+			print(template.format({
+					result = blend_result_var(blend_result_count + 1),
+					a = result_var(0) if layer_num == 1 else blend_result_var(blend_result_count),
+					b = result_var(layer_num),
+					mode = layer.blend_mode,
+	# warning-ignore:incompatible_ternary
+	# warning-ignore:incompatible_ternary
+					opacity = layer.mask if layer.mask else layer.opacity,
+				}))
+			blend_result_count += 1
 	
-	var shader_code := BLEND_TEMPLATE.format({
+	var shader_code := SHADER_TEMPLATE.format({
 		uniforms = uniforms,
 		blend_shaders = BLEND_SHADERS,
 		preparing_code = preparing_code,
 		blending = blending_code,
-		result = blend_result_var(blend_result_count),
+		result = blend_result_var(blend_result_count) if layers.size() > 1 else result_var(0),
 	})
 	
 	return shader_code

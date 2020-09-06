@@ -10,8 +10,6 @@ onready var texture_type_list : ItemList = $"TextureTypeList"
 
 const CHOICES := [
 	preload("res://texture_layers/types/bitmap_texture_layer.gd"),
-	preload("res://texture_layers/types/paint_texture_layer.gd"),
-	preload("res://texture_layers/types/noise_texture_layer.gd"),
 	preload("res://texture_layers/types/color_texture_layer.gd"),
 	preload("res://texture_layers/types/scalar_texture_layer.gd")
 ]

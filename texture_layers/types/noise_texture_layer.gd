@@ -17,14 +17,3 @@ func get_properties() -> Array:
 			Properties.FloatProperty.new("persistence", 0.0, 1.0),
 			Properties.FloatProperty.new("lacunarity", 0.1, 4.0),
 		]
-
-
-func generate_texture() -> void:
-	var noise := OpenSimplexNoise.new()
-	for property in properties:
-		if property in noise:
-			noise.set(property, properties[property])
-	texture = NoiseTexture.new()
-	texture.width = int(size.x)
-	texture.height = int(size.y)
-	texture.noise = noise

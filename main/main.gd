@@ -14,6 +14,7 @@ var editing_layer_texture : LayerTexture
 var editing_texture_layer : TextureLayer
 var editing_material_layer : MaterialLayer
 
+#var result_size := Vector2(204, 204)
 var result_size := Vector2(2048, 2048)
 
 const SaveFile = preload("res://main/save_file.gd")
@@ -22,6 +23,7 @@ const LayerMaterial = preload("res://material_layers/layer_material.gd")
 const LayerTexture = preload("res://texture_layers/layer_texture.gd")
 const TextureLayer = preload("res://texture_layers/texture_layer.gd")
 const TextureOption = preload("res://texture_option/texture_option.gd")
+const Layer = preload("res://render_viewports/layer_blending_viewport/layer_blending_viewport.gd").Layer
 
 onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/TopButtons/FileMenuButton
 onready var file_dialog : FileDialog = $FileDialog
@@ -29,8 +31,7 @@ onready var material_layer_tree : Tree = $VBoxContainer/PanelContainer/LayerCont
 onready var material_layer_property_panel : Panel = $VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerPropertyPanel
 onready var texture_layer_property_panel : Panel = $VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerPropertyPanel
 onready var texture_layer_tree : Tree = $VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree
-onready var texture_blending_viewport : Viewport = $TextureBlendingViewport
-onready var masked_texture_blending_viewport : Viewport = $MaskedTextureBlendingViewport
+onready var layer_blending_viewport : Viewport = $LayerBlendingViewport
 onready var normal_map_generation_viewport : Viewport = $NormalMapGenerationViewport
 onready var model : MeshInstance = $"VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport/Model"
 
@@ -48,44 +49,41 @@ func generate_layer_material_textures(layer_material : LayerMaterial) -> void:
 
 func generate_layer_material_channel_texture(layer_material : LayerMaterial, type : String) -> void:
 	var layers := []
-	var options := []
 	
 	for layer in layer_material.layers:
-		# todo: add height instead of masking it
-		layer = layer as MaterialLayer
-		if layer.properties.has(type) and layer.properties[type]:
-			if not layer.properties[type].result:
-				yield(generate_layer_texture_result(layer.properties[type]), "completed")
-			if layer.properties.mask and not layer.properties.mask.result:
-				yield(generate_layer_texture_result(layer.properties.mask), "completed")
-			
-			layers.append(layer.properties[type].result)
-			options.append({
-				mask = null if not layer.properties.mask else layer.properties.mask.result
-			})
+		if not (type in layer.properties and layer.properties[type]):
+			continue
+		var shader_layer := Layer.new()
+		shader_layer.code = "texture({0}, UV).rgb"
+		if "mask" in layer.properties and layer.properties.mask:
+			shader_layer.mask = layer.properties.mask.result
+		shader_layer.uniform_types = ["sampler2D"]
+		shader_layer.uniform_values = [layer.properties[type].result]
+		layers.append(shader_layer)
 	
-	if not layers.empty():
-		var result : ImageTexture = yield(masked_texture_blending_viewport.blend(layers, options, result_size), "completed")
+	if layers.empty():
+		return
+	
+	var result : ImageTexture = yield(layer_blending_viewport.blend(layers, result_size), "completed")
+	if type == "height":
+		var normal_texture : ImageTexture = yield(normal_map_generation_viewport.get_normal_map(result), "completed")
+		model.get_surface_material(0).normal_texture = normal_texture
+		layer_material.results.normal = normal_texture
+	else:
+		model.get_surface_material(0).set(type + "_texture", result)
 		layer_material.results[type] = result
-		if type == "height":
-			var normal_texture : ImageTexture = yield(normal_map_generation_viewport.get_normal_map(result), "completed")
-			model.get_surface_material(0).normal_texture = normal_texture
-			layer_material.results.normal = normal_texture
-		else:
-			model.get_surface_material(0).set(type + "_texture", result)
+
+
+func generate_texture_layer_result(texture_layer : TextureLayer) -> void:
+	texture_layer.result = yield(layer_blending_viewport.blend(
+			[texture_layer._get_as_shader_layer()], result_size), "completed")
 
 
 func generate_layer_texture_result(layer_texture : LayerTexture) -> void:
 	var layers := []
-	var options := []
-	
 	for layer in layer_texture.layers:
-		layer = layer as TextureLayer
-		if layer.texture:
-			layers.append(layer.texture)
-			options.append(layer.properties)
-	
-	layer_texture.result = yield(texture_blending_viewport.blend(layers, options, result_size), "completed")
+		layers.append(layer._get_as_shader_layer())
+	layer_texture.result = yield(layer_blending_viewport.blend(layers, result_size), "completed")
 
 
 func load_file(save_file : SaveFile) -> void:
@@ -105,7 +103,7 @@ func export_textures(to_folder : String, layer_material : LayerMaterial) -> void
 
 
 func add_texture_layer(texture_layer : TextureLayer) -> void:
-	texture_layer.generate_texture()
+	generate_texture_layer_result(texture_layer)
 	editing_layer_texture.layers.append(texture_layer)
 	texture_layer_tree.update_tree()
 	texture_layer_tree.update_icons()
@@ -168,7 +166,7 @@ func _on_TextureLayerTree_nothing_selected() -> void:
 
 func _on_TextureLayerPropertyPanel_values_changed() -> void:
 	editing_texture_layer.properties = texture_layer_property_panel.get_property_values()
-	editing_texture_layer.generate_texture()
+	generate_texture_layer_result(editing_texture_layer)
 	texture_layer_tree.update_icons()
 	generate_layer_texture_result(editing_layer_texture)
 	generate_layer_material_textures(editing_layer_material)

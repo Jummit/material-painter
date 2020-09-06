@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=2]
+[gd_scene load_steps=21 format=2]
 
 [ext_resource path="res://main/2d_viewport.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
@@ -13,14 +13,12 @@
 [ext_resource path="res://main/asset_browser.gd" type="Script" id=11]
 [ext_resource path="res://3d_viewport/plasma_gun.obj" type="ArrayMesh" id=12]
 [ext_resource path="res://3d_viewport/spatialmaterial.tres" type="Material" id=13]
+[ext_resource path="res://render_viewports/layer_blending_viewport/layer_blending_viewport.tscn" type="PackedScene" id=14]
 [ext_resource path="res://material_layers/texture_channel_buttons/texture_channel_buttons.tscn" type="PackedScene" id=16]
 [ext_resource path="res://addons/property_panel/property_panel.tscn" type="PackedScene" id=17]
 [ext_resource path="res://addons/arrangable_tree/arrangable_tree.tscn" type="PackedScene" id=18]
 [ext_resource path="res://3d_viewport/rotating_camera/rotating_camera.tscn" type="PackedScene" id=19]
 [ext_resource path="res://3d_viewport/3d_viewport.gd" type="Script" id=20]
-
-
-
 
 [sub_resource type="ImageTexture" id=1]
 
@@ -232,7 +230,7 @@ margin_left = -236.0
 margin_top = -191.0
 margin_right = 236.0
 margin_bottom = 163.0
-items = [ "Bitmap", ExtResource( 2 ), false, "Paint", ExtResource( 2 ), false, "Noise", ExtResource( 2 ), false, "Color", ExtResource( 2 ), false, "Scalar", ExtResource( 2 ), false ]
+items = [ "Bitmap", ExtResource( 2 ), false, "Color", ExtResource( 2 ), false, "Scalar", ExtResource( 2 ), false ]
 max_columns = 2
 same_column_width = true
 icon_mode = 0
@@ -257,6 +255,8 @@ current_path = "/home/jummit/Games/MaterialPainter/Layers/"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="LayerBlendingViewport" parent="." instance=ExtResource( 14 )]
 
 [node name="NormalMapGenerationViewport" parent="." instance=ExtResource( 8 )]
 [connection signal="painted" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport" to="." method="_on_3DViewport_painted"]

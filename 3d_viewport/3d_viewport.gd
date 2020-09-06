@@ -2,14 +2,14 @@ extends ViewportContainer
 
 signal painted
 
-const PaintTextureLayer = preload("res://texture_layers/types/paint_texture_layer.gd")
+const BitmapTextureLayer = preload("res://texture_layers/types/bitmap_texture_layer.gd")
 
 onready var model : MeshInstance = $Viewport/Model
 onready var main : Control = $"../../../../../.."
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
-		if main.editing_texture_layer is PaintTextureLayer:
+		if main.editing_texture_layer is BitmapTextureLayer:
 			var camera : Camera = $Viewport.get_camera()
 			var camera_world_position := camera.project_position(event.position, 0.0)
 			var clicked_world_position := camera.project_position(event.position, 1000.0)

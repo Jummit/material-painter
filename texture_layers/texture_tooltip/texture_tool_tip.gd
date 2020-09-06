@@ -13,5 +13,5 @@ onready var texture_rect : TextureRect = $VBoxContainer/TextureRect
 onready var name_label : Label = $VBoxContainer/Name
 
 func setup(texture_layer : TextureLayer) -> void:
-	texture_rect.texture = texture_layer.texture
+	texture_rect.texture = texture_layer.result
 	name_label.text = texture_layer.name

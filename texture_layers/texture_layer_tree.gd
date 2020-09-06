@@ -43,7 +43,7 @@ func update_icons() -> void:
 	var tree_item := get_root().get_children()
 	while tree_item:
 		var texture_layer : TextureLayer = tree_item.get_metadata(0)
-		var icon := texture_layer.texture
+		var icon := texture_layer.result
 		tree_item.set_icon(ICON_COLUMN, icon)
 		tree_item.set_icon_max_width(ICON_COLUMN, 16)
 		tree_item = tree_item.get_next_visible()
