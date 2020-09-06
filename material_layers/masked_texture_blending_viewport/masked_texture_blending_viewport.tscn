@@ -1,7 +1,0 @@
-[gd_scene load_steps=3 format=2]
-
-[ext_resource path="res://addons/blending/texture_blending_viewport.tscn" type="PackedScene" id=1]
-[ext_resource path="res://material_layers/masked_texture_blending_viewport/masked_texture_blending_viewport.gd" type="Script" id=2]
-
-[node name="MaskedTextureBlendingViewport" instance=ExtResource( 1 )]
-script = ExtResource( 2 )
