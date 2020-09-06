@@ -14,7 +14,7 @@ var editing_layer_texture : LayerTexture
 var editing_texture_layer : TextureLayer
 var editing_material_layer : MaterialLayer
 
-var result_size := Vector2(64, 64)
+var result_size := Vector2(2048, 2048)
 
 const SaveFile = preload("res://main/save_file.gd")
 const MaterialLayer = preload("res://material_layers/material_layer.gd")

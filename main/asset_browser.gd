@@ -1,7 +1,7 @@
 extends TabContainer
 
 """
-A list of texture that can be drag and droped onto different UI elements
+A list of assets that can be drag and dropped onto different UI elements
 """
 
 var ASSET_TYPES := [
@@ -58,9 +58,9 @@ func load_assets(asset_type : AssetType) -> void:
 		var file := folder.plus_file(file_name)
 		if ResourceLoader.exists(file):
 			var asset := load(file)
-			var id := item_list.get_item_count() - 1
+			var id := item_list.get_item_count()
 			item_list.add_item(file.get_file().get_basename(), asset_type._generate_preview(asset))
-			item_list.set_item_metadata(id, asset)
+			item_list.set_item_metadata(id, {type = asset_type.name, asset = asset})
 
 
 func get_drag_data(position : Vector2):
@@ -72,4 +72,4 @@ func get_drag_data(position : Vector2):
 		preview.expand = true
 		preview.texture = item_list.get_item_icon(item)
 		set_drag_preview(preview)
-		return {type = "asset", asset = item_list.get_item_metadata(item)}
+		return item_list.get_item_metadata(item)
