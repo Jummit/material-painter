@@ -18,6 +18,7 @@ export var size := Vector2(256, 256)
 var texture : Texture setget , get_texture
 
 const Properties = preload("res://addons/property_panel/properties.gd")
+const Layer = preload("res://render_viewports/layer_blending_viewport/layer_blending_viewport.gd").Layer
 
 func _init():
 	properties = {
@@ -40,3 +41,10 @@ func get_texture() -> Texture:
 
 func generate_texture() -> void:
 	pass
+
+
+func _get_as_shader_layer() -> Layer:
+	var layer := Layer.new()
+	layer.blend_mode = properties.blend_mode
+	layer.opacity = properties.opacity
+	return layer

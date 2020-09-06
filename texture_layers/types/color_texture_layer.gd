@@ -9,9 +9,9 @@ func get_properties() -> Array:
 	return .get_properties() + [Properties.ColorProperty.new("color")]
 
 
-func generate_texture() -> void:
-	var image := Image.new()
-	image.create(int(size.x), int(size.y), false, Image.FORMAT_RGB8)
-	image.fill(properties.color)
-	texture = ImageTexture.new()
-	texture.create_from_image(image)
+func _get_as_shader_layer() -> Layer:
+	var layer := ._get_as_shader_layer()
+	layer.code = "{result} = {0};"
+	layer.uniform_types = ["vec4"]
+	layer.uniform_values = [properties.color]
+	return layer
