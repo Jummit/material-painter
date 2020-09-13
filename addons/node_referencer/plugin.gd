@@ -44,11 +44,13 @@ static func search_node_that_uses(root : Node, script : Script) -> Node:
 
 
 static func get_node_reference(to_node : Node, node_path : NodePath) -> String:
-#	return "onready var %s : %s = $\"%s\"" % [
+	var path := String(node_path)
+	if "." in path:
+		path = '"%s"' % path
 	return "onready var %s : %s = $%s" % [
 			pascal_to_snake_case(to_node.name),
 			to_node.get_class(),
-			node_path]
+			path]
 
 
 static func snake_to_pascal_case(string : String) -> String:

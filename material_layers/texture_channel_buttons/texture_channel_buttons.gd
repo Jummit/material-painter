@@ -1,7 +1,7 @@
 extends GridContainer
 
 """
-Buttons used to specify the enabled channels of the selected MaterialLayer
+Buttons used to specify the enabled channels of the selected `MaterialLayer`
 """
 
 signal changed
@@ -9,7 +9,7 @@ signal changed
 const LayerTexture = preload("res://texture_layers/layer_texture.gd")
 const MaterialLayer = preload("res://material_layers/material_layer.gd")
 
-onready var material_layer_tree : Tree = $"../MaterialLayerTree"
+onready var layer_tree : Tree = $"../LayerTree"
 
 func _ready():
 	for type in Globals.TEXTURE_MAP_TYPES:
@@ -22,16 +22,17 @@ func _ready():
 
 
 func _on_Button_toggled(button_pressed : bool, type : String):
-	var properties : Dictionary = material_layer_tree.get_selected().get_metadata(0).properties
+	var properties : Dictionary = layer_tree.get_selected().get_meta("layer").properties
 	if button_pressed:
 		if not properties.has(type):
-			properties[type] = null
+			properties[type] = LayerTexture.new()
 	else:
 		properties.erase(type)
 	emit_signal("changed")
 
 
-func _on_MaterialLayerTree_layer_selected(material_layer : MaterialLayer):
+func _on_LayerTree_material_layer_selected(material_layer : MaterialLayer) -> void:
+	show()
 	var properties : Dictionary = material_layer.properties
 	for button in get_children():
 		# block `toggled` signals to avoid emitting the `changed` signal

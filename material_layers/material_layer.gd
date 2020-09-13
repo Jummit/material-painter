@@ -10,8 +10,9 @@ and can hold a `LayerTexture` for each channel (for example albedo, height, etc.
 # warning-ignore-all:unused_class_variable
 export var properties : Dictionary
 export var name := "Untitled Layer"
-export var opacity = 1.0
-export var blend_mode = "normal"
+export var opacity := 1.0
+export var blend_mode := "normal"
+export var visible := true
 
 func get_maps() -> Dictionary:
 	var maps := {}

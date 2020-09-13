@@ -14,6 +14,7 @@ to retrieve a list of `Properties` for the `TextureLayerPropertyPanel`.
 # warning-ignore-all:unused_class_variable
 export var name : String
 export var properties : Dictionary
+export var visible := true
 
 var result : Texture
 

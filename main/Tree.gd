@@ -45,21 +45,14 @@ func setup_layer_material(layer_material : LayerMaterial) -> void:
 
 func add_material_layer(material_layer : MaterialLayer) -> void:
 	var maps := material_layer.get_maps()
-	var selected_map : LayerTexture = maps.values().front()
+	var selected_map : LayerTexture
+	if maps.size() > 0:
+		selected_map = maps.values().front()
 	
 	var material_layer_item := create_item(root)
 	material_layer_item.set_meta("layer", material_layer)
 	material_layer_item.set_meta("selected", selected_map)
-	if "mask" in material_layer.properties:
-		material_layer_item.add_button(0, material_layer.properties.mask.result, Buttons.MASK)
-	else:
-		material_layer_item.set_selectable(0, false)
-	material_layer_item.add_button(0, preload("res://layer.png"), Buttons.RESULT)
-	if maps.size() > 1:
-		material_layer_item.add_button(0, preload("res://down.svg"), Buttons.MAP_DROPDOWN)
-	material_layer_item.set_text(1, "Material Layer")
-	material_layer_item.add_button(1, preload("res://visibility.svg"), Buttons.VISIBILITY)
-	
+	setup_material_layer_item(material_layer_item)
 	tree_items[material_layer] = material_layer_item
 	
 	if selected_map:
@@ -77,7 +70,29 @@ func add_texture_layer(texture_layer : TextureLayer, on_material_layer : Materia
 	tree_items[texture_layer] = texture_layer_item
 
 
-func _on_button_pressed(item : TreeItem, column : int, id : int) -> void:
+func setup_material_layer_item(material_layer_item : TreeItem) -> void:
+	for button in material_layer_item.get_button_count(1):
+		material_layer_item.erase_button(1, button)
+	for button in material_layer_item.get_button_count(0):
+		material_layer_item.erase_button(0, button)
+	
+	var material_layer : MaterialLayer = material_layer_item.get_meta("layer")
+	var maps := material_layer.get_maps()
+	
+	if "mask" in material_layer.properties:
+		material_layer_item.add_button(0, material_layer.properties.mask.result, Buttons.MASK)
+	else:
+		material_layer_item.set_selectable(0, false)
+	if maps.size() > 0:
+		material_layer_item.add_button(0, preload("res://layer.png"), Buttons.RESULT)
+	if maps.size() > 1:
+		material_layer_item.add_button(0, preload("res://down.svg"), Buttons.MAP_DROPDOWN)
+	
+	material_layer_item.set_text(1, material_layer.name)
+	material_layer_item.add_button(1, preload("res://visibility.svg"), Buttons.VISIBILITY)
+
+
+func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 	match id:
 		Buttons.MAP_DROPDOWN:
 			map_type_popup_menu.rect_global_position = get_global_transform().xform(get_item_area_rect(item).position)
@@ -92,7 +107,7 @@ func _on_button_pressed(item : TreeItem, column : int, id : int) -> void:
 			pass
 
 
-func _on_AddLayerPopupMenu_id_pressed(id : int) -> void:
+func _on_AddLayerPopupMenu_id_pressed(_id : int) -> void:
 	var texture_layer := TextureLayer.new()
 	var item := get_item_at_position(get_global_transform().xform_inv(add_layer_popup_menu.rect_position))
 	var material_layer : MaterialLayer = item.get_meta("layer")
@@ -102,10 +117,25 @@ func _on_AddLayerPopupMenu_id_pressed(id : int) -> void:
 	add_texture_layer(texture_layer, material_layer)
 
 
-func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
+func _on_MapTypePopupMenu_id_pressed(_id : int) -> void:
 	var item := get_item_at_position(get_global_transform().xform_inv(add_layer_popup_menu.rect_position))
 	item.set_meta("selected", map_type_popup_menu)
 
 
 func _on_cell_selected() -> void:
-	emit_signal("material_layer_selected", get_selected().get_meta("layer"))
+	var layer = get_selected().get_meta("layer")
+	if layer is MaterialLayer:
+		emit_signal("material_layer_selected", layer)
+	elif layer is TextureLayer:
+		emit_signal("texture_layer_selected", layer)
+
+
+func _on_TextureChannelButtons_changed() -> void:
+	var maps : Dictionary = get_selected().get_meta("layer").get_maps()
+	get_selected().set_meta("selected", null if maps.size() == 0 else maps.keys().front())
+	setup_material_layer_item(get_selected())
+
+
+func _on_LayerPropertyPanel_values_changed() -> void:
+	if get_selected().get_meta("layer") is MaterialLayer:
+		setup_material_layer_item(get_selected())
