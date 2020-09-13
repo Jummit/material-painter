@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://layer.png" type="Texture" id=1]
+[ext_resource path="res://mask.png" type="Texture" id=2]
+
+[node name="MapTypePopupMenu" type="PopupMenu"]
+margin_right = 99.0
+margin_bottom = 88.0
+items = [ "height", ExtResource( 2 ), 0, false, false, 0, 0, null, "", false, "albedo", ExtResource( 1 ), 0, false, false, 1, 0, null, "", false ]

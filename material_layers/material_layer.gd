@@ -7,7 +7,15 @@ The `properties` `Dictionary` holds a `mask` that is used when blending the laye
 and can hold a `LayerTexture` for each channel (for example albedo, height, etc...).
 """
 
-# warning-ignore:unused_class_variable
+# warning-ignore-all:unused_class_variable
 export var properties : Dictionary
-# warning-ignore:unused_class_variable
 export var name := "Untitled Layer"
+export var opacity = 1.0
+export var blend_mode = "normal"
+
+func get_maps() -> Dictionary:
+	var maps := {}
+	for map_type in Globals.TEXTURE_MAP_TYPES:
+		if map_type in properties:
+			maps[map_type] = properties[map_type]
+	return maps

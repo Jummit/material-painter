@@ -10,9 +10,6 @@ Keeps track of the currently editing objects and manages the menu bar, saving an
 var current_file : SaveFile
 
 var editing_layer_material : LayerMaterial
-var editing_layer_texture : LayerTexture
-var editing_texture_layer : TextureLayer
-var editing_material_layer : MaterialLayer
 
 #var result_size := Vector2(204, 204)
 var result_size := Vector2(2048, 2048)
@@ -27,13 +24,10 @@ const Layer = preload("res://render_viewports/layer_blending_viewport/layer_blen
 
 onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/TopButtons/FileMenuButton
 onready var file_dialog : FileDialog = $FileDialog
-onready var material_layer_tree : Tree = $VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerTree
-onready var material_layer_property_panel : Panel = $VBoxContainer/PanelContainer/LayerContainer/MaterialLayerPanel/MaterialLayerPropertyPanel
-onready var texture_layer_property_panel : Panel = $VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerPropertyPanel
-onready var texture_layer_tree : Tree = $VBoxContainer/PanelContainer/LayerContainer/TextureLayerPanel/TextureLayerTree
 onready var layer_blending_viewport : Viewport = $LayerBlendingViewport
 onready var normal_map_generation_viewport : Viewport = $NormalMapGenerationViewport
 onready var model : MeshInstance = $"VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport/Model"
+onready var layer_tree : Tree = $VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree
 
 func _ready():
 	file_menu_button.get_popup().connect("id_pressed", self, "_on_FileMenu_id_pressed")
@@ -64,7 +58,7 @@ func generate_layer_material_channel_texture(layer_material : LayerMaterial, typ
 	if layers.empty():
 		return
 	
-	var result : ImageTexture = yield(layer_blending_viewport.blend(layers, result_size), "completed")
+	var result : Texture = yield(layer_blending_viewport.blend(layers, result_size), "completed")
 	if type == "height":
 		var normal_texture : ImageTexture = yield(normal_map_generation_viewport.get_normal_map(result), "completed")
 		model.get_surface_material(0).normal_texture = normal_texture
@@ -89,11 +83,11 @@ func generate_layer_texture_result(layer_texture : LayerTexture) -> void:
 func load_file(save_file : SaveFile) -> void:
 	current_file = save_file
 	editing_layer_material = current_file.layer_material
-	material_layer_tree.items = editing_layer_material.layers
-	material_layer_tree.update_tree()
 	
 	TextureManager.load_textures_from_layer_material(current_file.layer_material)
 	generate_layer_material_textures(editing_layer_material)
+	
+	layer_tree.setup_layer_material(editing_layer_material)
 
 
 func export_textures(to_folder : String, layer_material : LayerMaterial) -> void:
@@ -102,13 +96,14 @@ func export_textures(to_folder : String, layer_material : LayerMaterial) -> void
 		results[type].get_data().save_png(to_folder.plus_file(type) + ".png")
 
 
-func add_texture_layer(texture_layer : TextureLayer) -> void:
+func add_texture_layer(texture_layer : TextureLayer, on_layer_texture : LayerTexture) -> void:
+	on_layer_texture.layers.append(texture_layer)
 	generate_texture_layer_result(texture_layer)
-	editing_layer_texture.layers.append(texture_layer)
-	texture_layer_tree.update_tree()
-	texture_layer_tree.update_icons()
-	generate_layer_texture_result(editing_layer_texture)
-	generate_layer_material_textures(editing_layer_material)
+
+
+func add_material_layer(material_layer : MaterialLayer) -> void:
+	editing_layer_material.layers.append(material_layer)
+	layer_tree.add_material_layer(material_layer)
 
 
 func _on_FileMenu_id_pressed(id : int):
@@ -145,64 +140,13 @@ func _on_TextureOption_changed():
 	generate_layer_material_textures(editing_layer_material)
 
 
-func _on_TextureOption_selected(texture_option : TextureOption):
-	editing_layer_texture = texture_option.selected_texture
-	texture_layer_tree.load_layer_texture(editing_layer_texture)
+func _on_AddButton_pressed() -> void:
+	add_material_layer(MaterialLayer.new())
 
 
-func _on_TextureCreationDialog_texture_creation_confirmed(texture_layer : TextureLayer) -> void:
-	add_texture_layer(texture_layer)
+func _on_DeleteButton_pressed() -> void:
+	pass # Replace with function body.
 
 
-func _on_TextureLayerTree_layer_selected(texture_layer : TextureLayer) -> void:
-	editing_texture_layer = texture_layer
-	texture_layer_property_panel.load_texture_layer(editing_texture_layer)
-
-
-func _on_TextureLayerTree_nothing_selected() -> void:
-	if not texture_layer_tree.get_selected():
-		editing_texture_layer = null
-
-
-func _on_TextureLayerPropertyPanel_values_changed() -> void:
-	editing_texture_layer.properties = texture_layer_property_panel.get_property_values()
-	generate_texture_layer_result(editing_texture_layer)
-	texture_layer_tree.update_icons()
-	generate_layer_texture_result(editing_layer_texture)
-	generate_layer_material_textures(editing_layer_material)
-
-
-func _on_AddMaterialLayerButton_pressed() -> void:
-	editing_layer_material.layers.append(MaterialLayer.new())
-	material_layer_tree.update_tree()
-
-
-func _on_MaterialLayerTree_layer_selected(material_layer : MaterialLayer) -> void:
-	editing_material_layer = material_layer
-	material_layer_property_panel.load_material_layer(material_layer)
-
-
-func _on_MaterialLayerTree_nothing_selected() -> void:
-	if not material_layer_tree.get_selected():
-		editing_material_layer = null
-
-
-func _on_MaterialLayerPropertyPanel_values_changed() -> void:
-	editing_material_layer.properties = material_layer_property_panel.get_property_values()
-	generate_layer_material_textures(editing_layer_material)
-
-
-func _on_TextureChannelButtons_changed() -> void:
-	material_layer_property_panel.load_material_layer(editing_material_layer)
-
-
-func _on_3DViewport_painted() -> void:
-	generate_layer_texture_result(editing_layer_texture)
-	generate_layer_material_textures(editing_layer_material)
-	texture_layer_tree.update_icons()
-
-
-func _on_2DViewport_painted() -> void:
-	generate_layer_texture_result(editing_layer_texture)
-	generate_layer_material_textures(editing_layer_material)
-	texture_layer_tree.update_icons()
+func _on_LayerTree_texture_layer_added(texture_layer : TextureLayer, on_layer_texture : LayerTexture) -> void:
+	add_texture_layer(texture_layer, on_layer_texture)
