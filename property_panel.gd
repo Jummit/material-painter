@@ -27,15 +27,3 @@ func load_material_layer(material_layer : MaterialLayer) -> void:
 	
 	set_properties(properties)
 	load_values(material_layer.properties)
-
-
-func _on_LayerTree_layer_texture_selected(_layer_texture) -> void:
-	pass # Replace with function body.
-
-
-func _on_LayerTree_material_layer_selected(material_layer) -> void:
-	load_material_layer(material_layer)
-
-
-func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
-	load_texture_layer(texture_layer)

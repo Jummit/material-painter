@@ -9,7 +9,7 @@ signal changed
 const LayerTexture = preload("res://texture_layers/layer_texture.gd")
 const MaterialLayer = preload("res://material_layers/material_layer.gd")
 
-onready var layer_tree : Tree = $"../LayerTree"
+onready var main : Control = $"../../../../.."
 
 func _ready():
 	for type in Globals.TEXTURE_MAP_TYPES:
@@ -21,17 +21,7 @@ func _ready():
 		add_child(new_button)
 
 
-func _on_Button_toggled(button_pressed : bool, type : String):
-	var properties : Dictionary = layer_tree.get_selected().get_meta("layer").properties
-	if button_pressed:
-		if not properties.has(type):
-			properties[type] = LayerTexture.new()
-	else:
-		properties.erase(type)
-	emit_signal("changed")
-
-
-func _on_LayerTree_material_layer_selected(material_layer : MaterialLayer) -> void:
+func load_material_layer(material_layer : MaterialLayer) -> void:
 	show()
 	var properties : Dictionary = material_layer.properties
 	for button in get_children():
@@ -39,3 +29,13 @@ func _on_LayerTree_material_layer_selected(material_layer : MaterialLayer) -> vo
 		button.set_block_signals(true)
 		button.pressed = properties.has(button.name)
 		button.set_block_signals(false)
+
+
+func _on_Button_toggled(button_pressed : bool, type : String):
+	var properties : Dictionary = main.editing_layer.properties
+	if button_pressed:
+		if not properties.has(type):
+			properties[type] = LayerTexture.new()
+	else:
+		properties.erase(type)
+	emit_signal("changed")

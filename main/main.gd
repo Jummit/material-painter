@@ -8,11 +8,9 @@ Keeps track of the currently editing objects and manages the menu bar, saving an
 """
 
 var current_file : SaveFile
-
 var editing_layer_material : LayerMaterial
-
-#var result_size := Vector2(204, 204)
 var result_size := Vector2(2048, 2048)
+var editing_layer
 
 const SaveFile = preload("res://main/save_file.gd")
 const MaterialLayer = preload("res://material_layers/material_layer.gd")
@@ -20,12 +18,15 @@ const LayerMaterial = preload("res://material_layers/layer_material.gd")
 const LayerTexture = preload("res://texture_layers/layer_texture.gd")
 const TextureLayer = preload("res://texture_layers/texture_layer.gd")
 const TextureOption = preload("res://texture_option/texture_option.gd")
+const BitmapTextureLayer = preload("res://texture_layers/types/bitmap_texture_layer.gd")
 const Layer = preload("res://render_viewports/layer_blending_viewport/layer_blending_viewport.gd").Layer
 
 onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/TopButtons/FileMenuButton
 onready var file_dialog : FileDialog = $FileDialog
 onready var layer_blending_viewport : Viewport = $LayerBlendingViewport
 onready var normal_map_generation_viewport : Viewport = $NormalMapGenerationViewport
+onready var layer_property_panel : Panel = $VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerPropertyPanel
+onready var texture_channel_buttons : GridContainer = $VBoxContainer/PanelContainer/LayerContainer/LayerTree/TextureChannelButtons
 onready var model : MeshInstance = $"VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport/Model"
 onready var layer_tree : Tree = $VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree
 
@@ -99,11 +100,14 @@ func export_textures(to_folder : String, layer_material : LayerMaterial) -> void
 func add_texture_layer(texture_layer : TextureLayer, on_layer_texture : LayerTexture) -> void:
 	on_layer_texture.layers.append(texture_layer)
 	generate_texture_layer_result(texture_layer)
+	layer_tree.setup_layer_material(editing_layer_material)
+#	layer_tree.add_texture_layer(texture_layer, layer_tree.get_selected_material_layer())
 
 
 func add_material_layer(material_layer : MaterialLayer) -> void:
 	editing_layer_material.layers.append(material_layer)
-	layer_tree.add_material_layer(material_layer)
+#	layer_tree.add_material_layer(material_layer)
+	layer_tree.setup_layer_material(editing_layer_material)
 
 
 func _on_FileMenu_id_pressed(id : int):
@@ -148,5 +152,30 @@ func _on_DeleteButton_pressed() -> void:
 	pass # Replace with function body.
 
 
-func _on_LayerTree_texture_layer_added(texture_layer : TextureLayer, on_layer_texture : LayerTexture) -> void:
-	add_texture_layer(texture_layer, on_layer_texture)
+func _on_AddLayerPopupMenu_id_pressed(_id : int) -> void:
+	add_texture_layer(BitmapTextureLayer.new(), layer_tree.get_selected_layer_texture())
+
+
+func _on_TextureChannelButtons_changed() -> void:
+	layer_tree.setup_layer_material(editing_layer_material)
+
+
+func _on_LayerTree_layer_texture_selected(_layer_texture) -> void:
+	pass
+
+
+func _on_LayerTree_material_layer_selected(material_layer) -> void:
+	editing_layer = material_layer
+	layer_property_panel.load_material_layer(material_layer)
+	texture_channel_buttons.load_material_layer(material_layer)
+
+
+func _on_LayerPropertyPanel_values_changed() -> void:
+	editing_layer.properties = layer_property_panel.get_property_values()
+	layer_tree.setup_layer_material(editing_layer_material)
+
+
+func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
+	editing_layer = texture_layer
+	layer_property_panel.load_texture_layer(texture_layer)
+	texture_channel_buttons.hide()

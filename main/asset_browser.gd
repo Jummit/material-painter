@@ -4,6 +4,7 @@ extends TabContainer
 A list of assets that can be drag and dropped onto different UI elements
 """
 
+# warning-ignore:unused_class_variable
 var ASSET_TYPES := [
 	TextureAssetType.new(),
 	MaterialAssetType.new(),
@@ -34,9 +35,9 @@ class MaterialAssetType extends AssetType:
 	func _generate_preview(_asset : Resource) -> Texture:
 		return null
 
-func _ready():
-	for asset_type in ASSET_TYPES:
-		load_assets(asset_type)
+#func _ready():
+#	for asset_type in ASSET_TYPES:
+#		load_assets(asset_type)
 
 
 func load_assets(asset_type : AssetType) -> void:
