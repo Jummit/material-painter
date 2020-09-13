@@ -5,6 +5,10 @@ var tree_items : Dictionary = {}
 
 signal texture_layer_added(layer, on_material_layer)
 
+signal material_layer_selected(material_layer)
+signal layer_texture_selected(layer_texture)
+signal texture_layer_selected(texture_layer)
+
 enum Buttons {
 	MASK,
 	RESULT,
@@ -80,8 +84,10 @@ func _on_button_pressed(item : TreeItem, column : int, id : int) -> void:
 			map_type_popup_menu.popup()
 		Buttons.RESULT:
 			item.collapsed = not item.collapsed
+			emit_signal("layer_texture_selected", item.get_meta("layer").properties[item.get_meta("selected")])
 		Buttons.MASK:
 			item.collapsed = not item.collapsed
+			emit_signal("layer_texture_selected", item.get_meta("layer").properties.mask)
 		Buttons.VISIBILITY:
 			pass
 
@@ -99,3 +105,7 @@ func _on_AddLayerPopupMenu_id_pressed(id : int) -> void:
 func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
 	var item := get_item_at_position(get_global_transform().xform_inv(add_layer_popup_menu.rect_position))
 	item.set_meta("selected", map_type_popup_menu)
+
+
+func _on_cell_selected() -> void:
+	emit_signal("material_layer_selected", get_selected().get_meta("layer"))
