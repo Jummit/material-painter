@@ -4,7 +4,6 @@ var root : TreeItem
 var tree_items : Dictionary = {}
 
 signal material_layer_selected(material_layer)
-signal layer_texture_selected(layer_texture)
 signal texture_layer_selected(texture_layer)
 
 enum Buttons {
@@ -106,7 +105,6 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 			map_type_popup_menu.popup()
 		Buttons.RESULT:
 			item.collapsed = not item.collapsed
-			emit_signal("layer_texture_selected", item.get_meta("layer").properties[item.get_meta("selected")])
 		Buttons.MASK:
 			item.collapsed = not item.collapsed
 			emit_signal("layer_texture_selected", item.get_meta("layer").properties.mask)

@@ -235,27 +235,15 @@ static func generate_blend_shader(layers : Array) -> String:
 		if layer_num > 0:
 			var template := (MASKED_BLEND_TEMPLATE if layer.mask else BLEND_TEMPLATE)
 			
-			print(layer.opacity)
-			print("%s" % layer.opacity)
-			print("{opacity}".format({opacity = layer.opacity}))
 			blending_code += template.format({
 					result = blend_result_var(blend_result_count + 1),
 					a = result_var(0) if layer_num == 1 else blend_result_var(blend_result_count),
 					b = result_var(layer_num),
 					mode = layer.blend_mode,
-	# warning-ignore:incompatible_ternary
-	# warning-ignore:incompatible_ternary
+# warning-ignore:incompatible_ternary
+# warning-ignore:incompatible_ternary
 					opacity = layer.mask if layer.mask else layer.opacity,
 				}) + "\n"
-			print(template.format({
-					result = blend_result_var(blend_result_count + 1),
-					a = result_var(0) if layer_num == 1 else blend_result_var(blend_result_count),
-					b = result_var(layer_num),
-					mode = layer.blend_mode,
-	# warning-ignore:incompatible_ternary
-	# warning-ignore:incompatible_ternary
-					opacity = layer.mask if layer.mask else layer.opacity,
-				}))
 			blend_result_count += 1
 	
 	var shader_code := SHADER_TEMPLATE.format({

@@ -9,7 +9,7 @@ signal changed
 const LayerTexture = preload("res://texture_layers/layer_texture.gd")
 const MaterialLayer = preload("res://material_layers/material_layer.gd")
 
-onready var main : Control = $"../../../../.."
+onready var layer_property_panel : Panel = $"../LayerPropertyPanel"
 
 func _ready():
 	for type in Globals.TEXTURE_MAP_TYPES:
@@ -32,7 +32,7 @@ func load_material_layer(material_layer : MaterialLayer) -> void:
 
 
 func _on_Button_toggled(button_pressed : bool, type : String):
-	var properties : Dictionary = main.editing_layer.properties
+	var properties : Dictionary = layer_property_panel.editing_layer.properties
 	if button_pressed:
 		if not properties.has(type):
 			properties[type] = LayerTexture.new()

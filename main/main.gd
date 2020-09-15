@@ -10,7 +10,7 @@ Keeps track of the currently editing objects and manages the menu bar, saving an
 var current_file : SaveFile
 var editing_layer_material : LayerMaterial
 var result_size := Vector2(2048, 2048)
-var editing_layer
+var editing_layer_texture : LayerTexture
 
 const SaveFile = preload("res://main/save_file.gd")
 const MaterialLayer = preload("res://material_layers/material_layer.gd")
@@ -156,25 +156,20 @@ func _on_TextureChannelButtons_changed() -> void:
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
-func _on_LayerTree_layer_texture_selected(_layer_texture) -> void:
-	pass
-
-
 func _on_LayerTree_material_layer_selected(material_layer) -> void:
-	editing_layer = material_layer
 	layer_property_panel.load_material_layer(material_layer)
 	texture_channel_buttons.load_material_layer(material_layer)
 
 
 func _on_LayerPropertyPanel_values_changed() -> void:
-	editing_layer.properties = layer_property_panel.get_property_values()
-	generate_layer_texture_result(editing_layer)
+	layer_property_panel.editing_layer.properties = layer_property_panel.get_property_values()
+	generate_layer_texture_result(editing_layer_texture)
 	generate_layer_material_textures(editing_layer_material)
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
 func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
-	editing_layer = texture_layer
+	editing_layer_texture = layer_tree.get_selected_layer_texture()
 	layer_property_panel.load_texture_layer(texture_layer)
 	texture_channel_buttons.hide()
 

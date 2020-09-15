@@ -11,7 +11,7 @@ func get_properties() -> Array:
 
 func _get_as_shader_layer() -> Layer:
 	var layer := ._get_as_shader_layer()
-	layer.code = "texture({0})"
+	layer.code = "texture({0}, UV).rgb"
 	layer.uniform_types = ["sampler2D"]
 	# todo: load image manually
 	layer.uniform_values = [load(properties.image_path)]
