@@ -20,7 +20,7 @@ func blend(layers : Array, result_size : Vector2, id : int, keep_viewport := tru
 			add_child(layer_blend_viewport)
 	else:
 		layer_blend_viewport = one_time_viewport
-	var result : Texture = layer_blend_viewport.blend(layers, result_size)
+	var result : Texture = yield(layer_blend_viewport.blend(layers, result_size), "completed")
 	if not keep_viewport:
 		result = TextureUtils.viewport_to_image(result)
 	return result

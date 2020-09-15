@@ -1,9 +1,9 @@
 extends Node
 
-const BitmapTextureLayer = preload("res://texture_layers/types/bitmap_texture_layer.gd")
-const ColorTextureLayer = preload("res://texture_layers/types/color_texture_layer.gd")
-const ScalarTextureLayer = preload("res://texture_layers/types/scalar_texture_layer.gd")
-const NoiseTextureLayer = preload("res://texture_layers/types/noise_texture_layer.gd")
+const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_layer.gd")
+const ColorTextureLayer = preload("res://layers/texture_layers/color_texture_layer.gd")
+const ScalarTextureLayer = preload("res://layers/texture_layers/scalar_texture_layer.gd")
+const NoiseTextureLayer = preload("res://layers/texture_layers/noise_texture_layer.gd")
 
 const TEXTURE_MAP_TYPES := ["albedo", "emission", "height",
 		"ao", "metalic", "roughness"]

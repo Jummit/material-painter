@@ -1,9 +1,9 @@
 extends Node
 
-const MaterialLayer = preload("res://material_layers/material_layer.gd")
-const LayerMaterial = preload("res://material_layers/layer_material.gd")
-const LayerTexture = preload("res://texture_layers/layer_texture.gd")
-const TextureLayer = preload("res://texture_layers/texture_layer.gd")
+const MaterialLayer = preload("res://layers/material_layer.gd")
+const LayerMaterial = preload("res://layers/layer_material.gd")
+const LayerTexture = preload("res://layers/layer_texture.gd")
+const TextureLayer = preload("res://layers/texture_layer.gd")
 const TextureOption = preload("res://texture_option/texture_option.gd")
 const Layer = preload("res://render_viewports/layer_blending_viewport/layer_blending_viewport.gd").Layer
 

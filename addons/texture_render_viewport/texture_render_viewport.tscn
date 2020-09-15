@@ -2,8 +2,6 @@
 
 [ext_resource path="res://addons/texture_render_viewport/texture_render_viewport.gd" type="Script" id=1]
 
-
-
 [sub_resource type="World" id=1]
 
 [node name="TextureRenderViewport" type="Viewport"]

@@ -177,12 +177,15 @@ class Layer:
 
 func blend(layers : Array, result_size : Vector2) -> ViewportTexture:
 	var shader := Shader.new()
+	shader.resource_local_to_scene = true
 	shader.code = _generate_blend_shader(layers)
 	var material := ShaderMaterial.new()
+	material.resource_local_to_scene = true
 	material.shader = shader
 	_setup_shader_vars(material, layers)
 	
 	var color_rect := ColorRect.new()
+	color_rect.color = Color.magenta
 	color_rect.rect_size = result_size
 	color_rect.material = material
 	

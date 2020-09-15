@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://texture_tooltip/texture_tool_tip.gd" type="Script" id=1]
+
+[node name="TextureToolTip" type="PanelContainer"]
+margin_right = 14.0
+margin_bottom = 14.0
+rect_min_size = Vector2( 200, 200 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 193.0
+margin_bottom = 193.0
+
+[node name="Name" type="Label" parent="VBoxContainer"]
+margin_right = 186.0
+margin_bottom = 14.0
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer"]
+margin_top = 18.0
+margin_right = 186.0
+margin_bottom = 186.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+expand = true
+stretch_mode = 6

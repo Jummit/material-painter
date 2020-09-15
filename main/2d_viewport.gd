@@ -6,7 +6,7 @@ A panel for painting onto a texture using the UV of a model
 
 signal painted
 
-const BitmapTextureLayer = preload("res://texture_layers/types/bitmap_texture_layer.gd")
+const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_layer.gd")
 
 var mesh_tool := MeshDataTool.new()
 

@@ -2,7 +2,7 @@ extends ViewportContainer
 
 signal painted
 
-const BitmapTextureLayer = preload("res://texture_layers/types/bitmap_texture_layer.gd")
+const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_layer.gd")
 
 onready var model : MeshInstance = $Viewport/Model
 onready var main : Control = $"../../../../../.."

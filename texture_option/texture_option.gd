@@ -9,8 +9,8 @@ Loads textures from the `TextureManager`. Creation of new textures and clearing 
 signal selected
 signal changed
 
-const LayerTexture = preload("res://texture_layers/layer_texture.gd")
-const BitmapTextureLayer = preload("res://texture_layers/types/bitmap_texture_layer.gd")
+const LayerTexture = preload("res://layers/layer_texture.gd")
+const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_layer.gd")
 
 onready var clear_button : Button = $HBoxContainer/ClearButton
 onready var texture_popup_menu : MenuButton = $HBoxContainer/TexturePopupMenu
@@ -27,7 +27,7 @@ func _ready():
 
 
 func _make_custom_tooltip(_for_text : String):
-	var tooltip : PanelContainer = preload("res://texture_layers/texture_tooltip/texture_tool_tip.tscn").instance()
+	var tooltip : PanelContainer = preload("res://texture_tooltip/texture_tool_tip.tscn").instance()
 	if selected_texture:
 		tooltip.get_node("VBoxContainer/TextureRect").texture = selected_texture.result
 		tooltip.get_node("VBoxContainer/Name").text = selected_texture.name

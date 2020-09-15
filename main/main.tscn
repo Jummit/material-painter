@@ -1,22 +1,21 @@
-[gd_scene load_steps=19 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://main/2d_viewport.gd" type="Script" id=1]
-[ext_resource path="res://icon.png" type="Texture" id=2]
+[ext_resource path="res://3d_viewport/material.tres" type="Material" id=2]
 [ext_resource path="res://main/main.gd" type="Script" id=3]
-[ext_resource path="res://mask.png" type="Texture" id=4]
-[ext_resource path="res://layer.png" type="Texture" id=5]
-[ext_resource path="res://property_panel.gd" type="Script" id=6]
-[ext_resource path="res://texture_layers/texture_creation_dialog.gd" type="Script" id=7]
-[ext_resource path="res://material_layers/texture_channel_buttons/texture_channel_buttons.tscn" type="PackedScene" id=9]
-[ext_resource path="res://3d_viewport/environment/environment.tres" type="Environment" id=10]
+[ext_resource path="res://icons/mask.png" type="Texture" id=4]
+[ext_resource path="res://icons/layer.png" type="Texture" id=5]
+[ext_resource path="res://main/property_panel.gd" type="Script" id=6]
+[ext_resource path="res://main/model.gd" type="Script" id=8]
+[ext_resource path="res://texture_channel_buttons/texture_channel_buttons.tscn" type="PackedScene" id=9]
+[ext_resource path="res://3d_viewport/environment.tres" type="Environment" id=10]
 [ext_resource path="res://main/asset_browser.gd" type="Script" id=11]
-[ext_resource path="res://3d_viewport/plasma_gun.obj" type="ArrayMesh" id=12]
-[ext_resource path="res://3d_viewport/spatialmaterial.tres" type="Material" id=13]
+[ext_resource path="res://3d_viewport/models/plasma_gun.obj" type="ArrayMesh" id=12]
 [ext_resource path="res://main/add_layer_popup_menu.gd" type="Script" id=16]
 [ext_resource path="res://addons/property_panel/property_panel.tscn" type="PackedScene" id=17]
-[ext_resource path="res://3d_viewport/rotating_camera/rotating_camera.tscn" type="PackedScene" id=19]
+[ext_resource path="res://addons/rotating_camera/rotating_camera.tscn" type="PackedScene" id=19]
 [ext_resource path="res://3d_viewport/3d_viewport.gd" type="Script" id=20]
-[ext_resource path="res://main/Tree.gd" type="Script" id=21]
+[ext_resource path="res://main/layer_tree.gd" type="Script" id=21]
 
 [sub_resource type="ImageTexture" id=1]
 
@@ -122,7 +121,8 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.850238, -0.605874 )
 
 [node name="Model" type="MeshInstance" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
 mesh = ExtResource( 12 )
-material/0 = ExtResource( 13 )
+material/0 = ExtResource( 2 )
+script = ExtResource( 8 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
 environment = ExtResource( 10 )
@@ -214,35 +214,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 6 )
 
-[node name="TextureCreationDialog" type="ConfirmationDialog" parent="."]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -244.0
-margin_top = -199.0
-margin_right = 244.0
-margin_bottom = 199.0
-rect_min_size = Vector2( 100, 35 )
-script = ExtResource( 7 )
-
-[node name="TextureTypeList" type="ItemList" parent="TextureCreationDialog"]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -236.0
-margin_top = -191.0
-margin_right = 236.0
-margin_bottom = 163.0
-items = [ "Bitmap", ExtResource( 2 ), false, "Color", ExtResource( 2 ), false, "Scalar", ExtResource( 2 ), false ]
-max_columns = 2
-same_column_width = true
-icon_mode = 0
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
 [node name="FileDialog" type="FileDialog" parent="."]
 anchor_left = 0.5
 anchor_top = 0.5
@@ -272,6 +243,4 @@ __meta__ = {
 [connection signal="id_pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MapTypePopupMenu" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_MapTypePopupMenu_id_pressed"]
 [connection signal="changed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/TextureChannelButtons" to="." method="_on_TextureChannelButtons_changed"]
 [connection signal="values_changed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerPropertyPanel" to="." method="_on_LayerPropertyPanel_values_changed"]
-[connection signal="confirmed" from="TextureCreationDialog" to="TextureCreationDialog" method="_on_confirmed"]
-[connection signal="item_activated" from="TextureCreationDialog/TextureTypeList" to="TextureCreationDialog" method="_on_TextureTypeList_item_activated"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]
