@@ -78,6 +78,14 @@ func setup_texture_layer_item(texture_layer : TextureLayer, on_item : TreeItem) 
 	tree_items[texture_layer] = texture_layer_item
 
 
+func update_icons() -> void:
+	pass
+#	for layer in tree_items.keys():
+#		var tree_item : TreeItem = tree_items[layer]
+#		if layer is TextureLayer:
+#			tree_item.set_button(0, 0, layer.result)
+
+
 func get_selected_material_layer() -> MaterialLayer:
 	return _get_selected_material_layer_item().get_meta("layer")
 

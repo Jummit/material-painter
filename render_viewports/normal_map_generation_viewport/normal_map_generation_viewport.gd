@@ -1,10 +1,10 @@
 extends "res://addons/texture_render_viewport/texture_render_viewport.gd"
 
 """
-A `Viewport` to generate a normal map from a grayscale heightmap
+A `TextureRenderViewport` to generate a normal map from a grayscale heightmap
 """
 
-func get_normal_map(height_map : ImageTexture) -> ImageTexture:
+func get_normal_map(height_map : Texture) -> ImageTexture:
 	var result_size = height_map.get_size()
 	var texture_rect := TextureRect.new()
 	texture_rect.texture = height_map

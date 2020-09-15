@@ -175,12 +175,12 @@ class Layer:
 	var opacity := 1.0
 	var mask : Texture
 
-func blend(layers : Array, result_size : Vector2) -> Texture:
+func blend(layers : Array, result_size : Vector2) -> ViewportTexture:
 	var shader := Shader.new()
-	shader.code = generate_blend_shader(layers)
+	shader.code = _generate_blend_shader(layers)
 	var material := ShaderMaterial.new()
 	material.shader = shader
-	setup_shader_vars(material, layers)
+	_setup_shader_vars(material, layers)
 	
 	var color_rect := ColorRect.new()
 	color_rect.rect_size = result_size
@@ -189,22 +189,22 @@ func blend(layers : Array, result_size : Vector2) -> Texture:
 	return render_texture(color_rect, result_size)
 
 
-static func setup_shader_vars(material : Material, layers : Array) -> void:
+static func _setup_shader_vars(material : Material, layers : Array) -> void:
 	var uniform_count := 0
 	for layer_num in layers.size():
 		var layer := layers[layer_num] as Layer
 		
 		if layer.mask:
-			material.set_shader_param(mask_var(layer_num), layer.mask)
+			material.set_shader_param(_mask_var(layer_num), layer.mask)
 		
 		for uniform in layer.uniform_types.size():
 			material.set_shader_param(
-					uniform_var(uniform_count),
+					_uniform_var(uniform_count),
 					layer.uniform_values[uniform])
 			uniform_count += 1
 
 
-static func generate_blend_shader(layers : Array) -> String:
+static func _generate_blend_shader(layers : Array) -> String:
 	var uniforms := ""
 	var preparing_code := ""
 	var blending_code := ""
@@ -214,20 +214,20 @@ static func generate_blend_shader(layers : Array) -> String:
 	for layer_num in layers.size():
 		var layer := layers[layer_num] as Layer
 		var prepared_shader := RESULT_TEMPLATE.format({
-			result = result_var(layer_num),
+			result = _result_var(layer_num),
 			code = layer.code,
 		})
 		
 		if layer.mask:
-			uniforms += "uniform texture_sampler %s;\n" % mask_var(layer_num)
+			uniforms += "uniform texture_sampler %s;\n" % _mask_var(layer_num)
 		
 		for uniform in layer.uniform_types.size():
 			uniforms += "uniform %s %s;\n" % [
 					layer.uniform_types[uniform],
-					uniform_var(uniform_count)]
+					_uniform_var(uniform_count)]
 			prepared_shader = prepared_shader.replace(
 					"{%s}" % uniform,
-					uniform_var(uniform_count))
+					_uniform_var(uniform_count))
 			uniform_count += 1
 		
 		preparing_code += prepared_shader + "\n"
@@ -236,9 +236,9 @@ static func generate_blend_shader(layers : Array) -> String:
 			var template := (MASKED_BLEND_TEMPLATE if layer.mask else BLEND_TEMPLATE)
 			
 			blending_code += template.format({
-					result = blend_result_var(blend_result_count + 1),
-					a = result_var(0) if layer_num == 1 else blend_result_var(blend_result_count),
-					b = result_var(layer_num),
+					result = _blend_result_var(blend_result_count + 1),
+					a = _result_var(0) if layer_num == 1 else _blend_result_var(blend_result_count),
+					b = _result_var(layer_num),
 					mode = layer.blend_mode,
 # warning-ignore:incompatible_ternary
 # warning-ignore:incompatible_ternary
@@ -251,23 +251,23 @@ static func generate_blend_shader(layers : Array) -> String:
 		blend_shaders = BLEND_SHADERS,
 		preparing_code = preparing_code,
 		blending = blending_code,
-		result = blend_result_var(blend_result_count) if layers.size() > 1 else result_var(0),
+		result = _blend_result_var(blend_result_count) if layers.size() > 1 else _result_var(0),
 	})
 	
 	return shader_code
 
 
-static func uniform_var(num : int) -> String:
+static func _uniform_var(num : int) -> String:
 	return "uniform_%s" % num
 
 
-static func result_var(num : int) -> String:
+static func _result_var(num : int) -> String:
 	return "result_%s" % num
 
 
-static func blend_result_var(num : int) -> String:
+static func _blend_result_var(num : int) -> String:
 	return "blend_result_%s" % num
 
 
-static func mask_var(num : int) -> String:
+static func _mask_var(num : int) -> String:
 	return "mask_%s" % num

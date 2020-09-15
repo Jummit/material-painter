@@ -36,6 +36,11 @@ func get_properties() -> Array:
 		Properties.EnumProperty.new("blend_mode", Globals.BLEND_MODES)]
 
 
+func generate_result(result_size : Vector2, keep_viewport := true) -> void:
+	result = yield(LayerBlendViewportManager.blend(
+			[_get_as_shader_layer()], result_size, get_instance_id(), keep_viewport), "completed")
+
+
 func _get_as_shader_layer() -> Layer:
 	var layer := Layer.new()
 	layer.blend_mode = properties.blend_mode

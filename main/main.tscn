@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://main/2d_viewport.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
@@ -7,14 +7,11 @@
 [ext_resource path="res://layer.png" type="Texture" id=5]
 [ext_resource path="res://property_panel.gd" type="Script" id=6]
 [ext_resource path="res://texture_layers/texture_creation_dialog.gd" type="Script" id=7]
-[ext_resource path="res://render_viewports/normal_map_generation_viewport/normal_map_generation_viewport.tscn" type="PackedScene" id=8]
 [ext_resource path="res://material_layers/texture_channel_buttons/texture_channel_buttons.tscn" type="PackedScene" id=9]
 [ext_resource path="res://3d_viewport/environment/environment.tres" type="Environment" id=10]
 [ext_resource path="res://main/asset_browser.gd" type="Script" id=11]
 [ext_resource path="res://3d_viewport/plasma_gun.obj" type="ArrayMesh" id=12]
 [ext_resource path="res://3d_viewport/spatialmaterial.tres" type="Material" id=13]
-[ext_resource path="res://render_viewports/layer_blending_viewport/layer_blending_viewport.tscn" type="PackedScene" id=14]
-[ext_resource path="res://main/material_layer_blending_viewports.gd" type="Script" id=15]
 [ext_resource path="res://main/add_layer_popup_menu.gd" type="Script" id=16]
 [ext_resource path="res://addons/property_panel/property_panel.tscn" type="PackedScene" id=17]
 [ext_resource path="res://3d_viewport/rotating_camera/rotating_camera.tscn" type="PackedScene" id=19]
@@ -263,13 +260,6 @@ current_path = "/home/jummit/Games/MaterialPainter/Layers/"
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="LayerBlendingViewport" parent="." instance=ExtResource( 14 )]
-
-[node name="NormalMapGenerationViewport" parent="." instance=ExtResource( 8 )]
-
-[node name="MaterialLayerBlendingViewports" type="Node" parent="."]
-script = ExtResource( 15 )
 [connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/HBoxContainer/AddButton" to="." method="_on_AddButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/HBoxContainer/DeleteButton" to="." method="_on_DeleteButton_pressed"]
 [connection signal="button_pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_button_pressed"]
