@@ -10,7 +10,6 @@ Keeps track of the currently editing objects and manages the menu bar, saving an
 var current_file : SaveFile
 var editing_layer_material : LayerMaterial
 var result_size := Vector2(2048, 2048)
-var editing_layer_texture : LayerTexture
 
 const SaveFile = preload("res://main/save_file.gd")
 const MaterialLayer = preload("res://layers/material_layer.gd")
@@ -84,7 +83,6 @@ func _on_LayerPropertyPanel_values_changed() -> void:
 
 
 func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
-	editing_layer_texture = layer_tree.get_selected_layer_texture()
 	layer_property_panel.load_texture_layer(texture_layer)
 	texture_channel_buttons.hide()
 
