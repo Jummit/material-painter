@@ -20,4 +20,4 @@ func generate_result(result_size : Vector2, keep_viewport := true) -> void:
 	var blending_layers := []
 	for layer in layers:
 		blending_layers.append(layer._get_as_shader_layer())
-	result = yield(LayerBlendViewportManager.blend(layers, result_size, get_instance_id(), keep_viewport), "completed")
+	result = yield(LayerBlendViewportManager.blend(blending_layers, result_size, get_instance_id(), keep_viewport), "completed")

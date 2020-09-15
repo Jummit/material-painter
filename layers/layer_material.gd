@@ -10,6 +10,7 @@ export var layers : Array
 
 var results : Dictionary
 
+const TextureLayer = preload("res://layers/texture_layer.gd")
 const MaterialLayer = preload("res://layers/material_layer.gd")
 const BlendingLayer = preload("res://render_viewports/layer_blending_viewport/layer_blending_viewport.gd").Layer
 
@@ -26,6 +27,7 @@ func generate_map_result(map : String, result_size : Vector2) -> void:
 	var blending_layers := []
 	
 	for layer in layers:
+		layer = layer as MaterialLayer
 		if not (map in layer.properties and layer.properties[map]):
 			continue
 		var blending_layer := BlendingLayer.new()
@@ -51,3 +53,11 @@ func generate_map_result(map : String, result_size : Vector2) -> void:
 func export_textures(to_folder : String) -> void:
 	for type in results.keys():
 		results[type].get_data().save_png(to_folder.plus_file(type) + ".png")
+
+
+func get_depending_layer_textures(texture_layer : TextureLayer) -> Array:
+	var depending_layer_textures := []
+	for layer in layers:
+		layer = layer as MaterialLayer
+		depending_layer_textures += layer.get_depending_layer_textures(texture_layer)
+	return depending_layer_textures

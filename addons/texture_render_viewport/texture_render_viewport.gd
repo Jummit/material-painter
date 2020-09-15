@@ -3,6 +3,9 @@ extends Viewport
 var busy := false
 
 func render_texture(subject : Node, result_size : Vector2) -> ViewportTexture:
+	if busy:
+		yield()
+		return ViewportTexture.new()
 	while busy:
 		yield(VisualServer, "frame_post_draw")
 	add_child(subject)

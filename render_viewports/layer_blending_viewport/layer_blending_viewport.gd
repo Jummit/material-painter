@@ -179,6 +179,7 @@ func blend(layers : Array, result_size : Vector2) -> ViewportTexture:
 	var shader := Shader.new()
 	shader.resource_local_to_scene = true
 	shader.code = _generate_blend_shader(layers)
+	
 	var material := ShaderMaterial.new()
 	material.resource_local_to_scene = true
 	material.shader = shader

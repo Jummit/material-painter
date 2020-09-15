@@ -8,6 +8,7 @@ Keeps track of the currently editing objects and manages the menu bar, saving an
 """
 
 var current_file : SaveFile
+var file_location : String
 var editing_layer_material : LayerMaterial
 var result_size := Vector2(2048, 2048)
 
@@ -51,8 +52,10 @@ func add_material_layer(material_layer : MaterialLayer) -> void:
 func _on_FileDialog_file_selected(path : String):
 	match file_dialog.mode:
 		FileDialog.MODE_SAVE_FILE:
+			file_location = path
 			ResourceSaver.save(path, current_file)
 		FileDialog.MODE_OPEN_FILE:
+			file_location = path
 			load_file(load(path))
 
 
@@ -75,8 +78,8 @@ func _on_LayerTree_material_layer_selected(material_layer) -> void:
 
 func _on_LayerPropertyPanel_values_changed() -> void:
 	layer_property_panel.editing_layer.properties = layer_property_panel.get_property_values()
-	if layer_property_panel.editing_layer is TextureLayer:
-		(layer_property_panel.editing_layer as TextureLayer).generate_result(result_size)
+	var affected_layers := editing_layer_material.get_depending_layer_textures(layer_property_panel.editing_layer)
+	affected_layers.front().generate_result(result_size)
 	editing_layer_material.generate_results(result_size)
 	model.load_layer_material_maps(editing_layer_material)
 	layer_tree.update_icons()
@@ -102,8 +105,8 @@ func _on_FileMenu_id_pressed(id : int):
 			file_dialog.mode = FileDialog.MODE_SAVE_FILE
 			file_dialog.popup_centered()
 		3:
-			if current_file.resource_path:
-				editing_layer_material.export_textures(current_file.resource_path.get_base_dir())
+			if file_location:
+				editing_layer_material.export_textures(file_location.get_base_dir())
 
 
 func _on_SceneTree_node_added(node : Node):
