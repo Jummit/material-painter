@@ -41,6 +41,9 @@ func load_file(save_file : SaveFile) -> void:
 
 func add_texture_layer(texture_layer : TextureLayer, on_layer_texture : LayerTexture) -> void:
 	on_layer_texture.layers.append(texture_layer)
+	texture_layer.generate_result(result_size)
+	on_layer_texture.generate_result(result_size)
+	editing_layer_material.generate_results(result_size)
 	layer_tree.setup_layer_material(editing_layer_material)
 
 

@@ -4,7 +4,6 @@ extends TabContainer
 A list of assets that can be drag and dropped onto different UI elements
 """
 
-# warning-ignore:unused_class_variable
 var ASSET_TYPES := [
 	TextureAssetType.new(),
 	MaterialAssetType.new(),
@@ -35,9 +34,9 @@ class MaterialAssetType extends AssetType:
 	func _generate_preview(_asset : Resource) -> Texture:
 		return null
 
-#func _ready():
-#	for asset_type in ASSET_TYPES:
-#		load_assets(asset_type)
+func _ready():
+	for asset_type in ASSET_TYPES:
+		load_assets(asset_type)
 
 
 func load_assets(asset_type : AssetType) -> void:
@@ -47,6 +46,7 @@ func load_assets(asset_type : AssetType) -> void:
 	item_list.same_column_width = true
 	item_list.max_columns = 100
 	item_list.fixed_icon_size = Vector2(128, 128)
+	item_list.set_drag_forwarding(self)
 	add_child(item_list)
 	
 	var folder := "res://assets/".plus_file(asset_type.directory)
@@ -64,7 +64,7 @@ func load_assets(asset_type : AssetType) -> void:
 			item_list.set_item_metadata(id, {type = asset_type.name, asset = asset})
 
 
-func get_drag_data(position : Vector2):
+func get_drag_data_fw(position : Vector2, _from : Control):
 	var item_list : ItemList = get_child(current_tab)
 	var item := item_list.get_item_at_position(position, true)
 	if item != -1:

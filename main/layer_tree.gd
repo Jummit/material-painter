@@ -19,7 +19,9 @@ const LayerMaterial = preload("res://layers/layer_material.gd")
 const MaterialLayer = preload("res://layers/material_layer.gd")
 const LayerTexture = preload("res://layers/layer_texture.gd")
 const TextureLayer = preload("res://layers/texture_layer.gd")
+const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_layer.gd")
 
+onready var main : Control = $"../../../../.."
 onready var add_layer_popup_menu : PopupMenu = $AddLayerPopupMenu
 onready var map_type_popup_menu : PopupMenu = $MapTypePopupMenu
 
@@ -33,6 +35,17 @@ func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == BUTTON_RIGHT and event.pressed:
 		add_layer_popup_menu.rect_global_position = event.global_position
 		add_layer_popup_menu.popup()
+
+
+func can_drop_data(_position : Vector2, data) -> bool:
+	return data is Dictionary and "asset" in data
+
+
+func drop_data(position : Vector2, data) -> void:
+	if data.asset is Texture:
+		var layer := BitmapTextureLayer.new()
+		layer.properties.image_path = data.asset.resource_path
+		main.add_texture_layer(layer, get_item_at_position(position).get_meta("layer").properties[get_item_at_position(position).get_meta("selected")])
 
 
 func setup_layer_material(layer_material : LayerMaterial) -> void:
