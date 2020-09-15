@@ -1,6 +1,6 @@
 extends "res://texture_layers/texture_layer.gd"
 
-func _init(_name := "Untitled Bitmap Texture"):
+func _init(_name := "Untitled Bitmap Texture").("bitmap"):
 	name = _name
 	properties.image_path = ""
 

@@ -1,6 +1,6 @@
 extends "res://texture_layers/texture_layer.gd"
 
-func _init(_name := "Untitled Noise Texture"):
+func _init(_name := "Untitled Noise Texture").("noise"):
 	name = _name
 	properties.seed = 0
 	properties.octaves = 3

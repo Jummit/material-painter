@@ -15,13 +15,15 @@ to retrieve a list of `Properties` for the `TextureLayerPropertyPanel`.
 export var name : String
 export var properties : Dictionary
 export var visible := true
+var type_name : String
 
 var result : Texture
 
 const Properties = preload("res://addons/property_panel/properties.gd")
 const Layer = preload("res://render_viewports/layer_blending_viewport/layer_blending_viewport.gd").Layer
 
-func _init():
+func _init(_type_name : String):
+	type_name = _type_name
 	properties = {
 		opacity = 1.0,
 		blend_mode = "normal"

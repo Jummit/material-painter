@@ -80,7 +80,7 @@ func setup_texture_layer_item(texture_layer : TextureLayer, on_item : TreeItem) 
 
 
 func get_selected_material_layer() -> MaterialLayer:
-	return get_selected().get_meta("layer") as MaterialLayer
+	return _get_selected_material_layer_item().get_meta("layer")
 
 
 func get_selected_texture_layer() -> TextureLayer:
@@ -88,7 +88,15 @@ func get_selected_texture_layer() -> TextureLayer:
 
 
 func get_selected_layer_texture() -> LayerTexture:
-	return get_selected_material_layer().properties[get_selected().get_meta("selected")] as LayerTexture
+	return get_selected_material_layer().properties[\
+			_get_selected_material_layer_item().get_meta("selected")] as LayerTexture
+
+
+func _get_selected_material_layer_item() -> TreeItem:
+	if get_selected().get_meta("layer") is MaterialLayer:
+		return get_selected()
+	else:
+		return get_selected().get_parent()
 
 
 func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:

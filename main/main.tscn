@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://main/2d_viewport.gd" type="Script" id=1]
 [ext_resource path="res://icon.png" type="Texture" id=2]
@@ -15,6 +15,7 @@
 [ext_resource path="res://3d_viewport/spatialmaterial.tres" type="Material" id=13]
 [ext_resource path="res://render_viewports/layer_blending_viewport/layer_blending_viewport.tscn" type="PackedScene" id=14]
 [ext_resource path="res://main/material_layer_blending_viewports.gd" type="Script" id=15]
+[ext_resource path="res://main/add_layer_popup_menu.gd" type="Script" id=16]
 [ext_resource path="res://addons/property_panel/property_panel.tscn" type="PackedScene" id=17]
 [ext_resource path="res://3d_viewport/rotating_camera/rotating_camera.tscn" type="PackedScene" id=19]
 [ext_resource path="res://3d_viewport/3d_viewport.gd" type="Script" id=20]
@@ -189,7 +190,7 @@ script = ExtResource( 21 )
 [node name="AddLayerPopupMenu" type="PopupMenu" parent="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree"]
 margin_right = 133.0
 margin_bottom = 52.0
-items = [ "Add Bitmap Layer", null, 0, false, false, 0, 0, null, "", false, "Add Noise Layer", null, 0, false, false, 1, 0, null, "", false ]
+script = ExtResource( 16 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -269,8 +270,6 @@ __meta__ = {
 
 [node name="MaterialLayerBlendingViewports" type="Node" parent="."]
 script = ExtResource( 15 )
-[connection signal="painted" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport" to="." method="_on_3DViewport_painted"]
-[connection signal="painted" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/2DViewport" to="." method="_on_2DViewport_painted"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/HBoxContainer/AddButton" to="." method="_on_AddButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/HBoxContainer/DeleteButton" to="." method="_on_DeleteButton_pressed"]
 [connection signal="button_pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_button_pressed"]
@@ -279,11 +278,11 @@ script = ExtResource( 15 )
 [connection signal="layer_texture_selected" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="." method="_on_LayerTree_layer_texture_selected"]
 [connection signal="material_layer_selected" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="." method="_on_LayerTree_material_layer_selected"]
 [connection signal="texture_layer_selected" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="." method="_on_LayerTree_texture_layer_selected"]
-[connection signal="id_pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/AddLayerPopupMenu" to="." method="_on_AddLayerPopupMenu_id_pressed"]
+[connection signal="index_pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/AddLayerPopupMenu" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/AddLayerPopupMenu" method="_on_index_pressed"]
+[connection signal="layer_selected" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/AddLayerPopupMenu" to="." method="_on_AddLayerPopupMenu_layer_selected"]
 [connection signal="id_pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MapTypePopupMenu" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_MapTypePopupMenu_id_pressed"]
 [connection signal="changed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/TextureChannelButtons" to="." method="_on_TextureChannelButtons_changed"]
 [connection signal="values_changed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerPropertyPanel" to="." method="_on_LayerPropertyPanel_values_changed"]
 [connection signal="confirmed" from="TextureCreationDialog" to="TextureCreationDialog" method="_on_confirmed"]
-[connection signal="texture_creation_confirmed" from="TextureCreationDialog" to="." method="_on_TextureCreationDialog_texture_creation_confirmed"]
 [connection signal="item_activated" from="TextureCreationDialog/TextureTypeList" to="TextureCreationDialog" method="_on_TextureTypeList_item_activated"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]

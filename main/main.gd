@@ -152,10 +152,6 @@ func _on_DeleteButton_pressed() -> void:
 	pass # Replace with function body.
 
 
-func _on_AddLayerPopupMenu_id_pressed(_id : int) -> void:
-	add_texture_layer(BitmapTextureLayer.new(), layer_tree.get_selected_layer_texture())
-
-
 func _on_TextureChannelButtons_changed() -> void:
 	layer_tree.setup_layer_material(editing_layer_material)
 
@@ -172,6 +168,8 @@ func _on_LayerTree_material_layer_selected(material_layer) -> void:
 
 func _on_LayerPropertyPanel_values_changed() -> void:
 	editing_layer.properties = layer_property_panel.get_property_values()
+	generate_layer_texture_result(editing_layer)
+	generate_layer_material_textures(editing_layer_material)
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
@@ -179,3 +177,7 @@ func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
 	editing_layer = texture_layer
 	layer_property_panel.load_texture_layer(texture_layer)
 	texture_channel_buttons.hide()
+
+
+func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
+	add_texture_layer(layer.new(), layer_tree.get_selected_layer_texture())

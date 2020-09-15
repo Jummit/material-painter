@@ -1,6 +1,6 @@
 extends "res://texture_layers/texture_layer.gd"
 
-func _init(_name := "Untitled Color Texture"):
+func _init(_name := "Untitled Color Texture").("color"):
 	name = _name
 	properties.color = Color()
 

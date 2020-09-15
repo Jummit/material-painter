@@ -1,6 +1,6 @@
 extends "res://texture_layers/texture_layer.gd"
 
-func _init(_name := "Untitled Scalar Texture"):
+func _init(_name := "Untitled Scalar Texture").("scalar"):
 	name = _name
 	properties.value = .5
 
