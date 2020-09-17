@@ -46,6 +46,8 @@ func drop_data(position : Vector2, data) -> void:
 		var layer := BitmapTextureLayer.new()
 		layer.properties.image_path = data.asset
 		main.add_texture_layer(layer, get_item_at_position(position).get_meta("layer").properties[get_item_at_position(position).get_meta("selected")])
+	elif data.asset is MaterialLayer:
+		main.add_material_layer(data.asset)
 
 
 func setup_layer_material(layer_material : LayerMaterial) -> void:

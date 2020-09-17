@@ -13,29 +13,35 @@ var results : Dictionary
 const TextureLayer = preload("res://layers/texture_layer.gd")
 const MaterialLayer = preload("res://layers/material_layer.gd")
 const BlendingLayer = preload("res://render_viewports/layer_blending_viewport/layer_blending_viewport.gd").Layer
+const LayerTexture = preload("res://layers/layer_texture.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
 
 
-func generate_results(result_size : Vector2) -> void:
+func generate_results(result_size : Vector2, generate_texture_layers := false) -> void:
 	for map in Globals.TEXTURE_MAP_TYPES:
-		generate_map_result(map, result_size)
+		generate_map_result(map, result_size, generate_texture_layers)
 
 
-func generate_map_result(map : String, result_size : Vector2) -> void:
+func generate_map_result(map : String, result_size : Vector2, generate_texture_layers := false) -> void:
 	var blending_layers := []
 	
 	for layer in layers:
 		layer = layer as MaterialLayer
 		if not (map in layer.properties and layer.properties[map]):
 			continue
+		
+		var map_layer_texture : LayerTexture = layer.properties[map]
+		if generate_texture_layers:
+			map_layer_texture.generate_result(result_size)
+		
 		var blending_layer := BlendingLayer.new()
-		blending_layer.code = "texture({0}, UV).rgb"
 		if "mask" in layer.properties and layer.properties.mask:
 			blending_layer.mask = layer.properties.mask.result
+		blending_layer.code = "texture({0}, UV).rgb"
 		blending_layer.uniform_types = ["sampler2D"]
-		blending_layer.uniform_values = [layer.properties[map].result]
+		blending_layer.uniform_values = [map_layer_texture.result]
 		blending_layers.append(blending_layer)
 	
 	if blending_layers.empty():
@@ -44,7 +50,7 @@ func generate_map_result(map : String, result_size : Vector2) -> void:
 	var result : ViewportTexture = yield(LayerBlendViewportManager.blend(
 			blending_layers, result_size, get_instance_id()), "completed")
 	if map == "height":
-		var normal_texture : ImageTexture = yield(
+		var normal_texture : ViewportTexture = yield(
 				NormalMapGenerationViewport.get_normal_map(result), "completed")
 		results.normal = normal_texture
 	results[map] = result

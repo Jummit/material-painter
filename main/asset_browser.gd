@@ -67,12 +67,12 @@ func load_assets(asset_type : AssetType) -> void:
 	dir.list_dir_begin(true)
 	var file_name := dir.get_next()
 	while file_name != "":
-		file_name = dir.get_next()
 		var file := asset_type.directory.plus_file(file_name)
 		var asset = asset_type._load(file)
 		var id := item_list.get_item_count()
 		item_list.add_item(file.get_file().get_basename(), asset_type._generate_preview(asset))
 		item_list.set_item_metadata(id, {type = asset_type.name, asset = asset})
+		file_name = dir.get_next()
 
 
 func get_drag_data_fw(position : Vector2, _from : Control):

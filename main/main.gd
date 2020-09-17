@@ -46,11 +46,14 @@ func add_texture_layer(texture_layer : TextureLayer, on_layer_texture : LayerTex
 	texture_layer.generate_result(result_size)
 	on_layer_texture.generate_result(result_size)
 	editing_layer_material.generate_results(result_size)
+	model.load_layer_material_maps(editing_layer_material)
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
 func add_material_layer(material_layer : MaterialLayer) -> void:
 	editing_layer_material.layers.append(material_layer)
+	editing_layer_material.generate_results(result_size, true)
+	model.load_layer_material_maps(editing_layer_material)
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
