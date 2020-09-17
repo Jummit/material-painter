@@ -12,6 +12,8 @@ var file_location : String
 var editing_layer_material : LayerMaterial
 var result_size := Vector2(2048, 2048)
 
+const MATERIAL_PATH := "user://materials"
+
 const SaveFile = preload("res://main/save_file.gd")
 const MaterialLayer = preload("res://layers/material_layer.gd")
 const LayerMaterial = preload("res://layers/layer_material.gd")
@@ -116,3 +118,8 @@ func _on_SceneTree_node_added(node : Node):
 	if node is TextureOption:
 		node.connect("selected", self, "_on_TextureOption_selected", [node])
 #		node.connect("changed", self, "_on_TextureOption_changed")
+
+
+func _on_MaterialLayerPopupMenu_layer_saved() -> void:
+	var material_layer : MaterialLayer = layer_tree.get_selected_material_layer()
+	ResourceSaver.save(MATERIAL_PATH.plus_file(material_layer.name) + ".tres", material_layer)

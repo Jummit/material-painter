@@ -22,7 +22,7 @@ const TextureLayer = preload("res://layers/texture_layer.gd")
 const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_layer.gd")
 
 onready var main : Control = $"../../../../.."
-onready var add_layer_popup_menu : PopupMenu = $AddLayerPopupMenu
+onready var material_layer_popup_menu : PopupMenu = $MaterialLayerPopupMenu
 onready var map_type_popup_menu : PopupMenu = $MapTypePopupMenu
 
 func _ready() -> void:
@@ -33,8 +33,8 @@ func _ready() -> void:
 
 func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == BUTTON_RIGHT and event.pressed:
-		add_layer_popup_menu.rect_global_position = event.global_position
-		add_layer_popup_menu.popup()
+		material_layer_popup_menu.rect_global_position = event.global_position
+		material_layer_popup_menu.popup()
 
 
 func can_drop_data(_position : Vector2, data) -> bool:
@@ -42,9 +42,9 @@ func can_drop_data(_position : Vector2, data) -> bool:
 
 
 func drop_data(position : Vector2, data) -> void:
-	if data.asset is Texture:
+	if data.asset is String:
 		var layer := BitmapTextureLayer.new()
-		layer.properties.image_path = data.asset.resource_path
+		layer.properties.image_path = data.asset
 		main.add_texture_layer(layer, get_item_at_position(position).get_meta("layer").properties[get_item_at_position(position).get_meta("selected")])
 
 
@@ -134,7 +134,7 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 
 
 func _on_MapTypePopupMenu_id_pressed(_id : int) -> void:
-	var item := get_item_at_position(get_global_transform().xform_inv(add_layer_popup_menu.rect_position))
+	var item := get_item_at_position(get_global_transform().xform_inv(material_layer_popup_menu.rect_position))
 	item.set_meta("selected", map_type_popup_menu)
 
 

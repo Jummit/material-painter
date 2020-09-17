@@ -19,20 +19,33 @@ class AssetType:
 	
 	func _generate_preview(_asset : Resource) -> Texture:
 		return null
+	
+	func _load(path : String):
+		return load(path)
 
 class TextureAssetType extends AssetType:
-	func _init().("Textures", "textures") -> void:
+	func _init().("Textures", "user://textures") -> void:
 		pass
 	
-	func _generate_preview(asset : Resource) -> Texture:
-		return asset as Texture
+	func _generate_preview(asset) -> Texture:
+		var image := Image.new()
+		image.load(asset)
+		var image_texture := ImageTexture.new()
+		image_texture.create_from_image(image)
+		return image_texture
+	
+	func _load(path : String):
+		return path
 
 class MaterialAssetType extends AssetType:
-	func _init().("Materials", "materials") -> void:
+	const MaterialLayer = preload("res://layers/material_layer.gd")
+	const LayerTexture = preload("res://layers/layer_texture.gd")
+	
+	func _init().("Materials", "user://materials") -> void:
 		pass
 	
-	func _generate_preview(_asset : Resource) -> Texture:
-		return null
+	func _generate_preview(asset : Resource):
+		return ((asset as MaterialLayer).properties.albedo as LayerTexture).generate_result(Vector2(128, 128), false)
 
 func _ready():
 	for asset_type in ASSET_TYPES:
@@ -49,19 +62,17 @@ func load_assets(asset_type : AssetType) -> void:
 	item_list.set_drag_forwarding(self)
 	add_child(item_list)
 	
-	var folder := "res://assets/".plus_file(asset_type.directory)
 	var dir := Directory.new()
-	dir.open(folder)
-	dir.list_dir_begin()
+	dir.open(asset_type.directory)
+	dir.list_dir_begin(true)
 	var file_name := dir.get_next()
 	while file_name != "":
 		file_name = dir.get_next()
-		var file := folder.plus_file(file_name)
-		if ResourceLoader.exists(file):
-			var asset := load(file)
-			var id := item_list.get_item_count()
-			item_list.add_item(file.get_file().get_basename(), asset_type._generate_preview(asset))
-			item_list.set_item_metadata(id, {type = asset_type.name, asset = asset})
+		var file := asset_type.directory.plus_file(file_name)
+		var asset = asset_type._load(file)
+		var id := item_list.get_item_count()
+		item_list.add_item(file.get_file().get_basename(), asset_type._generate_preview(asset))
+		item_list.set_item_metadata(id, {type = asset_type.name, asset = asset})
 
 
 func get_drag_data_fw(position : Vector2, _from : Control):

@@ -1,6 +1,7 @@
 extends PopupMenu
 
 signal layer_selected(layer)
+signal layer_saved
 
 func _ready() -> void:
 	for layer_type in Globals.TEXTURE_LAYER_TYPES:
@@ -9,4 +10,7 @@ func _ready() -> void:
 
 
 func _on_index_pressed(index : int) -> void:
-	emit_signal("layer_selected", get_item_metadata(index))
+	if index == 0:
+		emit_signal("layer_saved")
+	else:
+		emit_signal("layer_selected", get_item_metadata(index))

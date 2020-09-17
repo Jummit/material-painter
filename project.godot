@@ -15,7 +15,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="103605822"
+config/name="Layers"
 run/main_scene="res://main/main.tscn"
 config/icon="res://icon.png"
 
