@@ -1,5 +1,9 @@
 extends Camera
 
+"""
+A camera that can be rotated around a center using the mouse
+"""
+
 var sensitity := 0.01
 
 onready var horizontal_camera_socket : Spatial = get_parent()

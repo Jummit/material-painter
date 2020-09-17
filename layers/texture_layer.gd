@@ -20,7 +20,7 @@ var type_name : String
 var result : Texture
 
 const Properties = preload("res://addons/property_panel/properties.gd")
-const Layer = preload("res://render_viewports/layer_blending_viewport/layer_blending_viewport.gd").Layer
+const BlendingLayer = preload("res://render_viewports/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 
 func _init(_type_name : String):
 	resource_local_to_scene = true
@@ -37,13 +37,18 @@ func get_properties() -> Array:
 		Properties.EnumProperty.new("blend_mode", Globals.BLEND_MODES)]
 
 
-func generate_result(result_size : Vector2, keep_viewport := true) -> void:
-	result = yield(LayerBlendViewportManager.blend(
-			[_get_as_shader_layer()], result_size, get_instance_id(), keep_viewport), "completed")
+func update_result(result_size : Vector2, keep_viewport := true) -> void:
+	result = yield(generate_result(result_size, keep_viewport), "completed")
 
 
-func _get_as_shader_layer() -> Layer:
-	var layer := Layer.new()
+func generate_result(result_size : Vector2, keep_viewport := true) -> Texture:
+	return yield(LayerBlendViewportManager.blend(
+			[_get_as_shader_layer()], result_size,
+			get_instance_id() if keep_viewport else -1), "completed")
+
+
+func _get_as_shader_layer() -> BlendingLayer:
+	var layer := BlendingLayer.new()
 	layer.blend_mode = properties.blend_mode
 	layer.opacity = properties.opacity
 	return layer

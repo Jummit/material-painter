@@ -12,7 +12,7 @@ func get_properties() -> Array:
 	return .get_properties() + [Properties.FilePathProperty.new("image_path")]
 
 
-func _get_as_shader_layer() -> Layer:
+func _get_as_shader_layer() -> BlendingLayer:
 	var layer := ._get_as_shader_layer()
 	layer.code = "texture({0}, UV).rgb"
 	layer.uniform_types = ["sampler2D"]

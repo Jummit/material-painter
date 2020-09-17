@@ -1,5 +1,9 @@
 extends MeshInstance
 
+"""
+The mesh that is used to preview the generated material
+"""
+
 const LayerMaterial = preload("res://layers/layer_material.gd")
 
 func load_layer_material_maps(layer_material : LayerMaterial) -> void:

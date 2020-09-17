@@ -1,7 +1,8 @@
 """
-All properties used to edit values in the `PropertyPanel`
+All properties used to edit values in a `PropertyPanel`
 
-Each property can create a `Control` and specifies the signal that control emits when it changed. It also specifies which member of the control is the resulting value.
+Each property can create a `Control` and specifies the signal that control emits
+when it changed. It also specifies which member of the control is the resulting value.
 """
 
 class Property:

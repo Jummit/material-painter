@@ -4,7 +4,7 @@ extends Control
 The main script of the Material Painter application
 
 It handles most callbacks and updates the results of the layer stacks when something changes.
-Keeps track of the currently editing objects and manages the menu bar, saving and loading.
+Manages the menu bar, saving and loading.
 """
 
 var current_file : SaveFile
@@ -43,16 +43,16 @@ func load_file(save_file : SaveFile) -> void:
 
 func add_texture_layer(texture_layer : TextureLayer, on_layer_texture : LayerTexture) -> void:
 	on_layer_texture.layers.append(texture_layer)
-	texture_layer.generate_result(result_size)
-	on_layer_texture.generate_result(result_size)
-	editing_layer_material.generate_results(result_size)
+	texture_layer.update_result(result_size)
+	on_layer_texture.update_result(result_size)
+	editing_layer_material.update_results(result_size)
 	model.load_layer_material_maps(editing_layer_material)
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
 func add_material_layer(material_layer : MaterialLayer) -> void:
 	editing_layer_material.layers.append(material_layer)
-	editing_layer_material.generate_results(result_size, true)
+	editing_layer_material.update_results(result_size, true)
 	model.load_layer_material_maps(editing_layer_material)
 	layer_tree.setup_layer_material(editing_layer_material)
 
@@ -87,8 +87,8 @@ func _on_LayerTree_material_layer_selected(material_layer) -> void:
 func _on_LayerPropertyPanel_values_changed() -> void:
 	layer_property_panel.editing_layer.properties = layer_property_panel.get_property_values()
 	var affected_layers := editing_layer_material.get_depending_layer_textures(layer_property_panel.editing_layer)
-	affected_layers.front().generate_result(result_size)
-	editing_layer_material.generate_results(result_size)
+	affected_layers.front().update_result(result_size)
+	editing_layer_material.update_results(result_size)
 	model.load_layer_material_maps(editing_layer_material)
 	layer_tree.update_icons()
 

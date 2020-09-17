@@ -9,7 +9,7 @@ func get_properties() -> Array:
 	return .get_properties() + [Properties.ColorProperty.new("color")]
 
 
-func _get_as_shader_layer() -> Layer:
+func _get_as_shader_layer() -> BlendingLayer:
 	var layer := ._get_as_shader_layer()
 	layer.code = "{0}"
 	layer.uniform_types = ["vec3"]

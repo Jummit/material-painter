@@ -12,19 +12,19 @@ var results : Dictionary
 
 const TextureLayer = preload("res://layers/texture_layer.gd")
 const MaterialLayer = preload("res://layers/material_layer.gd")
-const BlendingLayer = preload("res://render_viewports/layer_blending_viewport/layer_blending_viewport.gd").Layer
+const BlendingLayer = preload("res://render_viewports/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 const LayerTexture = preload("res://layers/layer_texture.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
 
 
-func generate_results(result_size : Vector2, generate_texture_layers := false) -> void:
+func update_results(result_size : Vector2, generate_texture_layers := false) -> void:
 	for map in Globals.TEXTURE_MAP_TYPES:
-		generate_map_result(map, result_size, generate_texture_layers)
+		update_map_result(map, result_size, generate_texture_layers)
 
 
-func generate_map_result(map : String, result_size : Vector2, generate_texture_layers := false) -> void:
+func update_map_result(map : String, result_size : Vector2, generate_texture_layers := false) -> void:
 	var blending_layers := []
 	
 	for layer in layers:
@@ -34,7 +34,7 @@ func generate_map_result(map : String, result_size : Vector2, generate_texture_l
 		
 		var map_layer_texture : LayerTexture = layer.properties[map]
 		if generate_texture_layers:
-			map_layer_texture.generate_result(result_size)
+			map_layer_texture.update_result(result_size)
 		
 		var blending_layer := BlendingLayer.new()
 		if "mask" in layer.properties and layer.properties.mask:

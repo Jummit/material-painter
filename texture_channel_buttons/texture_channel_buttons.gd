@@ -1,7 +1,7 @@
 extends GridContainer
 
 """
-Buttons used to specify the enabled channels of the selected `MaterialLayer`
+Buttons used to specify the enabled maps of the selected `MaterialLayer`
 """
 
 signal changed

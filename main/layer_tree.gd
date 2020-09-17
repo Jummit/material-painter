@@ -1,5 +1,13 @@
 extends Tree
 
+"""
+An interactive representation of a `LayerMaterial` as a tree
+
+The tree consists of a list of `MaterialLayer`s with the `TextureLayer`s
+of the selected `LayerTexture` below.
+Shows previews of maps and masks as buttons.
+"""
+
 var root : TreeItem
 var tree_items : Dictionary = {}
 
@@ -94,11 +102,13 @@ func setup_texture_layer_item(texture_layer : TextureLayer, on_item : TreeItem) 
 
 
 func update_icons() -> void:
-	pass
-#	for layer in tree_items.keys():
-#		var tree_item : TreeItem = tree_items[layer]
-#		if layer is TextureLayer:
-#			tree_item.set_button(0, 0, layer.result)
+	for layer in tree_items.keys():
+		var tree_item : TreeItem = tree_items[layer]
+		if layer is TextureLayer:
+			tree_item.set_button(0, 0, yield(layer.generate_result(Vector2(32, 32), false), "completed"))
+		elif layer is MaterialLayer:
+			var selected_layer_texture : LayerTexture = layer.properties[tree_item.get_meta("selected")]
+			tree_item.set_button(0, 0, yield(selected_layer_texture.generate_result(Vector2(32, 32), false), "completed"))
 
 
 func get_selected_material_layer() -> MaterialLayer:
@@ -111,7 +121,7 @@ func get_selected_texture_layer() -> TextureLayer:
 
 func get_selected_layer_texture() -> LayerTexture:
 	return get_selected_material_layer().properties[\
-			_get_selected_material_layer_item().get_meta("selected")] as LayerTexture
+		_get_selected_material_layer_item().get_meta("selected")] as LayerTexture
 
 
 func _get_selected_material_layer_item() -> TreeItem:

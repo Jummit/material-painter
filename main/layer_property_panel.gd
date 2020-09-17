@@ -1,5 +1,8 @@
 extends "res://addons/property_panel/property_panel.gd"
 
+"""
+"""
+
 var editing_layer
 
 const LayerTexture = preload("res://layers/layer_texture.gd")

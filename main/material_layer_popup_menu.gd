@@ -1,5 +1,9 @@
 extends PopupMenu
 
+"""
+The context menu that is shown when right-clicking a `MaterialLayer`
+"""
+
 signal layer_selected(layer)
 signal layer_saved
 

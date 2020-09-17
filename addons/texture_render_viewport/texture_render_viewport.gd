@@ -1,13 +1,19 @@
 extends Viewport
 
+"""
+A `Viewport` to render a `subject` to a `ViewportTexture` with a given size
+"""
+
 var busy := false
 
-func render_texture(subject : Node, result_size : Vector2) -> ViewportTexture:
+func render_texture(subject : Node, result_size : Vector2, wait_when_busy := false) -> ViewportTexture:
 	if busy:
-		yield()
-		return ViewportTexture.new()
-	while busy:
-		yield(VisualServer, "frame_post_draw")
+		if wait_when_busy:
+			while busy:
+				yield(VisualServer, "frame_post_draw")
+		else:
+			yield()
+			return ViewportTexture.new()
 	add_child(subject)
 	size = result_size
 	render_target_update_mode = Viewport.UPDATE_ONCE

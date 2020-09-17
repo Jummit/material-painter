@@ -1,5 +1,9 @@
 extends Button
 
+"""
+A `Button` to select a path to be used in a `PropertyPanel`
+"""
+
 signal changed
 
 var path := "" setget set_path

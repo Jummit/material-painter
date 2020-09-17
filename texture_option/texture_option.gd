@@ -3,7 +3,8 @@ extends PanelContainer
 """
 A dropdown for choosing a texture
 
-Loads textures from the `TextureManager`. Creation of new textures and clearing of the texture is supported.
+Loads textures from the `TextureManager`.
+Supports creation of new textures and clearing the texture.
 """
 
 signal selected
