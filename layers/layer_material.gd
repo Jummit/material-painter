@@ -37,8 +37,8 @@ func update_map_result(map : String, result_size : Vector2, generate_texture_lay
 			map_layer_texture.update_result(result_size)
 		
 		var blending_layer := BlendingLayer.new()
-		if "mask" in layer.maps and layer.maps.mask:
-			blending_layer.mask = layer.maps.mask.result
+		if layer.mask:
+			blending_layer.mask = layer.mask.result
 		blending_layer.code = "texture({0}, UV).rgb"
 		blending_layer.uniform_types = ["sampler2D"]
 		blending_layer.uniform_values = [map_layer_texture.result]
