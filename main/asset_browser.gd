@@ -45,7 +45,7 @@ class MaterialAssetType extends AssetType:
 		pass
 	
 	func _generate_preview(asset : Resource):
-		return ((asset as MaterialLayer).maps.values().front() as LayerTexture).generate_result(Vector2(128, 128), false)
+		return yield(((asset as MaterialLayer).maps.values().front() as LayerTexture).generate_result(Vector2(128, 128), false), "completed")
 
 func _ready():
 	for asset_type in ASSET_TYPES:
@@ -70,7 +70,10 @@ func load_assets(asset_type : AssetType) -> void:
 		var file := asset_type.directory.plus_file(file_name)
 		var asset = asset_type._load(file)
 		var id := item_list.get_item_count()
-		item_list.add_item(file.get_file().get_basename(), asset_type._generate_preview(asset))
+		var preview = asset_type._generate_preview(asset)
+		if preview is GDScriptFunctionState:
+			preview = yield(preview, "completed")
+		item_list.add_item(file.get_file().get_basename(), preview)
 		item_list.set_item_metadata(id, {type = asset_type.name, asset = asset})
 		file_name = dir.get_next()
 
