@@ -20,7 +20,7 @@ class TextureProperty extends "res://addons/property_panel/properties.gd".Proper
 func load_texture_layer(texture_layer : TextureLayer) -> void:
 	editing_layer = texture_layer
 	set_properties(texture_layer.get_properties())
-	load_values(texture_layer.properties)
+	load_values(texture_layer)
 
 
 func load_material_layer(material_layer : MaterialLayer) -> void:
@@ -30,11 +30,12 @@ func load_material_layer(material_layer : MaterialLayer) -> void:
 		TextureProperty.new("mask"),
 	]
 	
-	for type in material_layer.get_maps().keys():
+	for type in material_layer.maps.keys():
 		properties += [
 			TextureProperty.new(type),
-			#Properties.FloatProperty("opacity", 0.0, 1.0)
+			Properties.EnumProperty.new("blend_mode", Globals.BLEND_MODES),
+			Properties.FloatProperty.new("opacity", 0.0, 1.0),
 			]
 	
 	set_properties(properties)
-	load_values(material_layer.properties)
+	load_values(material_layer)

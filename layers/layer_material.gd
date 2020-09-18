@@ -29,16 +29,16 @@ func update_map_result(map : String, result_size : Vector2, generate_texture_lay
 	
 	for layer in layers:
 		layer = layer as MaterialLayer
-		if not (map in layer.properties and layer.properties[map]):
+		if not (map in layer.maps and layer.maps[map]):
 			continue
 		
-		var map_layer_texture : LayerTexture = layer.properties[map]
+		var map_layer_texture : LayerTexture = layer.maps[map]
 		if generate_texture_layers:
 			map_layer_texture.update_result(result_size)
 		
 		var blending_layer := BlendingLayer.new()
-		if "mask" in layer.properties and layer.properties.mask:
-			blending_layer.mask = layer.properties.mask.result
+		if "mask" in layer.maps and layer.maps.mask:
+			blending_layer.mask = layer.maps.mask.result
 		blending_layer.code = "texture({0}, UV).rgb"
 		blending_layer.uniform_types = ["sampler2D"]
 		blending_layer.uniform_values = [map_layer_texture.result]

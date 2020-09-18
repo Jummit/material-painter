@@ -45,7 +45,7 @@ class MaterialAssetType extends AssetType:
 		pass
 	
 	func _generate_preview(asset : Resource):
-		return ((asset as MaterialLayer).properties.albedo as LayerTexture).generate_result(Vector2(128, 128), false)
+		return ((asset as MaterialLayer).maps.values().front() as LayerTexture).generate_result(Vector2(128, 128), false)
 
 func _ready():
 	for asset_type in ASSET_TYPES:

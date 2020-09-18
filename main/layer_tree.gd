@@ -27,7 +27,7 @@ const LayerMaterial = preload("res://layers/layer_material.gd")
 const MaterialLayer = preload("res://layers/material_layer.gd")
 const LayerTexture = preload("res://layers/layer_texture.gd")
 const TextureLayer = preload("res://layers/texture_layer.gd")
-const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_layer.gd")
+const FileTextureLayer = preload("res://layers/texture_layers/file_texture_layer.gd")
 
 onready var main : Control = $"../../../../.."
 onready var material_layer_popup_menu : PopupMenu = $MaterialLayerPopupMenu
@@ -51,8 +51,8 @@ func can_drop_data(_position : Vector2, data) -> bool:
 
 func drop_data(position : Vector2, data) -> void:
 	if data.asset is String:
-		var layer := BitmapTextureLayer.new()
-		layer.properties.image_path = data.asset
+		var layer := FileTextureLayer.new()
+		layer.path = data.asset
 		main.add_texture_layer(layer, selected_layer_textures[get_item_at_position(position).get_meta("layer")])
 	elif data.asset is MaterialLayer:
 		main.add_material_layer(data.asset)
@@ -71,19 +71,18 @@ func setup_material_layer_item(material_layer : MaterialLayer) -> void:
 	var material_layer_item := create_item(root)
 	material_layer_item.set_meta("layer", material_layer)
 	
-	var maps := material_layer.get_maps()
 	if not material_layer in selected_maps:
-		if maps.size() > 0:
-			selected_maps[material_layer] = maps.values().front()
+		if material_layer.maps.size() > 0:
+			selected_maps[material_layer] = material_layer.maps.values().front()
 	var selected_layer_texture : LayerTexture
 	if material_layer in selected_layer_textures:
 		selected_layer_texture = selected_layer_textures[material_layer]
 	
-	if "mask" in material_layer.properties:
-		material_layer_item.add_button(0, preload("res://icon.png"), Buttons.MASK)
-	if maps.size() > 0:
-		material_layer_item.add_button(0, preload("res://icon.png"), Buttons.RESULT)
-	if maps.size() > 1:
+	if material_layer.mask:
+		material_layer_item.add_button(0, ImageTexture.new(), Buttons.MASK)
+	if material_layer.maps.size() > 0:
+		material_layer_item.add_button(0, ImageTexture.new(), Buttons.RESULT)
+	if material_layer.maps.size() > 1:
 		material_layer_item.add_button(0, preload("res://icons/down.svg"), Buttons.MAP_DROPDOWN)
 	
 	material_layer_item.set_text(1, material_layer.name)
@@ -101,7 +100,7 @@ func setup_material_layer_item(material_layer : MaterialLayer) -> void:
 func setup_texture_layer_item(texture_layer : TextureLayer, on_item : TreeItem) -> void:
 	var texture_layer_item := create_item(on_item)
 	texture_layer_item.set_meta("layer", texture_layer)
-	texture_layer_item.add_button(0, preload("res://icon.png"), Buttons.RESULT)
+	texture_layer_item.add_button(0, ImageTexture.new(), Buttons.RESULT)
 	texture_layer_item.set_text(1, "Texture Layer")
 	texture_layer_item.add_button(1, preload("res://icons/icon_visible.svg"), Buttons.VISIBILITY)
 	tree_items[texture_layer] = texture_layer_item
@@ -114,10 +113,10 @@ func update_icons() -> void:
 			tree_item.set_button(0, 0, yield(layer.generate_result(Vector2(32, 32), false), "completed"))
 		elif layer is MaterialLayer:
 			var button_count := 0
-			if "mask" in layer.properties:
-				tree_item.set_button(0, 0, yield(layer.properties.mask.generate_result(Vector2(32, 32), false), "completed"))
+			if layer.mask:
+				tree_item.set_button(0, 0, yield(layer.mask.generate_result(Vector2(32, 32), false), "completed"))
 				button_count += 1
-			if layer.get_maps().size() > 0:
+			if layer.maps.size() > 0:
 				if layer in selected_maps:
 					var selected_map : LayerTexture = selected_maps[layer]
 					tree_item.set_button(0, button_count, yield(selected_map.generate_result(Vector2(32, 32), false), "completed"))
@@ -156,10 +155,10 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 			setup_layer_material(main.editing_layer_material)
 		Buttons.MASK:
 			var material_layer : MaterialLayer = item.get_meta("layer")
-			if material_layer in selected_layer_textures and selected_layer_textures[material_layer] == material_layer.properties.mask:
+			if material_layer in selected_layer_textures and selected_layer_textures[material_layer] == material_layer.mask:
 				selected_layer_textures.erase(material_layer)
 			else:
-				selected_layer_textures[material_layer] = material_layer.properties.mask
+				selected_layer_textures[material_layer] = material_layer.mask
 			setup_layer_material(main.editing_layer_material)
 		Buttons.VISIBILITY:
 			pass

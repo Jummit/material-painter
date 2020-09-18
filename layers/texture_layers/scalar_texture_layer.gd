@@ -1,8 +1,9 @@
 extends "res://layers/texture_layer.gd"
 
+export var value = .5
+
 func _init(_name := "Untitled Scalar Texture").("scalar"):
 	name = _name
-	properties.value = .5
 
 
 func get_properties() -> Array:
@@ -13,5 +14,5 @@ func _get_as_shader_layer() -> BlendingLayer:
 	var layer := ._get_as_shader_layer()
 	layer.code = "vec3({0}, {0}, {0})"
 	layer.uniform_types = ["float"]
-	layer.uniform_values = [properties.value]
+	layer.uniform_values = [value]
 	return layer

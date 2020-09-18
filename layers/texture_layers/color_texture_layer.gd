@@ -1,8 +1,9 @@
 extends "res://layers/texture_layer.gd"
 
+export var color := Color.white
+
 func _init(_name := "Untitled Color Texture").("color"):
 	name = _name
-	properties.color = Color()
 
 
 func get_properties() -> Array:
@@ -13,5 +14,5 @@ func _get_as_shader_layer() -> BlendingLayer:
 	var layer := ._get_as_shader_layer()
 	layer.code = "{0}"
 	layer.uniform_types = ["vec3"]
-	layer.uniform_values = [Vector3(properties.color.r, properties.color.g, properties.color.b)]
+	layer.uniform_values = [Vector3(color.r, color.g, color.b)]
 	return layer

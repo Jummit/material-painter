@@ -41,7 +41,7 @@ func can_drop_data_fw(_position : Vector2, data, _from_control : Control) -> boo
 
 func drop_data_fw(_position : Vector2, data : String, _from_control : Control) -> void:
 	var texture_layer := BitmapTextureLayer.new(data.get_file().get_basename())
-	texture_layer.properties.image_path = data
+	texture_layer.image_path = data
 	var layer_texture := LayerTexture.new()
 	layer_texture.layers = [texture_layer]
 	TextureManager.textures.append(layer_texture)

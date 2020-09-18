@@ -23,19 +23,18 @@ func _ready():
 
 func load_material_layer(material_layer : MaterialLayer) -> void:
 	show()
-	var properties : Dictionary = material_layer.properties
 	for button in get_children():
 		# block `toggled` signals to avoid emitting the `changed` signal
 		button.set_block_signals(true)
-		button.pressed = properties.has(button.name)
+		button.pressed = button.name in material_layer.maps
 		button.set_block_signals(false)
 
 
 func _on_Button_toggled(button_pressed : bool, type : String):
-	var properties : Dictionary = layer_property_panel.editing_layer.properties
+	var maps : Dictionary = layer_property_panel.editing_layer.maps
 	if button_pressed:
-		if not properties.has(type):
-			properties[type] = LayerTexture.new()
+		if not type in maps:
+			maps[type] = LayerTexture.new()
 	else:
-		properties.erase(type)
+		maps.erase(type)
 	emit_signal("changed")
