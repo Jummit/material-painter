@@ -15,7 +15,7 @@ _global_script_class_icons={
 
 [application]
 
-config/name="Layers"
+config/name="Material Painter"
 run/main_scene="res://main/main.tscn"
 config/icon="res://icon.png"
 

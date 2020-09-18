@@ -72,7 +72,12 @@ func _on_AddButton_pressed() -> void:
 
 
 func _on_DeleteButton_pressed() -> void:
-	pass # Replace with function body.
+	var layer = layer_tree.get_selected().get_meta("layer")
+	if layer is MaterialLayer:
+		editing_layer_material.layers.erase(layer)
+	elif layer is TextureLayer:
+		layer_tree.get_selected_layer_texture().layers.erase(layer)
+	layer_tree.setup_layer_material(editing_layer_material)
 
 
 func _on_TextureChannelButtons_changed() -> void:
