@@ -22,6 +22,11 @@ class BlendingLayer:
 	var mask : Texture
 
 func blend(layers : Array, result_size : Vector2) -> ViewportTexture:
+	if layers.size() == 0:
+		var color_rect := ColorRect.new()
+		color_rect.rect_size = result_size
+		return render_texture(color_rect, result_size)
+	
 	var shader := Shader.new()
 	shader.resource_local_to_scene = true
 	shader.code = _generate_blending_shader(layers)
@@ -53,7 +58,7 @@ static func _generate_blending_shader(layers : Array) -> String:
 		})
 		
 		if layer.mask:
-			uniform_declaration += "uniform texture_sampler %s;\n" % _mask_var(layer_num)
+			uniform_declaration += "uniform sampler2D %s;\n" % _mask_var(layer_num)
 		
 		for uniform in layer.uniform_types.size():
 			uniform_declaration += "uniform %s %s;\n" % [
@@ -80,7 +85,7 @@ static func _generate_blending_shader(layers : Array) -> String:
 					mode = layer.blend_mode,
 # warning-ignore:incompatible_ternary
 # warning-ignore:incompatible_ternary
-					opacity = layer.mask if layer.mask else layer.opacity,
+					opacity = _mask_var(layer_num) if layer.mask else layer.opacity,
 				})
 			blending_code += "\n"
 			blend_result_count += 1

@@ -1,5 +1,5 @@
 const BLEND_TEMPLATE := "	vec3 {result} = blend{mode}({a}, {b}, {opacity});"
-const MASKED_BLEND_TEMPLATE := "	vec3 {result} = blend{mode}({a}, {b}, texture({opacity}, UV));"
+const MASKED_BLEND_TEMPLATE := "	vec3 {result} = blend{mode}({a}, {b}, texture({opacity}, UV).r);"
 const RESULT_TEMPLATE := "	vec3 {result} = {code};"
 
 const SHADER_TEMPLATE := """shader_type canvas_item;

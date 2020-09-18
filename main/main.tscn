@@ -1,10 +1,8 @@
-[gd_scene load_steps=18 format=2]
+[gd_scene load_steps=16 format=2]
 
 [ext_resource path="res://main/2d_viewport.gd" type="Script" id=1]
 [ext_resource path="res://3d_viewport/material.tres" type="Material" id=2]
 [ext_resource path="res://main/main.gd" type="Script" id=3]
-[ext_resource path="res://icons/mask.png" type="Texture" id=4]
-[ext_resource path="res://icons/layer.png" type="Texture" id=5]
 [ext_resource path="res://main/layer_property_panel.gd" type="Script" id=6]
 [ext_resource path="res://3d_viewport/model.gd" type="Script" id=8]
 [ext_resource path="res://texture_channel_buttons/texture_channel_buttons.tscn" type="PackedScene" id=9]
@@ -181,13 +179,14 @@ margin_right = 250.0
 margin_bottom = 284.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+hide_folding = true
 hide_root = true
 script = ExtResource( 21 )
 
 [node name="MaterialLayerPopupMenu" type="PopupMenu" parent="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree"]
 margin_right = 133.0
 margin_bottom = 52.0
-items = [ "save to library", null, 0, false, false, 0, 0, null, "", false ]
+items = [ "save to library", null, 0, false, false, 0, 0, null, "", false, "add mask", null, 0, false, false, 1, 0, null, "", false ]
 script = ExtResource( 16 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -196,7 +195,6 @@ __meta__ = {
 [node name="MapTypePopupMenu" type="PopupMenu" parent="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree"]
 margin_right = 99.0
 margin_bottom = 88.0
-items = [ "height", ExtResource( 4 ), 0, false, false, 0, 0, null, "", false, "albedo", ExtResource( 5 ), 0, false, false, 1, 0, null, "", false ]
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -242,6 +240,7 @@ __meta__ = {
 [connection signal="index_pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" method="_on_index_pressed"]
 [connection signal="layer_saved" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" to="." method="_on_MaterialLayerPopupMenu_layer_saved"]
 [connection signal="layer_selected" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" to="." method="_on_AddLayerPopupMenu_layer_selected"]
+[connection signal="mask_added" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" to="." method="_on_MaterialLayerPopupMenu_mask_added"]
 [connection signal="id_pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MapTypePopupMenu" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_MapTypePopupMenu_id_pressed"]
 [connection signal="changed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/TextureChannelButtons" to="." method="_on_TextureChannelButtons_changed"]
 [connection signal="values_changed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerPropertyPanel" to="." method="_on_LayerPropertyPanel_values_changed"]

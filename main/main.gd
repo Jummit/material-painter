@@ -87,7 +87,8 @@ func _on_LayerTree_material_layer_selected(material_layer) -> void:
 func _on_LayerPropertyPanel_values_changed() -> void:
 	layer_property_panel.editing_layer.properties = layer_property_panel.get_property_values()
 	var affected_layers := editing_layer_material.get_depending_layer_textures(layer_property_panel.editing_layer)
-	affected_layers.front().update_result(result_size)
+	for affected_layer in affected_layers:
+		affected_layer.update_result(result_size)
 	editing_layer_material.update_results(result_size)
 	model.load_layer_material_maps(editing_layer_material)
 	layer_tree.update_icons()
@@ -126,3 +127,9 @@ func _on_SceneTree_node_added(node : Node):
 func _on_MaterialLayerPopupMenu_layer_saved() -> void:
 	var material_layer : MaterialLayer = layer_tree.get_selected_material_layer()
 	ResourceSaver.save(MATERIAL_PATH.plus_file(material_layer.name) + ".tres", material_layer)
+
+
+func _on_MaterialLayerPopupMenu_mask_added() -> void:
+	var material_layer : MaterialLayer = layer_tree.get_selected_material_layer()
+	material_layer.properties.mask = LayerTexture.new()
+	layer_tree.setup_layer_material(editing_layer_material)
