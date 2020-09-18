@@ -8,7 +8,7 @@ and can hold a `LayerTexture` for each map (for example albedo, height, etc...).
 """
 
 # warning-ignore-all:unused_class_variable
-export var maps : Dictionary = {}
+export var maps : Dictionary
 export var mask : Resource
 export var name := "Untitled Layer"
 export var opacity := 1.0
