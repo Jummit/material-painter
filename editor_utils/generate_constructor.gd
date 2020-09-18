@@ -17,5 +17,5 @@ func _run() -> void:
 	
 	var code := TEMPLATE.format({args = args.trim_suffix(", "), assigns = assigns})
 	
-	print(code)
+	print("Constructor copied to clipboard")
 	OS.clipboard = code

@@ -184,7 +184,6 @@ func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
 
 
 func _on_cell_selected() -> void:
-#	get_selected().set_editable(1, true)
 	var layer = get_selected().get_meta("layer")
 	if layer is MaterialLayer:
 		emit_signal("material_layer_selected", layer)
