@@ -176,11 +176,12 @@ text = "-"
 [node name="LayerTree" type="Tree" parent="VBoxContainer/PanelContainer/LayerContainer/LayerTree"]
 margin_top = 24.0
 margin_right = 250.0
-margin_bottom = 284.0
+margin_bottom = 282.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/draw_guides = 1
 custom_constants/draw_relationship_lines = 1
+columns = 2
 hide_folding = true
 hide_root = true
 script = ExtResource( 21 )
@@ -202,13 +203,12 @@ __meta__ = {
 }
 
 [node name="TextureChannelButtons" parent="VBoxContainer/PanelContainer/LayerContainer/LayerTree" instance=ExtResource( 9 )]
-visible = false
 margin_top = 286.0
 margin_right = 250.0
 margin_bottom = 286.0
 
 [node name="LayerPropertyPanel" parent="VBoxContainer/PanelContainer/LayerContainer/LayerTree" instance=ExtResource( 17 )]
-margin_top = 288.0
+margin_top = 290.0
 margin_right = 250.0
 margin_bottom = 548.0
 size_flags_horizontal = 3
@@ -236,6 +236,7 @@ __meta__ = {
 [connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/HBoxContainer/DeleteButton" to="." method="_on_DeleteButton_pressed"]
 [connection signal="button_pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_button_pressed"]
 [connection signal="cell_selected" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_cell_selected"]
+[connection signal="item_edited" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_item_edited"]
 [connection signal="layer_visibility_changed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="." method="_on_LayerTree_layer_visibility_changed"]
 [connection signal="material_layer_selected" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="." method="_on_LayerTree_material_layer_selected"]
 [connection signal="texture_layer_selected" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="." method="_on_LayerTree_texture_layer_selected"]

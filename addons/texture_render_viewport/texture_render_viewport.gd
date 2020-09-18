@@ -6,12 +6,13 @@ A `Viewport` to render a `subject` to a `ViewportTexture` with a given size
 
 var busy := false
 
-func render_texture(subject : Node, result_size : Vector2, wait_when_busy := true) -> ViewportTexture:
+func render_texture(subject : Node, result_size : Vector2, wait_when_busy := false) -> ViewportTexture:
 	if busy:
 		if wait_when_busy:
 			while busy:
 				yield(VisualServer, "frame_post_draw")
 		else:
+			# yield because a `GDScriptFunctionState` is expected
 			yield()
 			return ViewportTexture.new()
 	add_child(subject)

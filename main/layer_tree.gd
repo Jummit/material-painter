@@ -14,6 +14,7 @@ var selected_maps : Dictionary = {}
 var selected_layer_textures : Dictionary = {}
 var clicked_layer : MaterialLayer
 var empty_texture := ImageTexture.new()
+var last_edited : TreeItem
 
 signal material_layer_selected(material_layer)
 signal texture_layer_selected(texture_layer)
@@ -37,7 +38,6 @@ onready var material_layer_popup_menu : PopupMenu = $MaterialLayerPopupMenu
 onready var map_type_popup_menu : PopupMenu = $MapTypePopupMenu
 
 func _ready() -> void:
-	columns = 2
 	set_column_expand(0, false)
 	set_column_min_width(0, 100)
 
@@ -46,6 +46,12 @@ func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == BUTTON_RIGHT and event.pressed:
 		material_layer_popup_menu.rect_global_position = event.global_position
 		material_layer_popup_menu.popup()
+	elif event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
+		if get_selected():
+			get_selected().set_editable(1, true)
+			if last_edited:
+				last_edited.set_editable(1, false)
+			last_edited = get_selected()
 
 
 func can_drop_data(_position : Vector2, data) -> bool:
@@ -178,6 +184,7 @@ func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
 
 
 func _on_cell_selected() -> void:
+#	get_selected().set_editable(1, true)
 	var layer = get_selected().get_meta("layer")
 	if layer is MaterialLayer:
 		emit_signal("material_layer_selected", layer)
@@ -197,3 +204,7 @@ func _on_MapTypePopupMenu_about_to_show() -> void:
 func _draw_material_layer_item(_material_layer_item : TreeItem, _item_rect : Rect2) -> void:
 	# no way to get button regions, so no selection border
 	pass
+
+
+func _on_item_edited() -> void:
+	get_edited().get_meta("layer").name = get_edited().get_text(get_edited_column())
