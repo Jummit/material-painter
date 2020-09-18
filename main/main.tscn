@@ -236,7 +236,7 @@ __meta__ = {
 [connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/HBoxContainer/DeleteButton" to="." method="_on_DeleteButton_pressed"]
 [connection signal="button_pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_button_pressed"]
 [connection signal="cell_selected" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_cell_selected"]
-[connection signal="item_rmb_selected" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_item_rmb_selected"]
+[connection signal="layer_visibility_changed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="." method="_on_LayerTree_layer_visibility_changed"]
 [connection signal="material_layer_selected" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="." method="_on_LayerTree_material_layer_selected"]
 [connection signal="texture_layer_selected" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="." method="_on_LayerTree_texture_layer_selected"]
 [connection signal="index_pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" method="_on_index_pressed"]

@@ -23,5 +23,6 @@ func update_result(result_size : Vector2, keep_viewport := true) -> void:
 func generate_result(result_size : Vector2, keep_viewport := true) -> Texture:
 	var blending_layers := []
 	for layer in layers:
-		blending_layers.append(layer._get_as_shader_layer())
+		if layer.visible:
+			blending_layers.append(layer._get_as_shader_layer())
 	return yield(LayerBlendViewportManager.blend(blending_layers, result_size, get_instance_id() if keep_viewport else -1), "completed")

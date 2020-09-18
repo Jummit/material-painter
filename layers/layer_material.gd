@@ -29,6 +29,8 @@ func update_map_result(map : String, result_size : Vector2, generate_texture_lay
 	
 	for layer in layers:
 		layer = layer as MaterialLayer
+		if not layer.visible:
+			continue
 		if not (map in layer.maps and layer.maps[map]):
 			continue
 		

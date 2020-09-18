@@ -138,3 +138,15 @@ func _on_MaterialLayerPopupMenu_mask_added() -> void:
 	var material_layer : MaterialLayer = layer_tree.get_selected_material_layer()
 	material_layer.mask = LayerTexture.new()
 	layer_tree.setup_layer_material(editing_layer_material)
+
+
+func _on_LayerTree_layer_visibility_changed(layer) -> void:
+	if layer is MaterialLayer:
+		editing_layer_material.update_results(result_size)
+	elif layer is TextureLayer:
+		layer.update_result(result_size)
+		for affected_layer in editing_layer_material.get_depending_layer_textures(layer):
+			affected_layer.update_result(result_size)
+		editing_layer_material.update_results(result_size)
+	model.load_layer_material_maps(editing_layer_material)
+	layer_tree.update_icons()

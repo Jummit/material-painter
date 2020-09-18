@@ -16,6 +16,7 @@ var clicked_layer : MaterialLayer
 
 signal material_layer_selected(material_layer)
 signal texture_layer_selected(texture_layer)
+signal layer_visibility_changed(layer)
 
 enum Buttons {
 	MASK,
@@ -87,7 +88,7 @@ func setup_material_layer_item(material_layer : MaterialLayer) -> void:
 		material_layer_item.add_button(0, preload("res://icons/down.svg"), Buttons.MAP_DROPDOWN)
 	
 	material_layer_item.set_text(1, material_layer.name)
-	material_layer_item.add_button(1, preload("res://icons/icon_visible.svg"), Buttons.VISIBILITY)
+	material_layer_item.add_button(1, preload("res://icons/icon_visible.svg") if material_layer.visible else preload("res://icons/icon_hidden.svg"), Buttons.VISIBILITY)
 	
 	material_layer_item.set_custom_draw(0, self, "_draw_material_layer_item")
 	
@@ -121,6 +122,7 @@ func update_icons() -> void:
 				if layer in selected_maps:
 					var selected_map : LayerTexture = selected_maps[layer]
 					tree_item.set_button(0, button_count, yield(selected_map.generate_result(Vector2(32, 32), false), "completed"))
+		tree_item.set_button(1, 0, preload("res://icons/icon_visible.svg") if layer.visible else preload("res://icons/icon_hidden.svg"))
 
 
 func get_selected_material_layer() -> MaterialLayer:
@@ -143,27 +145,29 @@ func _get_selected_material_layer_item() -> TreeItem:
 
 
 func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
+	var layer = item.get_meta("layer")
 	match id:
 		Buttons.MAP_DROPDOWN:
-			clicked_layer = item.get_meta("layer")
+			clicked_layer = layer
 			map_type_popup_menu.rect_global_position = get_global_transform().xform(get_item_area_rect(item).position)
 			map_type_popup_menu.popup()
 		Buttons.RESULT:
-			var material_layer : MaterialLayer = item.get_meta("layer")
+			var material_layer : MaterialLayer = layer
 			if material_layer in selected_layer_textures and selected_layer_textures[material_layer] == selected_maps[material_layer]:
 				selected_layer_textures.erase(material_layer)
 			else:
 				selected_layer_textures[material_layer] = selected_maps[material_layer]
 			setup_layer_material(main.editing_layer_material)
 		Buttons.MASK:
-			var material_layer : MaterialLayer = item.get_meta("layer")
+			var material_layer : MaterialLayer = layer
 			if material_layer in selected_layer_textures and selected_layer_textures[material_layer] == material_layer.mask:
 				selected_layer_textures.erase(material_layer)
 			else:
 				selected_layer_textures[material_layer] = material_layer.mask
 			setup_layer_material(main.editing_layer_material)
 		Buttons.VISIBILITY:
-			pass
+			layer.visible = not layer.visible
+			emit_signal("layer_visibility_changed", layer)
 
 
 func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
