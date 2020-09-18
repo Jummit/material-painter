@@ -21,4 +21,6 @@ func render_texture(subject : Node, result_size : Vector2, wait_when_busy := fal
 	yield(VisualServer, "frame_post_draw")
 	busy = false
 	subject.queue_free()
-	return get_texture()
+	var texture := get_texture()
+	texture.flags = Texture.FLAG_MIPMAPS | Texture.FLAG_REPEAT | Texture.FLAG_FILTER
+	return texture
