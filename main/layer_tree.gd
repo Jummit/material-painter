@@ -13,6 +13,7 @@ var tree_items : Dictionary = {}
 var selected_maps : Dictionary = {}
 var selected_layer_textures : Dictionary = {}
 var clicked_layer : MaterialLayer
+var empty_texture := ImageTexture.new()
 
 signal material_layer_selected(material_layer)
 signal texture_layer_selected(texture_layer)
@@ -79,32 +80,31 @@ func setup_material_layer_item(material_layer : MaterialLayer) -> void:
 	var selected_layer_texture : LayerTexture
 	if material_layer in selected_layer_textures:
 		selected_layer_texture = selected_layer_textures[material_layer]
+	if selected_layer_texture:
+		for texture_layer in selected_layer_texture.layers:
+			setup_texture_layer_item(texture_layer, material_layer_item)
 	
 	if material_layer.mask:
-		material_layer_item.add_button(0, ImageTexture.new(), Buttons.MASK)
+		material_layer_item.add_button(0, empty_texture, Buttons.MASK)
 	if material_layer.maps.size() > 0:
-		material_layer_item.add_button(0, ImageTexture.new(), Buttons.RESULT)
+		material_layer_item.add_button(0, empty_texture, Buttons.RESULT)
 	if material_layer.maps.size() > 1:
 		material_layer_item.add_button(0, preload("res://icons/down.svg"), Buttons.MAP_DROPDOWN)
 	
 	material_layer_item.set_text(1, material_layer.name)
-	material_layer_item.add_button(1, preload("res://icons/icon_visible.svg") if material_layer.visible else preload("res://icons/icon_hidden.svg"), Buttons.VISIBILITY)
+	material_layer_item.add_button(1, empty_texture, Buttons.VISIBILITY)
 	
 	material_layer_item.set_custom_draw(0, self, "_draw_material_layer_item")
 	
 	tree_items[material_layer] = material_layer_item
-	
-	if selected_layer_texture:
-		for texture_layer in selected_layer_texture.layers:
-			setup_texture_layer_item(texture_layer, material_layer_item)
 
 
 func setup_texture_layer_item(texture_layer : TextureLayer, on_item : TreeItem) -> void:
 	var texture_layer_item := create_item(on_item)
 	texture_layer_item.set_meta("layer", texture_layer)
-	texture_layer_item.add_button(0, ImageTexture.new(), Buttons.RESULT)
-	texture_layer_item.set_text(1, "Texture Layer")
-	texture_layer_item.add_button(1, preload("res://icons/icon_visible.svg"), Buttons.VISIBILITY)
+	texture_layer_item.add_button(0, empty_texture, Buttons.RESULT)
+	texture_layer_item.set_text(1, texture_layer.name)
+	texture_layer_item.add_button(1, empty_texture, Buttons.VISIBILITY)
 	tree_items[texture_layer] = texture_layer_item
 
 
