@@ -12,6 +12,7 @@ var root : TreeItem
 var tree_items : Dictionary = {}
 var selected_maps : Dictionary = {}
 var selected_layer_textures : Dictionary = {}
+var clicked_layer : MaterialLayer
 
 signal material_layer_selected(material_layer)
 signal texture_layer_selected(texture_layer)
@@ -144,6 +145,7 @@ func _get_selected_material_layer_item() -> TreeItem:
 func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 	match id:
 		Buttons.MAP_DROPDOWN:
+			clicked_layer = item.get_meta("layer")
 			map_type_popup_menu.rect_global_position = get_global_transform().xform(get_item_area_rect(item).position)
 			map_type_popup_menu.popup()
 		Buttons.RESULT:
@@ -164,9 +166,11 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 			pass
 
 
-func _on_MapTypePopupMenu_id_pressed(_id : int) -> void:
-	var item := get_item_at_position(get_global_transform().xform_inv(material_layer_popup_menu.rect_position))
-	item.set_meta("selected", map_type_popup_menu)
+func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
+	var selected_map : LayerTexture = clicked_layer.maps.values()[id]
+	selected_maps[clicked_layer] = selected_map
+	selected_layer_textures[clicked_layer] = selected_map
+	setup_layer_material(main.editing_layer_material)
 
 
 func _on_cell_selected() -> void:
@@ -175,6 +179,15 @@ func _on_cell_selected() -> void:
 		emit_signal("material_layer_selected", layer)
 	elif layer is TextureLayer:
 		emit_signal("texture_layer_selected", layer)
+
+
+func _on_MapTypePopupMenu_about_to_show() -> void:
+	map_type_popup_menu.clear()
+	for map in clicked_layer.maps:
+		map_type_popup_menu.add_item(map)
+		var icon : ImageTexture = yield(
+			clicked_layer.maps[map].generate_result(Vector2(32, 32), false), "completed")
+		map_type_popup_menu.set_item_icon(map_type_popup_menu.get_item_count() - 1, icon)
 
 
 func _draw_material_layer_item(_material_layer_item : TreeItem, _item_rect : Rect2) -> void:

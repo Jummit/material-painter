@@ -243,6 +243,7 @@ __meta__ = {
 [connection signal="layer_saved" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" to="." method="_on_MaterialLayerPopupMenu_layer_saved"]
 [connection signal="layer_selected" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" to="." method="_on_AddLayerPopupMenu_layer_selected"]
 [connection signal="mask_added" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" to="." method="_on_MaterialLayerPopupMenu_mask_added"]
+[connection signal="about_to_show" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MapTypePopupMenu" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_MapTypePopupMenu_about_to_show"]
 [connection signal="id_pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MapTypePopupMenu" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_MapTypePopupMenu_id_pressed"]
 [connection signal="changed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/TextureChannelButtons" to="." method="_on_TextureChannelButtons_changed"]
 [connection signal="values_changed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerPropertyPanel" to="." method="_on_LayerPropertyPanel_values_changed"]
