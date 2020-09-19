@@ -84,6 +84,8 @@ func _on_AddButton_pressed() -> void:
 
 
 func _on_DeleteButton_pressed() -> void:
+	if not layer_tree.get_selected():
+		return
 	var layer = layer_tree.get_selected().get_meta("layer")
 	if layer is MaterialLayer:
 		editing_layer_material.layers.erase(layer)
