@@ -101,6 +101,7 @@ func setup_material_layer_item(material_layer : MaterialLayer) -> void:
 	material_layer_item.add_button(1, empty_texture, Buttons.VISIBILITY)
 	
 	material_layer_item.set_custom_draw(0, self, "_draw_material_layer_item")
+	material_layer_item.set_cell_mode(0, TreeItem.CELL_MODE_CUSTOM)
 	
 	tree_items[material_layer] = material_layer_item
 
@@ -200,9 +201,18 @@ func _on_MapTypePopupMenu_about_to_show() -> void:
 		map_type_popup_menu.set_item_icon(map_type_popup_menu.get_item_count() - 1, icon)
 
 
-func _draw_material_layer_item(_material_layer_item : TreeItem, _item_rect : Rect2) -> void:
-	# no way to get button regions, so no selection border
-	pass
+func _draw_material_layer_item(material_layer_item : TreeItem, item_rect : Rect2) -> void:
+	var material_layer : MaterialLayer = material_layer_item.get_meta("layer")
+	if material_layer in selected_layer_textures:
+		var selected : LayerTexture = selected_layer_textures[material_layer]
+		var mask_pos := 25
+		var map_pos := 68
+		var icon_rect := Rect2(Vector2(
+				mask_pos if selected == material_layer.mask else map_pos,
+				3 + item_rect.position.y), Vector2(32, 32))
+		if material_layer.maps.size() > 1:
+			icon_rect.position.x -= 23
+		draw_rect(icon_rect, Color.dodgerblue, false, 2.0)
 
 
 func _on_item_edited() -> void:
