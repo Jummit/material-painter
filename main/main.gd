@@ -69,6 +69,7 @@ func _on_FileDialog_file_selected(path : String):
 				load_file(load(path))
 			elif path.get_extension() == "obj":
 				model.mesh = ObjParser.parse_obj(path)
+				model.set_surface_material(0, preload("res://3d_viewport/material.tres"))
 
 
 func _on_AddButton_pressed() -> void:
@@ -161,7 +162,7 @@ func _on_LayerTree_layer_visibility_changed(layer) -> void:
 	layer_tree.update_icons()
 
 
-func _on_3DViewport_painted(layer : TextureLayer) -> void:
+func _on_Viewport_painted(layer : TextureLayer) -> void:
 	layer.update_result(result_size)
 	for affected_layer in editing_layer_material.get_depending_layer_textures(layer):
 		affected_layer.update_result(result_size)

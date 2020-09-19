@@ -112,6 +112,7 @@ script = ExtResource( 20 )
 [node name="Viewport" type="Viewport" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport"]
 size = Vector2( 748, 329 )
 handle_input_locally = false
+msaa = 1
 render_target_update_mode = 3
 
 [node name="RotatingCamera" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport" instance=ExtResource( 19 )]
@@ -125,7 +126,7 @@ script = ExtResource( 8 )
 environment = ExtResource( 10 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
-transform = Transform( 0.481907, -0.539854, -0.690162, 0, -0.787656, 0.616115, -0.876223, -0.29691, -0.379577, 0, 9.32911, 0 )
+transform = Transform( 0.822333, 0.397311, -0.407324, 0, 0.715851, 0.698253, 0.569007, -0.574196, 0.588668, 0, 10, 0 )
 
 [node name="2DViewport" type="TextureRect" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer"]
 visible = false
@@ -232,7 +233,8 @@ current_path = "/home/jummit/Games/MaterialPainter/Layers/"
 __meta__ = {
 "_edit_use_anchors_": false
 }
-[connection signal="painted" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport" to="." method="_on_3DViewport_painted"]
+[connection signal="painted" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport" to="." method="_on_Viewport_painted"]
+[connection signal="painted" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/2DViewport" to="." method="_on_Viewport_painted"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/HBoxContainer/AddButton" to="." method="_on_AddButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/HBoxContainer/DeleteButton" to="." method="_on_DeleteButton_pressed"]
 [connection signal="button_pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_button_pressed"]

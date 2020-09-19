@@ -10,6 +10,6 @@ func load_layer_material_maps(layer_material : LayerMaterial) -> void:
 	var material_maps = Globals.TEXTURE_MAP_TYPES.duplicate()
 	material_maps.erase("height")
 	material_maps.append("normal")
-	for map in Globals.TEXTURE_MAP_TYPES:
+	for map in material_maps:
 		if map in layer_material.results.keys():
 			get_surface_material(0).set(map + "_texture", layer_material.results[map])

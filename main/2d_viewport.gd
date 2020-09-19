@@ -4,14 +4,16 @@ extends TextureRect
 A panel for painting onto a texture using the UV of a model
 """
 
-signal painted
+signal painted(layer)
 
 const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_layer.gd")
+const MeshUtils = preload("res://utils/mesh_utils.gd")
 
 var mesh_tool := MeshDataTool.new()
 
 onready var model : MeshInstance = $"../3DViewport/Viewport/Model"
 onready var main : Control = $"../../../../../.."
+onready var layer_tree : Tree = $"../../../LayerTree/LayerTree"
 
 func _ready() -> void:
 	mesh_tool.create_from_surface(model.mesh, 0)
@@ -22,15 +24,15 @@ func _draw() -> void:
 
 
 func _gui_input(event : InputEvent) -> void:
-	# todo: update the texture not only when it is edited in 2d
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
-		var layer_texture := main.editing_texture_layer as BitmapTextureLayer
-		if layer_texture:
-			var selected_face := _get_selected_face(get_local_mouse_position())
-			if selected_face != -1:
-				layer_texture.paint_face(selected_face, Color.white, model.mesh)
-				texture.create_from_image(layer_texture.painted_image)
-				emit_signal("painted")
+		if layer_tree.get_selected():
+			var layer_texture := layer_tree.get_selected_texture_layer() as BitmapTextureLayer
+			if layer_texture:
+				var selected_face := _get_selected_face(get_local_mouse_position())
+				if selected_face != -1:
+					MeshUtils.paint_face(layer_texture.image_data, selected_face, Color.white, model.mesh)
+					texture.create_from_image(layer_texture.image_data)
+					emit_signal("painted", layer_texture)
 
 
 func _get_selected_face(position : Vector2) -> int:
