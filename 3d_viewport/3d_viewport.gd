@@ -11,8 +11,8 @@ onready var layer_tree : Tree = $"../../../LayerTree/LayerTree"
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
 		if layer_tree.get_selected():
-			var selected_texture_layer : BitmapTextureLayer = layer_tree.get_selected_texture_layer()
-			if selected_texture_layer:
+			var selected_texture_layer = layer_tree.get_selected_texture_layer()
+			if selected_texture_layer is BitmapTextureLayer:
 				var camera : Camera = $Viewport.get_camera()
 				var camera_world_position := camera.project_position(event.position, 0.0)
 				var clicked_world_position := camera.project_position(event.position, 1000.0)

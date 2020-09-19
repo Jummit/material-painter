@@ -36,7 +36,6 @@ func update_map_result(map : String, result_size : Vector2, generate_texture_lay
 			continue
 		if not (map in layer.maps and layer.maps[map]):
 			continue
-		
 		var map_layer_texture : LayerTexture = layer.maps[map]
 		if generate_texture_layers:
 			map_layer_texture.update_result(result_size)
@@ -50,10 +49,12 @@ func update_map_result(map : String, result_size : Vector2, generate_texture_lay
 		blending_layers.append(blending_layer)
 	
 	if blending_layers.empty():
+		results.erase(map)
 		return
 	
 	var result : ViewportTexture = yield(LayerBlendViewportManager.blend(
 			blending_layers, result_size, get_instance_id()), "completed")
+	
 	if map == "height":
 		var normal_texture : ViewportTexture = yield(
 				NormalMapGenerationViewport.get_normal_map(result), "completed")
