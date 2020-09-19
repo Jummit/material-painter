@@ -4,21 +4,41 @@ extends PopupMenu
 The context menu that is shown when right-clicking a `MaterialLayer`
 """
 
+var layer : MaterialLayer
+
 signal layer_selected(layer)
 signal layer_saved
 signal mask_added
+signal mask_removed
 
-func _ready() -> void:
-	for layer_type in Globals.TEXTURE_LAYER_TYPES:
-		add_item("Add %s layer" % layer_type.new().type_name)
-		set_item_metadata(get_item_count() - 1, layer_type)
+enum Items {
+	SAVE_TO_LIBRARY,
+	ADD_MASK,
+	REMOVE_MASK,
+	ADD_LAYER,
+}
 
+const MaterialLayer = preload("res://layers/material_layer.gd")
 
-func _on_index_pressed(index : int) -> void:
-	match index:
-		0:
+func _on_id_pressed(id : int) -> void:
+	match id:
+		Items.SAVE_TO_LIBRARY:
 			emit_signal("layer_saved")
-		1:
+		Items.ADD_MASK:
 			emit_signal("mask_added")
-		_:
-			emit_signal("layer_selected", get_item_metadata(index))
+		Items.REMOVE_MASK:
+			emit_signal("mask_removed")
+		Items.ADD_LAYER:
+			emit_signal("layer_selected", get_item_metadata(get_item_index(id)))
+
+
+func _on_about_to_show() -> void:
+	clear()
+	add_item("Save To Library", Items.SAVE_TO_LIBRARY)
+	if layer.mask:
+		add_item("Remove Mask", Items.REMOVE_MASK)
+	else:
+		add_item("Add Mask", Items.ADD_MASK)
+	for layer_type in Globals.TEXTURE_LAYER_TYPES:
+		add_item("Add %s Layer" % layer_type.new().type_name, Items.ADD_LAYER)
+		set_item_metadata(get_item_count() - 1, layer_type)

@@ -177,3 +177,10 @@ func _on_Viewport_painted(layer : TextureLayer) -> void:
 	editing_layer_material.update_results(result_size)
 	model.load_layer_material_maps(editing_layer_material)
 	layer_tree.update_icons()
+
+
+func _on_MaterialLayerPopupMenu_mask_removed() -> void:
+	layer_tree.get_selected_material_layer().mask = null
+	editing_layer_material.update_results(result_size)
+	model.load_layer_material_maps(editing_layer_material)
+	layer_tree.setup_layer_material(editing_layer_material)

@@ -45,6 +45,7 @@ func _ready() -> void:
 func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == BUTTON_RIGHT and event.pressed:
 		material_layer_popup_menu.rect_global_position = event.global_position
+		material_layer_popup_menu.layer = get_selected_material_layer()
 		material_layer_popup_menu.popup()
 	elif event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
 		if get_selected():
