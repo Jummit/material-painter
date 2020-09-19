@@ -28,6 +28,7 @@ NormalMapGenerationViewport="*res://render_viewports/normal_map_generation_viewp
 
 [debug]
 
+gdscript/warnings/exclude_addons=false
 gdscript/warnings/unused_class_variable=true
 gdscript/warnings/return_value_discarded=false
 

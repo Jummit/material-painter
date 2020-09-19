@@ -14,6 +14,7 @@ var result_size := Vector2(2048, 2048)
 
 const MATERIAL_PATH := "user://materials"
 
+const ObjParser = preload("res://addons/gd-obj/obj_parser.gd")
 const SaveFile = preload("res://main/save_file.gd")
 const MaterialLayer = preload("res://layers/material_layer.gd")
 const LayerMaterial = preload("res://layers/layer_material.gd")
@@ -63,8 +64,11 @@ func _on_FileDialog_file_selected(path : String):
 			file_location = path
 			ResourceSaver.save(path, current_file)
 		FileDialog.MODE_OPEN_FILE:
-			file_location = path
-			load_file(load(path))
+			if path.get_extension() == "tres":
+				file_location = path
+				load_file(load(path))
+			elif path.get_extension() == "obj":
+				model.mesh = ObjParser.parse_obj(path)
 
 
 func _on_AddButton_pressed() -> void:
@@ -114,6 +118,7 @@ func _on_FileMenu_id_pressed(id : int):
 			load_file(SaveFile.new())
 		1:
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
+			file_dialog.filters = ["*.tres;Material Painter File"]
 			file_dialog.popup_centered()
 		2:
 			file_dialog.mode = FileDialog.MODE_SAVE_FILE
@@ -121,6 +126,10 @@ func _on_FileMenu_id_pressed(id : int):
 		3:
 			if file_location:
 				editing_layer_material.export_textures(file_location.get_base_dir())
+		4:
+			file_dialog.mode = FileDialog.MODE_OPEN_FILE
+			file_dialog.filters = ["*.obj;Object File"]
+			file_dialog.popup_centered()
 
 
 func _on_SceneTree_node_added(node : Node):

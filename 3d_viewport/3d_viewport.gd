@@ -26,7 +26,7 @@ func _get_nearest_intersecting_face(start : Vector3, direction : Vector3, mesh :
 	mesh_tool.create_from_surface(mesh, 0)
 	
 	var nearest_face := -1
-	var nearest_face_pos := Vector3(INF, INF, INF)
+	var nearest_distance := INF
 	for face in mesh_tool.get_face_count():
 		var triangle := Basis(
 				mesh_tool.get_vertex(mesh_tool.get_face_vertex(face, 0)),
@@ -34,9 +34,11 @@ func _get_nearest_intersecting_face(start : Vector3, direction : Vector3, mesh :
 				mesh_tool.get_vertex(mesh_tool.get_face_vertex(face, 2)))
 		var collision_point = Geometry.ray_intersects_triangle(
 				start, direction, triangle.x, triangle.y, triangle.z)
-		if collision_point and collision_point.distance_to(start) < nearest_face_pos.distance_to(start):
-			nearest_face = face
-			nearest_face_pos = collision_point
+		if collision_point:
+			var distance : float = collision_point.distance_to(start)
+			if distance < nearest_distance:
+				nearest_face = face
+				nearest_distance = distance
 	return nearest_face
 
 
@@ -50,11 +52,11 @@ func paint_face(image : Image, face : int, color : Color, mesh : Mesh) -> void:
 	var size := image.get_size()
 	bounds.position *= size
 	bounds.size *= size
-	# todo: use for loop
-	for x in range(bounds.position.x, bounds.end.x):
-		for y in range(bounds.position.y, bounds.end.y):
-			if Geometry.point_is_inside_triangle(Vector2(x, y) / size, uv_a, uv_b, uv_c):
-				image.set_pixel(x, y, color)
+	for i in bounds.size.x * bounds.size.y:
+		var x := int(bounds.position.y + i % int(bounds.size.x) - 1)
+		var y := int(bounds.position.x + i / bounds.size.x - 1)
+		if Geometry.point_is_inside_triangle(Vector2(x, y) / size, uv_a, uv_b, uv_c):
+			image.set_pixel(x, y, color)
 
 
 static func get_triangle_bounds(a : Vector2, b : Vector2, c : Vector2) -> Rect2:
