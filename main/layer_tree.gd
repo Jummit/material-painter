@@ -61,6 +61,7 @@ func can_drop_data(_position : Vector2, data) -> bool:
 func drop_data(position : Vector2, data) -> void:
 	if data.asset is String:
 		var layer := FileTextureLayer.new()
+		layer.name = data.asset.get_file().get_basename()
 		layer.path = data.asset
 		main.add_texture_layer(layer, selected_layer_textures[get_item_at_position(position).get_meta("layer")])
 	elif data.asset is MaterialLayer:
