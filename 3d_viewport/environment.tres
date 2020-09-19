@@ -1,15 +1,19 @@
-[gd_resource type="Environment" load_steps=2 format=2]
+[gd_resource type="Environment" load_steps=3 format=2]
 
-[sub_resource type="ProceduralSky" id=1]
-sky_top_color = Color( 0.501961, 0.8, 0.94902, 1 )
-ground_bottom_color = Color( 0.290196, 0.568627, 0.709804, 1 )
-ground_horizon_color = Color( 0.839216, 0.917647, 0.980392, 1 )
-sun_latitude = 51.94
-sun_longitude = -137.64
+[ext_resource path="res://3d_viewport/hdrs/cannon_2k.hdr" type="Texture" id=1]
+
+[sub_resource type="PanoramaSky" id=1]
+radiance_size = 3
+panorama = ExtResource( 1 )
 
 [resource]
 background_mode = 2
 background_sky = SubResource( 1 )
-ambient_light_color = Color( 0.384314, 0.384314, 0.384314, 1 )
-ambient_light_sky_contribution = 0.16
+ambient_light_color = Color( 0.403922, 0.403922, 0.403922, 1 )
+ambient_light_sky_contribution = 0.45
+tonemap_mode = 2
+tonemap_exposure = 1.13
+tonemap_white = 8.72
 glow_enabled = true
+glow_strength = 0.71
+glow_bicubic_upscale = true

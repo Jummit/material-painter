@@ -7,8 +7,10 @@ const MeshUtils = preload("res://utils/mesh_utils.gd")
 
 onready var model : MeshInstance = $Viewport/Model
 onready var layer_tree : Tree = $"../../../LayerTree/LayerTree"
+onready var world_environment : WorldEnvironment = $Viewport/WorldEnvironment
+onready var color_skybox : MeshInstance = $Viewport/ColorSkybox
 
-func _gui_input(event: InputEvent) -> void:
+func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
 		if layer_tree.get_selected():
 			var selected_texture_layer = layer_tree.get_selected_texture_layer()
@@ -21,6 +23,14 @@ func _gui_input(event: InputEvent) -> void:
 				if selected_face != -1:
 					MeshUtils.paint_face(selected_texture_layer.image_data, selected_face, Color.white, model.mesh)
 					emit_signal("painted", selected_texture_layer)
+
+
+func _on_ViewMenuButton_show_background_toggled() -> void:
+	color_skybox.visible = not color_skybox.visible
+
+
+func _on_ViewMenuButton_hdr_selected(hdr : Texture) -> void:
+	world_environment.environment.background_sky.panorama = hdr
 
 
 func _get_nearest_intersecting_face(start : Vector3, direction : Vector3, mesh : Mesh) -> int:

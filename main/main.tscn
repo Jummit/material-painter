@@ -1,10 +1,12 @@
-[gd_scene load_steps=16 format=2]
+[gd_scene load_steps=19 format=2]
 
 [ext_resource path="res://main/2d_viewport.gd" type="Script" id=1]
 [ext_resource path="res://3d_viewport/material.tres" type="Material" id=2]
 [ext_resource path="res://main/main.gd" type="Script" id=3]
 [ext_resource path="res://3d_viewport/cube.obj" type="ArrayMesh" id=4]
+[ext_resource path="res://main/view_menu_button.gd" type="Script" id=5]
 [ext_resource path="res://main/layer_property_panel.gd" type="Script" id=6]
+[ext_resource path="res://3d_viewport/color_skybox.tres" type="Material" id=7]
 [ext_resource path="res://3d_viewport/model.gd" type="Script" id=8]
 [ext_resource path="res://texture_channel_buttons/texture_channel_buttons.tscn" type="PackedScene" id=9]
 [ext_resource path="res://3d_viewport/environment.tres" type="Environment" id=10]
@@ -14,6 +16,8 @@
 [ext_resource path="res://addons/rotating_camera/rotating_camera.tscn" type="PackedScene" id=19]
 [ext_resource path="res://3d_viewport/3d_viewport.gd" type="Script" id=20]
 [ext_resource path="res://main/layer_tree.gd" type="Script" id=21]
+
+[sub_resource type="CubeMesh" id=2]
 
 [sub_resource type="ImageTexture" id=1]
 
@@ -64,7 +68,9 @@ margin_left = 79.0
 margin_right = 121.0
 margin_bottom = 20.0
 text = "View"
+items = [ "Show Background", null, 1, false, false, 0, 0, null, "", false ]
 switch_on_hover = true
+script = ExtResource( 5 )
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
 margin_top = 38.0
@@ -127,6 +133,11 @@ environment = ExtResource( 10 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
 transform = Transform( 0.822333, 0.397311, -0.407324, 0, 0.715851, 0.698253, 0.569007, -0.574196, 0.588668, 0, 10, 0 )
+
+[node name="ColorSkybox" type="MeshInstance" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
+material_override = ExtResource( 7 )
+mesh = SubResource( 2 )
+material/0 = null
 
 [node name="2DViewport" type="TextureRect" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer"]
 visible = false
@@ -232,6 +243,8 @@ current_path = "/home/jummit/Games/MaterialPainter/Layers/"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+[connection signal="hdr_selected" from="VBoxContainer/TopButtonBar/TopButtons/ViewMenuButton" to="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport" method="_on_ViewMenuButton_hdr_selected"]
+[connection signal="show_background_toggled" from="VBoxContainer/TopButtonBar/TopButtons/ViewMenuButton" to="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport" method="_on_ViewMenuButton_show_background_toggled"]
 [connection signal="painted" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport" to="." method="_on_Viewport_painted"]
 [connection signal="painted" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/2DViewport" to="." method="_on_Viewport_painted"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/HBoxContainer/AddButton" to="." method="_on_AddButton_pressed"]
