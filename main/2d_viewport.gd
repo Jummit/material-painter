@@ -12,7 +12,6 @@ const MeshUtils = preload("res://utils/mesh_utils.gd")
 var mesh_tool := MeshDataTool.new()
 
 onready var model : MeshInstance = $"../3DViewport/Viewport/Model"
-onready var main : Control = $"../../../../../.."
 onready var layer_tree : Tree = $"../../../LayerTree/LayerTree"
 
 func _ready() -> void:
