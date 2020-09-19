@@ -115,7 +115,6 @@ handle_input_locally = false
 render_target_update_mode = 3
 
 [node name="RotatingCamera" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport" instance=ExtResource( 19 )]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.850238, -0.605874 )
 
 [node name="Model" type="MeshInstance" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
 mesh = ExtResource( 4 )

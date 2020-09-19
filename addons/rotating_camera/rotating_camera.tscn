@@ -7,5 +7,5 @@
 [node name="HorizontalCameraSocket" type="Spatial" parent="."]
 
 [node name="Camera" type="Camera" parent="HorizontalCameraSocket"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 3.82679 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5 )
 script = ExtResource( 1 )
