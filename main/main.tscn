@@ -176,7 +176,7 @@ text = "-"
 [node name="LayerTree" type="Tree" parent="VBoxContainer/PanelContainer/LayerContainer/LayerTree"]
 margin_top = 24.0
 margin_right = 250.0
-margin_bottom = 282.0
+margin_bottom = 284.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_constants/draw_guides = 1
@@ -203,12 +203,13 @@ __meta__ = {
 }
 
 [node name="TextureChannelButtons" parent="VBoxContainer/PanelContainer/LayerContainer/LayerTree" instance=ExtResource( 9 )]
+visible = false
 margin_top = 286.0
 margin_right = 250.0
 margin_bottom = 286.0
 
 [node name="LayerPropertyPanel" parent="VBoxContainer/PanelContainer/LayerContainer/LayerTree" instance=ExtResource( 17 )]
-margin_top = 290.0
+margin_top = 288.0
 margin_right = 250.0
 margin_bottom = 548.0
 size_flags_horizontal = 3
@@ -232,6 +233,7 @@ current_path = "/home/jummit/Games/MaterialPainter/Layers/"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+[connection signal="painted" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport" to="." method="_on_3DViewport_painted"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/HBoxContainer/AddButton" to="." method="_on_AddButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/HBoxContainer/DeleteButton" to="." method="_on_DeleteButton_pressed"]
 [connection signal="button_pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_button_pressed"]

@@ -20,6 +20,9 @@ func _init() -> void:
 
 
 func update_results(result_size : Vector2, generate_texture_layers := false) -> void:
+	for layer in layers:
+		if layer.mask:
+			layer.mask.generate_result(result_size)
 	for map in Globals.TEXTURE_MAP_TYPES:
 		update_map_result(map, result_size, generate_texture_layers)
 

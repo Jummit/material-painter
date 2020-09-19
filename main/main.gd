@@ -150,3 +150,12 @@ func _on_LayerTree_layer_visibility_changed(layer) -> void:
 		editing_layer_material.update_results(result_size)
 	model.load_layer_material_maps(editing_layer_material)
 	layer_tree.update_icons()
+
+
+func _on_3DViewport_painted(layer : TextureLayer) -> void:
+	layer.update_result(result_size)
+	for affected_layer in editing_layer_material.get_depending_layer_textures(layer):
+		affected_layer.update_result(result_size)
+	editing_layer_material.update_results(result_size)
+	model.load_layer_material_maps(editing_layer_material)
+	layer_tree.update_icons()
