@@ -37,6 +37,8 @@ func _ready():
 
 func load_file(save_file : SaveFile) -> void:
 	current_file = save_file
+	if current_file.model_path:
+		load_model(current_file.model_path)
 	editing_layer_material = current_file.layer_material
 	TextureManager.load_textures_from_layer_material(current_file.layer_material)
 	layer_tree.setup_layer_material(editing_layer_material)
@@ -58,6 +60,11 @@ func add_material_layer(material_layer : MaterialLayer) -> void:
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
+func load_model(path : String) -> void:
+	model.mesh = ObjParser.parse_obj(path)
+	model.set_surface_material(0, preload("res://3d_viewport/material.tres"))
+
+
 func _on_FileDialog_file_selected(path : String):
 	match file_dialog.mode:
 		FileDialog.MODE_SAVE_FILE:
@@ -68,8 +75,8 @@ func _on_FileDialog_file_selected(path : String):
 				file_location = path
 				load_file(load(path))
 			elif path.get_extension() == "obj":
-				model.mesh = ObjParser.parse_obj(path)
-				model.set_surface_material(0, preload("res://3d_viewport/material.tres"))
+				current_file.model_path = path
+				load_model(path)
 
 
 func _on_AddButton_pressed() -> void:
@@ -123,6 +130,7 @@ func _on_FileMenu_id_pressed(id : int):
 			file_dialog.popup_centered()
 		2:
 			file_dialog.mode = FileDialog.MODE_SAVE_FILE
+			file_dialog.filters = ["*.tres;Material Painter File"]
 			file_dialog.popup_centered()
 		3:
 			if file_location:
