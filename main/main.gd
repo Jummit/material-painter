@@ -116,7 +116,7 @@ func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
 	texture_channel_buttons.hide()
 
 
-func _on_AddLayerPopupMenu_layer_selected(layer : TextureLayer) -> void:
+func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
 	add_texture_layer(layer.new(), layer_tree.get_selected_layer_texture())
 
 
