@@ -1,5 +1,7 @@
 extends MenuButton
 
+var show_background := false
+
 var hdrs := {
 	"Rocky Sea": "res://3d_viewport/hdrs/cannon_2k.hdr",
 	"Modern House": "res://3d_viewport/hdrs/cayley_interior_2k.hdr",
@@ -23,7 +25,8 @@ func _ready() -> void:
 
 
 func _on_Popup_id_pressed(_id : int) -> void:
-#	get_popup().set_item_checked(0, show_background)
+	show_background = not show_background
+	get_popup().set_item_checked(0, show_background)
 	emit_signal("show_background_toggled")
 
 
