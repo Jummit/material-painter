@@ -125,7 +125,7 @@ script = ExtResource( 8 )
 environment = ExtResource( 10 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
-transform = Transform( 0.788462, -0.446122, 0.423442, 0, 0.68843, 0.725302, -0.615084, -0.571873, 0.542801, 0, 3.22287, 0 )
+transform = Transform( 0.481907, -0.539854, -0.690162, 0, -0.787656, 0.616115, -0.876223, -0.29691, -0.379577, 0, 9.32911, 0 )
 
 [node name="2DViewport" type="TextureRect" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer"]
 visible = false
