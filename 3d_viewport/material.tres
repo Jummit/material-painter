@@ -2,3 +2,4 @@
 
 [resource]
 resource_local_to_scene = true
+metallic_texture_channel = 4

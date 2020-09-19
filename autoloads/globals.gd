@@ -6,7 +6,7 @@ const ScalarTextureLayer = preload("res://layers/texture_layers/scalar_texture_l
 const FileTextureLayer = preload("res://layers/texture_layers/file_texture_layer.gd")
 
 const TEXTURE_MAP_TYPES := ["albedo", "emission", "height",
-		"ao", "metalic", "roughness"]
+		"ao", "metallic", "roughness"]
 const BLEND_MODES := ["normal", "add", "subtract", "multiply",
 		"overlay", "screen", "darken", "lighten", "soft-light",
 		"color-burn", "color-dodge"]

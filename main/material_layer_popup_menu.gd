@@ -28,8 +28,11 @@ func _on_id_pressed(id : int) -> void:
 			emit_signal("mask_added")
 		Items.REMOVE_MASK:
 			emit_signal("mask_removed")
-		Items.ADD_LAYER:
-			emit_signal("layer_selected", get_item_metadata(get_item_index(id)))
+
+
+func _on_index_pressed(index : int) -> void:
+	if get_item_id(index) == Items.ADD_LAYER:
+		emit_signal("layer_selected", get_item_metadata(index))
 
 
 func _on_about_to_show() -> void:

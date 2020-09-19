@@ -17,3 +17,6 @@ func load_layer_material_maps(layer_material : LayerMaterial) -> void:
 		else:
 			get_surface_material(0).set(map + "_enabled", false)
 			get_surface_material(0).set(map + "_texture", null)
+		
+		if map == "metallic":
+			get_surface_material(0).set("metallic", int(map in layer_material.results.keys()))
