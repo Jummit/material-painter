@@ -3,12 +3,12 @@
 [ext_resource path="res://main/2d_viewport.gd" type="Script" id=1]
 [ext_resource path="res://3d_viewport/material.tres" type="Material" id=2]
 [ext_resource path="res://main/main.gd" type="Script" id=3]
+[ext_resource path="res://3d_viewport/cube.obj" type="ArrayMesh" id=4]
 [ext_resource path="res://main/layer_property_panel.gd" type="Script" id=6]
 [ext_resource path="res://3d_viewport/model.gd" type="Script" id=8]
 [ext_resource path="res://texture_channel_buttons/texture_channel_buttons.tscn" type="PackedScene" id=9]
 [ext_resource path="res://3d_viewport/environment.tres" type="Environment" id=10]
 [ext_resource path="res://main/asset_browser.gd" type="Script" id=11]
-[ext_resource path="res://3d_viewport/models/plasma_gun.obj" type="ArrayMesh" id=12]
 [ext_resource path="res://main/material_layer_popup_menu.gd" type="Script" id=16]
 [ext_resource path="res://addons/property_panel/property_panel.tscn" type="PackedScene" id=17]
 [ext_resource path="res://addons/rotating_camera/rotating_camera.tscn" type="PackedScene" id=19]
@@ -118,7 +118,7 @@ render_target_update_mode = 3
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.850238, -0.605874 )
 
 [node name="Model" type="MeshInstance" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
-mesh = ExtResource( 12 )
+mesh = ExtResource( 4 )
 material/0 = ExtResource( 2 )
 script = ExtResource( 8 )
 

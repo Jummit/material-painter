@@ -9,16 +9,17 @@ onready var layer_tree : Tree = $"../../../LayerTree/LayerTree"
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
-		var selected_texture_layer : BitmapTextureLayer = layer_tree.get_selected_texture_layer()
-		if selected_texture_layer:
-			var camera : Camera = $Viewport.get_camera()
-			var camera_world_position := camera.project_position(event.position, 0.0)
-			var clicked_world_position := camera.project_position(event.position, 1000.0)
-			
-			var selected_face := _get_nearest_intersecting_face(camera_world_position, clicked_world_position, model.mesh)
-			if selected_face != -1:
-				paint_face(selected_texture_layer.image_data, selected_face, Color.white, model.mesh)
-				emit_signal("painted", selected_texture_layer)
+		if layer_tree.get_selected():
+			var selected_texture_layer : BitmapTextureLayer = layer_tree.get_selected_texture_layer()
+			if selected_texture_layer:
+				var camera : Camera = $Viewport.get_camera()
+				var camera_world_position := camera.project_position(event.position, 0.0)
+				var clicked_world_position := camera.project_position(event.position, 1000.0)
+				
+				var selected_face := _get_nearest_intersecting_face(camera_world_position, clicked_world_position, model.mesh)
+				if selected_face != -1:
+					paint_face(selected_texture_layer.image_data, selected_face, Color.white, model.mesh)
+					emit_signal("painted", selected_texture_layer)
 
 
 func _get_nearest_intersecting_face(start : Vector3, direction : Vector3, mesh : Mesh) -> int:
