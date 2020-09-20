@@ -1,12 +1,71 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=10 format=2]
 
 [ext_resource path="res://3d_viewport/painting/utility_texture_viewports/utility_texture_viewports.gd" type="Script" id=1]
+[ext_resource path="res://3d_viewport/painting/shaders/texture2view.shader" type="Shader" id=2]
+[ext_resource path="res://3d_viewport/painting/shaders/view2texture.shader" type="Shader" id=3]
+[ext_resource path="res://3d_viewport/painting/shaders/seams.shader" type="Shader" id=4]
+
+[sub_resource type="ShaderMaterial" id=1]
+shader = ExtResource( 3 )
+
+[sub_resource type="ViewportTexture" id=2]
+viewport_path = NodePath("ViewToTextureViewport")
+
+[sub_resource type="ShaderMaterial" id=3]
+resource_local_to_scene = true
+shader = ExtResource( 2 )
+shader_param/model_transform = null
+shader_param/fovy_degrees = 45.0
+shader_param/z_near = 0.01
+shader_param/z_far = 60.0
+shader_param/aspect = 1.0
+shader_param/view2texture = SubResource( 2 )
+
+[sub_resource type="ViewportTexture" id=4]
+
+[sub_resource type="ShaderMaterial" id=5]
+resource_local_to_scene = true
+shader = ExtResource( 4 )
+shader_param/tex = SubResource( 4 )
 
 [node name="UtilityTextureViewports" type="Node"]
 script = ExtResource( 1 )
 
 [node name="ViewToTextureViewport" type="Viewport" parent="."]
+size = Vector2( 2048, 2048 )
+own_world = true
+transparent_bg = true
+usage = 1
+render_target_v_flip = true
+render_target_update_mode = 1
+
+[node name="Camera" type="Camera" parent="ViewToTextureViewport"]
+current = true
+
+[node name="MeshInstance" type="MeshInstance" parent="ViewToTextureViewport"]
+material_override = SubResource( 1 )
 
 [node name="TextureToViewViewport" type="Viewport" parent="."]
+size = Vector2( 2048, 2048 )
+own_world = true
+transparent_bg = true
+usage = 1
+render_target_update_mode = 1
+
+[node name="Camera" type="Camera" parent="TextureToViewViewport"]
+current = true
+
+[node name="MeshInstance" type="MeshInstance" parent="TextureToViewViewport"]
+material_override = SubResource( 3 )
 
 [node name="SeamsViewport" type="Viewport" parent="."]
+size = Vector2( 2048, 2048 )
+own_world = true
+transparent_bg = true
+usage = 1
+render_target_update_mode = 1
+
+[node name="ColorRect" type="ColorRect" parent="SeamsViewport"]
+material = SubResource( 5 )
+anchor_right = 1.0
+anchor_bottom = 1.0
