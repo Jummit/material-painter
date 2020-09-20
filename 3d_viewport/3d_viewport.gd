@@ -2,6 +2,8 @@ extends ViewportContainer
 
 signal painted(layer)
 
+var sensitity := 0.01
+
 const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_layer.gd")
 const MeshUtils = preload("res://utils/mesh_utils.gd")
 
@@ -9,20 +11,29 @@ onready var model : MeshInstance = $Viewport/Model
 onready var layer_tree : Tree = $"../../../LayerTree/LayerTree"
 onready var world_environment : WorldEnvironment = $Viewport/WorldEnvironment
 onready var color_skybox : MeshInstance = $Viewport/ColorSkybox
+onready var directional_light : DirectionalLight = $Viewport/DirectionalLight
 
 func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
-		if layer_tree.get_selected():
-			var selected_texture_layer = layer_tree.get_selected_texture_layer()
-			if selected_texture_layer is BitmapTextureLayer:
-				var camera : Camera = $Viewport.get_camera()
-				var camera_world_position := camera.project_position(event.position, 0.0)
-				var clicked_world_position := camera.project_position(event.position, 1000.0)
-				
-				var selected_face := _get_nearest_intersecting_face(camera_world_position, clicked_world_position, model.mesh)
-				if selected_face != -1:
-					MeshUtils.paint_face(selected_texture_layer.image_data, selected_face, Color.white, model.mesh)
-					emit_signal("painted", selected_texture_layer)
+		if not layer_tree.get_selected():
+			return
+		var selected_texture_layer = layer_tree.get_selected_texture_layer()
+		if not selected_texture_layer is BitmapTextureLayer:
+			return
+		var camera : Camera = $Viewport.get_camera()
+		var camera_world_position := camera.project_position(event.position, 0.0)
+		var clicked_world_position := camera.project_position(event.position, 1000.0)
+		
+		var selected_face := _get_nearest_intersecting_face(camera_world_position, clicked_world_position, model.mesh)
+		if selected_face != -1:
+			MeshUtils.paint_face(selected_texture_layer.image_data, selected_face, Color.white, model.mesh)
+			emit_signal("painted", selected_texture_layer)
+	if event is InputEventMouseButton and event.pressed and event.button_mask == BUTTON_MASK_RIGHT:
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(BUTTON_RIGHT) and event.button_mask == BUTTON_MASK_RIGHT:
+		directional_light.rotate_y(event.relative.x * sensitity)
+	if event is InputEventMouseButton and not event.pressed:
+		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 
 func _on_ViewMenuButton_show_background_toggled() -> void:

@@ -3,6 +3,5 @@
 [resource]
 flags_unshaded = true
 flags_fixed_size = true
-params_cull_mode = 1
 params_billboard_mode = 1
 albedo_color = Color( 0.172549, 0.172549, 0.172549, 1 )

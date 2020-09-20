@@ -4,13 +4,9 @@
 
 [node name="RotatingCamera" type="Spatial"]
 
-[node name="Position3D" type="Position3D" parent="."]
-
 [node name="HorizontalCameraSocket" type="Spatial" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0 )
 
 [node name="Camera" type="Camera" parent="HorizontalCameraSocket"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.77447 )
+far = 500.0
 script = ExtResource( 1 )
-
-[node name="Position3D2" type="Position3D" parent="HorizontalCameraSocket"]
