@@ -4,7 +4,7 @@ extends GridContainer
 Buttons used to specify the enabled maps of the selected `MaterialLayer`
 """
 
-signal changed
+signal changed(map, activated)
 
 const LayerTexture = preload("res://layers/layer_texture.gd")
 const MaterialLayer = preload("res://layers/material_layer.gd")
@@ -37,4 +37,4 @@ func _on_Button_toggled(button_pressed : bool, type : String):
 			maps[type] = LayerTexture.new()
 	else:
 		maps.erase(type)
-	emit_signal("changed")
+	emit_signal("changed", type, button_pressed)

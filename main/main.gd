@@ -48,6 +48,7 @@ func load_file(save_file : SaveFile) -> void:
 func add_texture_layer(texture_layer : TextureLayer, on_layer_texture : LayerTexture) -> void:
 	on_layer_texture.layers.append(texture_layer)
 	on_layer_texture.update_result(result_size)
+#	yield(on_layer_texture.update_result(result_size), "completed")
 	editing_layer_material.update_results(result_size)
 	results_item_list.load_layer_material(editing_layer_material)
 	model.load_layer_material_maps(editing_layer_material)
@@ -96,7 +97,10 @@ func _on_DeleteButton_pressed() -> void:
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
-func _on_TextureChannelButtons_changed() -> void:
+func _on_TextureChannelButtons_changed(map : String, activated : bool) -> void:
+	if activated:
+		layer_tree.selected_maps[layer_property_panel.editing_layer] = layer_property_panel.editing_layer.maps[map]
+		layer_tree.selected_layer_textures[layer_property_panel.editing_layer] = layer_property_panel.editing_layer.maps[map]
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
