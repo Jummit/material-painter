@@ -5,7 +5,6 @@ A layer of a `LayerTexture`
 
 By default the settings include the blend_mode
 and the opacity to configure the strength when blending.
-The `properties` `Dictionary` holds the settings of the layer.
 
 For making the layer editable, `get_properties` is used
 to retrieve a list of `Properties` for the `TextureLayerPropertyPanel`.
@@ -18,7 +17,6 @@ export var opacity := 1.0
 export var blend_mode := "normal"
 
 var type_name : String
-var result : Texture
 
 const Properties = preload("res://addons/property_panel/properties.gd")
 const BlendingLayer = preload("res://render_viewports/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
@@ -35,11 +33,7 @@ func get_properties() -> Array:
 			]
 
 
-func update_result(result_size : Vector2, keep_viewport := true) -> void:
-	result = yield(generate_result(result_size, keep_viewport), "completed")
-
-
-func generate_result(result_size : Vector2, keep_viewport := true) -> Texture:
+func generate_result(result_size : Vector2, keep_viewport := false) -> Texture:
 	return yield(LayerBlendViewportManager.blend(
 			[_get_as_shader_layer()], result_size,
 			get_instance_id() if keep_viewport else -1), "completed")

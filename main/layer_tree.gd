@@ -45,7 +45,7 @@ func _ready() -> void:
 func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == BUTTON_RIGHT and event.pressed:
 		material_layer_popup_menu.rect_global_position = event.global_position
-		material_layer_popup_menu.layer = get_selected_material_layer()
+		material_layer_popup_menu.layer = get_item_at_position(event.position).get_meta("layer")
 		material_layer_popup_menu.popup()
 	elif event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
 		if get_selected():
@@ -118,7 +118,7 @@ func setup_texture_layer_item(texture_layer : TextureLayer, on_item : TreeItem) 
 
 
 func update_icons() -> void:
-	for layer in tree_items.keys():
+	for layer in tree_items:
 		var tree_item : TreeItem = tree_items[layer]
 		if layer is TextureLayer:
 			tree_item.set_button(0, 0, yield(layer.generate_result(Vector2(32, 32), false), "completed"))
@@ -183,7 +183,8 @@ func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
 	var selected_map : LayerTexture = clicked_layer.maps.values()[id]
 	selected_maps[clicked_layer] = selected_map
 	selected_layer_textures[clicked_layer] = selected_map
-	setup_layer_material(main.editing_layer_material)
+	update_icons()
+	update()
 
 
 func _on_cell_selected() -> void:

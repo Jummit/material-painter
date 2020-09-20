@@ -2,3 +2,4 @@
 
 [resource]
 resource_local_to_scene = true
+flags_albedo_tex_force_srgb = true

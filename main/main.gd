@@ -28,6 +28,7 @@ onready var layer_property_panel : Panel = $VBoxContainer/PanelContainer/LayerCo
 onready var texture_channel_buttons : GridContainer = $VBoxContainer/PanelContainer/LayerContainer/LayerTree/TextureChannelButtons
 onready var model : MeshInstance = $"VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport/Model"
 onready var layer_tree : Tree = $VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree
+onready var results_item_list : ItemList = $VBoxContainer/PanelContainer/LayerContainer/ResultsItemList
 
 func _ready():
 	file_menu_button.get_popup().connect("id_pressed", self, "_on_FileMenu_id_pressed")
@@ -46,9 +47,9 @@ func load_file(save_file : SaveFile) -> void:
 
 func add_texture_layer(texture_layer : TextureLayer, on_layer_texture : LayerTexture) -> void:
 	on_layer_texture.layers.append(texture_layer)
-	texture_layer.update_result(result_size)
 	on_layer_texture.update_result(result_size)
 	editing_layer_material.update_results(result_size)
+	results_item_list.load_layer_material(editing_layer_material)
 	model.load_layer_material_maps(editing_layer_material)
 	layer_tree.setup_layer_material(editing_layer_material)
 
@@ -56,6 +57,7 @@ func add_texture_layer(texture_layer : TextureLayer, on_layer_texture : LayerTex
 func add_material_layer(material_layer : MaterialLayer) -> void:
 	editing_layer_material.layers.append(material_layer)
 	editing_layer_material.update_results(result_size, true)
+	results_item_list.load_layer_material(editing_layer_material)
 	model.load_layer_material_maps(editing_layer_material)
 	layer_tree.setup_layer_material(editing_layer_material)
 
@@ -109,6 +111,7 @@ func _on_LayerPropertyPanel_values_changed() -> void:
 	for affected_layer in affected_layers:
 		affected_layer.update_result(result_size)
 	editing_layer_material.update_results(result_size)
+	results_item_list.load_layer_material(editing_layer_material)
 	model.load_layer_material_maps(editing_layer_material)
 	layer_tree.update_icons()
 
@@ -119,7 +122,7 @@ func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
 
 
 func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
-	add_texture_layer(layer.new(), layer_tree.get_selected_layer_texture())
+	add_texture_layer(layer.new(), layer_tree.selected_layer_textures[layer_tree.material_layer_popup_menu.layer])
 
 
 func _on_FileMenu_id_pressed(id : int):
@@ -164,19 +167,19 @@ func _on_LayerTree_layer_visibility_changed(layer) -> void:
 	if layer is MaterialLayer:
 		editing_layer_material.update_results(result_size)
 	elif layer is TextureLayer:
-		layer.update_result(result_size)
 		for affected_layer in editing_layer_material.get_depending_layer_textures(layer):
 			affected_layer.update_result(result_size)
 		editing_layer_material.update_results(result_size)
+	results_item_list.load_layer_material(editing_layer_material)
 	model.load_layer_material_maps(editing_layer_material)
 	layer_tree.update_icons()
 
 
 func _on_Viewport_painted(layer : TextureLayer) -> void:
-	layer.update_result(result_size)
 	for affected_layer in editing_layer_material.get_depending_layer_textures(layer):
 		affected_layer.update_result(result_size)
 	editing_layer_material.update_results(result_size)
+	results_item_list.load_layer_material(editing_layer_material)
 	model.load_layer_material_maps(editing_layer_material)
 	layer_tree.update_icons()
 
@@ -184,5 +187,6 @@ func _on_Viewport_painted(layer : TextureLayer) -> void:
 func _on_MaterialLayerPopupMenu_mask_removed() -> void:
 	layer_tree.get_selected_material_layer().mask = null
 	editing_layer_material.update_results(result_size)
+	results_item_list.load_layer_material(editing_layer_material)
 	model.load_layer_material_maps(editing_layer_material)
 	layer_tree.setup_layer_material(editing_layer_material)
