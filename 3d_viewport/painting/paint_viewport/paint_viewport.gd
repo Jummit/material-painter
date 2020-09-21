@@ -1,6 +1,6 @@
 extends Viewport
 
-onready var paint_rect : ColorRect = $PaintRect
+#onready var paint_rect : ColorRect = $PaintRect
 onready var paint_material : ShaderMaterial = $PaintRect.material
 
 func load_utility_textures(textures : Dictionary) -> void:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://main/2d_viewport.gd" type="Script" id=1]
 [ext_resource path="res://3d_viewport/material.tres" type="Material" id=2]
@@ -23,6 +23,9 @@
 [sub_resource type="CubeMesh" id=1]
 flip_faces = true
 size = Vector3( 20, 20, 20 )
+
+[sub_resource type="ViewportTexture" id=3]
+viewport_path = NodePath("VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport/PaintViewport")
 
 [sub_resource type="ImageTexture" id=2]
 
@@ -156,6 +159,44 @@ material/0 = null
 
 [node name="UtilityTextureViewports" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport" instance=ExtResource( 13 )]
 
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = -716.0
+margin_bottom = -325.0
+
+[node name="TextureToView" type="TextureRect" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/HBoxContainer"]
+margin_right = 128.0
+margin_bottom = 512.0
+rect_min_size = Vector2( 128, 128 )
+expand = true
+stretch_mode = 5
+
+[node name="ViewToTexture" type="TextureRect" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/HBoxContainer"]
+margin_left = 132.0
+margin_right = 260.0
+margin_bottom = 512.0
+rect_min_size = Vector2( 128, 128 )
+expand = true
+stretch_mode = 5
+
+[node name="Seams" type="TextureRect" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/HBoxContainer"]
+margin_left = 264.0
+margin_right = 392.0
+margin_bottom = 512.0
+rect_min_size = Vector2( 128, 128 )
+expand = true
+stretch_mode = 5
+
+[node name="PaintResult" type="TextureRect" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/HBoxContainer"]
+margin_left = 396.0
+margin_right = 524.0
+margin_bottom = 512.0
+rect_min_size = Vector2( 128, 128 )
+texture = SubResource( 3 )
+expand = true
+stretch_mode = 5
+
 [node name="2DViewport" type="TextureRect" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer"]
 visible = false
 anchor_right = 1.0
@@ -263,6 +304,7 @@ __meta__ = {
 [connection signal="hdr_selected" from="VBoxContainer/TopButtonBar/TopButtons/ViewMenuButton" to="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport" method="_on_ViewMenuButton_hdr_selected"]
 [connection signal="show_background_toggled" from="VBoxContainer/TopButtonBar/TopButtons/ViewMenuButton" to="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport" method="_on_ViewMenuButton_show_background_toggled"]
 [connection signal="painted" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport" to="." method="_on_Viewport_painted"]
+[connection signal="mesh_changed" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport/Model" to="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport" method="_on_Model_mesh_changed"]
 [connection signal="painted" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/2DViewport" to="." method="_on_Viewport_painted"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/HBoxContainer/AddButton" to="." method="_on_AddButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/HBoxContainer/DeleteButton" to="." method="_on_DeleteButton_pressed"]

@@ -62,4 +62,6 @@ void fragment() {
 		float alpha_sum = min(1.0, a + screen_color.a);
 		COLOR = vec4((color.xyz*a*brush_channelmask.xyz+screen_color.xyz*(vec3(alpha_sum)-a*brush_channelmask.xyz))/alpha_sum, alpha_sum);
 	}
+//	COLOR.rg = xy;
+//	COLOR.a = 1.0;
 }

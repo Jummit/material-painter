@@ -64,8 +64,7 @@ func add_material_layer(material_layer : MaterialLayer) -> void:
 
 
 func load_model(path : String) -> void:
-	model.mesh = ObjParser.parse_obj(path)
-	model.set_surface_material(0, preload("res://3d_viewport/material.tres"))
+	model.set_mesh(ObjParser.parse_obj(path))
 
 
 func _on_FileDialog_file_selected(path : String):

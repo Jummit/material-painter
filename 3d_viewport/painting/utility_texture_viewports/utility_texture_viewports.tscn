@@ -22,6 +22,7 @@ shader_param/aspect = 1.0
 shader_param/view2texture = SubResource( 2 )
 
 [sub_resource type="ViewportTexture" id=4]
+viewport_path = NodePath("TextureToViewViewport")
 
 [sub_resource type="ShaderMaterial" id=5]
 resource_local_to_scene = true
@@ -35,9 +36,8 @@ script = ExtResource( 1 )
 size = Vector2( 2048, 2048 )
 own_world = true
 transparent_bg = true
-usage = 1
 render_target_v_flip = true
-render_target_update_mode = 1
+render_target_update_mode = 0
 
 [node name="Camera" type="Camera" parent="ViewToTextureViewport"]
 current = true
@@ -49,23 +49,24 @@ material_override = SubResource( 1 )
 size = Vector2( 2048, 2048 )
 own_world = true
 transparent_bg = true
-usage = 1
-render_target_update_mode = 1
-
-[node name="Camera" type="Camera" parent="TextureToViewViewport"]
-current = true
+render_target_update_mode = 0
 
 [node name="MeshInstance" type="MeshInstance" parent="TextureToViewViewport"]
 material_override = SubResource( 3 )
+
+[node name="Camera" type="Camera" parent="TextureToViewViewport"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 20 )
+projection = 1
+current = true
 
 [node name="SeamsViewport" type="Viewport" parent="."]
 size = Vector2( 2048, 2048 )
 own_world = true
 transparent_bg = true
-usage = 1
-render_target_update_mode = 1
+usage = 0
+render_target_update_mode = 0
 
-[node name="ColorRect" type="ColorRect" parent="SeamsViewport"]
+[node name="SeamsRect" type="ColorRect" parent="SeamsViewport"]
 material = SubResource( 5 )
 anchor_right = 1.0
 anchor_bottom = 1.0
