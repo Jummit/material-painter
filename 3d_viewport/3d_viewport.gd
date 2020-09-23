@@ -14,21 +14,22 @@ onready var layer_tree : Tree = $"../../../../LayerPanelContainer/LayerTree"
 onready var world_environment : WorldEnvironment = $Viewport/WorldEnvironment
 onready var color_skybox : MeshInstance = $Viewport/ColorSkybox
 onready var directional_light : DirectionalLight = $Viewport/DirectionalLight
-onready var paint_viewport : Viewport = $Viewport/PaintViewport
-onready var utility_texture_viewports : Node = $Viewport/UtilityTextureViewports
+onready var viewport : Viewport = $Viewport
 
 onready var seams : TextureRect = $HBoxContainer/Seams
 onready var texture_to_view : TextureRect = $HBoxContainer/TextureToView
 onready var view_to_texture : TextureRect = $HBoxContainer/ViewToTexture
+onready var paint_result : TextureRect = $HBoxContainer/PaintResult
+
+onready var painter : Node = $Painter
 
 func _ready() -> void:
-	utility_texture_viewports.mesh_instance = model
-	$Viewport/RotatingCamera/HorizontalCameraSocket/Camera
-	var utility_textures : Dictionary = utility_texture_viewports.get_textures()
-	paint_viewport.load_utility_textures(utility_textures)
+	painter.mesh_instance = model
+	var utility_textures : Dictionary = painter.get_textures()
 	view_to_texture.texture = utility_textures.view_to_texture
 	texture_to_view.texture = utility_textures.texture_to_view
 	seams.texture = utility_textures.seams
+	paint_result.texture = painter.result
 
 
 func _gui_input(event : InputEvent) -> void:
@@ -71,7 +72,7 @@ func _on_ViewMenuButton_hdr_selected(hdr : Texture) -> void:
 
 
 func _on_Model_mesh_changed() -> void:
-	utility_texture_viewports.set_mesh(model)
+	painter.mesh_instance = model
 
 
 func _get_nearest_intersecting_face(start : Vector3, direction : Vector3, mesh : Mesh) -> int:
@@ -96,11 +97,11 @@ func _get_nearest_intersecting_face(start : Vector3, direction : Vector3, mesh :
 
 
 func _paint(on_texture_layer : BitmapTextureLayer, from : Vector2, to : Vector2) -> void:
-	var camera : Camera = get_child(0).get_camera()
+	var camera : Camera = viewport.get_camera()
 	var camera_transform = camera.global_transform
 	if camera_transform != cashed_camera_transform:
-		yield(utility_texture_viewports.update_view(get_child(0)), "completed")
+		yield(painter.update_view(viewport), "completed")
 	cashed_camera_transform = camera_transform
-	paint_viewport.paint(from / rect_size, to / rect_size)
-	on_texture_layer.image_data = paint_viewport.get_texture().get_data()
+	painter.paint(from / rect_size, to / rect_size)
+	on_texture_layer.image_data = painter.result.get_data()
 	emit_signal("painted", on_texture_layer)

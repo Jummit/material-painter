@@ -1,7 +1,6 @@
 shader_type canvas_item;
 
 uniform sampler2D tex : hint_white;
-uniform sampler2D seams : hint_white;
 
 void fragment() {
 	float best_distance = 1.0;

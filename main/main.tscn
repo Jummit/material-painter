@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://main/2d_viewport.gd" type="Script" id=1]
 [ext_resource path="res://3d_viewport/material.tres" type="Material" id=2]
@@ -12,8 +12,7 @@
 [ext_resource path="res://3d_viewport/environment.tres" type="Environment" id=10]
 [ext_resource path="res://main/asset_browser.gd" type="Script" id=11]
 [ext_resource path="res://main/results_item_list.gd" type="Script" id=12]
-[ext_resource path="res://3d_viewport/painting/utility_texture_viewports/utility_texture_viewports.tscn" type="PackedScene" id=13]
-[ext_resource path="res://3d_viewport/painting/paint_viewport/paint_viewport.tscn" type="PackedScene" id=14]
+[ext_resource path="res://addons/painter/painter.tscn" type="PackedScene" id=13]
 [ext_resource path="res://main/value_slider/value_slider.tscn" type="PackedScene" id=15]
 [ext_resource path="res://main/material_layer_popup_menu.gd" type="Script" id=16]
 [ext_resource path="res://addons/property_panel/property_panel.tscn" type="PackedScene" id=17]
@@ -24,9 +23,6 @@
 [sub_resource type="CubeMesh" id=1]
 flip_faces = true
 size = Vector3( 20, 20, 20 )
-
-[sub_resource type="ViewportTexture" id=2]
-viewport_path = NodePath("VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/Viewport/PaintViewport")
 
 [sub_resource type="ImageTexture" id=3]
 
@@ -148,6 +144,8 @@ size_flags_vertical = 3
 stretch = true
 script = ExtResource( 20 )
 
+[node name="Painter" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer" instance=ExtResource( 13 )]
+
 [node name="Viewport" type="Viewport" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer"]
 size = Vector2( 748, 281 )
 handle_input_locally = false
@@ -171,10 +169,6 @@ transform = Transform( 0.822333, 0.397311, -0.407324, 0, 0.715851, 0.698253, 0.5
 material_override = ExtResource( 7 )
 mesh = SubResource( 1 )
 material/0 = null
-
-[node name="PaintViewport" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/Viewport" instance=ExtResource( 14 )]
-
-[node name="UtilityTextureViewports" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/Viewport" instance=ExtResource( 13 )]
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer"]
 anchor_right = 1.0
@@ -210,7 +204,6 @@ margin_left = 396.0
 margin_right = 524.0
 margin_bottom = 128.0
 rect_min_size = Vector2( 128, 128 )
-texture = SubResource( 2 )
 expand = true
 stretch_mode = 5
 

@@ -1,13 +1,40 @@
 extends Node
 
+var painting := false
+var next_position : Vector2
 var mesh_instance : MeshInstance setget set_mesh_instance
+# warning-ignore:unused_class_variable
+onready var result : ViewportTexture = $PaintViewport.get_texture()
 
+onready var paint_material : ShaderMaterial = $PaintViewport/PaintRect.material
+onready var paint_viewport : Viewport = $PaintViewport
 onready var view_to_texture_viewport : Viewport = $ViewToTextureViewport
 onready var texture_to_view_viewport : Viewport = $TextureToViewViewport
 onready var seams_viewport : Viewport = $SeamsViewport
 onready var view_to_texture_camera : Camera = $ViewToTextureViewport/Camera
 onready var texture_to_view_mesh_instance : MeshInstance = $TextureToViewViewport/MeshInstance
 onready var view_to_texture_mesh_instance : MeshInstance = $ViewToTextureViewport/MeshInstance
+onready var seams_rect_material : ShaderMaterial = $SeamsViewport/SeamsRect.material
+
+func _ready() -> void:
+	seams_rect_material.set_shader_param("tex", texture_to_view_viewport.get_texture())
+	paint_material.set_shader_param("seams", seams_viewport.get_texture())
+	paint_material.set_shader_param("tex_2_view_tex", texture_to_view_viewport.get_texture())
+
+
+func paint(from : Vector2, to : Vector2) -> void:
+	if painting:
+		next_position = from
+	painting = true
+	paint_material.set_shader_param("brush_pos", from)
+	paint_material.set_shader_param("brush_ppos", to)
+	paint_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
+	yield(VisualServer, "frame_post_draw")
+	painting = false
+	if next_position != Vector2.ZERO:
+		next_position = Vector2.ZERO
+		paint(to, next_position)
+
 
 func get_textures() -> Dictionary:
 	return {
