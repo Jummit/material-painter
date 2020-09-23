@@ -10,7 +10,7 @@ const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_l
 const MeshUtils = preload("res://utils/mesh_utils.gd")
 
 onready var model : MeshInstance = $Viewport/Model
-onready var layer_tree : Tree = $"../../../LayerTree/LayerTree"
+onready var layer_tree : Tree = $"../../../../LayerPanelContainer/LayerTree"
 onready var world_environment : WorldEnvironment = $Viewport/WorldEnvironment
 onready var color_skybox : MeshInstance = $Viewport/ColorSkybox
 onready var directional_light : DirectionalLight = $Viewport/DirectionalLight
@@ -22,9 +22,13 @@ onready var texture_to_view : TextureRect = $HBoxContainer/TextureToView
 onready var view_to_texture : TextureRect = $HBoxContainer/ViewToTexture
 
 func _ready() -> void:
-	utility_texture_viewports.set_mesh(model)
+	utility_texture_viewports.mesh_instance = model
 	$Viewport/RotatingCamera/HorizontalCameraSocket/Camera
-	paint_viewport.load_utility_textures(utility_texture_viewports.get_textures())
+	var utility_textures : Dictionary = utility_texture_viewports.get_textures()
+	paint_viewport.load_utility_textures(utility_textures)
+	view_to_texture.texture = utility_textures.view_to_texture
+	texture_to_view.texture = utility_textures.texture_to_view
+	seams.texture = utility_textures.seams
 
 
 func _gui_input(event : InputEvent) -> void:
@@ -48,23 +52,14 @@ func _gui_input(event : InputEvent) -> void:
 		directional_light.rotate_y(event.relative.x * sensitity)
 	if event is InputEventMouseButton and not event.pressed:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
+		if layer_tree.get_selected() and layer_tree.get_selected_texture_layer() is BitmapTextureLayer:
+			_paint(layer_tree.get_selected_texture_layer(), event.position, event.position)
+			last_painted_position = event.position
 	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(BUTTON_LEFT):
 		if layer_tree.get_selected() and layer_tree.get_selected_texture_layer() is BitmapTextureLayer:
-			var camera : Camera = get_child(0).get_camera()
-			var camera_transform = camera.global_transform
-			if camera_transform != cashed_camera_transform:
-				yield(utility_texture_viewports.update_view(get_child(0)), "completed")
-				var utility_textures : Dictionary = utility_texture_viewports.get_textures()
-				view_to_texture.texture = utility_textures.view_to_texture
-				texture_to_view.texture = utility_textures.texture_to_view
-				seams.texture = utility_textures.seams
-				cashed_camera_transform = camera_transform
-			
-			paint_viewport.paint(last_painted_position / rect_size, event.position / rect_size)
+			_paint(layer_tree.get_selected_texture_layer(), last_painted_position, event.position)
 			last_painted_position = event.position
-			
-			layer_tree.get_selected_texture_layer().image_data = paint_viewport.get_texture().get_data()
-			emit_signal("painted", layer_tree.get_selected_texture_layer())
 
 
 func _on_ViewMenuButton_show_background_toggled() -> void:
@@ -98,3 +93,14 @@ func _get_nearest_intersecting_face(start : Vector3, direction : Vector3, mesh :
 				nearest_face = face
 				nearest_distance = distance
 	return nearest_face
+
+
+func _paint(on_texture_layer : BitmapTextureLayer, from : Vector2, to : Vector2) -> void:
+	var camera : Camera = get_child(0).get_camera()
+	var camera_transform = camera.global_transform
+	if camera_transform != cashed_camera_transform:
+		yield(utility_texture_viewports.update_view(get_child(0)), "completed")
+	cashed_camera_transform = camera_transform
+	paint_viewport.paint(from / rect_size, to / rect_size)
+	on_texture_layer.image_data = paint_viewport.get_texture().get_data()
+	emit_signal("painted", on_texture_layer)

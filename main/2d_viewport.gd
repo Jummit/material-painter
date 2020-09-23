@@ -11,8 +11,8 @@ const MeshUtils = preload("res://utils/mesh_utils.gd")
 
 var mesh_tool := MeshDataTool.new()
 
-onready var model : MeshInstance = $"../3DViewport/Viewport/Model"
-onready var layer_tree : Tree = $"../../../LayerTree/LayerTree"
+onready var model : MeshInstance = $"../3DViewport/ViewportContainer/Viewport/Model"
+onready var layer_tree : Tree = $"../../../LayerPanelContainer/LayerTree"
 
 func _ready() -> void:
 	mesh_tool.create_from_surface(model.mesh, 0)

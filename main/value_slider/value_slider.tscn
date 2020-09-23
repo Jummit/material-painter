@@ -1,0 +1,36 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://main/value_slider/value_slider.gd" type="Script" id=1]
+
+[node name="ValueSlider" type="VBoxContainer"]
+margin_right = 118.0
+margin_bottom = 44.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+margin_right = 118.0
+margin_bottom = 24.0
+
+[node name="NameLabel" type="Label" parent="HBoxContainer"]
+margin_top = 5.0
+margin_right = 56.0
+margin_bottom = 19.0
+size_flags_horizontal = 3
+
+[node name="ValueEdit" type="LineEdit" parent="HBoxContainer"]
+margin_left = 60.0
+margin_right = 118.0
+margin_bottom = 24.0
+
+[node name="ValueSlider" type="HSlider" parent="."]
+margin_top = 28.0
+margin_right = 118.0
+margin_bottom = 44.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+[connection signal="text_changed" from="HBoxContainer/ValueEdit" to="." method="_on_ValueEdit_text_changed"]
+[connection signal="value_changed" from="ValueSlider" to="." method="_on_ValueSlider_value_changed"]

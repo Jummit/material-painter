@@ -1,5 +1,7 @@
 extends Node
 
+var mesh_instance : MeshInstance setget set_mesh_instance
+
 onready var view_to_texture_viewport : Viewport = $ViewToTextureViewport
 onready var texture_to_view_viewport : Viewport = $TextureToViewViewport
 onready var seams_viewport : Viewport = $SeamsViewport
@@ -15,11 +17,10 @@ func get_textures() -> Dictionary:
 	}
 
 
-func set_mesh(mesh_instance : MeshInstance) -> void:
+func set_mesh_instance(to : MeshInstance) -> void:
+	mesh_instance = to
 	texture_to_view_mesh_instance.mesh = mesh_instance.mesh
 	view_to_texture_mesh_instance.mesh = mesh_instance.mesh
-	texture_to_view_mesh_instance.material_override.set_shader_param("model_transform", mesh_instance.transform)
-	
 	texture_to_view_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 	yield(VisualServer, "frame_post_draw")
 	seams_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
@@ -33,8 +34,10 @@ func update_view(viewport : Viewport):
 	view_to_texture_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 	yield(VisualServer, "frame_post_draw")
 	var texture_to_view_material := texture_to_view_mesh_instance.material_override
+	texture_to_view_material.set_shader_param("model_transform", camera.global_transform.affine_inverse() * mesh_instance.global_transform)
 	texture_to_view_material.set_shader_param("fovy_degrees", camera.fov)
 	texture_to_view_material.set_shader_param("z_near", camera.near)
 	texture_to_view_material.set_shader_param("z_far", camera.far)
 	texture_to_view_material.set_shader_param("aspect", viewport.size.x / viewport.size.y)
 	texture_to_view_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
+	texture_to_view_viewport.update_worlds()

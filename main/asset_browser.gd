@@ -76,6 +76,7 @@ func load_assets(asset_type : AssetType) -> void:
 		item_list.add_item(file.get_file().get_basename(), preview)
 		item_list.set_item_metadata(id, {type = asset_type.name, asset = asset})
 		file_name = dir.get_next()
+		yield(get_tree(), "idle_frame")
 
 
 func get_drag_data_fw(position : Vector2, _from : Control):

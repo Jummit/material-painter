@@ -20,7 +20,7 @@ enum Item {
 signal hdr_selected(hdr)
 signal show_background_toggled
 
-onready var results_item_list : ItemList = $"../../../PanelContainer/LayerContainer/ResultsItemList"
+onready var results_item_list : ItemList = $"../../../PanelContainer/HBoxContainer/ResultsItemList"
 
 func _ready() -> void:
 	get_popup().add_check_item("Show Background", Item.SHOW_BACKGROUND)

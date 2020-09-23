@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=24 format=2]
 
 [ext_resource path="res://main/2d_viewport.gd" type="Script" id=1]
 [ext_resource path="res://3d_viewport/material.tres" type="Material" id=2]
@@ -14,6 +14,7 @@
 [ext_resource path="res://main/results_item_list.gd" type="Script" id=12]
 [ext_resource path="res://3d_viewport/painting/utility_texture_viewports/utility_texture_viewports.tscn" type="PackedScene" id=13]
 [ext_resource path="res://3d_viewport/painting/paint_viewport/paint_viewport.tscn" type="PackedScene" id=14]
+[ext_resource path="res://main/value_slider/value_slider.tscn" type="PackedScene" id=15]
 [ext_resource path="res://main/material_layer_popup_menu.gd" type="Script" id=16]
 [ext_resource path="res://addons/property_panel/property_panel.tscn" type="PackedScene" id=17]
 [ext_resource path="res://addons/rotating_camera/rotating_camera.tscn" type="PackedScene" id=19]
@@ -24,10 +25,10 @@
 flip_faces = true
 size = Vector3( 20, 20, 20 )
 
-[sub_resource type="ViewportTexture" id=3]
-viewport_path = NodePath("VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport/PaintViewport")
+[sub_resource type="ViewportTexture" id=2]
+viewport_path = NodePath("VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/Viewport/PaintViewport")
 
-[sub_resource type="ImageTexture" id=2]
+[sub_resource type="ImageTexture" id=3]
 
 [node name="Main" type="Control"]
 anchor_right = 1.0
@@ -89,7 +90,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="LayerContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer"]
 margin_left = 7.0
 margin_top = 7.0
 margin_right = 1017.0
@@ -98,7 +99,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="ResultsItemList" type="ItemList" parent="VBoxContainer/PanelContainer/LayerContainer"]
+[node name="ResultsItemList" type="ItemList" parent="VBoxContainer/PanelContainer/HBoxContainer"]
 visible = false
 margin_right = 128.0
 margin_bottom = 548.0
@@ -107,97 +108,113 @@ icon_mode = 0
 fixed_icon_size = Vector2( 128, 128 )
 script = ExtResource( 12 )
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/LayerContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/HBoxContainer"]
 margin_right = 756.0
 margin_bottom = 548.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="ViewportTabContainer" type="TabContainer" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer"]
+[node name="ViewportTabContainer" type="TabContainer" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer"]
 margin_right = 756.0
 margin_bottom = 365.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="3DViewport" type="ViewportContainer" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer"]
+[node name="3DViewport" type="VBoxContainer" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
+
+[node name="BrushSettingsContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport"]
+margin_right = 748.0
+margin_bottom = 44.0
+
+[node name="ValueSlider" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/BrushSettingsContainer" instance=ExtResource( 15 )]
+margin_right = 88.0
+value_name = "Size"
+value = 10.0
+min_value = 5.0
+max_value = 50.0
+
+[node name="ViewportContainer" type="ViewportContainer" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport"]
+margin_top = 48.0
+margin_right = 748.0
+margin_bottom = 329.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 stretch = true
 script = ExtResource( 20 )
 
-[node name="Viewport" type="Viewport" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport"]
-size = Vector2( 748, 329 )
+[node name="Viewport" type="Viewport" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer"]
+size = Vector2( 748, 281 )
 handle_input_locally = false
 msaa = 1
 render_target_update_mode = 3
 
-[node name="RotatingCamera" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport" instance=ExtResource( 19 )]
+[node name="RotatingCamera" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/Viewport" instance=ExtResource( 19 )]
 
-[node name="Model" type="MeshInstance" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
+[node name="Model" type="MeshInstance" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/Viewport"]
 mesh = ExtResource( 4 )
 material/0 = ExtResource( 2 )
 script = ExtResource( 8 )
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/Viewport"]
 environment = ExtResource( 10 )
 
-[node name="DirectionalLight" type="DirectionalLight" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
+[node name="DirectionalLight" type="DirectionalLight" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/Viewport"]
 transform = Transform( 0.822333, 0.397311, -0.407324, 0, 0.715851, 0.698253, 0.569007, -0.574196, 0.588668, 0, 10, 0 )
 
-[node name="ColorSkybox" type="MeshInstance" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
+[node name="ColorSkybox" type="MeshInstance" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/Viewport"]
 material_override = ExtResource( 7 )
 mesh = SubResource( 1 )
 material/0 = null
 
-[node name="PaintViewport" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport" instance=ExtResource( 14 )]
+[node name="PaintViewport" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/Viewport" instance=ExtResource( 14 )]
 
-[node name="UtilityTextureViewports" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport" instance=ExtResource( 13 )]
+[node name="UtilityTextureViewports" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/Viewport" instance=ExtResource( 13 )]
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_right = -716.0
 margin_bottom = -325.0
 
-[node name="TextureToView" type="TextureRect" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/HBoxContainer"]
+[node name="TextureToView" type="TextureRect" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/HBoxContainer"]
 margin_right = 128.0
-margin_bottom = 512.0
+margin_bottom = 128.0
 rect_min_size = Vector2( 128, 128 )
 expand = true
 stretch_mode = 5
 
-[node name="ViewToTexture" type="TextureRect" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/HBoxContainer"]
+[node name="ViewToTexture" type="TextureRect" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/HBoxContainer"]
 margin_left = 132.0
 margin_right = 260.0
-margin_bottom = 512.0
+margin_bottom = 128.0
 rect_min_size = Vector2( 128, 128 )
 expand = true
 stretch_mode = 5
 
-[node name="Seams" type="TextureRect" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/HBoxContainer"]
+[node name="Seams" type="TextureRect" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/HBoxContainer"]
 margin_left = 264.0
 margin_right = 392.0
-margin_bottom = 512.0
+margin_bottom = 128.0
 rect_min_size = Vector2( 128, 128 )
 expand = true
 stretch_mode = 5
 
-[node name="PaintResult" type="TextureRect" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/HBoxContainer"]
+[node name="PaintResult" type="TextureRect" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/HBoxContainer"]
 margin_left = 396.0
 margin_right = 524.0
-margin_bottom = 512.0
+margin_bottom = 128.0
 rect_min_size = Vector2( 128, 128 )
-texture = SubResource( 3 )
+texture = SubResource( 2 )
 expand = true
 stretch_mode = 5
 
-[node name="2DViewport" type="TextureRect" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer"]
+[node name="2DViewport" type="TextureRect" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer"]
 visible = false
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -205,12 +222,12 @@ margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
-texture = SubResource( 2 )
+texture = SubResource( 3 )
 expand = true
 stretch_mode = 1
 script = ExtResource( 1 )
 
-[node name="AssetBrowser" type="TabContainer" parent="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer"]
+[node name="AssetBrowser" type="TabContainer" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer"]
 margin_top = 369.0
 margin_right = 756.0
 margin_bottom = 548.0
@@ -219,30 +236,30 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 0.49
 script = ExtResource( 11 )
 
-[node name="LayerTree" type="VBoxContainer" parent="VBoxContainer/PanelContainer/LayerContainer"]
+[node name="LayerPanelContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/HBoxContainer"]
 margin_left = 760.0
 margin_right = 1010.0
 margin_bottom = 548.0
 rect_min_size = Vector2( 250, 0 )
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/LayerContainer/LayerTree"]
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer"]
 margin_right = 250.0
 margin_bottom = 20.0
 alignment = 2
 
-[node name="AddButton" type="Button" parent="VBoxContainer/PanelContainer/LayerContainer/LayerTree/HBoxContainer"]
+[node name="AddButton" type="Button" parent="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/HBoxContainer"]
 margin_left = 209.0
 margin_right = 229.0
 margin_bottom = 20.0
 text = "+"
 
-[node name="DeleteButton" type="Button" parent="VBoxContainer/PanelContainer/LayerContainer/LayerTree/HBoxContainer"]
+[node name="DeleteButton" type="Button" parent="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/HBoxContainer"]
 margin_left = 233.0
 margin_right = 250.0
 margin_bottom = 20.0
 text = "-"
 
-[node name="LayerTree" type="Tree" parent="VBoxContainer/PanelContainer/LayerContainer/LayerTree"]
+[node name="LayerTree" type="Tree" parent="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer"]
 margin_top = 24.0
 margin_right = 250.0
 margin_bottom = 284.0
@@ -255,7 +272,7 @@ hide_folding = true
 hide_root = true
 script = ExtResource( 21 )
 
-[node name="MaterialLayerPopupMenu" type="PopupMenu" parent="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree"]
+[node name="MaterialLayerPopupMenu" type="PopupMenu" parent="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree"]
 margin_right = 133.0
 margin_bottom = 52.0
 script = ExtResource( 16 )
@@ -263,20 +280,20 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="MapTypePopupMenu" type="PopupMenu" parent="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree"]
+[node name="MapTypePopupMenu" type="PopupMenu" parent="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree"]
 margin_right = 99.0
 margin_bottom = 88.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="TextureChannelButtons" parent="VBoxContainer/PanelContainer/LayerContainer/LayerTree" instance=ExtResource( 9 )]
+[node name="TextureChannelButtons" parent="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer" instance=ExtResource( 9 )]
 visible = false
 margin_top = 286.0
 margin_right = 250.0
 margin_bottom = 286.0
 
-[node name="LayerPropertyPanel" parent="VBoxContainer/PanelContainer/LayerContainer/LayerTree" instance=ExtResource( 17 )]
+[node name="LayerPropertyPanel" parent="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer" instance=ExtResource( 17 )]
 margin_top = 288.0
 margin_right = 250.0
 margin_bottom = 548.0
@@ -301,28 +318,28 @@ current_path = "/home/jummit/Games/MaterialPainter/Layers/"
 __meta__ = {
 "_edit_use_anchors_": false
 }
-[connection signal="hdr_selected" from="VBoxContainer/TopButtonBar/TopButtons/ViewMenuButton" to="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport" method="_on_ViewMenuButton_hdr_selected"]
-[connection signal="show_background_toggled" from="VBoxContainer/TopButtonBar/TopButtons/ViewMenuButton" to="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport" method="_on_ViewMenuButton_show_background_toggled"]
-[connection signal="painted" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport" to="." method="_on_Viewport_painted"]
-[connection signal="mesh_changed" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport/Viewport/Model" to="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/3DViewport" method="_on_Model_mesh_changed"]
-[connection signal="painted" from="VBoxContainer/PanelContainer/LayerContainer/VBoxContainer/ViewportTabContainer/2DViewport" to="." method="_on_Viewport_painted"]
-[connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/HBoxContainer/AddButton" to="." method="_on_AddButton_pressed"]
-[connection signal="pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/HBoxContainer/DeleteButton" to="." method="_on_DeleteButton_pressed"]
-[connection signal="button_pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_button_pressed"]
-[connection signal="cell_selected" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_cell_selected"]
-[connection signal="item_edited" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_item_edited"]
-[connection signal="layer_visibility_changed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="." method="_on_LayerTree_layer_visibility_changed"]
-[connection signal="material_layer_selected" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="." method="_on_LayerTree_material_layer_selected"]
-[connection signal="texture_layer_selected" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" to="." method="_on_LayerTree_texture_layer_selected"]
-[connection signal="about_to_show" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" method="_on_about_to_show"]
-[connection signal="id_pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" method="_on_id_pressed"]
-[connection signal="index_pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" method="_on_index_pressed"]
-[connection signal="layer_saved" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" to="." method="_on_MaterialLayerPopupMenu_layer_saved"]
-[connection signal="layer_selected" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" to="." method="_on_AddLayerPopupMenu_layer_selected"]
-[connection signal="mask_added" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" to="." method="_on_MaterialLayerPopupMenu_mask_added"]
-[connection signal="mask_removed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MaterialLayerPopupMenu" to="." method="_on_MaterialLayerPopupMenu_mask_removed"]
-[connection signal="about_to_show" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MapTypePopupMenu" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_MapTypePopupMenu_about_to_show"]
-[connection signal="id_pressed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree/MapTypePopupMenu" to="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerTree" method="_on_MapTypePopupMenu_id_pressed"]
-[connection signal="changed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/TextureChannelButtons" to="." method="_on_TextureChannelButtons_changed"]
-[connection signal="values_changed" from="VBoxContainer/PanelContainer/LayerContainer/LayerTree/LayerPropertyPanel" to="." method="_on_LayerPropertyPanel_values_changed"]
+[connection signal="hdr_selected" from="VBoxContainer/TopButtonBar/TopButtons/ViewMenuButton" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer" method="_on_ViewMenuButton_hdr_selected"]
+[connection signal="show_background_toggled" from="VBoxContainer/TopButtonBar/TopButtons/ViewMenuButton" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer" method="_on_ViewMenuButton_show_background_toggled"]
+[connection signal="painted" from="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer" to="." method="_on_Viewport_painted"]
+[connection signal="mesh_changed" from="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/Viewport/Model" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer" method="_on_Model_mesh_changed"]
+[connection signal="painted" from="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/2DViewport" to="." method="_on_Viewport_painted"]
+[connection signal="pressed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/HBoxContainer/AddButton" to="." method="_on_AddButton_pressed"]
+[connection signal="pressed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/HBoxContainer/DeleteButton" to="." method="_on_DeleteButton_pressed"]
+[connection signal="button_pressed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" to="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" method="_on_button_pressed"]
+[connection signal="cell_selected" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" to="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" method="_on_cell_selected"]
+[connection signal="item_edited" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" to="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" method="_on_item_edited"]
+[connection signal="layer_visibility_changed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" to="." method="_on_LayerTree_layer_visibility_changed"]
+[connection signal="material_layer_selected" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" to="." method="_on_LayerTree_material_layer_selected"]
+[connection signal="texture_layer_selected" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" to="." method="_on_LayerTree_texture_layer_selected"]
+[connection signal="about_to_show" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MaterialLayerPopupMenu" to="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MaterialLayerPopupMenu" method="_on_about_to_show"]
+[connection signal="id_pressed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MaterialLayerPopupMenu" to="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MaterialLayerPopupMenu" method="_on_id_pressed"]
+[connection signal="index_pressed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MaterialLayerPopupMenu" to="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MaterialLayerPopupMenu" method="_on_index_pressed"]
+[connection signal="layer_saved" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MaterialLayerPopupMenu" to="." method="_on_MaterialLayerPopupMenu_layer_saved"]
+[connection signal="layer_selected" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MaterialLayerPopupMenu" to="." method="_on_AddLayerPopupMenu_layer_selected"]
+[connection signal="mask_added" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MaterialLayerPopupMenu" to="." method="_on_MaterialLayerPopupMenu_mask_added"]
+[connection signal="mask_removed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MaterialLayerPopupMenu" to="." method="_on_MaterialLayerPopupMenu_mask_removed"]
+[connection signal="about_to_show" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MapTypePopupMenu" to="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" method="_on_MapTypePopupMenu_about_to_show"]
+[connection signal="id_pressed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MapTypePopupMenu" to="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" method="_on_MapTypePopupMenu_id_pressed"]
+[connection signal="changed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/TextureChannelButtons" to="." method="_on_TextureChannelButtons_changed"]
+[connection signal="values_changed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerPropertyPanel" to="." method="_on_LayerPropertyPanel_values_changed"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]
