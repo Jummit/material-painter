@@ -6,12 +6,10 @@ uniform sampler2D seams : hint_white;
 
 uniform vec2 brush_pos = vec2(0.5, 0.5);
 uniform vec2 brush_ppos = vec2(0.5, 0.5);
-uniform bool erase = false;
 uniform vec2 brush_size = vec2(0.25, 0.25);
 uniform float brush_strength = 1.0;
 uniform sampler2D brush_texture : hint_white;
 uniform vec4 brush_color = vec4(1.0, 1.0, 1.0, 1.0);
-uniform vec4 brush_channelmask = vec4(1.0, 1.0, 1.0, 1.0);
 uniform float pattern_scale = 10.0;
 uniform float texture_angle = 0.0;
 uniform bool stamp_mode = false;
@@ -53,12 +51,8 @@ void fragment() {
 		color = pattern_color(xy);
 	}
 	color = brush_color * color * texture_mask + brush_color * (vec4(1.0) - texture_mask);
-	a  *= color.a * brush_channelmask.a * tex2view.z;
+	a *= color.a * tex2view.z;
 	vec4 screen_color = texture(SCREEN_TEXTURE, UV);
-	if (erase) {
-		COLOR = vec4(screen_color.xyz, max(screen_color.a - a, 0.0));
-	} else {
-		float alpha_sum = min(1.0, a + screen_color.a);
-		COLOR = vec4((color.xyz * a * brush_channelmask.xyz + screen_color.xyz * (vec3(alpha_sum) - a * brush_channelmask.xyz)) / alpha_sum, alpha_sum);
-	}
+	float alpha_sum = min(1.0, a + screen_color.a);
+ 	COLOR = vec4((color.xyz * a + screen_color.xyz * (vec3(alpha_sum) - a)) / alpha_sum, alpha_sum);
 }

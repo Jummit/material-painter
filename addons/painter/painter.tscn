@@ -12,11 +12,9 @@ resource_local_to_scene = true
 shader = ExtResource( 2 )
 shader_param/brush_pos = Vector2( 0.5, 0.5 )
 shader_param/brush_ppos = Vector2( 0.5, 0.5 )
-shader_param/erase = false
 shader_param/brush_size = Vector2( 0.25, 0.25 )
 shader_param/brush_strength = 1.0
 shader_param/brush_color = Plane( 1, 1, 1, 1 )
-shader_param/brush_channelmask = Plane( 1, 1, 1, 1 )
 shader_param/pattern_scale = 10.0
 shader_param/texture_angle = 0.0
 shader_param/stamp_mode = false
@@ -51,14 +49,14 @@ render_target_clear_mode = 1
 render_target_update_mode = 0
 gui_disable_input = true
 
+[node name="InitialTextureRect" type="TextureRect" parent="PaintViewport"]
+margin_right = 40.0
+margin_bottom = 40.0
+
 [node name="PaintRect" type="ColorRect" parent="PaintViewport"]
 material = SubResource( 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0
-
-[node name="InitialTextureRect" type="TextureRect" parent="PaintViewport"]
-margin_right = 40.0
-margin_bottom = 40.0
 
 [node name="ViewToTextureViewport" type="Viewport" parent="."]
 size = Vector2( 2048, 2048 )

@@ -26,7 +26,11 @@ func _ready() -> void:
 
 
 func set_initial_texture(texture : Texture) -> void:
+	initial_texture_rect.show()
 	initial_texture_rect.texture = texture
+	paint_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
+	yield(VisualServer, "frame_post_draw")
+	initial_texture_rect.hide()
 
 
 func paint(from : Vector2, to : Vector2) -> void:
@@ -71,3 +75,8 @@ func update_view(viewport : Viewport) -> void:
 	texture_to_view_material.set_shader_param("z_far", camera.far)
 	texture_to_view_material.set_shader_param("aspect", viewport.size.x / viewport.size.y)
 	texture_to_view_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
+
+
+func clear() -> void:
+	initial_texture_rect.texture = null
+	paint_viewport.render_target_clear_mode = Viewport.CLEAR_MODE_ONLY_NEXT_FRAME

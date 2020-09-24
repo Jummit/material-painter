@@ -111,3 +111,8 @@ func _can_paint_with_tool(tool_id : int) -> bool:
 	return layer_tree.get_selected() and\
 			layer_tree.get_selected_texture_layer() is BitmapTextureLayer\
 			and main.selected_tool == tool_id
+
+
+func _on_LayerTree_texture_layer_selected(texture_layer):
+	if texture_layer is BitmapTextureLayer:
+		painter.clear()
