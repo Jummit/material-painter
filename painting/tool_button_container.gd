@@ -3,6 +3,8 @@ extends VBoxContainer
 
 signal tool_selected(tool_id)
 
+const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_layer.gd")
+
 onready var main : Control = $"../../../../../../.."
 
 func _ready():
@@ -16,3 +18,11 @@ func _ready():
 
 func _on_ToolButton_pressed(tool_id : int):
 	emit_signal("tool_selected", tool_id)
+
+
+func _on_LayerTree_texture_layer_selected(texture_layer):
+	visible = texture_layer is BitmapTextureLayer
+
+
+func _on_LayerTree_cell_selected():
+	hide()

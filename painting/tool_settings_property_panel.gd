@@ -7,6 +7,9 @@ onready var main : Control = $"../../../../../.."
 func _ready():
 	set_properties([
 		Properties.FloatProperty.new("size", 0.5, 50),
+		Properties.FloatProperty.new("opacity", 0.0, 1.0),
+		Properties.FilePathProperty.new("texture"),
+		Properties.ColorProperty.new("color"),
 	])
 
 

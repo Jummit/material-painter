@@ -7,7 +7,7 @@ A list of assets that can be drag and dropped onto different UI elements
 var ASSET_TYPES := [
 	TextureAssetType.new(),
 	MaterialAssetType.new(),
-	MaterialAssetType.new(),
+	BrushAssetType.new(),
 ]
 
 class AssetType:
@@ -68,6 +68,7 @@ func load_assets(asset_type : AssetType) -> void:
 	add_child(item_list)
 	
 	var dir := Directory.new()
+	dir.make_dir_recursive(asset_type.directory)
 	dir.open(asset_type.directory)
 	dir.list_dir_begin(true)
 	var file_name := dir.get_next()

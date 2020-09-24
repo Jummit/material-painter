@@ -19,10 +19,14 @@ signal values_changed
 
 var properties := [] setget set_properties
 
-onready var properties_container : GridContainer = $Properties
+onready var properties_container : Container
 
 func _ready():
-	properties_container.columns = 1 if orientation == Orientation.VERTICAL else INF
+# warning-ignore:incompatible_ternary
+	properties_container = HBoxContainer.new() if orientation == Orientation.HORIZONTAL else VBoxContainer.new()
+	properties_container.anchor_right = 1.0
+	properties_container.anchor_bottom = 1.0
+	add_child(properties_container)
 	setup_property_containers()
 
 
