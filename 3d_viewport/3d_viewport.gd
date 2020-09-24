@@ -103,5 +103,5 @@ func _paint(on_texture_layer : BitmapTextureLayer, from : Vector2, to : Vector2)
 		yield(painter.update_view(viewport), "completed")
 	cashed_camera_transform = camera_transform
 	painter.paint(from / rect_size, to / rect_size)
-	on_texture_layer.image_data = painter.result.get_data()
+#	on_texture_layer.image_data = painter.result.get_data()
 	emit_signal("painted", on_texture_layer)

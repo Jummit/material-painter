@@ -24,7 +24,7 @@
 flip_faces = true
 size = Vector3( 20, 20, 20 )
 
-[sub_resource type="ImageTexture" id=3]
+[sub_resource type="ImageTexture" id=2]
 
 [node name="Main" type="Control"]
 anchor_right = 1.0
@@ -181,7 +181,7 @@ margin_right = 128.0
 margin_bottom = 128.0
 rect_min_size = Vector2( 128, 128 )
 expand = true
-stretch_mode = 5
+stretch_mode = 7
 
 [node name="ViewToTexture" type="TextureRect" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/HBoxContainer"]
 margin_left = 132.0
@@ -189,7 +189,7 @@ margin_right = 260.0
 margin_bottom = 128.0
 rect_min_size = Vector2( 128, 128 )
 expand = true
-stretch_mode = 5
+stretch_mode = 7
 
 [node name="Seams" type="TextureRect" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/HBoxContainer"]
 margin_left = 264.0
@@ -197,7 +197,7 @@ margin_right = 392.0
 margin_bottom = 128.0
 rect_min_size = Vector2( 128, 128 )
 expand = true
-stretch_mode = 5
+stretch_mode = 7
 
 [node name="PaintResult" type="TextureRect" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/HBoxContainer"]
 margin_left = 396.0
@@ -205,7 +205,7 @@ margin_right = 524.0
 margin_bottom = 128.0
 rect_min_size = Vector2( 128, 128 )
 expand = true
-stretch_mode = 5
+stretch_mode = 7
 
 [node name="2DViewport" type="TextureRect" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer"]
 visible = false
@@ -215,7 +215,7 @@ margin_left = 4.0
 margin_top = 32.0
 margin_right = -4.0
 margin_bottom = -4.0
-texture = SubResource( 3 )
+texture = SubResource( 2 )
 expand = true
 stretch_mode = 1
 script = ExtResource( 1 )
