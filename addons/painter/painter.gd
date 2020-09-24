@@ -28,7 +28,8 @@ func paint(from : Vector2, to : Vector2) -> void:
 		next_position = from
 	painting = true
 	paint_material.set_shader_param("brush_pos", from)
-	paint_material.set_shader_param("brush_ppos", to)
+	paint_material.set_shader_param("brush_ppos", from)
+#	paint_material.set_shader_param("brush_ppos", to)
 	paint_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 	yield(VisualServer, "frame_post_draw")
 	painting = false
