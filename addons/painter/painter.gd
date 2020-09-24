@@ -19,10 +19,10 @@ onready var view_to_texture_mesh_instance : MeshInstance = $ViewToTextureViewpor
 onready var seams_rect_material : ShaderMaterial = $SeamsViewport/SeamsRect.material
 
 func _ready() -> void:
-	seams_rect_material.set_shader_param("tex", texture_to_view_viewport.get_texture())
+	seams_rect_material.set_shader_param("texture_to_view", texture_to_view_viewport.get_texture())
 	paint_material.set_shader_param("seams", seams_viewport.get_texture())
-	paint_material.set_shader_param("tex2view_tex", texture_to_view_viewport.get_texture())
-	texture_to_view_mesh_instance.material_override.set_shader_param("view2texture", view_to_texture_viewport.get_texture())
+	paint_material.set_shader_param("texture_to_view", texture_to_view_viewport.get_texture())
+	texture_to_view_mesh_instance.material_override.set_shader_param("view_to_texture", view_to_texture_viewport.get_texture())
 
 
 func set_initial_texture(texture : Texture) -> void:

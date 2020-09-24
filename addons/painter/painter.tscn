@@ -4,8 +4,8 @@
 [ext_resource path="res://addons/painter/shaders/paint.shader" type="Shader" id=2]
 [ext_resource path="res://addons/painter/shaders/seams.shader" type="Shader" id=3]
 [ext_resource path="res://addons/painter/painter.gd" type="Script" id=4]
-[ext_resource path="res://addons/painter/shaders/view2texture.shader" type="Shader" id=5]
-[ext_resource path="res://addons/painter/shaders/texture2view.shader" type="Shader" id=6]
+[ext_resource path="res://addons/painter/shaders/view_to_texture.shader" type="Shader" id=5]
+[ext_resource path="res://addons/painter/shaders/texture_to_view.shader" type="Shader" id=6]
 
 [sub_resource type="ShaderMaterial" id=1]
 resource_local_to_scene = true

@@ -1,12 +1,12 @@
 shader_type spatial;
 render_mode unshaded, cull_front;
 
-uniform sampler2D view2texture;
-uniform mat4      model_transform;
-uniform float     fovy_degrees = 45;
-uniform float     z_near = 0.01;
-uniform float     z_far = 60.0;
-uniform float     aspect = 1.0;
+uniform sampler2D view_to_texture;
+uniform mat4 model_transform;
+uniform float fovy_degrees = 45;
+uniform float z_near = 0.01;
+uniform float z_far = 60.0;
+uniform float aspect = 1.0;
 
 varying vec4 global_position;
 varying vec3 normal;
@@ -38,30 +38,26 @@ mat4 get_projection_matrix() {
 
 void vertex() {
 	global_position = model_transform*vec4(VERTEX, 1.0);
-	normal = (model_transform*vec4(NORMAL, 0.0)).xyz;
+	normal = (model_transform * vec4(NORMAL, 0.0)).xyz;
 	VERTEX=vec3(UV.x, UV.y, 0.0);
 	COLOR=vec4(1.0);
 }
 
 float visibility(vec2 uv, vec3 view_pos) {
-	vec2 uv_delta = textureLod(view2texture, view_pos.xy, 0.0).xy-uv;
+	vec2 uv_delta = textureLod(view_to_texture, view_pos.xy, 0.0).xy-uv;
 	return step(dot(uv_delta, uv_delta), 0.0025);
-	/*
-	vec3 depth_delta = textureLod(view2texture, view_pos.xy, 0.0).xyz-vec3(cos(view_pos.z), sin(view_pos.z*7.0), sin(view_pos.z/7.0));
-	return step(dot(depth_delta, depth_delta), 0.1);
-	*/
 }
 
 void fragment() {
-	vec4 position = get_projection_matrix()*vec4(global_position.xyz, 1.0);
+	vec4 position = get_projection_matrix() * vec4(global_position.xyz, 1.0);
 	position.xyz /= position.w;
-	vec3 xyz = vec3(0.5-0.5*position.x, 0.5+0.5*position.y, z_near + (z_far - z_near)*position.z);
+	vec3 xyz = vec3(0.5 - 0.5 * position.x, 0.5 + 0.5 * position.y, z_near + (z_far - z_near) * position.z);
 	float visible = 0.0;
 	if (position.x > -1.0 && position.x < 1.0 && position.y > -1.0 && position.y < 1.0) {
-		float visibility_multiplier = max(visibility(UV.xy, xyz), max(max(visibility(UV.xy, xyz+vec3(0.001, 0.0, 0.0)), visibility(UV.xy, xyz+vec3(-0.0001, 0.0, 0.0))),  max(visibility(UV.xy, xyz+vec3(0.0, 0.001, 0.0)), visibility(UV.xy, xyz+vec3(0.0, -0.0001, 0.0)))));
+		float visibility_multiplier = max(visibility(UV.xy, xyz), max(max(visibility(UV.xy, xyz + vec3(0.001, 0.0, 0.0)), visibility(UV.xy, xyz + vec3(-0.0001, 0.0, 0.0))),  max(visibility(UV.xy, xyz + vec3(0.0, 0.001, 0.0)), visibility(UV.xy, xyz + vec3(0.0, -0.0001, 0.0)))));
 		//float visibility_multiplier = visibility(UV.xy, xyz);
 		float normal_multiplier = clamp(dot(normalize(normal), vec3(0.0, 0.0, 1.0)), 0.0, 1.0);
-		visible = normal_multiplier*visibility_multiplier;
+		visible = normal_multiplier * visibility_multiplier;
 	}
 	ALBEDO = vec3(xyz.xy, visible);
 }
