@@ -1,3 +1,7 @@
+"""
+String templates used to generate blending shaders
+"""
+
 const BLEND_TEMPLATE := "	vec3 {result} = blend{mode}({a}, {b}, {opacity});"
 const MASKED_BLEND_TEMPLATE := "	vec3 {result} = blend{mode}({a}, {b}, texture({opacity}, UV).r);"
 const RESULT_TEMPLATE := "	vec3 {result} = {code};"

@@ -1,5 +1,11 @@
 extends MenuButton
 
+"""
+A menu containing view related options
+
+Used to switch backgrounds.
+"""
+
 var show_background := false
 
 var hdrs := {

@@ -1,6 +1,13 @@
 tool
 extends VBoxContainer
 
+"""
+A list of buttons used to select the painting tool
+
+Procedurally adds buttons and loads icons from `res://icons/tools/`.
+Only shows when a `BitmapTextureLayer` is selected.
+"""
+
 signal tool_selected(tool_id)
 
 const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_layer.gd")

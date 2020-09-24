@@ -2,6 +2,10 @@ extends TabContainer
 
 """
 A list of assets that can be drag and dropped onto different UI elements
+
+The tabs for each `AssetType` are generated procedurally.
+Each `AssetType` defines how to load the asset file
+and how to generate a thumbnail for it.
 """
 
 var ASSET_TYPES := [

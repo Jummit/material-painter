@@ -1,5 +1,11 @@
 extends ViewportContainer
 
+"""
+The 3D view that contains a model with the generated material applied
+
+Handles face selection and painting using the `Painter` addon.
+"""
+
 signal painted(layer)
 
 var sensitity := 0.01

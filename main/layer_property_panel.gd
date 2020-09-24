@@ -1,6 +1,7 @@
 extends "res://addons/property_panel/property_panel.gd"
 
 """
+The `PropertyPanel` that shows the properties of the selected layer
 """
 
 var editing_layer

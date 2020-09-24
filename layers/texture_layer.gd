@@ -7,7 +7,7 @@ By default the settings include the blend_mode
 and the opacity to configure the strength when blending.
 
 For making the layer editable, `get_properties` is used
-to retrieve a list of `Properties` for the `TextureLayerPropertyPanel`.
+to retrieve a list of `Properties` for the `LayerPropertyPanel`.
 """
 
 # warning-ignore-all:unused_class_variable

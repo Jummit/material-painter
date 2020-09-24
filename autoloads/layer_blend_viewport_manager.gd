@@ -1,7 +1,10 @@
 extends Node
 
 """
+Global utility used to blend textures from anywhere
 
+Adds persistent `LayerBlendingViewport`s if `blend` is called with a given `id`.
+This avoids having to make the resulting texture local by keeping the viewport.
 """
 
 var one_time_viewport := LayerBlendingViewportScene.instance()

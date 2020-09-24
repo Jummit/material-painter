@@ -1,5 +1,8 @@
 extends ItemList
 
+"""
+A list of map results of the editing `LayerMaterial`
+"""
 
 const MaterialLayer = preload("res://layers/material_layer.gd")
 const LayerMaterial = preload("res://layers/layer_material.gd")

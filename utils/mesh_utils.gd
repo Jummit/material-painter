@@ -1,3 +1,7 @@
+"""
+3D mesh related utility functions
+"""
+
 static func paint_face(image : Image, face : int, color : Color, mesh : Mesh) -> void:
 	image.lock()
 	var mesh_tool := MeshDataTool.new()

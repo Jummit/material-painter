@@ -3,7 +3,7 @@ extends Resource
 """
 A texture made up of blending `TextureLayer`s stored in the `layers` array
 
-Stores a result which is updated when settings of the layers change.
+Stores a `result` which is updated when settings of the layers change.
 """
 
 export var layers : Array
