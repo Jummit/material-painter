@@ -7,6 +7,7 @@ A list of assets that can be drag and dropped onto different UI elements
 var ASSET_TYPES := [
 	TextureAssetType.new(),
 	MaterialAssetType.new(),
+	MaterialAssetType.new(),
 ]
 
 class AssetType:
@@ -46,6 +47,10 @@ class MaterialAssetType extends AssetType:
 	
 	func _generate_preview(asset : Resource):
 		return yield(((asset as MaterialLayer).maps.values().front() as LayerTexture).generate_result(Vector2(128, 128), false), "completed")
+
+class BrushAssetType extends AssetType:
+	func _init().("Brushes", "user://brushes") -> void:
+		pass
 
 func _ready():
 	for asset_type in ASSET_TYPES:

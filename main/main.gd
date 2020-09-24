@@ -11,6 +11,13 @@ var current_file : SaveFile
 var file_location : String
 var editing_layer_material : LayerMaterial
 var result_size := Vector2(2048, 2048)
+var selected_tool : int = Tools.PAINT
+
+enum Tools {
+	PAINT,
+	TRIANGLE,
+	UV_ISLANDS,
+}
 
 const MATERIAL_PATH := "user://materials"
 
@@ -26,7 +33,7 @@ onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/TopButto
 onready var file_dialog : FileDialog = $FileDialog
 onready var layer_property_panel : Panel = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerPropertyPanel
 onready var texture_channel_buttons : GridContainer = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/TextureChannelButtons
-onready var model : MeshInstance = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/ViewportTabContainer/3DViewport/ViewportContainer/Viewport/Model"
+onready var model : MeshInstance = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport/Model"
 onready var layer_tree : Tree = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree
 onready var results_item_list : ItemList = $VBoxContainer/PanelContainer/HBoxContainer/ResultsItemList
 
@@ -193,3 +200,7 @@ func _on_MaterialLayerPopupMenu_mask_removed() -> void:
 	results_item_list.load_layer_material(editing_layer_material)
 	model.load_layer_material_maps(editing_layer_material)
 	layer_tree.setup_layer_material(editing_layer_material)
+
+
+func _on_ToolButtonContainer_tool_selected(tool_id : int):
+	selected_tool = tool_id

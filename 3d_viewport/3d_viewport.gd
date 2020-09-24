@@ -10,26 +10,16 @@ const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_l
 const MeshUtils = preload("res://utils/mesh_utils.gd")
 
 onready var model : MeshInstance = $Viewport/Model
-onready var layer_tree : Tree = $"../../../../LayerPanelContainer/LayerTree"
+onready var layer_tree : Tree = $"../../../../../LayerPanelContainer/LayerTree"
 onready var world_environment : WorldEnvironment = $Viewport/WorldEnvironment
 onready var color_skybox : MeshInstance = $Viewport/ColorSkybox
 onready var directional_light : DirectionalLight = $Viewport/DirectionalLight
 onready var viewport : Viewport = $Viewport
 
-onready var seams : TextureRect = $HBoxContainer/Seams
-onready var texture_to_view : TextureRect = $HBoxContainer/TextureToView
-onready var view_to_texture : TextureRect = $HBoxContainer/ViewToTexture
-onready var paint_result : TextureRect = $HBoxContainer/PaintResult
-
 onready var painter : Node = $Painter
 
 func _ready() -> void:
 	painter.mesh_instance = model
-	var utility_textures : Dictionary = painter.get_textures()
-	view_to_texture.texture = utility_textures.view_to_texture
-	texture_to_view.texture = utility_textures.texture_to_view
-	seams.texture = utility_textures.seams
-	paint_result.texture = painter.result
 
 
 func _gui_input(event : InputEvent) -> void:

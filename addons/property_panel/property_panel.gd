@@ -8,13 +8,21 @@ The resulting values can be retrieved using `get_property_value` and `get_proper
 A `Dictionary` similar to the result of `get_property_values` can be fed to `load_values` to update the values of the `PropertyContainers`s.
 """
 
+enum Orientation {
+	VERTICAL,
+	HORIZONTAL,
+}
+
+export(Orientation) var orientation := Orientation.VERTICAL
+
 signal values_changed
 
 var properties := [] setget set_properties
 
-onready var properties_container : VBoxContainer = $Properties
+onready var properties_container : GridContainer = $Properties
 
 func _ready():
+	properties_container.columns = 1 if orientation == Orientation.VERTICAL else INF
 	setup_property_containers()
 
 

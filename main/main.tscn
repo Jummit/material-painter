@@ -13,10 +13,10 @@
 [ext_resource path="res://main/asset_browser.gd" type="Script" id=11]
 [ext_resource path="res://main/results_item_list.gd" type="Script" id=12]
 [ext_resource path="res://addons/painter/painter.tscn" type="PackedScene" id=13]
-[ext_resource path="res://icons/icon_hidden.svg" type="Texture" id=14]
-[ext_resource path="res://main/value_slider/value_slider.tscn" type="PackedScene" id=15]
+[ext_resource path="res://painting/tool_settings_property_panel.gd" type="Script" id=15]
 [ext_resource path="res://main/material_layer_popup_menu.gd" type="Script" id=16]
 [ext_resource path="res://addons/property_panel/property_panel.tscn" type="PackedScene" id=17]
+[ext_resource path="res://painting/tool_button_container.gd" type="Script" id=18]
 [ext_resource path="res://addons/rotating_camera/rotating_camera.tscn" type="PackedScene" id=19]
 [ext_resource path="res://3d_viewport/3d_viewport.gd" type="Script" id=20]
 [ext_resource path="res://main/layer_tree.gd" type="Script" id=21]
@@ -117,61 +117,33 @@ margin_bottom = 365.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="ToolSettingsContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer"]
+[node name="ToolSettingsPropertyPanel" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer" instance=ExtResource( 17 )]
 margin_right = 756.0
-margin_bottom = 44.0
-
-[node name="SizeSlider" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/ToolSettingsContainer" instance=ExtResource( 15 )]
-margin_right = 88.0
-value_name = "size"
-value = 10.0
-min_value = 5.0
-max_value = 50.0
+margin_bottom = 20.0
+rect_min_size = Vector2( 0, 20 )
+script = ExtResource( 15 )
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer"]
-margin_top = 48.0
+margin_top = 24.0
 margin_right = 756.0
 margin_bottom = 365.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="ToolButtonContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
-margin_right = 28.0
-margin_bottom = 317.0
+margin_right = 44.0
+margin_bottom = 341.0
+script = ExtResource( 18 )
 
 [node name="Padding" type="Control" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ToolButtonContainer"]
-margin_right = 28.0
+margin_right = 44.0
 margin_bottom = 30.0
 rect_min_size = Vector2( 0, 30 )
 
-[node name="Button" type="Button" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ToolButtonContainer"]
-margin_top = 34.0
-margin_right = 28.0
-margin_bottom = 56.0
-icon = ExtResource( 14 )
-
-[node name="Button2" type="Button" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ToolButtonContainer"]
-margin_top = 60.0
-margin_right = 28.0
-margin_bottom = 82.0
-icon = ExtResource( 14 )
-
-[node name="Button3" type="Button" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ToolButtonContainer"]
-margin_top = 86.0
-margin_right = 28.0
-margin_bottom = 108.0
-icon = ExtResource( 14 )
-
-[node name="Button4" type="Button" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ToolButtonContainer"]
-margin_top = 112.0
-margin_right = 28.0
-margin_bottom = 134.0
-icon = ExtResource( 14 )
-
 [node name="ViewportTabContainer" type="TabContainer" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
-margin_left = 32.0
+margin_left = 48.0
 margin_right = 756.0
-margin_bottom = 317.0
+margin_bottom = 341.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -188,28 +160,28 @@ stretch = true
 script = ExtResource( 20 )
 
 [node name="Viewport" type="Viewport" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport"]
-size = Vector2( 716, 281 )
+size = Vector2( 700, 305 )
 handle_input_locally = false
 msaa = 1
 render_target_update_mode = 3
-
-[node name="RotatingCamera" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport" instance=ExtResource( 19 )]
 
 [node name="Model" type="MeshInstance" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
 mesh = ExtResource( 4 )
 material/0 = ExtResource( 2 )
 script = ExtResource( 8 )
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
-environment = ExtResource( 10 )
-
-[node name="DirectionalLight" type="DirectionalLight" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
-transform = Transform( 0.822333, 0.397311, -0.407324, 0, 0.715851, 0.698253, 0.569007, -0.574196, 0.588668, 0, 10, 0 )
-
 [node name="ColorSkybox" type="MeshInstance" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
 material_override = ExtResource( 7 )
 mesh = SubResource( 1 )
 material/0 = null
+
+[node name="RotatingCamera" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport" instance=ExtResource( 19 )]
+
+[node name="DirectionalLight" type="DirectionalLight" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
+transform = Transform( 0.822333, 0.397311, -0.407324, 0, 0.715851, 0.698253, 0.569007, -0.574196, 0.588668, 0, 10, 0 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
+environment = ExtResource( 10 )
 
 [node name="Painter" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport" instance=ExtResource( 13 )]
 
@@ -319,6 +291,8 @@ __meta__ = {
 }
 [connection signal="hdr_selected" from="VBoxContainer/TopButtonBar/TopButtons/ViewMenuButton" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport" method="_on_ViewMenuButton_hdr_selected"]
 [connection signal="show_background_toggled" from="VBoxContainer/TopButtonBar/TopButtons/ViewMenuButton" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport" method="_on_ViewMenuButton_show_background_toggled"]
+[connection signal="tool_selected" from="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ToolButtonContainer" to="." method="_on_ToolButtonContainer_tool_selected"]
+[connection signal="tool_selected" from="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ToolButtonContainer" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/ToolSettingsPropertyPanel" method="_on_ToolButtonContainer_tool_selected"]
 [connection signal="painted" from="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport" to="." method="_on_Viewport_painted"]
 [connection signal="mesh_changed" from="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport/Model" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport" method="_on_Model_mesh_changed"]
 [connection signal="painted" from="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/2DViewport" to="." method="_on_Viewport_painted"]
