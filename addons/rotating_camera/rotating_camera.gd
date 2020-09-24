@@ -1,7 +1,7 @@
 extends Camera
 
 """
-A camera that can be rotated around a center using the mouse
+A camera that can be rotated and panned around a center using the mouse
 """
 
 var sensitity := 0.01

@@ -1,11 +1,14 @@
 extends Panel
 
 """
-A inspector-like panel that builds a list of `PropertyContainers`s from its `properties`
+An inspector-like panel that builds a list of `PropertyContainers`s from its `properties`
 
-The resulting values can be retrieved using `get_property_value` and `get_property_values`.
-`get_property_values` returns a `Dictionary` with the property names as keys and the values as values.
-A `Dictionary` similar to the result of `get_property_values` can be fed to `load_values` to update the values of the `PropertyContainers`s.
+The resulting values can be retrieved using
+`get_property_value` and `get_property_values`.
+`get_property_values` returns a `Dictionary` with the
+property names as keys and the values as values.
+A `Dictionary` similar to the result of `get_property_values` can be fed
+to `load_values` to update the values of the `PropertyContainers`s.
 """
 
 enum Orientation {
