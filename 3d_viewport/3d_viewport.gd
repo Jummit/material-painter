@@ -25,41 +25,28 @@ func _ready() -> void:
 
 func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
-		if not layer_tree.get_selected():
-			return
-		var selected_texture_layer = layer_tree.get_selected_texture_layer()
-		if not selected_texture_layer is BitmapTextureLayer:
-			return
-		if main.selected_tool != main.Tools.TRIANGLE:
-			return
-		var camera : Camera = $Viewport.get_camera()
-		var camera_world_position := camera.project_position(event.position, 0.0)
-		var clicked_world_position := camera.project_position(event.position, 1000.0)
-
-		var selected_face := _get_nearest_intersecting_face(camera_world_position, clicked_world_position, model.mesh)
-		if selected_face != -1:
-			MeshUtils.paint_face(selected_texture_layer.image_data, selected_face, Color.white, model.mesh)
-			emit_signal("painted", selected_texture_layer)
+		if _can_paint_with_tool(main.Tools.TRIANGLE):
+			var camera : Camera = $Viewport.get_camera()
+			var camera_world_position := camera.project_position(event.position, 0.0)
+			var clicked_world_position := camera.project_position(event.position, 1000.0)
+			var selected_texture_layer : BitmapTextureLayer = layer_tree.get_selected_texture_layer()
+			var selected_face := _get_nearest_intersecting_face(camera_world_position, clicked_world_position, model.mesh, Input.is_key_pressed(KEY_CONTROL))
+			if selected_face != -1:
+				MeshUtils.paint_face(selected_texture_layer.image_data, selected_face, Color.white, model.mesh)
+				emit_signal("painted", selected_texture_layer)
+		if _can_paint_with_tool(main.Tools.PAINT):
+			_paint(layer_tree.get_selected_texture_layer(), event.position, event.position)
+			last_painted_position = event.position
+	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(BUTTON_LEFT) and _can_paint_with_tool(main.Tools.PAINT):
+		_paint(layer_tree.get_selected_texture_layer(), last_painted_position, event.position)
+		last_painted_position = event.position
+	
 	if event is InputEventMouseButton and event.pressed and event.button_mask == BUTTON_MASK_RIGHT:
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(BUTTON_RIGHT) and event.button_mask == BUTTON_MASK_RIGHT:
 		directional_light.rotate_y(event.relative.x * sensitity)
 	if event is InputEventMouseButton and not event.pressed:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
-		if not layer_tree.get_selected() or (not layer_tree.get_selected_texture_layer() is BitmapTextureLayer):
-			return
-		if main.selected_tool != main.Tools.PAINT:
-			return
-		_paint(layer_tree.get_selected_texture_layer(), event.position, event.position)
-		last_painted_position = event.position
-	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(BUTTON_LEFT):
-		if not layer_tree.get_selected() or (not layer_tree.get_selected_texture_layer() is BitmapTextureLayer):
-			return
-		if main.selected_tool != main.Tools.PAINT:
-			return
-		_paint(layer_tree.get_selected_texture_layer(), last_painted_position, event.position)
-		last_painted_position = event.position
 
 
 func _on_ViewMenuButton_show_background_toggled() -> void:
@@ -74,7 +61,19 @@ func _on_Model_mesh_changed() -> void:
 	painter.mesh_instance = model
 
 
-func _get_nearest_intersecting_face(start : Vector3, direction : Vector3, mesh : Mesh) -> int:
+func _on_ToolButtonContainer_tool_selected(tool_id : int):
+	var bitmap_texture_layer : BitmapTextureLayer = layer_tree.get_selected_texture_layer()
+	if tool_id == main.Tools.PAINT:
+		var image_texture := ImageTexture.new()
+		image_texture.create_from_image(bitmap_texture_layer.image_data)
+		painter.set_initial_texture(image_texture)
+		bitmap_texture_layer.temp_texture = painter.result
+	else:
+		bitmap_texture_layer.image_data = painter.result.get_data()
+		bitmap_texture_layer.temp_texture = null
+
+
+func _get_nearest_intersecting_face(start : Vector3, direction : Vector3, mesh : Mesh, fast := false) -> int:
 	var mesh_tool := MeshDataTool.new()
 	mesh_tool.create_from_surface(mesh, 0)
 	
@@ -88,6 +87,8 @@ func _get_nearest_intersecting_face(start : Vector3, direction : Vector3, mesh :
 		var collision_point = Geometry.ray_intersects_triangle(
 				start, direction, triangle.x, triangle.y, triangle.z)
 		if collision_point:
+			if fast:
+				return face
 			var distance : float = collision_point.distance_to(start)
 			if distance < nearest_distance:
 				nearest_face = face
@@ -106,13 +107,7 @@ func _paint(on_texture_layer : BitmapTextureLayer, from : Vector2, to : Vector2)
 	emit_signal("painted", on_texture_layer)
 
 
-func _on_ToolButtonContainer_tool_selected(tool_id : int):
-	var bitmap_texture_layer : BitmapTextureLayer = layer_tree.get_selected_texture_layer()
-	if tool_id == main.Tools.PAINT:
-		var image_texture := ImageTexture.new()
-		image_texture.create_from_image(bitmap_texture_layer.image_data)
-		painter.set_initial_texture(image_texture)
-		bitmap_texture_layer.temp_texture = painter.result
-	else:
-		bitmap_texture_layer.image_data = painter.result.get_data()
-		bitmap_texture_layer.temp_texture = null
+func _can_paint_with_tool(tool_id : int) -> bool:
+	return layer_tree.get_selected() and\
+			layer_tree.get_selected_texture_layer() is BitmapTextureLayer\
+			and main.selected_tool == tool_id
