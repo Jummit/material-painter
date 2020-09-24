@@ -1,6 +1,7 @@
 extends "res://layers/texture_layer.gd"
 
 export var image_data : Image
+var temp_texture : Texture
 
 func _init(_name := "Untitled Bitmap Texture").("bitmap"):
 	name = _name
@@ -13,7 +14,11 @@ func _get_as_shader_layer() -> BlendingLayer:
 	var layer := ._get_as_shader_layer()
 	layer.code = "texture({0}, UV).rgb"
 	layer.uniform_types = ["sampler2D"]
-	var texture := ImageTexture.new()
-	texture.create_from_image(image_data)
+	var texture : Texture
+	if temp_texture:
+		texture = temp_texture
+	else:
+		texture = ImageTexture.new()
+		texture.create_from_image(image_data)
 	layer.uniform_values = [texture]
 	return layer
