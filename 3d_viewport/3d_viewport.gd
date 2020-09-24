@@ -104,3 +104,15 @@ func _paint(on_texture_layer : BitmapTextureLayer, from : Vector2, to : Vector2)
 	painter.paint(from / rect_size, to / rect_size)
 	on_texture_layer.temp_texture = painter.result
 	emit_signal("painted", on_texture_layer)
+
+
+func _on_ToolButtonContainer_tool_selected(tool_id : int):
+	var bitmap_texture_layer : BitmapTextureLayer = layer_tree.get_selected_texture_layer()
+	if tool_id == main.Tools.PAINT:
+		var image_texture := ImageTexture.new()
+		image_texture.create_from_image(bitmap_texture_layer.image_data)
+		painter.set_initial_texture(image_texture)
+		bitmap_texture_layer.temp_texture = painter.result
+	else:
+		bitmap_texture_layer.image_data = painter.result.get_data()
+		bitmap_texture_layer.temp_texture = null

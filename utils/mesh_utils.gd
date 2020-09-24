@@ -1,4 +1,5 @@
 static func paint_face(image : Image, face : int, color : Color, mesh : Mesh) -> void:
+	image.lock()
 	var mesh_tool := MeshDataTool.new()
 	mesh_tool.create_from_surface(mesh, 0)
 	var uv_a := mesh_tool.get_vertex_uv(mesh_tool.get_face_vertex(face, 0))

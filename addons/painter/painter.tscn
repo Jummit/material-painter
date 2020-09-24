@@ -25,7 +25,7 @@ shader_param/texture_mask = Plane( 1, 1, 1, 1 )
 [sub_resource type="ShaderMaterial" id=2]
 shader = ExtResource( 5 )
 
-[sub_resource type="ShaderMaterial" id=4]
+[sub_resource type="ShaderMaterial" id=3]
 resource_local_to_scene = true
 shader = ExtResource( 6 )
 shader_param/model_transform = null
@@ -34,7 +34,7 @@ shader_param/z_near = 0.01
 shader_param/z_far = 60.0
 shader_param/aspect = 1.0
 
-[sub_resource type="ShaderMaterial" id=5]
+[sub_resource type="ShaderMaterial" id=4]
 resource_local_to_scene = true
 shader = ExtResource( 3 )
 
@@ -55,6 +55,10 @@ gui_disable_input = true
 material = SubResource( 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0
+
+[node name="InitialTextureRect" type="TextureRect" parent="PaintViewport"]
+margin_right = 40.0
+margin_bottom = 40.0
 
 [node name="ViewToTextureViewport" type="Viewport" parent="."]
 size = Vector2( 2048, 2048 )
@@ -85,7 +89,7 @@ projection = 1
 current = true
 
 [node name="MeshInstance" type="MeshInstance" parent="TextureToViewViewport"]
-material_override = SubResource( 4 )
+material_override = SubResource( 3 )
 mesh = ExtResource( 1 )
 material/0 = null
 
@@ -97,6 +101,6 @@ usage = 0
 render_target_update_mode = 0
 
 [node name="SeamsRect" type="ColorRect" parent="SeamsViewport"]
-material = SubResource( 5 )
+material = SubResource( 4 )
 anchor_right = 1.0
 anchor_bottom = 1.0
