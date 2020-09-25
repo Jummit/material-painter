@@ -23,13 +23,14 @@ signal values_changed
 var properties := [] setget set_properties
 
 onready var properties_container : Container
+onready var scroll_container : ScrollContainer = $ScrollContainer
 
 func _ready():
 # warning-ignore:incompatible_ternary
 	properties_container = HBoxContainer.new() if orientation == Orientation.HORIZONTAL else VBoxContainer.new()
 	properties_container.anchor_right = 1.0
 	properties_container.anchor_bottom = 1.0
-	add_child(properties_container)
+	scroll_container.add_child(properties_container)
 	setup_property_containers()
 
 
