@@ -296,6 +296,7 @@ size_flags_vertical = 3
 script = ExtResource( 6 )
 
 [node name="FileDialog" type="FileDialog" parent="."]
+visible = true
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
@@ -305,7 +306,6 @@ margin_top = -143.5
 margin_right = 244.5
 margin_bottom = 143.5
 rect_min_size = Vector2( 100, 35 )
-window_title = "Datei speichern"
 access = 2
 current_dir = "/home/jummit/Games/MaterialPainter/Layers"
 current_path = "/home/jummit/Games/MaterialPainter/Layers/"
