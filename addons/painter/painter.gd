@@ -14,11 +14,14 @@ onready var result : ViewportTexture = $PaintViewport.get_texture()
 
 var _painting := false
 var _next_position : Vector2
+var _viewport_size : Vector2
+var _cashed_images : Dictionary = {}
 
 const Brush = preload("res://addons/painter/brush.gd")
 
 onready var paint_material : ShaderMaterial = $PaintViewport/PaintRect.material
 onready var paint_viewport : Viewport = $PaintViewport
+onready var paint_rect : ColorRect = $PaintViewport/PaintRect
 onready var initial_texture_rect : TextureRect = $PaintViewport/InitialTextureRect
 onready var view_to_texture_viewport : Viewport = $ViewToTextureViewport
 onready var texture_to_view_viewport : Viewport = $TextureToViewViewport
@@ -38,9 +41,11 @@ func _ready() -> void:
 func set_initial_texture(texture : Texture) -> void:
 	initial_texture_rect.show()
 	initial_texture_rect.texture = texture
+	paint_rect.hide()
 	paint_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 	yield(VisualServer, "frame_post_draw")
 	initial_texture_rect.hide()
+	paint_rect.show()
 
 
 func paint(from : Vector2, to : Vector2) -> void:
@@ -85,20 +90,45 @@ func update_view(viewport : Viewport) -> void:
 	texture_to_view_material.set_shader_param("z_far", camera.far)
 	texture_to_view_material.set_shader_param("aspect", viewport.size.x / viewport.size.y)
 	texture_to_view_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
+	
+	if brush:
+		paint_material.set_shader_param("brush_size", brush.size / viewport.size)
+	
+	_viewport_size = viewport.size
 
 
 func set_brush(to : Brush) -> void:
 	brush = to
-	paint_material.set_shader_param("brush_size", brush.size)
+	
+	var brush_texture : Texture
+	var texture_mask : Texture
+	
+	if brush.texture:
+		brush_texture = _load_image_texture(brush.texture)
+	if brush.texture_mask:
+		texture_mask = _load_image_texture(brush.texture_mask)
+	
+	paint_material.set_shader_param("brush_size", brush.size / _viewport_size)
 	paint_material.set_shader_param("brush_strength", brush.strength)
-	paint_material.set_shader_param("brush_texture", brush.texture)
+	paint_material.set_shader_param("brush_texture", brush_texture)
 	paint_material.set_shader_param("brush_color", brush.color)
 	paint_material.set_shader_param("pattern_scale", brush.pattern_scale)
 	paint_material.set_shader_param("texture_angle", brush.texture_angle)
 	paint_material.set_shader_param("stamp_mode", brush.stamp_mode)
-	paint_material.set_shader_param("texture_mask", brush.texture_mask)
+	paint_material.set_shader_param("texture_mask", texture_mask)
 
 
 func clear() -> void:
 	initial_texture_rect.texture = null
 	paint_viewport.render_target_clear_mode = Viewport.CLEAR_MODE_ONLY_NEXT_FRAME
+
+
+func _load_image_texture(path : String) -> ImageTexture:
+	if path in _cashed_images:
+		return _cashed_images[path]
+	var image := Image.new()
+	image.load(path)
+	var image_texture := ImageTexture.new()
+	image_texture.create_from_image(image)
+	_cashed_images[path] = image_texture
+	return image_texture

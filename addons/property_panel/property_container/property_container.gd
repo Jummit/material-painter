@@ -23,7 +23,8 @@ func setup(_property : Property) -> void:
 	property_control = property._get_control()
 	property_control.size_flags_horizontal = SIZE_EXPAND_FILL
 	property_control.size_flags_vertical = SIZE_EXPAND_FILL
-	property_control.rect_min_size = Vector2(50, 0)
+	property_control.rect_min_size = Vector2(60, 0)
+	property_control.set_drag_forwarding(self)
 	# this is a little hacky; since the argument count
 	# of signal callbacks have to be a exactly right,
 	# "pad" the call with the ´binds´ argument of ´connect´
@@ -47,4 +48,13 @@ func set_value(to) -> void:
 
 
 func _on_PropertyControl_changed(_a, _b, _c, _d, _e):
+	emit_signal("property_changed")
+
+
+func can_drop_data_fw(_position : Vector2, data, _control : Control) -> bool:
+	return property._can_drop_data(property_control, data)
+
+
+func drop_data_fw(_position : Vector2, data, _control : Control) -> void:
+	property._drop_data(property_control, data)
 	emit_signal("property_changed")

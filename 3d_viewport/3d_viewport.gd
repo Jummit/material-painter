@@ -22,7 +22,7 @@ onready var world_environment : WorldEnvironment = $Viewport/WorldEnvironment
 onready var color_skybox : MeshInstance = $Viewport/ColorSkybox
 onready var directional_light : DirectionalLight = $Viewport/DirectionalLight
 onready var viewport : Viewport = $Viewport
-onready var tool_settings_property_panel : Panel = $"../../../ToolSettingsPropertyPanel"
+onready var tool_settings_property_panel : Panel = $"../../../ToolSettingsContainer/ToolSettingsPropertyPanel"
 onready var main : Control = $"../../../../../../../.."
 
 onready var painter : Node = $Painter
@@ -131,3 +131,10 @@ func _on_ToolSettingsPropertyPanel_values_changed():
 	tool_settings_property_panel.store_values(new_brush)
 	new_brush.size = Vector2.ONE * tool_settings_property_panel.get_property_value("size")
 	painter.brush = new_brush
+
+
+func _on_AssetBrowser_asset_activated(asset : Dictionary) -> void:
+	if asset.type != "Brushes":
+		return
+	painter.brush = asset.asset
+	tool_settings_property_panel.load_values(asset.asset)

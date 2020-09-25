@@ -20,3 +20,10 @@ func _on_FileDialog_file_selected(selected_path : String):
 func set_path(to : String):
 	path = to
 	text = path.get_file()
+
+
+func _gui_input(event : InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_RIGHT:
+		set_path("")
+		emit_signal("changed")
+	

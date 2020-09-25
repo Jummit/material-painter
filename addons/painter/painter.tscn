@@ -50,6 +50,7 @@ render_target_update_mode = 0
 gui_disable_input = true
 
 [node name="InitialTextureRect" type="TextureRect" parent="PaintViewport"]
+visible = false
 margin_right = 40.0
 margin_bottom = 40.0
 

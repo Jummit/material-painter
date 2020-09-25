@@ -8,6 +8,8 @@ Each `AssetType` defines how to load the asset file
 and how to generate a thumbnail for it.
 """
 
+signal asset_activated(asset)
+
 var ASSET_TYPES := [
 	TextureAssetType.new(),
 	MaterialAssetType.new(),
@@ -69,6 +71,7 @@ func load_assets(asset_type : AssetType) -> void:
 	item_list.max_columns = 100
 	item_list.fixed_icon_size = Vector2(128, 128)
 	item_list.set_drag_forwarding(self)
+	item_list.connect("item_activated", self, "_on_AssetList_item_activated", [item_list])
 	add_child(item_list)
 	
 	var dir := Directory.new()
@@ -99,3 +102,7 @@ func get_drag_data_fw(position : Vector2, _from : Control):
 		preview.texture = item_list.get_item_icon(item)
 		set_drag_preview(preview)
 		return item_list.get_item_metadata(item)
+
+
+func _on_AssetList_item_activated(index : int, item_list : ItemList) -> void:
+	emit_signal("asset_activated", item_list.get_item_metadata(index))

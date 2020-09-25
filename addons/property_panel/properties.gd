@@ -23,6 +23,12 @@ class Property:
 	
 	func _set_value(control : Control, to) -> void:
 		control.set(property_variable, to)
+	
+	func _can_drop_data(control : Control, data) -> bool:
+		return typeof(data) == typeof(_get_value(control))
+	
+	func _drop_data(control : Control, data) -> void:
+		_set_value(control, data)
 
 class EnumProperty extends Property:
 	var choices : PoolStringArray

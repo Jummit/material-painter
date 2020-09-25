@@ -5,6 +5,7 @@ The context menu that is shown when right-clicking a `MaterialLayer`
 """
 
 var layer : MaterialLayer
+var layer_texture_selected : bool
 
 signal layer_selected(layer)
 signal layer_saved
@@ -42,6 +43,7 @@ func _on_about_to_show() -> void:
 		add_item("Remove Mask", Items.REMOVE_MASK)
 	else:
 		add_item("Add Mask", Items.ADD_MASK)
-	for layer_type in Globals.TEXTURE_LAYER_TYPES:
-		add_item("Add %s Layer" % layer_type.new().type_name, Items.ADD_LAYER)
-		set_item_metadata(get_item_count() - 1, layer_type)
+	if layer_texture_selected:
+		for layer_type in Globals.TEXTURE_LAYER_TYPES:
+			add_item("Add %s Layer" % layer_type.new().type_name, Items.ADD_LAYER)
+			set_item_metadata(get_item_count() - 1, layer_type)

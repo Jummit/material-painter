@@ -36,6 +36,7 @@ onready var texture_channel_buttons : GridContainer = $VBoxContainer/PanelContai
 onready var model : MeshInstance = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport/Model"
 onready var layer_tree : Tree = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree
 onready var results_item_list : ItemList = $VBoxContainer/PanelContainer/HBoxContainer/ResultsItemList
+onready var painter : Node = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Painter"
 
 func _ready():
 	file_menu_button.get_popup().connect("id_pressed", self, "_on_FileMenu_id_pressed")
@@ -77,8 +78,10 @@ func load_model(path : String) -> void:
 func _on_FileDialog_file_selected(path : String):
 	match file_dialog.mode:
 		FileDialog.MODE_SAVE_FILE:
-			file_location = path
-			ResourceSaver.save(path, current_file)
+			var to_save = file_dialog.get_meta("to_save")
+			if to_save is SaveFile:
+				file_location = path
+			ResourceSaver.save(path, to_save)
 		FileDialog.MODE_OPEN_FILE:
 			if path.get_extension() == "tres":
 				file_location = path
@@ -146,6 +149,7 @@ func _on_FileMenu_id_pressed(id : int):
 		2:
 			file_dialog.mode = FileDialog.MODE_SAVE_FILE
 			file_dialog.filters = ["*.tres;Material Painter File"]
+			file_dialog.set_meta("to_save", current_file)
 			file_dialog.popup_centered()
 		3:
 			if file_location:
@@ -204,3 +208,13 @@ func _on_MaterialLayerPopupMenu_mask_removed() -> void:
 
 func _on_ToolButtonContainer_tool_selected(tool_id : int):
 	selected_tool = tool_id
+
+
+func _on_SaveButton_pressed() -> void:
+	file_dialog.current_dir = "user://brushes/"
+	file_dialog.current_path = "user://brushes/"
+	file_dialog.current_file = ""
+	file_dialog.mode = FileDialog.MODE_SAVE_FILE
+	file_dialog.filters = ["*.tres;Brush File"]
+	file_dialog.set_meta("to_save", painter.brush)
+	file_dialog.popup_centered()
