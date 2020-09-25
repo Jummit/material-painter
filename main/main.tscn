@@ -262,7 +262,6 @@ size_flags_vertical = 3
 custom_constants/draw_guides = 1
 custom_constants/draw_relationship_lines = 1
 columns = 2
-hide_folding = true
 hide_root = true
 select_mode = 2
 script = ExtResource( 21 )

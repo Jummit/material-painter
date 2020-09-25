@@ -23,6 +23,7 @@ signal layer_visibility_changed(layer)
 enum Buttons {
 	MASK,
 	RESULT,
+	ICON,
 	MAP_DROPDOWN,
 	VISIBILITY,
 }
@@ -102,6 +103,8 @@ func setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
 			material_layer_item.add_button(0, empty_texture, Buttons.RESULT)
 		if material_layer.maps.size() > 1:
 			material_layer_item.add_button(0, preload("res://icons/down.svg"), Buttons.MAP_DROPDOWN)
+	else:
+		material_layer_item.add_button(0, preload("res://icons/icon_folder.svg"), Buttons.ICON)
 	
 	material_layer_item.set_text(1, material_layer.name)
 	material_layer_item.add_button(1, empty_texture, Buttons.VISIBILITY)
@@ -142,7 +145,7 @@ func update_icons() -> void:
 		tree_item.set_button(1, 0, preload("res://icons/icon_visible.svg") if layer.visible else preload("res://icons/icon_hidden.svg"))
 
 
-func get_selected_material_layer() -> MaterialLayer:
+func get_selected_material_layer():
 	return _get_selected_material_layer_item().get_meta("layer")
 
 
@@ -155,10 +158,9 @@ func get_selected_layer_texture() -> LayerTexture:
 
 
 func _get_selected_material_layer_item() -> TreeItem:
-	if get_selected().get_meta("layer") is MaterialLayer:
+	if get_selected().get_meta("layer") is MaterialLayer or get_selected().get_meta("layer") is FolderLayer:
 		return get_selected()
-	else:
-		return get_selected().get_parent()
+	return null
 
 
 func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:

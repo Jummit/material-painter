@@ -64,8 +64,8 @@ func add_texture_layer(texture_layer : TextureLayer, on_layer_texture : LayerTex
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
-func add_material_layer(material_layer) -> void:
-	editing_layer_material.layers.append(material_layer)
+func add_material_layer(material_layer, onto : Array) -> void:
+	onto.append(material_layer)
 	editing_layer_material.update_results(result_size, true)
 	results_item_list.load_layer_material(editing_layer_material)
 	model.load_layer_material_maps(editing_layer_material)
@@ -93,11 +93,17 @@ func _on_FileDialog_file_selected(path : String):
 
 
 func _on_AddButton_pressed() -> void:
-	add_material_layer(MaterialLayer.new())
+	if layer_tree.get_selected() and layer_tree.get_selected_material_layer() is FolderLayer:
+		add_material_layer(MaterialLayer.new(), layer_tree.get_selected_material_layer().layers)
+	else:
+		add_material_layer(MaterialLayer.new(), editing_layer_material.layers)
 
 
 func _on_AddFolderButton_pressed() -> void:
-	add_material_layer(FolderLayer.new())
+	if layer_tree.get_selected() and layer_tree.get_selected_material_layer() is FolderLayer:
+		add_material_layer(FolderLayer.new(), layer_tree.get_selected_material_layer().layers)
+	else:
+		add_material_layer(FolderLayer.new(), editing_layer_material.layers)
 
 
 func _on_DeleteButton_pressed() -> void:
