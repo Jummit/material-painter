@@ -54,10 +54,8 @@ func load_file(save_file : SaveFile) -> void:
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
-func add_texture_layer(texture_layer : TextureLayer, on_layer_texture : LayerTexture) -> void:
-	on_layer_texture.layers.append(texture_layer)
-	on_layer_texture.update_result(result_size)
-#	yield(on_layer_texture.update_result(result_size), "completed")
+func add_texture_layer(texture_layer, onto : Array) -> void:
+	onto.append(texture_layer)
 	editing_layer_material.update_results(result_size)
 	results_item_list.load_layer_material(editing_layer_material)
 	model.load_layer_material_maps(editing_layer_material)
@@ -102,6 +100,8 @@ func _on_AddButton_pressed() -> void:
 func _on_AddFolderButton_pressed() -> void:
 	if layer_tree.get_selected() and layer_tree.get_selected_material_layer() is FolderLayer:
 		add_material_layer(FolderLayer.new(), layer_tree.get_selected_material_layer().layers)
+	elif layer_tree.get_selected() and layer_tree.get_selected_material_layer() is MaterialLayer and layer_tree.get_selected_material_layer() in layer_tree.selected_layer_textures:
+		add_material_layer(FolderLayer.new(), layer_tree.selected_layer_textures[layer_tree.get_selected_material_layer()].layers)
 	else:
 		add_material_layer(FolderLayer.new(), editing_layer_material.layers)
 
@@ -146,7 +146,10 @@ func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
 
 
 func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
-	add_texture_layer(layer.new(), layer_tree.selected_layer_textures[layer_tree.material_layer_popup_menu.layer])
+	if layer_tree.material_layer_popup_menu.layer is FolderLayer:
+		add_texture_layer(layer.new(), layer_tree.material_layer_popup_menu.layer.layers)
+	else:
+		add_texture_layer(layer.new(), layer_tree.selected_layer_textures[layer_tree.material_layer_popup_menu.layer].layers)
 
 
 func _on_FileMenu_id_pressed(id : int):

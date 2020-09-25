@@ -13,7 +13,7 @@ var tree_items : Dictionary = {}
 var selected_maps : Dictionary = {}
 var selected_layer_textures : Dictionary = {}
 var clicked_layer : MaterialLayer
-var empty_texture := ImageTexture.new()
+var empty_texture := preload("res://main/loading_layer_icon.svg")
 var last_edited : TreeItem
 
 signal material_layer_selected(material_layer)
@@ -47,10 +47,11 @@ func _ready() -> void:
 func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == BUTTON_RIGHT and event.pressed:
 		material_layer_popup_menu.rect_global_position = event.global_position
-		var material_layer = get_item_at_position(event.position).get_meta("layer")
-		material_layer_popup_menu.layer = material_layer
-		material_layer_popup_menu.layer_texture_selected = material_layer in selected_layer_textures
-		material_layer_popup_menu.popup()
+		var layer = get_item_at_position(event.position).get_meta("layer")
+		if layer is MaterialLayer or get_material_layer_from_layer(layer):
+			material_layer_popup_menu.layer = layer
+			material_layer_popup_menu.layer_texture_selected = layer in selected_layer_textures or get_material_layer_from_layer(layer) in selected_layer_textures
+			material_layer_popup_menu.popup()
 	elif event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
 		if get_selected():
 			get_selected().set_editable(1, true)
@@ -119,13 +120,19 @@ func setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
 			setup_material_layer_item(layer, material_layer_item)
 
 
-func setup_texture_layer_item(texture_layer : TextureLayer, on_item : TreeItem) -> void:
-	var texture_layer_item := create_item(on_item)
+func setup_texture_layer_item(texture_layer, parent_item : TreeItem) -> void:
+	var texture_layer_item := create_item(parent_item)
 	texture_layer_item.set_meta("layer", texture_layer)
-	texture_layer_item.add_button(0, empty_texture, Buttons.RESULT)
+	if texture_layer is TextureLayer:
+		texture_layer_item.add_button(0, empty_texture, Buttons.RESULT)
+	else:
+		texture_layer_item.add_button(0, preload("res://icons/icon_folder.svg"), Buttons.ICON)
 	texture_layer_item.set_text(1, texture_layer.name)
 	texture_layer_item.add_button(1, empty_texture, Buttons.VISIBILITY)
 	tree_items[texture_layer] = texture_layer_item
+	if texture_layer is FolderLayer:
+		for layer in texture_layer.layers:
+			setup_texture_layer_item(layer, texture_layer_item)
 
 
 func update_icons() -> void:
@@ -161,6 +168,16 @@ func _get_selected_material_layer_item() -> TreeItem:
 	if get_selected().get_meta("layer") is MaterialLayer or get_selected().get_meta("layer") is FolderLayer:
 		return get_selected()
 	return null
+
+
+func get_material_layer_from_layer(layer) -> MaterialLayer:
+	var parent_layer = tree_items[layer].get_parent().get_meta("layer")
+	if not parent_layer:
+		return null
+	if parent_layer is MaterialLayer:
+		return parent_layer
+	else:
+		return get_material_layer_from_layer(parent_layer)
 
 
 func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
