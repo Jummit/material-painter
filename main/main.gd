@@ -28,6 +28,7 @@ const LayerMaterial = preload("res://layers/layer_material.gd")
 const LayerTexture = preload("res://layers/layer_texture.gd")
 const TextureLayer = preload("res://layers/texture_layer.gd")
 const TextureOption = preload("res://texture_option/texture_option.gd")
+const FolderLayer = preload("res://layers/folder_layer.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/TopButtons/FileMenuButton
 onready var file_dialog : FileDialog = $FileDialog
@@ -63,7 +64,7 @@ func add_texture_layer(texture_layer : TextureLayer, on_layer_texture : LayerTex
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
-func add_material_layer(material_layer : MaterialLayer) -> void:
+func add_material_layer(material_layer) -> void:
 	editing_layer_material.layers.append(material_layer)
 	editing_layer_material.update_results(result_size, true)
 	results_item_list.load_layer_material(editing_layer_material)
@@ -93,6 +94,10 @@ func _on_FileDialog_file_selected(path : String):
 
 func _on_AddButton_pressed() -> void:
 	add_material_layer(MaterialLayer.new())
+
+
+func _on_AddFolderButton_pressed() -> void:
+	add_material_layer(FolderLayer.new())
 
 
 func _on_DeleteButton_pressed() -> void:
@@ -218,3 +223,4 @@ func _on_SaveButton_pressed() -> void:
 	file_dialog.filters = ["*.tres;Brush File"]
 	file_dialog.set_meta("to_save", painter.brush)
 	file_dialog.popup_centered()
+

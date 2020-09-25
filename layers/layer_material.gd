@@ -21,31 +21,47 @@ const TextureLayer = preload("res://layers/texture_layer.gd")
 const MaterialLayer = preload("res://layers/material_layer.gd")
 const BlendingLayer = preload("res://render_viewports/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 const LayerTexture = preload("res://layers/layer_texture.gd")
+const FolderLayer = preload("res://layers/folder_layer.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
 
 
 func update_results(result_size : Vector2, generate_texture_layers := false) -> void:
-	for layer in layers:
-		if layer.mask:
-			layer.mask.generate_result(result_size)
+	var blending_layer_lists := {}
 	for map in Globals.TEXTURE_MAP_TYPES:
-		update_map_result(map, result_size, generate_texture_layers)
-
-
-func update_map_result(map : String, result_size : Vector2, generate_texture_layers := false) -> void:
-	var blending_layers := []
-	
+		blending_layer_lists[map] = []
 	for layer in layers:
-		layer = layer as MaterialLayer
-		if not layer.visible:
-			continue
+		add_blend_layers(layer, blending_layer_lists)
+	
+	for map in Globals.TEXTURE_MAP_TYPES:
+		if map == "height":
+			map = "normal"
+		
+		if blending_layer_lists[map].empty():
+			results.erase(map)
+			return
+		
+		var result : Texture = yield(LayerBlendViewportManager.blend(
+				blending_layer_lists[map], result_size, map.hash()), "completed")
+		if map == "normal":
+			result = yield(NormalMapGenerationViewport.get_normal_map(result), "completed")
+		results[map] = result
+
+
+func add_blend_layers(layer, blending_layer_lists : Dictionary) -> void:
+	if not layer.visible:
+		return
+	
+	if layer is FolderLayer:
+		for sub_layer in layer.layers:
+			add_blend_layers(sub_layer, blending_layer_lists)
+		return
+	
+	for map in Globals.TEXTURE_MAP_TYPES:
 		if not (map in layer.maps and layer.maps[map]):
 			continue
 		var map_layer_texture : LayerTexture = layer.maps[map]
-		if generate_texture_layers:
-			map_layer_texture.update_result(result_size)
 		
 		var blending_layer := BlendingLayer.new()
 		if layer.mask:
@@ -53,20 +69,7 @@ func update_map_result(map : String, result_size : Vector2, generate_texture_lay
 		blending_layer.code = "texture({0}, UV).rgb"
 		blending_layer.uniform_types = ["sampler2D"]
 		blending_layer.uniform_values = [map_layer_texture.result]
-		blending_layers.append(blending_layer)
-	
-	if map == "height":
-		map = "normal"
-	
-	if blending_layers.empty():
-		results.erase(map)
-		return
-	
-	var result : Texture = yield(LayerBlendViewportManager.blend(
-			blending_layers, result_size, map.hash()), "completed")
-	if map == "normal":
-		result = yield(NormalMapGenerationViewport.get_normal_map(result), "completed")
-	results[map] = result
+		blending_layer_lists[map].append(blending_layer)
 
 
 func export_textures(to_folder : String) -> void:
