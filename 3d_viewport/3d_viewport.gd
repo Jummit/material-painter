@@ -12,6 +12,7 @@ var sensitity := 0.01
 var last_painted_position : Vector2
 var cashed_camera_transform : Transform
 
+const Brush = preload("res://addons/painter/brush.gd")
 const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_layer.gd")
 const MeshUtils = preload("res://utils/mesh_utils.gd")
 
@@ -21,6 +22,7 @@ onready var world_environment : WorldEnvironment = $Viewport/WorldEnvironment
 onready var color_skybox : MeshInstance = $Viewport/ColorSkybox
 onready var directional_light : DirectionalLight = $Viewport/DirectionalLight
 onready var viewport : Viewport = $Viewport
+onready var tool_settings_property_panel : Panel = $"../../../ToolSettingsPropertyPanel"
 onready var main : Control = $"../../../../../../../.."
 
 onready var painter : Node = $Painter
@@ -122,3 +124,10 @@ func _can_paint_with_tool(tool_id : int) -> bool:
 func _on_LayerTree_texture_layer_selected(texture_layer):
 	if texture_layer is BitmapTextureLayer:
 		painter.clear()
+
+
+func _on_ToolSettingsPropertyPanel_values_changed():
+	var new_brush := Brush.new()
+	tool_settings_property_panel.store_values(new_brush)
+	new_brush.size = Vector2.ONE * tool_settings_property_panel.get_property_value("size")
+	painter.brush = new_brush

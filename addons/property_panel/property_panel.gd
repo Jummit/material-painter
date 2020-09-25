@@ -66,7 +66,7 @@ func get_property_values() -> Dictionary:
 
 func store_values(instance : Object) -> void:
 	var property_values := get_property_values()
-	for value in property_values.keys():
+	for value in property_values:
 		instance.set(value, property_values[value])
 
 
