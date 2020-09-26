@@ -1,5 +1,11 @@
 extends "res://addons/property_panel/property_panel.gd"
 
+"""
+The `PropertyPanel` that exposes the settings of the current brush
+
+Only visible when the paint tool is selected.
+"""
+
 const Properties = preload("res://addons/property_panel/properties.gd")
 
 class TextureAssetProperty extends Properties.FilePathProperty:

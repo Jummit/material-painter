@@ -22,8 +22,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Globals="*res://autoloads/globals.gd"
-LayerBlendViewportManager="*res://autoloads/layer_blend_viewport_manager.gd"
+Globals="*res://main/globals.gd"
+LayerBlendViewportManager="*res://render_viewports/layer_blend_viewport_manager.gd"
 NormalMapGenerationViewport="*res://render_viewports/normal_map_generation_viewport/normal_map_generation_viewport.gd"
 
 [debug]

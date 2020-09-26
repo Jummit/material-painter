@@ -51,7 +51,7 @@ class MaterialAssetType extends AssetType:
 	func _init().("Materials", "user://materials") -> void:
 		pass
 	
-	func _generate_preview(asset : Resource):
+	func _generate_preview(_asset : Resource):
 		# todo: proper previews
 		return null
 
