@@ -2,7 +2,7 @@ extends "res://layers/texture_layer.gd"
 
 export var color := Color.white
 
-func _init(_name := "Untitled Color Texture").("color"):
+func _init(_name := "Color").("color"):
 	name = _name
 
 

@@ -3,7 +3,7 @@ extends "res://layers/texture_layer.gd"
 export var image_data : Image
 var temp_texture : Texture
 
-func _init(_name := "Untitled Bitmap Texture").("bitmap"):
+func _init(_name := "Bitmap").("bitmap"):
 	name = _name
 	image_data = Image.new()
 	image_data.create(1024, 1024, false, Image.FORMAT_RGB8)

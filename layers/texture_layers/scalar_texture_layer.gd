@@ -2,7 +2,7 @@ extends "res://layers/texture_layer.gd"
 
 export var value = .5
 
-func _init(_name := "Untitled Scalar Texture").("scalar"):
+func _init(_name := "Scalar").("scalar"):
 	name = _name
 
 

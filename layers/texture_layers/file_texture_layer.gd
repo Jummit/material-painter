@@ -5,7 +5,7 @@ var cashed_image : Texture
 
 export var path := ""
 
-func _init(_name := "Untitled File Texture").("file"):
+func _init(_name := "File").("file"):
 	name = _name
 
 
