@@ -161,6 +161,8 @@ func _on_FileMenu_id_pressed(id : int):
 		2:
 			file_dialog.mode = FileDialog.MODE_SAVE_FILE
 			file_dialog.filters = ["*.tres;Material Painter File"]
+			file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
+			file_dialog.current_file = ""
 			file_dialog.set_meta("to_save", current_file)
 			file_dialog.popup_centered()
 			file_dialog.access = FileDialog.ACCESS_FILESYSTEM

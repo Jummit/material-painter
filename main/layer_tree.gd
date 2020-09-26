@@ -226,7 +226,11 @@ func get_array_layer_is_in(layer) -> Array:
 	if parent == root:
 		return main.editing_layer_material.layers
 	else:
-		return parent.get_meta("layer").layers
+		var parent_layer = parent.get_meta("layer")
+		if parent_layer is FolderLayer:
+			return parent_layer.layers
+		else:
+			return selected_layer_textures[parent_layer].layers
 
 
 func get_layer_type(layer_item : TreeItem) -> int:

@@ -28,6 +28,8 @@ onready var main : Control = $"../../../../../../../.."
 onready var painter : Node = $Painter
 
 func _ready() -> void:
+	tool_settings_property_panel.load_values(Brush.new())
+	tool_settings_property_panel.set_property_value("size", 10.0)
 	painter.mesh_instance = model
 
 
