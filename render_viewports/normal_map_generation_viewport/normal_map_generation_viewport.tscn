@@ -4,4 +4,5 @@
 [ext_resource path="res://render_viewports/normal_map_generation_viewport/normal_map_generation_viewport.gd" type="Script" id=2]
 
 [node name="NormalMapGenerationViewport" instance=ExtResource( 1 )]
+render_target_v_flip = false
 script = ExtResource( 2 )

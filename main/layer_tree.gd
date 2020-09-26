@@ -88,6 +88,8 @@ func get_drag_data(_position : Vector2):
 
 
 func can_drop_data(position : Vector2, data) -> bool:
+	if "asset" in data and data.asset is String or data.asset is MaterialLayer:
+		return true
 	if data is Dictionary and "type" in data and data.type == "layers":
 		var onto_layer = get_item_at_position(position).get_meta("layer")
 		var layer_type : int = data.layer_type
@@ -102,39 +104,41 @@ func can_drop_data(position : Vector2, data) -> bool:
 
 
 func drop_data(position : Vector2, data) -> void:
-	var onto_layer = get_item_at_position(position).get_meta("layer")
-	var layer_type : int = data.layer_type
-	var is_folder := onto_layer is FolderLayer
-	var onto_type : int = get_layer_type(get_item_at_position(position))
-	match get_drop_section_at_position(position):
-		0:
-			var onto_array : Array
-			if (layer_type == LayerType.TEXTURE_LAYER and onto_type == LayerType.MATERIAL_LAYER and not is_folder):
-				onto_array = selected_layer_textures[onto_layer].layers
-			elif LayerType.MATERIAL_LAYER == LayerType.MATERIAL_LAYER and is_folder:
-				onto_array = onto_layer.layers
-			for layer_item in data.layers:
-				onto_array.append(layer_item.get_meta("layer").duplicate())
-		var section:
-			var onto_array := get_array_layer_is_in(onto_layer)
-			var onto_position := onto_array.find(onto_layer)
-			if section == 1:
-				onto_position += 1
-			onto_position = int(clamp(onto_position, 0, onto_array.size()))
-			data.layers.invert()
-			for layer_item in data.layers:
-				onto_array.insert(onto_position, layer_item.get_meta("layer").duplicate())
-	
-	for layer_item in data.layers:
-		get_array_layer_is_in(layer_item.get_meta("layer")).erase(layer_item.get_meta("layer"))
-	setup_layer_material(main.editing_layer_material)
-#	if data.asset is String:
-#		var layer := FileTextureLayer.new()
-#		layer.name = data.asset.get_file().get_basename()
-#		layer.path = data.asset
-#		main.add_texture_layer(layer, selected_layer_textures[get_item_at_position(position).get_meta("layer")].layers)
-#	elif data.asset is MaterialLayer:
-#		main.add_material_layer(data.asset)
+	if data is Dictionary and "type" in data and data.type == "layers":
+		var onto_layer = get_item_at_position(position).get_meta("layer")
+		var layer_type : int = data.layer_type
+		var is_folder := onto_layer is FolderLayer
+		var onto_type : int = get_layer_type(get_item_at_position(position))
+		match get_drop_section_at_position(position):
+			0:
+				var onto_array : Array
+				if (layer_type == LayerType.TEXTURE_LAYER and onto_type == LayerType.MATERIAL_LAYER and not is_folder):
+					onto_array = selected_layer_textures[onto_layer].layers
+				elif LayerType.MATERIAL_LAYER == LayerType.MATERIAL_LAYER and is_folder:
+					onto_array = onto_layer.layers
+				for layer_item in data.layers:
+					onto_array.append(layer_item.get_meta("layer").duplicate())
+			var section:
+				var onto_array := get_array_layer_is_in(onto_layer)
+				var onto_position := onto_array.find(onto_layer)
+				if section == 1:
+					onto_position += 1
+				onto_position = int(clamp(onto_position, 0, onto_array.size()))
+				data.layers.invert()
+				for layer_item in data.layers:
+					onto_array.insert(onto_position, layer_item.get_meta("layer").duplicate())
+		
+		for layer_item in data.layers:
+			get_array_layer_is_in(layer_item.get_meta("layer")).erase(layer_item.get_meta("layer"))
+		setup_layer_material(main.editing_layer_material)
+	elif "asset" in data:
+		if data.asset is String:
+			var layer := FileTextureLayer.new()
+			layer.name = data.asset.get_file().get_basename()
+			layer.path = data.asset
+			main.add_texture_layer(layer, selected_layer_textures[get_item_at_position(position).get_meta("layer")].layers)
+		elif data.asset is MaterialLayer:
+			main.add_material_layer(data.asset)
 
 
 func setup_layer_material(layer_material : LayerMaterial) -> void:
@@ -273,12 +277,13 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 			map_type_popup_menu.rect_global_position = get_global_transform().xform(get_item_area_rect(item).position)
 			map_type_popup_menu.popup()
 		Buttons.RESULT:
-			var material_layer : MaterialLayer = layer
-			if material_layer in selected_layer_textures and selected_layer_textures[material_layer] == selected_maps[material_layer]:
-				selected_layer_textures.erase(material_layer)
-			else:
-				selected_layer_textures[material_layer] = selected_maps[material_layer]
-			setup_layer_material(main.editing_layer_material)
+			if layer is MaterialLayer:
+				var material_layer : MaterialLayer = layer
+				if material_layer in selected_layer_textures and selected_layer_textures[material_layer] == selected_maps[material_layer]:
+					selected_layer_textures.erase(material_layer)
+				else:
+					selected_layer_textures[material_layer] = selected_maps[material_layer]
+				setup_layer_material(main.editing_layer_material)
 		Buttons.MASK:
 			var material_layer : MaterialLayer = layer
 			if material_layer in selected_layer_textures and selected_layer_textures[material_layer] == material_layer.mask:

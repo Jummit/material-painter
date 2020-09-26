@@ -157,6 +157,8 @@ func _on_FileMenu_id_pressed(id : int):
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
 			file_dialog.filters = ["*.tres;Material Painter File"]
 			file_dialog.popup_centered()
+			file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
+			file_dialog.current_file = ""
 			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 		2:
 			file_dialog.mode = FileDialog.MODE_SAVE_FILE
@@ -173,6 +175,8 @@ func _on_FileMenu_id_pressed(id : int):
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
 			file_dialog.filters = ["*.obj;Object File"]
 			file_dialog.popup_centered()
+			file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
+			file_dialog.current_file = ""
 			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 
 
