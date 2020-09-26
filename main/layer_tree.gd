@@ -14,7 +14,7 @@ var selected_maps : Dictionary
 var selected_layer_textures : Dictionary
 var expanded_folders : Array
 var clicked_layer : MaterialLayer
-var empty_texture := preload("res://main/loading_layer_icon.svg")
+var empty_texture := preload("res://icons/loading_layer.svg")
 var last_edited : TreeItem
 
 signal material_layer_selected(material_layer)
