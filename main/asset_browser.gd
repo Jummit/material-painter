@@ -52,7 +52,8 @@ class MaterialAssetType extends AssetType:
 		pass
 	
 	func _generate_preview(asset : Resource):
-		return yield(((asset as MaterialLayer).maps.values().front() as LayerTexture).generate_result(Vector2(128, 128), false), "completed")
+		# todo: proper previews
+		return null
 
 class BrushAssetType extends AssetType:
 	func _init().("Brushes", "user://brushes") -> void:

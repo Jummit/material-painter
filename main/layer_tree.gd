@@ -54,10 +54,9 @@ func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == BUTTON_RIGHT and event.pressed:
 		material_layer_popup_menu.rect_global_position = event.global_position
 		var layer = get_item_at_position(event.position).get_meta("layer")
-		if layer is MaterialLayer or get_material_layer_from_layer(layer):
-			material_layer_popup_menu.layer = layer
-			material_layer_popup_menu.layer_texture_selected = layer in selected_layer_textures or get_material_layer_from_layer(layer) in selected_layer_textures
-			material_layer_popup_menu.popup()
+		material_layer_popup_menu.layer = layer
+		material_layer_popup_menu.layer_texture_selected = layer is MaterialLayer and (layer in selected_layer_textures or get_material_layer_from_layer(layer) in selected_layer_textures)
+		material_layer_popup_menu.popup()
 	elif event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
 		if get_selected():
 			get_selected().set_editable(1, true)
@@ -88,7 +87,7 @@ func get_drag_data(_position : Vector2):
 
 
 func can_drop_data(position : Vector2, data) -> bool:
-	if "asset" in data and data.asset is String or data.asset is MaterialLayer:
+	if "asset" in data and data.asset is String or data.asset is MaterialLayer or data.asset is FolderLayer:
 		return true
 	if data is Dictionary and "type" in data and data.type == "layers":
 		var onto_layer = get_item_at_position(position).get_meta("layer")
@@ -137,8 +136,8 @@ func drop_data(position : Vector2, data) -> void:
 			layer.name = data.asset.get_file().get_basename()
 			layer.path = data.asset
 			main.add_texture_layer(layer, selected_layer_textures[get_item_at_position(position).get_meta("layer")].layers)
-		elif data.asset is MaterialLayer:
-			main.add_material_layer(data.asset)
+		elif data.asset is MaterialLayer or data.asset is FolderLayer:
+			main.add_material_layer(data.asset, main.editing_layer_material.layers)
 
 
 func setup_layer_material(layer_material : LayerMaterial) -> void:

@@ -270,6 +270,8 @@ script = ExtResource( 21 )
 [node name="MaterialLayerPopupMenu" type="PopupMenu" parent="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree"]
 margin_right = 133.0
 margin_bottom = 52.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
 script = ExtResource( 16 )
 __meta__ = {
 "_edit_use_anchors_": false

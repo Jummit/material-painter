@@ -27,7 +27,6 @@ const MaterialLayer = preload("res://layers/material_layer.gd")
 const LayerMaterial = preload("res://layers/layer_material.gd")
 const LayerTexture = preload("res://layers/layer_texture.gd")
 const TextureLayer = preload("res://layers/texture_layer.gd")
-const TextureOption = preload("res://texture_option/texture_option.gd")
 const FolderLayer = preload("res://layers/folder_layer.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/TopButtons/FileMenuButton
@@ -41,7 +40,6 @@ onready var painter : Node = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxCo
 
 func _ready():
 	file_menu_button.get_popup().connect("id_pressed", self, "_on_FileMenu_id_pressed")
-	get_tree().connect("node_added", self, "_on_SceneTree_node_added")
 	load_file(SaveFile.new())
 
 
@@ -50,7 +48,6 @@ func load_file(save_file : SaveFile) -> void:
 	if current_file.model_path:
 		load_model(current_file.model_path)
 	editing_layer_material = current_file.layer_material
-	TextureManager.load_textures_from_layer_material(current_file.layer_material)
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
@@ -180,14 +177,8 @@ func _on_FileMenu_id_pressed(id : int):
 			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 
 
-func _on_SceneTree_node_added(node : Node):
-	if node is TextureOption:
-		node.connect("selected", self, "_on_TextureOption_selected", [node])
-#		node.connect("changed", self, "_on_TextureOption_changed")
-
-
 func _on_MaterialLayerPopupMenu_layer_saved() -> void:
-	var material_layer : MaterialLayer = layer_tree.get_selected_material_layer()
+	var material_layer = layer_tree.get_selected_material_layer()
 	ResourceSaver.save(MATERIAL_PATH.plus_file(material_layer.name) + ".tres", material_layer)
 
 

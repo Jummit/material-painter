@@ -38,6 +38,7 @@ func update_results(result_size : Vector2) -> void:
 			if not (map in layer.maps and layer.maps[map]):
 				continue
 			var map_layer_texture : LayerTexture = layer.maps[map]
+			map_layer_texture.update_result(result_size)
 			
 			var blending_layer := BlendingLayer.new()
 			if layer.mask:
