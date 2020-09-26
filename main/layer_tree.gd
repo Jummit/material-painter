@@ -9,9 +9,10 @@ Shows previews of maps and masks as buttons.
 """
 
 var root : TreeItem
-var tree_items : Dictionary = {}
-var selected_maps : Dictionary = {}
-var selected_layer_textures : Dictionary = {}
+var tree_items : Dictionary
+var selected_maps : Dictionary
+var selected_layer_textures : Dictionary
+var expanded_folders : Array
 var clicked_layer : MaterialLayer
 var empty_texture := preload("res://main/loading_layer_icon.svg")
 var last_edited : TreeItem
@@ -69,7 +70,7 @@ func drop_data(position : Vector2, data) -> void:
 		var layer := FileTextureLayer.new()
 		layer.name = data.asset.get_file().get_basename()
 		layer.path = data.asset
-		main.add_texture_layer(layer, selected_layer_textures[get_item_at_position(position).get_meta("layer")])
+		main.add_texture_layer(layer, selected_layer_textures[get_item_at_position(position).get_meta("layer")].layers)
 	elif data.asset is MaterialLayer:
 		main.add_material_layer(data.asset)
 
@@ -105,7 +106,8 @@ func setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
 		if material_layer.maps.size() > 1:
 			material_layer_item.add_button(0, preload("res://icons/down.svg"), Buttons.MAP_DROPDOWN)
 	else:
-		material_layer_item.add_button(0, preload("res://icons/icon_folder.svg"), Buttons.ICON)
+		var icon : Texture = preload("res://icons/icon_oper_folder.svg") if material_layer in expanded_folders else preload("res://icons/icon_folder.svg")
+		material_layer_item.add_button(0, icon, Buttons.ICON)
 	
 	material_layer_item.set_text(1, material_layer.name)
 	material_layer_item.add_button(1, empty_texture, Buttons.VISIBILITY)
@@ -115,7 +117,7 @@ func setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
 	
 	tree_items[material_layer] = material_layer_item
 	
-	if material_layer is FolderLayer:
+	if material_layer is FolderLayer and material_layer in expanded_folders:
 		for layer in material_layer.layers:
 			setup_material_layer_item(layer, material_layer_item)
 
@@ -126,11 +128,12 @@ func setup_texture_layer_item(texture_layer, parent_item : TreeItem) -> void:
 	if texture_layer is TextureLayer:
 		texture_layer_item.add_button(0, empty_texture, Buttons.RESULT)
 	else:
-		texture_layer_item.add_button(0, preload("res://icons/icon_folder.svg"), Buttons.ICON)
+		var icon : Texture = preload("res://icons/icon_oper_folder.svg") if texture_layer in expanded_folders else preload("res://icons/icon_folder.svg")
+		texture_layer_item.add_button(0, icon, Buttons.ICON)
 	texture_layer_item.set_text(1, texture_layer.name)
 	texture_layer_item.add_button(1, empty_texture, Buttons.VISIBILITY)
 	tree_items[texture_layer] = texture_layer_item
-	if texture_layer is FolderLayer:
+	if texture_layer is FolderLayer and texture_layer in expanded_folders:
 		for layer in texture_layer.layers:
 			setup_texture_layer_item(layer, texture_layer_item)
 
@@ -204,6 +207,12 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 		Buttons.VISIBILITY:
 			layer.visible = not layer.visible
 			emit_signal("layer_visibility_changed", layer)
+		Buttons.ICON:
+			if layer in expanded_folders:
+				expanded_folders.erase(layer)
+			else:
+				expanded_folders.append(layer)
+			setup_layer_material(main.editing_layer_material)
 
 
 func _on_MapTypePopupMenu_id_pressed(id : int) -> void:

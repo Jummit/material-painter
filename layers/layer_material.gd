@@ -28,48 +28,37 @@ func _init() -> void:
 
 
 func update_results(result_size : Vector2) -> void:
-	var blending_layer_lists := {}
-	for map in Globals.TEXTURE_MAP_TYPES:
-		blending_layer_lists[map] = []
+	var flat_layers := []
 	for layer in layers:
-		add_blend_layers(layer, blending_layer_lists)
+		get_flat_layers(layer, flat_layers, false)
 	
 	for map in Globals.TEXTURE_MAP_TYPES:
-		if map == "height":
-			map = "normal"
+		var blending_layers := []
+		for layer in flat_layers:
+			if not (map in layer.maps and layer.maps[map]):
+				continue
+			var map_layer_texture : LayerTexture = layer.maps[map]
+			
+			var blending_layer := BlendingLayer.new()
+			if layer.mask:
+				layer.mask.update_result(result_size)
+				blending_layer.mask = layer.mask.result
+			blending_layer.code = "texture({0}, UV).rgb"
+			blending_layer.uniform_types = ["sampler2D"]
+			blending_layer.uniform_values = [map_layer_texture.result]
+			blending_layers.append(blending_layer)
 		
-		if blending_layer_lists[map].empty():
+		if blending_layers.empty():
 			results.erase(map)
-			return
+			continue
 		
 		var result : Texture = yield(LayerBlendViewportManager.blend(
-				blending_layer_lists[map], result_size, map.hash()), "completed")
-		if map == "normal":
+				blending_layers, result_size, map.hash()), "completed")
+		
+		if map == "height":
+			map = "normal"
 			result = yield(NormalMapGenerationViewport.get_normal_map(result), "completed")
 		results[map] = result
-
-
-func add_blend_layers(layer, blending_layer_lists : Dictionary) -> void:
-	if not layer.visible:
-		return
-	
-	if layer is FolderLayer:
-		for sub_layer in layer.layers:
-			add_blend_layers(sub_layer, blending_layer_lists)
-		return
-	
-	for map in Globals.TEXTURE_MAP_TYPES:
-		if not (map in layer.maps and layer.maps[map]):
-			continue
-		var map_layer_texture : LayerTexture = layer.maps[map]
-		
-		var blending_layer := BlendingLayer.new()
-		if layer.mask:
-			blending_layer.mask = layer.mask.result
-		blending_layer.code = "texture({0}, UV).rgb"
-		blending_layer.uniform_types = ["sampler2D"]
-		blending_layer.uniform_values = [map_layer_texture.result]
-		blending_layer_lists[map].append(blending_layer)
 
 
 func export_textures(to_folder : String) -> void:
@@ -79,7 +68,20 @@ func export_textures(to_folder : String) -> void:
 
 func get_depending_layer_textures(texture_layer : TextureLayer) -> Array:
 	var depending_layer_textures := []
+	var flat_layers := []
 	for layer in layers:
+		get_flat_layers(layer, flat_layers)
+	for layer in flat_layers:
 		layer = layer as MaterialLayer
 		depending_layer_textures += layer.get_depending_layer_textures(texture_layer)
 	return depending_layer_textures
+
+
+func get_flat_layers(layer, flat_layers : Array, add_hidden := true) -> void:
+	if (not add_hidden) and not layer.visible:
+		return
+	if layer is FolderLayer:
+		for sub_layer in layer.layers:
+			get_flat_layers(sub_layer, flat_layers)
+	else:
+		flat_layers.append(layer)
