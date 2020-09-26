@@ -89,31 +89,44 @@ func get_drag_data(_position : Vector2):
 
 func can_drop_data(position : Vector2, data) -> bool:
 	if data is Dictionary and "type" in data and data.type == "layers":
-		if get_drop_section_at_position(position) == 0:
-			var onto_layer = get_item_at_position(position).get_meta("layer")
-			var layer_type : int = data.layer_type
-			var is_folder := onto_layer is FolderLayer
-			var onto_type : int = get_layer_type(get_item_at_position(position))
-			return (layer_type == LayerType.TEXTURE_LAYER and onto_type == LayerType.MATERIAL_LAYER and not is_folder) or\
-					(layer_type == LayerType.MATERIAL_LAYER and onto_type == LayerType.MATERIAL_LAYER and is_folder) or\
-					(layer_type == LayerType.TEXTURE_LAYER and onto_type == LayerType.TEXTURE_LAYER and is_folder)
-	return false
-
-
-func drop_data(position : Vector2, data) -> void:
-	if get_drop_section_at_position(position) == 0:
 		var onto_layer = get_item_at_position(position).get_meta("layer")
 		var layer_type : int = data.layer_type
 		var is_folder := onto_layer is FolderLayer
 		var onto_type : int = get_layer_type(get_item_at_position(position))
-		if (layer_type == LayerType.TEXTURE_LAYER and onto_type == LayerType.MATERIAL_LAYER and not is_folder):
-			pass
-		elif (layer_type == LayerType.MATERIAL_LAYER and onto_type == LayerType.MATERIAL_LAYER and is_folder):
-			for layer in data.layers:
-				onto_layer.layers.append(layer.get_meta("layer").duplicate())
-		elif (layer_type == LayerType.TEXTURE_LAYER and onto_type == LayerType.TEXTURE_LAYER and is_folder):
-			for layer in data.layers:
-				onto_layer.layers.append(layer.get_meta("layer").duplicate())
+		if get_drop_section_at_position(position) == 0:
+			return (layer_type == LayerType.TEXTURE_LAYER and onto_type == LayerType.MATERIAL_LAYER and not is_folder) or\
+					(layer_type == onto_type and is_folder)
+		else:
+			return layer_type == onto_type
+	return false
+
+
+func drop_data(position : Vector2, data) -> void:
+	var onto_layer = get_item_at_position(position).get_meta("layer")
+	var layer_type : int = data.layer_type
+	var is_folder := onto_layer is FolderLayer
+	var onto_type : int = get_layer_type(get_item_at_position(position))
+	match get_drop_section_at_position(position):
+		0:
+			var onto_array : Array
+			if (layer_type == LayerType.TEXTURE_LAYER and onto_type == LayerType.MATERIAL_LAYER and not is_folder):
+				onto_array = selected_layer_textures[onto_layer].layers
+			elif LayerType.MATERIAL_LAYER == LayerType.MATERIAL_LAYER and is_folder:
+				onto_array = onto_layer.layers
+			for layer_item in data.layers:
+				onto_array.append(layer_item.get_meta("layer").duplicate())
+		var section:
+			var onto_array := get_array_layer_is_in(onto_layer)
+			var onto_position := onto_array.find(onto_layer)
+			if section == 1:
+				onto_position += 1
+			onto_position = int(clamp(onto_position, 0, onto_array.size()))
+			data.layers.invert()
+			for layer_item in data.layers:
+				onto_array.insert(onto_position, layer_item.get_meta("layer").duplicate())
+	
+	for layer_item in data.layers:
+		get_array_layer_is_in(layer_item.get_meta("layer")).erase(layer_item.get_meta("layer"))
 	setup_layer_material(main.editing_layer_material)
 #	if data.asset is String:
 #		var layer := FileTextureLayer.new()
@@ -217,7 +230,7 @@ func get_array_layer_is_in(layer) -> Array:
 
 
 func get_layer_type(layer_item : TreeItem) -> int:
-	return LayerType.TEXTURE_LAYER if layer_item.get_meta("layer_texture") else LayerType.MATERIAL_LAYER
+	return LayerType.TEXTURE_LAYER if layer_item.has_meta("layer_texture") else LayerType.MATERIAL_LAYER
 
 
 func get_selected_material_layer():
