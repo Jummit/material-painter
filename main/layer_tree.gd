@@ -29,6 +29,11 @@ enum Buttons {
 	VISIBILITY,
 }
 
+enum LayerType {
+	MATERIAL_LAYER,
+	TEXTURE_LAYER,
+}
+
 const LayerMaterial = preload("res://layers/layer_material.gd")
 const MaterialLayer = preload("res://layers/material_layer.gd")
 const LayerTexture = preload("res://layers/layer_texture.gd")
@@ -61,8 +66,28 @@ func _gui_input(event : InputEvent) -> void:
 			last_edited = get_selected()
 
 
+func get_drag_data(_position : Vector2):
+	var selected_layers := []
+	var selected = get_next_selected(null)
+	var preview := VBoxContainer.new()
+	var type = get_layer_type(selected)
+	while selected:
+		if get_layer_type(selected) == type:
+			selected_layers.append(selected)
+			var label = Label.new()
+			label.text = selected.get_meta("layer").name
+			preview.add_child(label)
+		selected = get_next_selected(selected)
+	set_drag_preview(preview)
+	drop_mode_flags = DROP_MODE_INBETWEEN | DROP_MODE_ON_ITEM
+	return {
+		type = "layers",
+		layers = selected_layers,
+	}
+
+
 func can_drop_data(_position : Vector2, data) -> bool:
-	return data is Dictionary and "asset" in data
+	return data is Dictionary and "type" in data and data.type == "layers"
 
 
 func drop_data(position : Vector2, data) -> void:
@@ -97,7 +122,7 @@ func setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
 			selected_layer_texture = selected_layer_textures[material_layer]
 		if selected_layer_texture:
 			for texture_layer in selected_layer_texture.layers:
-				setup_texture_layer_item(texture_layer, material_layer_item)
+				setup_texture_layer_item(texture_layer, material_layer_item, selected_layer_texture)
 		
 		if material_layer.mask:
 			material_layer_item.add_button(0, empty_texture, Buttons.MASK)
@@ -122,9 +147,10 @@ func setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
 			setup_material_layer_item(layer, material_layer_item)
 
 
-func setup_texture_layer_item(texture_layer, parent_item : TreeItem) -> void:
+func setup_texture_layer_item(texture_layer, parent_item : TreeItem, layer_texture : LayerTexture) -> void:
 	var texture_layer_item := create_item(parent_item)
 	texture_layer_item.set_meta("layer", texture_layer)
+	texture_layer_item.set_meta("layer_texture", layer_texture)
 	if texture_layer is TextureLayer:
 		texture_layer_item.add_button(0, empty_texture, Buttons.RESULT)
 	else:
@@ -135,7 +161,7 @@ func setup_texture_layer_item(texture_layer, parent_item : TreeItem) -> void:
 	tree_items[texture_layer] = texture_layer_item
 	if texture_layer is FolderLayer and texture_layer in expanded_folders:
 		for layer in texture_layer.layers:
-			setup_texture_layer_item(layer, texture_layer_item)
+			setup_texture_layer_item(layer, texture_layer_item, layer_texture)
 
 
 func update_icons() -> void:
@@ -153,6 +179,10 @@ func update_icons() -> void:
 					var selected_map : LayerTexture = selected_maps[layer]
 					tree_item.set_button(0, button_count, yield(selected_map.generate_result(Vector2(32, 32), false), "completed"))
 		tree_item.set_button(1, 0, preload("res://icons/icon_visible.svg") if layer.visible else preload("res://icons/icon_hidden.svg"))
+
+
+func get_layer_type(layer_item : TreeItem) -> int:
+	return LayerType.TEXTURE_LAYER if layer_item.get_meta("layer_texture") else LayerType.MATERIAL_LAYER
 
 
 func get_selected_material_layer():

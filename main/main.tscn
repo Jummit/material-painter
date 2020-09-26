@@ -344,3 +344,5 @@ __meta__ = {
 [connection signal="changed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/TextureChannelButtons" to="." method="_on_TextureChannelButtons_changed"]
 [connection signal="values_changed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerPropertyPanel" to="." method="_on_LayerPropertyPanel_values_changed"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]
+
+[editable path="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/ToolSettingsContainer/ToolSettingsPropertyPanel"]
