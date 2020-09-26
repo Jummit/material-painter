@@ -27,7 +27,7 @@ func _init() -> void:
 	resource_local_to_scene = true
 
 
-func update_results(result_size : Vector2, generate_texture_layers := false) -> void:
+func update_results(result_size : Vector2) -> void:
 	var blending_layer_lists := {}
 	for map in Globals.TEXTURE_MAP_TYPES:
 		blending_layer_lists[map] = []

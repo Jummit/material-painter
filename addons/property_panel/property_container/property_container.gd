@@ -23,7 +23,7 @@ func setup(_property : Property) -> void:
 	property_control = property._get_control()
 	property_control.size_flags_horizontal = SIZE_EXPAND_FILL
 	property_control.size_flags_vertical = SIZE_EXPAND_FILL
-	property_control.rect_min_size = Vector2(60, 0)
+	property_control.rect_min_size.x = 60
 	property_control.set_drag_forwarding(self)
 	# this is a little hacky; since the argument count
 	# of signal callbacks have to be a exactly right,

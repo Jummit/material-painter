@@ -64,7 +64,7 @@ func add_texture_layer(texture_layer, onto : Array) -> void:
 
 func add_material_layer(material_layer, onto : Array) -> void:
 	onto.append(material_layer)
-	editing_layer_material.update_results(result_size, true)
+	editing_layer_material.update_results(result_size)
 	results_item_list.load_layer_material(editing_layer_material)
 	model.load_layer_material_maps(editing_layer_material)
 	layer_tree.setup_layer_material(editing_layer_material)
@@ -160,11 +160,13 @@ func _on_FileMenu_id_pressed(id : int):
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
 			file_dialog.filters = ["*.tres;Material Painter File"]
 			file_dialog.popup_centered()
+			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 		2:
 			file_dialog.mode = FileDialog.MODE_SAVE_FILE
 			file_dialog.filters = ["*.tres;Material Painter File"]
 			file_dialog.set_meta("to_save", current_file)
 			file_dialog.popup_centered()
+			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 		3:
 			if file_location:
 				editing_layer_material.export_textures(file_location.get_base_dir())
@@ -172,6 +174,7 @@ func _on_FileMenu_id_pressed(id : int):
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
 			file_dialog.filters = ["*.obj;Object File"]
 			file_dialog.popup_centered()
+			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 
 
 func _on_SceneTree_node_added(node : Node):
@@ -225,6 +228,7 @@ func _on_ToolButtonContainer_tool_selected(tool_id : int):
 
 
 func _on_SaveButton_pressed() -> void:
+	file_dialog.access = FileDialog.ACCESS_USERDATA
 	file_dialog.current_dir = "user://brushes/"
 	file_dialog.current_path = "user://brushes/"
 	file_dialog.current_file = ""
