@@ -83,21 +83,45 @@ func get_drag_data(_position : Vector2):
 	return {
 		type = "layers",
 		layers = selected_layers,
+		layer_type = type,
 	}
 
 
-func can_drop_data(_position : Vector2, data) -> bool:
-	return data is Dictionary and "type" in data and data.type == "layers"
+func can_drop_data(position : Vector2, data) -> bool:
+	if data is Dictionary and "type" in data and data.type == "layers":
+		if get_drop_section_at_position(position) == 0:
+			var onto_layer = get_item_at_position(position).get_meta("layer")
+			var layer_type : int = data.layer_type
+			var is_folder := onto_layer is FolderLayer
+			var onto_type : int = get_layer_type(get_item_at_position(position))
+			return (layer_type == LayerType.TEXTURE_LAYER and onto_type == LayerType.MATERIAL_LAYER and not is_folder) or\
+					(layer_type == LayerType.MATERIAL_LAYER and onto_type == LayerType.MATERIAL_LAYER and is_folder) or\
+					(layer_type == LayerType.TEXTURE_LAYER and onto_type == LayerType.TEXTURE_LAYER and is_folder)
+	return false
 
 
 func drop_data(position : Vector2, data) -> void:
-	if data.asset is String:
-		var layer := FileTextureLayer.new()
-		layer.name = data.asset.get_file().get_basename()
-		layer.path = data.asset
-		main.add_texture_layer(layer, selected_layer_textures[get_item_at_position(position).get_meta("layer")].layers)
-	elif data.asset is MaterialLayer:
-		main.add_material_layer(data.asset)
+	if get_drop_section_at_position(position) == 0:
+		var onto_layer = get_item_at_position(position).get_meta("layer")
+		var layer_type : int = data.layer_type
+		var is_folder := onto_layer is FolderLayer
+		var onto_type : int = get_layer_type(get_item_at_position(position))
+		if (layer_type == LayerType.TEXTURE_LAYER and onto_type == LayerType.MATERIAL_LAYER and not is_folder):
+			pass
+		elif (layer_type == LayerType.MATERIAL_LAYER and onto_type == LayerType.MATERIAL_LAYER and is_folder):
+			for layer in data.layers:
+				onto_layer.layers.append(layer.get_meta("layer").duplicate())
+		elif (layer_type == LayerType.TEXTURE_LAYER and onto_type == LayerType.TEXTURE_LAYER and is_folder):
+			for layer in data.layers:
+				onto_layer.layers.append(layer.get_meta("layer").duplicate())
+	setup_layer_material(main.editing_layer_material)
+#	if data.asset is String:
+#		var layer := FileTextureLayer.new()
+#		layer.name = data.asset.get_file().get_basename()
+#		layer.path = data.asset
+#		main.add_texture_layer(layer, selected_layer_textures[get_item_at_position(position).get_meta("layer")].layers)
+#	elif data.asset is MaterialLayer:
+#		main.add_material_layer(data.asset)
 
 
 func setup_layer_material(layer_material : LayerMaterial) -> void:
@@ -112,6 +136,7 @@ func setup_layer_material(layer_material : LayerMaterial) -> void:
 func setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
 	var material_layer_item := create_item(parent_item)
 	material_layer_item.set_meta("layer", material_layer)
+	material_layer_item.custom_minimum_height = 32
 	
 	if material_layer is MaterialLayer:
 		if not material_layer in selected_maps:
@@ -131,7 +156,7 @@ func setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
 		if material_layer.maps.size() > 1:
 			material_layer_item.add_button(0, preload("res://icons/down.svg"), Buttons.MAP_DROPDOWN)
 	else:
-		var icon : Texture = preload("res://icons/icon_oper_folder.svg") if material_layer in expanded_folders else preload("res://icons/icon_folder.svg")
+		var icon : Texture = preload("res://icons/open_folder.svg") if material_layer in expanded_folders else preload("res://icons/large_folder.svg")
 		material_layer_item.add_button(0, icon, Buttons.ICON)
 	
 	material_layer_item.set_text(1, material_layer.name)
@@ -151,10 +176,12 @@ func setup_texture_layer_item(texture_layer, parent_item : TreeItem, layer_textu
 	var texture_layer_item := create_item(parent_item)
 	texture_layer_item.set_meta("layer", texture_layer)
 	texture_layer_item.set_meta("layer_texture", layer_texture)
+	texture_layer_item.custom_minimum_height = 32
+	
 	if texture_layer is TextureLayer:
 		texture_layer_item.add_button(0, empty_texture, Buttons.RESULT)
 	else:
-		var icon : Texture = preload("res://icons/icon_oper_folder.svg") if texture_layer in expanded_folders else preload("res://icons/icon_folder.svg")
+		var icon : Texture = preload("res://icons/open_folder.svg") if texture_layer in expanded_folders else preload("res://icons/large_folder.svg")
 		texture_layer_item.add_button(0, icon, Buttons.ICON)
 	texture_layer_item.set_text(1, texture_layer.name)
 	texture_layer_item.add_button(1, empty_texture, Buttons.VISIBILITY)
@@ -179,6 +206,14 @@ func update_icons() -> void:
 					var selected_map : LayerTexture = selected_maps[layer]
 					tree_item.set_button(0, button_count, yield(selected_map.generate_result(Vector2(32, 32), false), "completed"))
 		tree_item.set_button(1, 0, preload("res://icons/icon_visible.svg") if layer.visible else preload("res://icons/icon_hidden.svg"))
+
+
+func get_array_layer_is_in(layer) -> Array:
+	var parent : TreeItem = tree_items[layer].get_parent()
+	if parent == root:
+		return main.editing_layer_material.layers
+	else:
+		return parent.get_meta("layer").layers
 
 
 func get_layer_type(layer_item : TreeItem) -> int:

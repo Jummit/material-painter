@@ -7,9 +7,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   height="16"
-   viewBox="0 0 16 16"
-   width="16"
+   height="32"
+   viewBox="0 0 32 32"
+   width="32"
    version="1.1"
    id="svg4"
    sodipodi:docname="icon_oper_folder.svg"
@@ -22,6 +22,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -40,21 +41,21 @@
      inkscape:window-height="1023"
      id="namedview6"
      showgrid="false"
-     inkscape:zoom="1.84375"
-     inkscape:cx="-17.062814"
-     inkscape:cy="-7.1457844"
+     inkscape:zoom="10.429825"
+     inkscape:cx="6.5172629"
+     inkscape:cy="13.081567"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg4" />
   <path
-     d="m2 2a1 1 0 0 0 -1 1v2 6 2a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-7a1 1 0 0 0 -1-1h-4a1 1 0 0 1 -1-1v-1a1 1 0 0 0 -1-1z"
-     fill="#e0e0e0"
+     d="m 3.6486039,3.9461736 a 2,2 0 0 0 -2,2 v 4 12.0000004 4 a 2,2 0 0 0 2,2 H 27.648603 a 2,2 0 0 0 2,-2 v -14 a 2,2 0 0 0 -2,-2.0000004 h -8 a 2,2 0 0 1 -1.999999,-2 v -2 a 2,2 0 0 0 -2,-2 z"
      id="path2"
-     style="fill:#969696;fill-opacity:1" />
+     style="fill:#969696;fill-opacity:1;stroke-width:2"
+     inkscape:connector-curvature="0" />
   <path
      id="path817"
-     d="M 3.3065816,7.4642698 A 0.539182,1.0101304 84.832058 0 0 2.1864004,8.008914 L 1.9460379,9.0982024 1.2249505,12.366067 0.98458801,13.455356 A 0.539182,1.0101304 84.832058 0 0 1.8644068,14 H 13.864407 a 0.539182,1.0101304 84.832058 0 0 1.120181,-0.544644 L 15.825857,9.6428465 A 0.539182,1.0101304 84.832058 0 0 14.946038,9.0982024 h -4 A 0.539182,1.0101304 84.832058 0 1 10.066219,8.5535582 L 10.1864,8.008914 A 0.539182,1.0101304 84.832058 0 0 9.306582,7.4642698 Z"
+     d="m 6.2617671,14.874714 a 1.078364,2.0202608 84.832058 0 0 -2.2403624,1.089288 l -0.480725,2.178576 -1.4421748,6.53573 -0.480725,2.178578 a 1.078364,2.0202608 84.832058 0 0 1.7596376,1.089288 H 27.377417 a 1.078364,2.0202608 84.832058 0 0 2.240362,-1.089288 l 1.682538,-7.62502 a 1.078364,2.0202608 84.832058 0 0 -1.759638,-1.089288 h -8 A 1.078364,2.0202608 84.832058 0 1 19.781041,17.05329 l 0.240362,-1.089288 a 1.078364,2.0202608 84.832058 0 0 -1.759636,-1.089288 z"
      inkscape:connector-curvature="0"
-     style="fill:#e0e0e0;fill-opacity:1;stroke:none;stroke-width:0.73800009;stroke-opacity:1" />
+     style="fill:#e0e0e0;fill-opacity:1;stroke:none;stroke-width:1.47600019;stroke-opacity:1" />
 </svg>

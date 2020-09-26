@@ -110,8 +110,7 @@ func _on_DeleteButton_pressed() -> void:
 	if not layer_tree.get_selected():
 		return
 	var layer = layer_tree.get_selected().get_meta("layer")
-	var in_array : Array = layer_tree.tree_items[layer].get_parent().get_meta("layer").layers
-	in_array.erase(layer)
+	layer_tree.get_array_layer_is_in(layer).erase(layer)
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
