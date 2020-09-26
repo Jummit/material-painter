@@ -18,6 +18,7 @@ _global_script_class_icons={
 config/name="Material Painter"
 config/description="A Substance Painter alternative made in the Godot Engine"
 run/main_scene="res://main/main.tscn"
+run/low_processor_mode=true
 config/icon="res://icon.svg"
 
 [autoload]

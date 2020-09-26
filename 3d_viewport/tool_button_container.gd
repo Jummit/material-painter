@@ -14,7 +14,7 @@ const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_l
 
 onready var main : Control = $"../../../../../../.."
 
-func _ready():
+func _ready() -> void:
 	for tool_name in main.Tools:
 		var tool_button := Button.new()
 		tool_button.name = tool_name
@@ -23,13 +23,13 @@ func _ready():
 		add_child(tool_button)
 
 
-func _on_ToolButton_pressed(tool_id : int):
-	emit_signal("tool_selected", tool_id)
-
-
-func _on_LayerTree_texture_layer_selected(texture_layer):
+func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
 	visible = texture_layer is BitmapTextureLayer
 
 
-func _on_LayerTree_cell_selected():
+func _on_LayerTree_cell_selected() -> void:
 	hide()
+
+
+func _on_ToolButton_pressed(tool_id : int) -> void:
+	emit_signal("tool_selected", tool_id)

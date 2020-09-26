@@ -20,7 +20,7 @@ class TextureAssetProperty extends Properties.FilePathProperty:
 
 onready var main : Control = $"../../../../../../.."
 
-func _ready():
+func _ready() -> void:
 	set_properties([
 		Properties.FloatProperty.new("size", 2, 200),
 		Properties.FloatProperty.new("strength", 0.0, 1.0),
@@ -33,5 +33,5 @@ func _ready():
 	])
 
 
-func _on_ToolButtonContainer_tool_selected(to : int):
+func _on_ToolButtonContainer_tool_selected(to : int) -> void:
 	get_parent().visible = to == main.Tools.PAINT

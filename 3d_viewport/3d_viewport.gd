@@ -83,6 +83,25 @@ func _on_ToolButtonContainer_tool_selected(tool_id : int):
 		bitmap_texture_layer.temp_texture = null
 
 
+func _on_LayerTree_texture_layer_selected(texture_layer):
+	if texture_layer is BitmapTextureLayer:
+		painter.clear()
+
+
+func _on_ToolSettingsPropertyPanel_values_changed():
+	var new_brush := Brush.new()
+	tool_settings_property_panel.store_values(new_brush)
+	new_brush.size = Vector2.ONE * tool_settings_property_panel.get_property_value("size")
+	painter.brush = new_brush
+
+
+func _on_AssetBrowser_asset_activated(asset : Dictionary) -> void:
+	if asset.type != "Brushes":
+		return
+	painter.brush = asset.asset
+	tool_settings_property_panel.load_values(asset.asset)
+
+
 func _get_nearest_intersecting_face(start : Vector3, direction : Vector3, mesh : Mesh, fast := false) -> int:
 	var mesh_tool := MeshDataTool.new()
 	mesh_tool.create_from_surface(mesh, 0)
@@ -106,6 +125,12 @@ func _get_nearest_intersecting_face(start : Vector3, direction : Vector3, mesh :
 	return nearest_face
 
 
+func _can_paint_with_tool(tool_id : int) -> bool:
+	return layer_tree.get_selected() and\
+			layer_tree.get_selected_texture_layer() is BitmapTextureLayer\
+			and main.selected_tool == tool_id
+
+
 func _paint(on_texture_layer : BitmapTextureLayer, from : Vector2, to : Vector2) -> void:
 	var camera : Camera = viewport.get_camera()
 	var camera_transform = camera.global_transform
@@ -115,28 +140,3 @@ func _paint(on_texture_layer : BitmapTextureLayer, from : Vector2, to : Vector2)
 	painter.paint(from / rect_size, to / rect_size)
 	on_texture_layer.temp_texture = painter.result
 	emit_signal("painted", on_texture_layer)
-
-
-func _can_paint_with_tool(tool_id : int) -> bool:
-	return layer_tree.get_selected() and\
-			layer_tree.get_selected_texture_layer() is BitmapTextureLayer\
-			and main.selected_tool == tool_id
-
-
-func _on_LayerTree_texture_layer_selected(texture_layer):
-	if texture_layer is BitmapTextureLayer:
-		painter.clear()
-
-
-func _on_ToolSettingsPropertyPanel_values_changed():
-	var new_brush := Brush.new()
-	tool_settings_property_panel.store_values(new_brush)
-	new_brush.size = Vector2.ONE * tool_settings_property_panel.get_property_value("size")
-	painter.brush = new_brush
-
-
-func _on_AssetBrowser_asset_activated(asset : Dictionary) -> void:
-	if asset.type != "Brushes":
-		return
-	painter.brush = asset.asset
-	tool_settings_property_panel.load_values(asset.asset)

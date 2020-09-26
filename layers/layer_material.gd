@@ -28,10 +28,7 @@ func _init() -> void:
 
 
 func update_results(result_size : Vector2) -> void:
-	var flat_layers := []
-	for layer in layers:
-		get_flat_layers(layer, flat_layers, false)
-	
+	var flat_layers := get_flat_layers(layers, false)
 	for map in Globals.TEXTURE_MAP_TYPES:
 		var blending_layers := []
 		for layer in flat_layers:
@@ -69,20 +66,20 @@ func export_textures(to_folder : String) -> void:
 
 func get_depending_layer_textures(texture_layer : TextureLayer) -> Array:
 	var depending_layer_textures := []
-	var flat_layers := []
-	for layer in layers:
-		get_flat_layers(layer, flat_layers)
-	for layer in flat_layers:
+	for layer in get_flat_layers():
 		layer = layer as MaterialLayer
 		depending_layer_textures += layer.get_depending_layer_textures(texture_layer)
 	return depending_layer_textures
 
 
-func get_flat_layers(layer, flat_layers : Array, add_hidden := true) -> void:
-	if (not add_hidden) and not layer.visible:
-		return
-	if layer is FolderLayer:
-		for sub_layer in layer.layers:
-			get_flat_layers(sub_layer, flat_layers)
-	else:
-		flat_layers.append(layer)
+func get_flat_layers(layer_array : Array = layers, add_hidden := true) -> Array:
+	var flat_layers := []
+	for layer in layer_array:
+		if (not add_hidden) and not layer.visible:
+			continue
+		if layer is FolderLayer:
+			for sub_layer in layer.layers:
+				flat_layers += get_flat_layers(sub_layer.layers, add_hidden)
+		else:
+			flat_layers.append(layer)
+	return flat_layers

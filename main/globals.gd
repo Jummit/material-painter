@@ -1,5 +1,9 @@
 extends Node
 
+"""
+Global constants
+"""
+
 const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_layer.gd")
 const ColorTextureLayer = preload("res://layers/texture_layers/color_texture_layer.gd")
 const ScalarTextureLayer = preload("res://layers/texture_layers/scalar_texture_layer.gd")

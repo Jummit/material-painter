@@ -24,15 +24,19 @@ func update_result(result_size : Vector2, keep_viewport := true) -> void:
 
 func generate_result(result_size : Vector2, keep_viewport := true) -> Texture:
 	var blending_layers := []
-	for layer in layers:
-		get_blending_layers(layer, blending_layers)
+	for layer in get_flat_layers(layers, false):
+		blending_layers.append(layer._get_as_shader_layer())
 	return yield(LayerBlendViewportManager.blend(blending_layers, result_size, get_instance_id() if keep_viewport else -1), "completed")
 
 
-func get_blending_layers(layer, blending_layers : Array) -> void:
-	if layer.visible:
+func get_flat_layers(layer_array : Array = layers, add_hidden := true) -> Array:
+	var flat_layers := []
+	for layer in layer_array:
+		if (not add_hidden) and not layer.visible:
+			continue
 		if layer is FolderLayer:
 			for sub_layer in layer.layers:
-				get_blending_layers(sub_layer, blending_layers)
+				flat_layers += get_flat_layers(sub_layer.layers, add_hidden)
 		else:
-			blending_layers.append(layer._get_as_shader_layer())
+			flat_layers.append(layer)
+	return flat_layers

@@ -1,5 +1,9 @@
 extends "res://layers/texture_layer.gd"
 
+"""
+A texture layer that uses a float value from 0 to 1 to generate a grayscale result
+"""
+
 export var value = .5
 
 func _init(_name := "Scalar").("scalar"):

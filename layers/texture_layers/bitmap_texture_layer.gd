@@ -1,6 +1,14 @@
 extends "res://layers/texture_layer.gd"
 
+"""
+A texture layer that uses `Image` data to generate the result
+
+`temp_texture` is used to set a `Texture` directly
+to make generating the shader faster.
+"""
+
 export var image_data : Image
+
 var temp_texture : Texture
 
 func _init(_name := "Bitmap").("bitmap"):

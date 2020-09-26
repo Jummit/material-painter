@@ -52,7 +52,7 @@ class MaterialAssetType extends AssetType:
 		pass
 	
 	func _generate_preview(_asset : Resource):
-		# todo: proper previews
+		# todo: propper previews
 		return null
 
 class BrushAssetType extends AssetType:

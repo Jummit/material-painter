@@ -111,9 +111,9 @@ func _on_DeleteButton_pressed() -> void:
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
-func _on_TextureChannelButtons_changed(map : String, activated : bool) -> void:
-	if activated:
-		layer_tree.selected_maps[layer_property_panel.editing_layer] = layer_property_panel.editing_layer.maps[map]
+func _on_TextureChannelButtons_changed(map : String, enabled : bool) -> void:
+	if enabled:
+		layer_tree.select_map(layer_property_panel.editing_layer, map)
 		layer_tree.selected_layer_textures[layer_property_panel.editing_layer] = layer_property_panel.editing_layer.maps[map]
 	layer_tree.setup_layer_material(editing_layer_material)
 

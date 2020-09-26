@@ -26,7 +26,7 @@ func get_depending_layer_textures(texture_layer : TextureLayer) -> Array:
 	var layer_textures := []
 	for map in maps.values():
 		map = map as LayerTexture
-		if texture_layer in map.layers:
+		if texture_layer in map.get_flat_layers():
 			layer_textures.append(map)
 			continue
 	return layer_textures

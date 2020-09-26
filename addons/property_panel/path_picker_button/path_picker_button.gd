@@ -2,6 +2,8 @@ extends Button
 
 """
 A `Button` to select a path to be used in a `PropertyPanel`
+
+Right-clicking clears the path.
 """
 
 signal changed

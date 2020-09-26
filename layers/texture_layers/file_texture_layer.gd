@@ -1,5 +1,11 @@
 extends "res://layers/texture_layer.gd"
 
+"""
+A texture layer that uses a loaded file to generate the result
+
+The file is cashed in `cashed_image` to avoid loading it every shader update.
+"""
+
 var cashed_path : String
 var cashed_image : Texture
 

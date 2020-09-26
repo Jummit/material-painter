@@ -1,5 +1,7 @@
 """
 String templates used to generate blending shaders
+
+Blending mode shaders from `https://github.com/jamieowen/glsl-blend`.
 """
 
 const BLEND_TEMPLATE := "	vec3 {result} = blend{mode}({a}, {b}, {opacity});"
