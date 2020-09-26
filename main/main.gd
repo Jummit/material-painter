@@ -110,10 +110,8 @@ func _on_DeleteButton_pressed() -> void:
 	if not layer_tree.get_selected():
 		return
 	var layer = layer_tree.get_selected().get_meta("layer")
-	if layer is MaterialLayer:
-		editing_layer_material.layers.erase(layer)
-	elif layer is TextureLayer:
-		layer_tree.get_selected_layer_texture().layers.erase(layer)
+	var in_array : Array = layer_tree.tree_items[layer].get_parent().get_meta("layer").layers
+	in_array.erase(layer)
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
