@@ -90,7 +90,7 @@ func get_drag_data(_position : Vector2):
 
 
 func can_drop_data(position : Vector2, data) -> bool:
-	if "asset" in data and data.asset is String or data.asset is MaterialLayer or data.asset is FolderLayer:
+	if "asset" in data and (data.asset is String or data.asset is MaterialLayer or data.asset is FolderLayer):
 		return true
 	if data is Dictionary and "type" in data and data.type == "layers":
 		var onto_layer = get_item_at_position(position).get_meta("layer")

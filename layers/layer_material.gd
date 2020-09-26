@@ -78,8 +78,7 @@ func get_flat_layers(layer_array : Array = layers, add_hidden := true) -> Array:
 		if (not add_hidden) and not layer.visible:
 			continue
 		if layer is FolderLayer:
-			for sub_layer in layer.layers:
-				flat_layers += get_flat_layers(sub_layer.layers, add_hidden)
+			flat_layers += get_flat_layers(layer.layers, add_hidden)
 		else:
 			flat_layers.append(layer)
 	return flat_layers
