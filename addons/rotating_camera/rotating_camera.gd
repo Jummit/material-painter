@@ -20,3 +20,4 @@ func _input(event : InputEvent) -> void:
 		else:
 			horizontal_camera_socket.rotate_x(-event.relative.y * sensitity)
 			vertical_camera_socket.rotate_y(-event.relative.x * sensitity)
+			horizontal_camera_socket.rotation_degrees.x = clamp(horizontal_camera_socket.rotation_degrees.x, -90.0, 90.0)

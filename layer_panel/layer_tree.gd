@@ -179,7 +179,9 @@ func get_layer_at_position(position : Vector2):
 
 
 func get_selected_layer_texture_of(material_layer : MaterialLayer) -> LayerTexture:
-	return _selected_layer_textures[material_layer] as LayerTexture
+	if material_layer in _selected_layer_textures:
+		return _selected_layer_textures[material_layer]
+	return null
 
 
 func get_selected_material_layer():

@@ -102,6 +102,8 @@ func _on_AddFolderButton_pressed() -> void:
 		elif layer_tree.get_selected_material_layer() is MaterialLayer:
 			if layer_tree.get_selected_layer_texture_of(layer_tree.get_selected_material_layer()):
 				add_material_layer(FolderLayer.new(), layer_tree.get_selected_layer_texture().layers)
+			else:
+				add_material_layer(FolderLayer.new(), editing_layer_material.layers)
 	else:
 		add_material_layer(FolderLayer.new(), editing_layer_material.layers)
 
