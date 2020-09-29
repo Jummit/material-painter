@@ -351,3 +351,4 @@ func _draw_material_layer_item(material_layer_item : TreeItem, item_rect : Rect2
 
 func _on_item_edited() -> void:
 	get_edited().get_meta("layer").name = get_edited().get_text(get_edited_column())
+	_lastly_edited_layer = null
