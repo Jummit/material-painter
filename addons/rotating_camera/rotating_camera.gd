@@ -13,6 +13,7 @@ onready var vertical_camera_socket : Spatial = get_parent().get_parent()
 func _input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and (event.button_index == BUTTON_WHEEL_UP or event.button_index == BUTTON_WHEEL_DOWN):
 		translation.z += (1.0 if event.button_index == BUTTON_WHEEL_DOWN else -1.0) * zoom_sensitity
+		translation.z = clamp(translation.z, .4, 20.0)
 	if event is InputEventMouseMotion and event.button_mask == BUTTON_MASK_MIDDLE:
 		if event.shift:
 			vertical_camera_socket.translate_object_local(Vector3.LEFT * event.relative.x * sensitity)

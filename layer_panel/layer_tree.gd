@@ -54,10 +54,11 @@ func _ready() -> void:
 func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == BUTTON_RIGHT and event.pressed:
 		var layer = get_layer_at_position(event.position)
-		material_layer_popup_menu.rect_global_position = event.global_position
-		material_layer_popup_menu.layer = layer
-		material_layer_popup_menu.layer_texture_selected = layer is MaterialLayer
-		material_layer_popup_menu.popup()
+		if layer:
+			material_layer_popup_menu.rect_global_position = event.global_position
+			material_layer_popup_menu.layer = layer
+			material_layer_popup_menu.layer_texture_selected = layer is MaterialLayer
+			material_layer_popup_menu.popup()
 	elif event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
 		# `get_selected` returns null the first time a layer is clicked
 		# if it doesn't, in thin case it means the layer was "double clicked"
@@ -175,7 +176,8 @@ func select_map(layer : MaterialLayer, map : String, expand := false) -> void:
 
 
 func get_layer_at_position(position : Vector2):
-	return get_item_at_position(position).get_meta("layer")
+	if get_item_at_position(position):
+		return get_item_at_position(position).get_meta("layer")
 
 
 func get_selected_layer_texture_of(material_layer : MaterialLayer) -> LayerTexture:
