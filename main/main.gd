@@ -38,19 +38,9 @@ onready var layer_tree : Tree = $VBoxContainer/PanelContainer/HBoxContainer/Laye
 onready var results_item_list : ItemList = $VBoxContainer/PanelContainer/HBoxContainer/ResultsItemList
 onready var painter : Node = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Painter"
 
-func _ready():
+func _ready() -> void:
 	file_menu_button.get_popup().connect("id_pressed", self, "_on_FileMenu_id_pressed")
-	load_file(SaveFile.new())
-
-
-func load_file(save_file : SaveFile) -> void:
-	current_file = save_file
-	if current_file.model_path:
-		load_model(current_file.model_path)
-	editing_layer_material = current_file.layer_material
-	editing_layer_material.update_all_layer_textures(result_size)
-	update_results(false)
-	layer_tree.setup_layer_material(editing_layer_material)
+	_load_file(SaveFile.new())
 
 
 func add_texture_layer(texture_layer, to_layer_texture : LayerTexture, onto_array = null) -> void:
@@ -59,7 +49,7 @@ func add_texture_layer(texture_layer, to_layer_texture : LayerTexture, onto_arra
 	onto_array.append(texture_layer)
 	yield(to_layer_texture.update_result(result_size), "completed")
 	if texture_layer is TextureLayer:
-		update_results(false)
+		_update_results(false)
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
@@ -67,34 +57,22 @@ func add_material_layer(material_layer, onto : Array) -> void:
 	onto.append(material_layer)
 	if material_layer is MaterialLayer:
 		material_layer.update_all_layer_textures(result_size)
-		update_results(false)
+		_update_results(false)
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
-func delete_layer(layer) -> void:
+func _delete_layer(layer) -> void:
 	var layer_texture : LayerTexture
 	if layer is TextureLayer:
 		layer_texture = editing_layer_material.get_layer_texture_of_texture_layer(layer)
 	editing_layer_material.get_array_layer_is_in(layer).erase(layer)
 	if layer_texture:
 		layer_texture.update_result(result_size)
-	update_results(false)
+	_update_results(false)
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
-func load_model(path : String) -> void:
-	model.set_mesh(ObjParser.parse_obj(path))
-
-
-func update_results(update_icons := true) -> void:
-	editing_layer_material.update_results(result_size)
-	results_item_list.load_layer_material(editing_layer_material)
-	model.load_layer_material_maps(editing_layer_material)
-	if update_icons:
-		layer_tree.update_icons()
-
-
-func _on_FileDialog_file_selected(path : String):
+func _on_FileDialog_file_selected(path : String) -> void:
 	match file_dialog.mode:
 		FileDialog.MODE_SAVE_FILE:
 			var to_save = file_dialog.get_meta("to_save")
@@ -104,10 +82,10 @@ func _on_FileDialog_file_selected(path : String):
 		FileDialog.MODE_OPEN_FILE:
 			if path.get_extension() == "tres":
 				file_location = path
-				load_file(load(path))
+				_load_file(load(path))
 			elif path.get_extension() == "obj":
 				current_file.model_path = path
-				load_model(path)
+				_load_model(path)
 
 
 func _on_AddButton_pressed() -> void:
@@ -130,13 +108,13 @@ func _on_AddFolderButton_pressed() -> void:
 
 func _on_DeleteButton_pressed() -> void:
 	if layer_tree.get_selected():
-		delete_layer(layer_tree.get_selected().get_meta("layer"))
+		_delete_layer(layer_tree.get_selected().get_meta("layer"))
 
 
 func _on_TextureMapButtons_changed(map : String, enabled : bool) -> void:
 	if enabled:
 		layer_tree.select_map(layer_property_panel.editing_layer, map, true)
-	update_results(false)
+	_update_results(false)
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
@@ -149,7 +127,7 @@ func _on_LayerPropertyPanel_values_changed() -> void:
 	layer_property_panel.store_values(layer_property_panel.editing_layer)
 	var affected_layer : LayerTexture = editing_layer_material.get_depending_layer_texture(layer_property_panel.editing_layer)
 	affected_layer.update_result(result_size)
-	update_results()
+	_update_results()
 
 
 func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
@@ -164,10 +142,53 @@ func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
 		add_texture_layer(layer.new(), layer_tree.get_selected_layer_texture_of(layer_tree.material_layer_popup_menu.layer))
 
 
-func _on_FileMenu_id_pressed(id : int):
+func _on_MaterialLayerPopupMenu_layer_saved() -> void:
+	var material_layer = layer_tree.get_selected_material_layer()
+	ResourceSaver.save(MATERIAL_PATH.plus_file(material_layer.name) + ".tres", material_layer)
+
+
+func _on_MaterialLayerPopupMenu_mask_added() -> void:
+	var material_layer : MaterialLayer = layer_tree.get_selected_material_layer()
+	material_layer.mask = LayerTexture.new()
+	layer_tree.setup_layer_material(editing_layer_material)
+
+
+func _on_LayerTree_layer_visibility_changed(layer) -> void:
+	if layer is TextureLayer:
+		var affected_layer := editing_layer_material.get_depending_layer_texture(layer)
+		affected_layer.update_result(result_size)
+	_update_results()
+
+
+func _on_Viewport_painted(layer : TextureLayer) -> void:
+	editing_layer_material.get_depending_layer_texture(layer).update_result(result_size)
+	_update_results()
+
+
+func _on_MaterialLayerPopupMenu_mask_removed() -> void:
+	layer_tree.get_selected_material_layer().mask = null
+	_update_results()
+
+
+func _on_ToolButtonContainer_tool_selected(tool_id : int) -> void:
+	selected_tool = tool_id
+
+
+func _on_SaveButton_pressed() -> void:
+	file_dialog.access = FileDialog.ACCESS_USERDATA
+	file_dialog.current_dir = "user://brushes/"
+	file_dialog.current_path = "user://brushes/"
+	file_dialog.current_file = ""
+	file_dialog.mode = FileDialog.MODE_SAVE_FILE
+	file_dialog.filters = ["*.tres;Brush File"]
+	file_dialog.set_meta("to_save", painter.brush)
+	file_dialog.popup_centered()
+
+
+func _on_FileMenu_id_pressed(id : int) -> void:
 	match id:
 		0:
-			load_file(SaveFile.new())
+			_load_file(SaveFile.new())
 		1:
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
 			file_dialog.filters = ["*.tres;Material Painter File"]
@@ -195,44 +216,23 @@ func _on_FileMenu_id_pressed(id : int):
 			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 
 
-func _on_MaterialLayerPopupMenu_layer_saved() -> void:
-	var material_layer = layer_tree.get_selected_material_layer()
-	ResourceSaver.save(MATERIAL_PATH.plus_file(material_layer.name) + ".tres", material_layer)
-
-
-func _on_MaterialLayerPopupMenu_mask_added() -> void:
-	var material_layer : MaterialLayer = layer_tree.get_selected_material_layer()
-	material_layer.mask = LayerTexture.new()
+func _load_file(save_file : SaveFile) -> void:
+	current_file = save_file
+	if current_file.model_path:
+		_load_model(current_file.model_path)
+	editing_layer_material = current_file.layer_material
+	editing_layer_material.update_all_layer_textures(result_size)
+	_update_results(false)
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
-func _on_LayerTree_layer_visibility_changed(layer) -> void:
-	if layer is TextureLayer:
-		var affected_layer := editing_layer_material.get_depending_layer_texture(layer)
-		affected_layer.update_result(result_size)
-	update_results()
+func _load_model(path : String) -> void:
+	model.set_mesh(ObjParser.parse_obj(path))
 
 
-func _on_Viewport_painted(layer : TextureLayer) -> void:
-	editing_layer_material.get_depending_layer_texture(layer).update_result(result_size)
-	update_results()
-
-
-func _on_MaterialLayerPopupMenu_mask_removed() -> void:
-	layer_tree.get_selected_material_layer().mask = null
-	update_results()
-
-
-func _on_ToolButtonContainer_tool_selected(tool_id : int):
-	selected_tool = tool_id
-
-
-func _on_SaveButton_pressed() -> void:
-	file_dialog.access = FileDialog.ACCESS_USERDATA
-	file_dialog.current_dir = "user://brushes/"
-	file_dialog.current_path = "user://brushes/"
-	file_dialog.current_file = ""
-	file_dialog.mode = FileDialog.MODE_SAVE_FILE
-	file_dialog.filters = ["*.tres;Brush File"]
-	file_dialog.set_meta("to_save", painter.brush)
-	file_dialog.popup_centered()
+func _update_results(update_icons := true) -> void:
+	editing_layer_material.update_results(result_size)
+	results_item_list.load_layer_material(editing_layer_material)
+	model.load_layer_material_maps(editing_layer_material)
+	if update_icons:
+		layer_tree.update_icons()

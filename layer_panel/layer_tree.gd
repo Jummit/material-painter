@@ -73,9 +73,9 @@ func get_drag_data(_position : Vector2):
 	var selected_layers := []
 	var selected = get_next_selected(null)
 	var preview := VBoxContainer.new()
-	var type = get_layer_type(selected)
+	var type = _get_layer_type(selected)
 	while selected:
-		if get_layer_type(selected) == type:
+		if _get_layer_type(selected) == type:
 			selected_layers.append(selected.get_meta("layer"))
 			var label = Label.new()
 			label.text = selected.get_meta("layer").name
@@ -97,7 +97,7 @@ func can_drop_data(position : Vector2, data) -> bool:
 	if data is Dictionary and "type" in data and data.type == "layers":
 		var layer_type : int = data.layer_type
 		var is_folder := get_layer_at_position(position) is FolderLayer
-		var onto_type : int = get_layer_type(get_item_at_position(position))
+		var onto_type : int = _get_layer_type(get_item_at_position(position))
 		if get_drop_section_at_position(position) == 0:
 			return (layer_type == LayerType.TEXTURE_LAYER and\
 					onto_type == LayerType.MATERIAL_LAYER and not is_folder) or\
@@ -147,64 +147,8 @@ func setup_layer_material(layer_material : LayerMaterial) -> void:
 	clear()
 	_root = create_item()
 	for material_layer in layer_material.layers:
-		setup_material_layer_item(material_layer, _root)
+		_setup_material_layer_item(material_layer, _root)
 	update_icons()
-
-
-func setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
-	var material_layer_item := create_item(parent_item)
-	material_layer_item.set_meta("layer", material_layer)
-	material_layer_item.custom_minimum_height = 32
-	
-	if material_layer is MaterialLayer:
-		if not material_layer in _selected_layer_textures:
-			if material_layer.maps.size() > 0:
-				_selected_layer_textures[material_layer] = material_layer.maps.values().front()
-		if material_layer in _expanded_maps:
-			var selected_layer_texture : LayerTexture = _selected_layer_textures[material_layer]
-			for texture_layer in selected_layer_texture.layers:
-				setup_texture_layer_item(texture_layer, material_layer_item, selected_layer_texture)
-		
-		if material_layer.mask:
-			material_layer_item.add_button(0, _empty_texture, Buttons.MASK)
-		if material_layer.maps.size() > 0:
-			material_layer_item.add_button(0, _empty_texture, Buttons.RESULT)
-		if material_layer.maps.size() > 1:
-			material_layer_item.add_button(0, preload("res://icons/down.svg"), Buttons.MAP_DROPDOWN)
-	else:
-		var icon : Texture = preload("res://icons/open_folder.svg") if material_layer in _expanded_folders else preload("res://icons/large_folder.svg")
-		material_layer_item.add_button(0, icon, Buttons.ICON)
-	
-	material_layer_item.set_text(1, material_layer.name)
-	material_layer_item.add_button(1, _empty_texture, Buttons.VISIBILITY)
-	
-	material_layer_item.set_custom_draw(0, self, "_draw_material_layer_item")
-	material_layer_item.set_cell_mode(0, TreeItem.CELL_MODE_CUSTOM)
-	
-	_tree_items[material_layer] = material_layer_item
-	
-	if material_layer is FolderLayer and material_layer in _expanded_folders:
-		for layer in material_layer.layers:
-			setup_material_layer_item(layer, material_layer_item)
-
-
-func setup_texture_layer_item(texture_layer, parent_item : TreeItem, layer_texture : LayerTexture) -> void:
-	var texture_layer_item := create_item(parent_item)
-	texture_layer_item.set_meta("layer", texture_layer)
-	texture_layer_item.set_meta("layer_texture", layer_texture)
-	texture_layer_item.custom_minimum_height = 16
-	
-	if texture_layer is TextureLayer:
-		texture_layer_item.add_button(0, _small_empty_texture, Buttons.RESULT)
-	else:
-		var icon : Texture = preload("res://icons/open_folder.svg") if texture_layer in _expanded_folders else preload("res://icons/large_folder.svg")
-		texture_layer_item.add_button(0, icon, Buttons.ICON)
-	texture_layer_item.set_text(1, texture_layer.name)
-	texture_layer_item.add_button(1, _empty_texture, Buttons.VISIBILITY)
-	_tree_items[texture_layer] = texture_layer_item
-	if texture_layer is FolderLayer and texture_layer in _expanded_folders:
-		for layer in texture_layer.layers:
-			setup_texture_layer_item(layer, texture_layer_item, layer_texture)
 
 
 func update_icons() -> void:
@@ -224,22 +168,18 @@ func update_icons() -> void:
 		tree_item.set_button(1, 0, preload("res://icons/icon_visible.svg") if layer.visible else preload("res://icons/icon_hidden.svg"))
 
 
-func get_layer_at_position(position : Vector2):
-	return get_item_at_position(position).get_meta("layer")
-
-
 func select_map(layer : MaterialLayer, map : String, expand := false) -> void:
 	_selected_maps[layer] = layer.maps[map]
 	if expand:
 		_selected_layer_textures[layer] = layer.maps[map]
 
 
+func get_layer_at_position(position : Vector2):
+	return get_item_at_position(position).get_meta("layer")
+
+
 func get_selected_layer_texture_of(material_layer : MaterialLayer) -> LayerTexture:
 	return _selected_layer_textures[material_layer] as LayerTexture
-
-
-func get_layer_type(layer_item : TreeItem) -> int:
-	return LayerType.TEXTURE_LAYER if layer_item.has_meta("layer_texture") else LayerType.MATERIAL_LAYER
 
 
 func get_selected_material_layer():
@@ -254,12 +194,6 @@ func get_selected_layer_texture() -> LayerTexture:
 	return _selected_layer_textures[get_selected_material_layer()] as LayerTexture
 
 
-func _get_selected_material_layer_item() -> TreeItem:
-	if get_selected().get_meta("layer") is MaterialLayer or get_selected().get_meta("layer") is FolderLayer:
-		return get_selected()
-	return null
-
-
 func get_material_layer_from_layer(layer) -> MaterialLayer:
 	var parent_layer = _tree_items[layer].get_parent().get_meta("layer")
 	if not parent_layer:
@@ -268,6 +202,14 @@ func get_material_layer_from_layer(layer) -> MaterialLayer:
 		return parent_layer
 	else:
 		return get_material_layer_from_layer(parent_layer)
+
+
+func _on_cell_selected() -> void:
+	var layer = get_selected().get_meta("layer")
+	if layer is MaterialLayer:
+		emit_signal("material_layer_selected", layer)
+	elif layer is TextureLayer:
+		emit_signal("texture_layer_selected", layer)
 
 
 func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
@@ -305,23 +247,6 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 			setup_layer_material(main.editing_layer_material)
 
 
-func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
-	var layer : MaterialLayer = map_type_popup_menu.get_meta("layer")
-	var selected_map : LayerTexture = layer.maps.values()[id]
-	_selected_maps[layer] = selected_map
-	_selected_layer_textures[layer] = selected_map
-	update_icons()
-	update()
-
-
-func _on_cell_selected() -> void:
-	var layer = get_selected().get_meta("layer")
-	if layer is MaterialLayer:
-		emit_signal("material_layer_selected", layer)
-	elif layer is TextureLayer:
-		emit_signal("texture_layer_selected", layer)
-
-
 func _on_MapTypePopupMenu_about_to_show() -> void:
 	map_type_popup_menu.clear()
 	var layer : MaterialLayer = map_type_popup_menu.get_meta("layer")
@@ -330,6 +255,15 @@ func _on_MapTypePopupMenu_about_to_show() -> void:
 		var icon : ImageTexture = yield(
 			layer.maps[map].generate_result(Vector2(32, 32), false), "completed")
 		map_type_popup_menu.set_item_icon(map_type_popup_menu.get_item_count() - 1, icon)
+
+
+func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
+	var layer : MaterialLayer = map_type_popup_menu.get_meta("layer")
+	var selected_map : LayerTexture = layer.maps.values()[id]
+	_selected_maps[layer] = selected_map
+	_selected_layer_textures[layer] = selected_map
+	update_icons()
+	update()
 
 
 func _draw_material_layer_item(material_layer_item : TreeItem, item_rect : Rect2) -> void:
@@ -352,3 +286,69 @@ func _draw_material_layer_item(material_layer_item : TreeItem, item_rect : Rect2
 func _on_item_edited() -> void:
 	get_edited().get_meta("layer").name = get_edited().get_text(get_edited_column())
 	_lastly_edited_layer = null
+
+
+func _get_layer_type(layer_item : TreeItem) -> int:
+	return LayerType.TEXTURE_LAYER if layer_item.has_meta("layer_texture") else LayerType.MATERIAL_LAYER
+
+
+func _get_selected_material_layer_item() -> TreeItem:
+	if get_selected().get_meta("layer") is MaterialLayer or get_selected().get_meta("layer") is FolderLayer:
+		return get_selected()
+	return null
+
+
+func _setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
+	var material_layer_item := create_item(parent_item)
+	material_layer_item.set_meta("layer", material_layer)
+	material_layer_item.custom_minimum_height = 32
+	
+	if material_layer is MaterialLayer:
+		if not material_layer in _selected_layer_textures:
+			if material_layer.maps.size() > 0:
+				_selected_layer_textures[material_layer] = material_layer.maps.values().front()
+		if material_layer in _expanded_maps:
+			var selected_layer_texture : LayerTexture = _selected_layer_textures[material_layer]
+			for texture_layer in selected_layer_texture.layers:
+				_setup_texture_layer_item(texture_layer, material_layer_item, selected_layer_texture)
+		
+		if material_layer.mask:
+			material_layer_item.add_button(0, _empty_texture, Buttons.MASK)
+		if material_layer.maps.size() > 0:
+			material_layer_item.add_button(0, _empty_texture, Buttons.RESULT)
+		if material_layer.maps.size() > 1:
+			material_layer_item.add_button(0, preload("res://icons/down.svg"), Buttons.MAP_DROPDOWN)
+	else:
+		var icon : Texture = preload("res://icons/open_folder.svg") if material_layer in _expanded_folders else preload("res://icons/large_folder.svg")
+		material_layer_item.add_button(0, icon, Buttons.ICON)
+	
+	material_layer_item.set_text(1, material_layer.name)
+	material_layer_item.add_button(1, _empty_texture, Buttons.VISIBILITY)
+	
+	material_layer_item.set_custom_draw(0, self, "_draw_material_layer_item")
+	material_layer_item.set_cell_mode(0, TreeItem.CELL_MODE_CUSTOM)
+	
+	_tree_items[material_layer] = material_layer_item
+	
+	if material_layer is FolderLayer and material_layer in _expanded_folders:
+		for layer in material_layer.layers:
+			_setup_material_layer_item(layer, material_layer_item)
+
+
+func _setup_texture_layer_item(texture_layer, parent_item : TreeItem, layer_texture : LayerTexture) -> void:
+	var texture_layer_item := create_item(parent_item)
+	texture_layer_item.set_meta("layer", texture_layer)
+	texture_layer_item.set_meta("layer_texture", layer_texture)
+	texture_layer_item.custom_minimum_height = 16
+	
+	if texture_layer is TextureLayer:
+		texture_layer_item.add_button(0, _small_empty_texture, Buttons.RESULT)
+	else:
+		var icon : Texture = preload("res://icons/open_folder.svg") if texture_layer in _expanded_folders else preload("res://icons/large_folder.svg")
+		texture_layer_item.add_button(0, icon, Buttons.ICON)
+	texture_layer_item.set_text(1, texture_layer.name)
+	texture_layer_item.add_button(1, _empty_texture, Buttons.VISIBILITY)
+	_tree_items[texture_layer] = texture_layer_item
+	if texture_layer is FolderLayer and texture_layer in _expanded_folders:
+		for layer in texture_layer.layers:
+			_setup_texture_layer_item(layer, texture_layer_item, layer_texture)

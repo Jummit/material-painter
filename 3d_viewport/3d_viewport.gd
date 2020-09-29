@@ -64,8 +64,8 @@ func _on_ViewMenuButton_show_background_toggled() -> void:
 	color_skybox.visible = not color_skybox.visible
 
 
-func _on_ViewMenuButton_hdr_selected(hdr : Texture) -> void:
-	world_environment.environment.background_sky.panorama = hdr
+func _on_ViewMenuButton_hdri_selected(hdri : Texture) -> void:
+	world_environment.environment.background_sky.panorama = hdri
 
 
 func _on_Model_mesh_changed() -> void:
@@ -84,12 +84,12 @@ func _on_ToolButtonContainer_tool_selected(tool_id : int):
 		bitmap_texture_layer.temp_texture = null
 
 
-func _on_LayerTree_texture_layer_selected(texture_layer):
+func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
 	if texture_layer is BitmapTextureLayer:
 		painter.clear()
 
 
-func _on_ToolSettingsPropertyPanel_values_changed():
+func _on_ToolSettingsPropertyPanel_values_changed() -> void:
 	var new_brush := Brush.new()
 	tool_settings_property_panel.store_values(new_brush)
 	new_brush.size = Vector2.ONE * tool_settings_property_panel.get_property_value("size")
