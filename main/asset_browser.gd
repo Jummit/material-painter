@@ -60,8 +60,9 @@ class BrushAssetType extends AssetType:
 		pass
 
 func _ready():
-	for asset_type in ASSET_TYPES:
-		load_assets(asset_type)
+	if ProjectSettings.get_setting("application/config/load_assets"):
+		for asset_type in ASSET_TYPES:
+			load_assets(asset_type)
 
 
 func load_assets(asset_type : AssetType) -> void:

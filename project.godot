@@ -20,6 +20,10 @@ config/description="A Substance Painter alternative made in the Godot Engine"
 run/main_scene="res://main/main.tscn"
 run/low_processor_mode=true
 config/icon="res://icon.svg"
+config/load_assets=true
+config/load_assets.debug=false
+config/initialize_painter=true
+config/initialize_painter.debug=false
 
 [autoload]
 
