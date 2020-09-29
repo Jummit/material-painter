@@ -22,11 +22,21 @@ func _init() -> void:
 	resource_local_to_scene = true
 
 
-func get_depending_layer_textures(texture_layer : TextureLayer) -> Array:
-	var layer_textures := []
-	for map in maps.values():
-		map = map as LayerTexture
-		if texture_layer in map.get_flat_layers():
-			layer_textures.append(map)
-			continue
-	return layer_textures
+func get_depending_layer_texture(texture_layer : TextureLayer) -> LayerTexture:
+	for layer in maps.values():
+		if texture_layer in layer.get_flat_layers():
+			return layer
+	return null
+
+
+func update_all_layer_textures(result_size : Vector2) -> void:
+	for layer_texture in maps.values() + [mask]:
+		if layer_texture:
+			layer_texture.update_result(result_size)
+
+
+func get_layer_texture_of_texture_layer(texture_layer):
+	for layer_texture in maps.values() + [mask]:
+		if layer_texture:
+			if texture_layer in layer_texture.get_flat_layers():
+				return layer_texture

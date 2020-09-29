@@ -32,7 +32,7 @@ const FolderLayer = preload("res://layers/folder_layer.gd")
 onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/TopButtons/FileMenuButton
 onready var file_dialog : FileDialog = $FileDialog
 onready var layer_property_panel : Panel = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerPropertyPanel
-onready var texture_channel_buttons : GridContainer = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/TextureChannelButtons
+onready var texture_map_buttons : GridContainer = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/TextureMapButtons
 onready var model : MeshInstance = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport/Model"
 onready var layer_tree : Tree = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree
 onready var results_item_list : ItemList = $VBoxContainer/PanelContainer/HBoxContainer/ResultsItemList
@@ -48,27 +48,50 @@ func load_file(save_file : SaveFile) -> void:
 	if current_file.model_path:
 		load_model(current_file.model_path)
 	editing_layer_material = current_file.layer_material
+	editing_layer_material.update_all_layer_textures(result_size)
+	update_results(false)
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
-func add_texture_layer(texture_layer, onto : Array) -> void:
-	onto.append(texture_layer)
-	editing_layer_material.update_results(result_size)
-	results_item_list.load_layer_material(editing_layer_material)
-	model.load_layer_material_maps(editing_layer_material)
+func add_texture_layer(texture_layer, to_layer_texture : LayerTexture, onto_array = null) -> void:
+	if not onto_array:
+		onto_array = to_layer_texture.layers
+	onto_array.append(texture_layer)
+	yield(to_layer_texture.update_result(result_size), "completed")
+	if texture_layer is TextureLayer:
+		update_results(false)
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
 func add_material_layer(material_layer, onto : Array) -> void:
 	onto.append(material_layer)
-	editing_layer_material.update_results(result_size)
-	results_item_list.load_layer_material(editing_layer_material)
-	model.load_layer_material_maps(editing_layer_material)
+	if material_layer is MaterialLayer:
+		material_layer.update_all_layer_textures(result_size)
+		update_results(false)
+	layer_tree.setup_layer_material(editing_layer_material)
+
+
+func delete_layer(layer) -> void:
+	var layer_texture : LayerTexture
+	if layer is TextureLayer:
+		layer_texture = editing_layer_material.get_layer_texture_of_texture_layer(layer)
+	editing_layer_material.get_array_layer_is_in(layer).erase(layer)
+	if layer_texture:
+		layer_texture.update_result(result_size)
+	update_results(false)
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
 func load_model(path : String) -> void:
 	model.set_mesh(ObjParser.parse_obj(path))
+
+
+func update_results(update_icons := true) -> void:
+	editing_layer_material.update_results(result_size)
+	results_item_list.load_layer_material(editing_layer_material)
+	model.load_layer_material_maps(editing_layer_material)
+	if update_icons:
+		layer_tree.update_icons()
 
 
 func _on_FileDialog_file_selected(path : String):
@@ -95,55 +118,50 @@ func _on_AddButton_pressed() -> void:
 
 
 func _on_AddFolderButton_pressed() -> void:
-	if layer_tree.get_selected() and layer_tree.get_selected_material_layer() is FolderLayer:
-		add_material_layer(FolderLayer.new(), layer_tree.get_selected_material_layer().layers)
-	elif layer_tree.get_selected() and layer_tree.get_selected_material_layer() is MaterialLayer and layer_tree.get_selected_material_layer() in layer_tree.selected_layer_textures:
-		add_material_layer(FolderLayer.new(), layer_tree.selected_layer_textures[layer_tree.get_selected_material_layer()].layers)
+	if layer_tree.get_selected():
+		if layer_tree.get_selected_material_layer() is FolderLayer:
+			add_material_layer(FolderLayer.new(), layer_tree.get_selected_material_layer().layers)
+		elif layer_tree.get_selected_material_layer() is MaterialLayer:
+			if layer_tree.get_selected_layer_texture_of(layer_tree.get_selected_material_layer()):
+				add_material_layer(FolderLayer.new(), layer_tree.get_selected_layer_texture().layers)
 	else:
 		add_material_layer(FolderLayer.new(), editing_layer_material.layers)
 
 
 func _on_DeleteButton_pressed() -> void:
-	if not layer_tree.get_selected():
-		return
-	var layer = layer_tree.get_selected().get_meta("layer")
-	layer_tree.get_array_layer_is_in(layer).erase(layer)
-	layer_tree.setup_layer_material(editing_layer_material)
+	if layer_tree.get_selected():
+		delete_layer(layer_tree.get_selected().get_meta("layer"))
 
 
-func _on_TextureChannelButtons_changed(map : String, enabled : bool) -> void:
+func _on_TextureMapButtons_changed(map : String, enabled : bool) -> void:
 	if enabled:
-		layer_tree.select_map(layer_property_panel.editing_layer, map)
-		layer_tree.selected_layer_textures[layer_property_panel.editing_layer] = layer_property_panel.editing_layer.maps[map]
+		layer_tree.select_map(layer_property_panel.editing_layer, map, true)
+	update_results(false)
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
 func _on_LayerTree_material_layer_selected(material_layer) -> void:
 	layer_property_panel.load_material_layer(material_layer)
-	texture_channel_buttons.load_material_layer(material_layer)
+	texture_map_buttons.load_material_layer(material_layer)
 
 
 func _on_LayerPropertyPanel_values_changed() -> void:
 	layer_property_panel.store_values(layer_property_panel.editing_layer)
-	var affected_layers := editing_layer_material.get_depending_layer_textures(layer_property_panel.editing_layer)
-	for affected_layer in affected_layers:
-		affected_layer.update_result(result_size)
-	editing_layer_material.update_results(result_size)
-	results_item_list.load_layer_material(editing_layer_material)
-	model.load_layer_material_maps(editing_layer_material)
-	layer_tree.update_icons()
+	var affected_layer : LayerTexture = editing_layer_material.get_depending_layer_texture(layer_property_panel.editing_layer)
+	affected_layer.update_result(result_size)
+	update_results()
 
 
 func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
 	layer_property_panel.load_texture_layer(texture_layer)
-	texture_channel_buttons.hide()
+	texture_map_buttons.hide()
 
 
 func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
 	if layer_tree.material_layer_popup_menu.layer is FolderLayer:
-		add_texture_layer(layer.new(), layer_tree.material_layer_popup_menu.layer.layers)
+		add_texture_layer(layer.new(), layer_tree.material_layer_popup_menu.layer)
 	else:
-		add_texture_layer(layer.new(), layer_tree.selected_layer_textures[layer_tree.material_layer_popup_menu.layer].layers)
+		add_texture_layer(layer.new(), layer_tree.get_selected_layer_texture_of(layer_tree.material_layer_popup_menu.layer))
 
 
 func _on_FileMenu_id_pressed(id : int):
@@ -189,32 +207,20 @@ func _on_MaterialLayerPopupMenu_mask_added() -> void:
 
 
 func _on_LayerTree_layer_visibility_changed(layer) -> void:
-	if layer is MaterialLayer:
-		editing_layer_material.update_results(result_size)
-	elif layer is TextureLayer:
-		for affected_layer in editing_layer_material.get_depending_layer_textures(layer):
-			affected_layer.update_result(result_size)
-		editing_layer_material.update_results(result_size)
-	results_item_list.load_layer_material(editing_layer_material)
-	model.load_layer_material_maps(editing_layer_material)
-	layer_tree.update_icons()
+	if layer is TextureLayer:
+		var affected_layer := editing_layer_material.get_depending_layer_texture(layer)
+		affected_layer.update_result(result_size)
+	update_results()
 
 
 func _on_Viewport_painted(layer : TextureLayer) -> void:
-	for affected_layer in editing_layer_material.get_depending_layer_textures(layer):
-		affected_layer.update_result(result_size)
-	editing_layer_material.update_results(result_size)
-	results_item_list.load_layer_material(editing_layer_material)
-	model.load_layer_material_maps(editing_layer_material)
-	layer_tree.update_icons()
+	editing_layer_material.get_depending_layer_texture(layer).update_result(result_size)
+	update_results()
 
 
 func _on_MaterialLayerPopupMenu_mask_removed() -> void:
 	layer_tree.get_selected_material_layer().mask = null
-	editing_layer_material.update_results(result_size)
-	results_item_list.load_layer_material(editing_layer_material)
-	model.load_layer_material_maps(editing_layer_material)
-	layer_tree.setup_layer_material(editing_layer_material)
+	update_results()
 
 
 func _on_ToolButtonContainer_tool_selected(tool_id : int):
@@ -230,4 +236,3 @@ func _on_SaveButton_pressed() -> void:
 	file_dialog.filters = ["*.tres;Brush File"]
 	file_dialog.set_meta("to_save", painter.brush)
 	file_dialog.popup_centered()
-

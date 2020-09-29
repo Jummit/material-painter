@@ -59,17 +59,32 @@ func update_results(result_size : Vector2) -> void:
 		results[map] = result
 
 
+
+func update_all_layer_textures(result_size : Vector2) -> void:
+	var flat_layers := get_flat_layers(layers, false)
+	for layer in flat_layers:
+		layer.update_all_layer_textures(result_size)
+
+
 func export_textures(to_folder : String) -> void:
 	for type in results.keys():
 		results[type].get_data().save_png(to_folder.plus_file(type) + ".png")
 
 
-func get_depending_layer_textures(texture_layer : TextureLayer) -> Array:
-	var depending_layer_textures := []
+func get_depending_layer_texture(texture_layer : TextureLayer) -> LayerTexture:
 	for layer in get_flat_layers():
 		layer = layer as MaterialLayer
-		depending_layer_textures += layer.get_depending_layer_textures(texture_layer)
-	return depending_layer_textures
+		var depending_layer = layer.get_depending_layer_texture(texture_layer)
+		if depending_layer:
+			return depending_layer
+	return null
+
+
+func get_layer_texture_of_texture_layer(texture_layer):
+	for layer in get_flat_layers():
+		var layer_texture = layer.get_layer_texture_of_texture_layer(texture_layer)
+		if layer_texture:
+			return layer_texture
 
 
 func get_flat_layers(layer_array : Array = layers, add_hidden := true) -> Array:
@@ -82,3 +97,22 @@ func get_flat_layers(layer_array : Array = layers, add_hidden := true) -> Array:
 		else:
 			flat_layers.append(layer)
 	return flat_layers
+
+
+func get_folders(layer_array : Array = layers) -> Array:
+	var folders := []
+	for layer in layer_array:
+		if layer is FolderLayer:
+			folders.append(layer)
+			folders += get_folders(layer.layers)
+	return folders
+
+
+func get_array_layer_is_in(layer) -> Array:
+	if layer in layers:
+		return layers
+	else:
+		for folder in get_folders():
+			if layer in folder.layers:
+				return folder.layers
+	return []
