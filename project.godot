@@ -30,6 +30,7 @@ config/initialize_painter.debug=true
 Globals="*res://main/globals.gd"
 LayerBlendViewportManager="*res://render_viewports/layer_blend_viewport_manager.gd"
 NormalMapGenerationViewport="*res://render_viewports/normal_map_generation_viewport/normal_map_generation_viewport.gd"
+PreviewRenderer="*res://render_viewports/preview_renderer/preview_renderer.tscn"
 
 [debug]
 

@@ -32,7 +32,7 @@ func get_depending_layer_texture(texture_layer : TextureLayer) -> LayerTexture:
 func update_all_layer_textures(result_size : Vector2) -> void:
 	for layer_texture in maps.values() + [mask]:
 		if layer_texture:
-			layer_texture.update_result(result_size)
+			yield(layer_texture.update_result(result_size), "completed")
 
 
 func get_layer_texture_of_texture_layer(texture_layer):

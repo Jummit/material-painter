@@ -47,13 +47,15 @@ class TextureAssetType extends AssetType:
 class MaterialAssetType extends AssetType:
 	const MaterialLayer = preload("res://layers/material_layer.gd")
 	const LayerTexture = preload("res://layers/layer_texture.gd")
+	const LayerMaterial = preload("res://layers/layer_material.gd")
 	
 	func _init().("Materials", "user://materials") -> void:
 		pass
 	
-	func _generate_preview(_asset : Resource):
-		# todo: propper previews
-		return null
+	func _generate_preview(asset : Resource) -> Texture:
+		var material_to_render := LayerMaterial.new()
+		material_to_render.layers.append(asset)
+		return yield(PreviewRenderer.get_preview_for_material(material_to_render, Vector2(128, 128)), "completed")
 
 class BrushAssetType extends AssetType:
 	func _init().("Brushes", "user://brushes") -> void:

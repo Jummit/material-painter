@@ -63,7 +63,7 @@ func update_results(result_size : Vector2) -> void:
 func update_all_layer_textures(result_size : Vector2) -> void:
 	var flat_layers := get_flat_layers(layers, false)
 	for layer in flat_layers:
-		layer.update_all_layer_textures(result_size)
+		yield(layer.update_all_layer_textures(result_size), "completed")
 
 
 func export_textures(to_folder : String) -> void:
