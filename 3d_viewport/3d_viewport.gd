@@ -48,7 +48,7 @@ func _gui_input(event : InputEvent) -> void:
 		if _can_paint_with_tool(main.Tools.PAINT):
 			_paint(layer_tree.get_selected_texture_layer(), event.position, event.position)
 			last_painted_position = event.position
-	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(BUTTON_LEFT) and _can_paint_with_tool(main.Tools.PAINT):
+	if not get_viewport().gui_is_dragging() and event is InputEventMouseMotion and Input.is_mouse_button_pressed(BUTTON_LEFT) and _can_paint_with_tool(main.Tools.PAINT):
 		_paint(layer_tree.get_selected_texture_layer(), last_painted_position, event.position)
 		last_painted_position = event.position
 	
