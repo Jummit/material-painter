@@ -15,7 +15,6 @@ var _small_empty_texture := preload("res://icons/small_loading_layer.svg")
 var _tree_items : Dictionary
 var _selected_layer_textures : Dictionary
 var _selected_maps : Dictionary
-var _expanded_maps : Array
 var _expanded_folders : Array
 
 signal material_layer_selected(material_layer)
@@ -228,20 +227,17 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 			map_type_popup_menu.popup()
 		Buttons.RESULT:
 			if layer is MaterialLayer:
-				var material_layer : MaterialLayer = layer
-				if material_layer in _expanded_maps and _selected_layer_textures[material_layer] != material_layer.mask:
-					_expanded_maps.erase(material_layer)
+				if layer in _selected_layer_textures and _selected_layer_textures[layer] != layer.mask:
+					_selected_layer_textures.erase(layer)
 				else:
-					_expanded_maps.append(material_layer)
-					_selected_layer_textures[material_layer] = _selected_maps[material_layer]
+					_selected_layer_textures[layer] = _selected_maps[layer]
 				setup_layer_material(main.editing_layer_material)
 		Buttons.MASK:
 			var material_layer : MaterialLayer = layer
-			if material_layer in _expanded_maps and _selected_layer_textures[material_layer] == material_layer.mask:
-				_expanded_maps.erase(material_layer)
+			if material_layer in _selected_layer_textures and _selected_layer_textures[material_layer] == material_layer.mask:
+				_selected_layer_textures.erase(material_layer)
 			else:
-				_expanded_maps.append(material_layer)
-				_selected_layer_textures[material_layer] = material_layer.mask
+				_selected_layer_textures[material_layer] = _selected_maps[material_layer]
 			setup_layer_material(main.editing_layer_material)
 		Buttons.VISIBILITY:
 			layer.visible = not layer.visible
@@ -311,13 +307,13 @@ func _setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
 	material_layer_item.custom_minimum_height = 32
 	
 	if material_layer is MaterialLayer:
-		if not material_layer in _selected_layer_textures:
-			if material_layer.maps.size() > 0:
-				_selected_layer_textures[material_layer] = material_layer.maps.values().front()
-		if material_layer in _expanded_maps:
+		if material_layer in _selected_layer_textures:
 			var selected_layer_texture : LayerTexture = _selected_layer_textures[material_layer]
 			for texture_layer in selected_layer_texture.layers:
 				_setup_texture_layer_item(texture_layer, material_layer_item, selected_layer_texture)
+		
+		if not material_layer in _selected_maps and material_layer.maps.size() > 0:
+			_selected_maps[material_layer] = material_layer.maps.values().front()
 		
 		if material_layer.mask:
 			material_layer_item.add_button(0, _empty_texture, Buttons.MASK)
