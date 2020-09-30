@@ -10,5 +10,5 @@ func get_normal_map(height_map : Texture) -> ViewportTexture:
 	texture_rect.texture = height_map
 	texture_rect.expand = true
 	texture_rect.rect_size = result_size
-	texture_rect.material = preload("res://render_viewports/normal_map_generation_viewport/height_to_normal_map.material")
+	texture_rect.material = preload("height_to_normal_map.material")
 	return render_texture(texture_rect, result_size)

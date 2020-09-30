@@ -10,8 +10,8 @@ This avoids having to make the resulting texture local by keeping the viewport.
 var one_time_viewport := LayerBlendingViewportScene.instance()
 
 const TextureUtils = preload("res://utils/texture_utils.gd")
-const LayerBlendingViewport = preload("res://render_viewports/layer_blending_viewport/layer_blending_viewport.gd")
-const LayerBlendingViewportScene = preload("res://render_viewports/layer_blending_viewport/layer_blending_viewport.tscn")
+const LayerBlendingViewport = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd")
+const LayerBlendingViewportScene = preload("res://addons/layer_blending_viewport/layer_blending_viewport.tscn")
 
 func _ready() -> void:
 	add_child(one_time_viewport)

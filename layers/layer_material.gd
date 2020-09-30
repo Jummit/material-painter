@@ -19,7 +19,7 @@ var results : Dictionary
 
 const TextureLayer = preload("res://layers/texture_layer.gd")
 const MaterialLayer = preload("res://layers/material_layer.gd")
-const BlendingLayer = preload("res://render_viewports/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
+const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 const LayerTexture = preload("res://layers/layer_texture.gd")
 const FolderLayer = preload("res://layers/folder_layer.gd")
 

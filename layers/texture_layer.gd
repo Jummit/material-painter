@@ -19,7 +19,7 @@ export var blend_mode := "normal"
 var type_name : String
 
 const Properties = preload("res://addons/property_panel/properties.gd")
-const BlendingLayer = preload("res://render_viewports/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
+const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 
 func _init(_type_name : String):
 	resource_local_to_scene = true
