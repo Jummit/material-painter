@@ -265,8 +265,7 @@ func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
 	var selected_map : LayerTexture = layer.maps.values()[id]
 	_selected_maps[layer] = selected_map
 	_selected_layer_textures[layer] = selected_map
-	update_icons()
-	update()
+	setup_layer_material(main.editing_layer_material)
 
 
 func _draw_material_layer_item(material_layer_item : TreeItem, item_rect : Rect2) -> void:
