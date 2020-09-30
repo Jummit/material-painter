@@ -56,8 +56,10 @@ func add_texture_layer(texture_layer, to_layer_texture : LayerTexture, onto_arra
 func add_material_layer(material_layer, onto : Array) -> void:
 	onto.append(material_layer)
 	if material_layer is MaterialLayer:
-		material_layer.update_all_layer_textures(result_size)
-		_update_results(false)
+		yield(material_layer.update_all_layer_textures(result_size), "completed")
+	else:
+		yield(_update_all_layer_textures(material_layer.layers), "completed")
+	_update_results()
 	layer_tree.setup_layer_material(editing_layer_material)
 
 
@@ -239,8 +241,18 @@ func _load_model(path : String) -> void:
 
 
 func _update_results(update_icons := true) -> void:
-	editing_layer_material.update_results(result_size)
+	var result = editing_layer_material.update_results(result_size)
+	if result is GDScriptFunctionState:
+		yield(result, "completed")
 	results_item_list.load_layer_material(editing_layer_material)
 	model.load_layer_material_maps(editing_layer_material)
 	if update_icons:
 		layer_tree.update_icons()
+
+
+func _update_all_layer_textures(layers : Array) -> void:
+	for layer in layers:
+		if layer is MaterialLayer:
+			yield(layer.update_all_layer_textures(result_size), "completed")
+		else:
+			yield(_update_all_layer_textures(layer.layers), "completed")

@@ -27,6 +27,7 @@ func _get_as_shader_layer() -> BlendingLayer:
 		texture = temp_texture
 	else:
 		texture = ImageTexture.new()
-		texture.create_from_image(image_data)
+		if image_data.get_data().size() > 0:
+			texture.create_from_image(image_data)
 	layer.uniform_values = [texture]
 	return layer
