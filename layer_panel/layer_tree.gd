@@ -20,6 +20,7 @@ var _expanded_folders : Array
 
 signal material_layer_selected(material_layer)
 signal texture_layer_selected(texture_layer)
+signal folder_layer_selected
 signal layer_visibility_changed(layer)
 
 enum Buttons {
@@ -214,6 +215,8 @@ func _on_cell_selected() -> void:
 		emit_signal("material_layer_selected", layer)
 	elif layer is TextureLayer:
 		emit_signal("texture_layer_selected", layer)
+	else:
+		emit_signal("folder_layer_selected")
 
 
 func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:

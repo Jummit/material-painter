@@ -88,5 +88,9 @@ func load_values(instance : Object) -> void:
 	set_block_signals(false)
 
 
+func clear() -> void:
+	set_properties([])
+
+
 func _on_Property_changed():
 	emit_signal("values_changed")

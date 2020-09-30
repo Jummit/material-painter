@@ -111,6 +111,8 @@ func _on_AddFolderButton_pressed() -> void:
 func _on_DeleteButton_pressed() -> void:
 	if layer_tree.get_selected():
 		_delete_layer(layer_tree.get_selected().get_meta("layer"))
+	layer_property_panel.clear()
+	texture_map_buttons.hide()
 
 
 func _on_TextureMapButtons_changed(map : String, enabled : bool) -> void:
@@ -134,6 +136,10 @@ func _on_LayerPropertyPanel_values_changed() -> void:
 
 func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
 	layer_property_panel.load_texture_layer(texture_layer)
+	texture_map_buttons.hide()
+
+
+func _on_LayerTree_folder_layer_selected() -> void:
 	texture_map_buttons.hide()
 
 
