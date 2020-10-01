@@ -37,13 +37,26 @@ onready var asset_browser : TabContainer = $VBoxContainer/PanelContainer/HBoxCon
 func _ready() -> void:
 	file_menu_button.get_popup().connect("id_pressed", self, "_on_FileMenu_id_pressed")
 	_load_file(SaveFile.new())
+	undo_redo.connect("version_changed", self, "_on_UndoRedo_version_changed")
+
+
+func _on_UndoRedo_version_changed() -> void:
+	if undo_redo.get_current_action_name():
+		print(undo_redo.get_current_action_name())
 
 
 func _input(event : InputEvent) -> void:
 	if event.is_action_pressed("undo"):
-		undo_redo.undo()
+		var action := undo_redo.get_current_action_name()
+		if not undo_redo.undo():
+			print("Nothing to undo.")
+		elif action:
+			print("Undo: " + action)
 	elif event.is_action_pressed("redo"):
-		undo_redo.redo()
+		if not undo_redo.redo():
+			print("Nothing to redo.")
+		else:
+			print("Redo: " + undo_redo.get_current_action_name())
 
 
 func add_texture_layer(texture_layer, to_layer_texture : LayerTexture, onto_array = null) -> void:
