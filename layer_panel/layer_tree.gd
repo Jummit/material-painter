@@ -233,11 +233,10 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 					_selected_layer_textures[layer] = _selected_maps[layer]
 				setup_layer_material(main.editing_layer_material)
 		Buttons.MASK:
-			var material_layer : MaterialLayer = layer
-			if material_layer in _selected_layer_textures and _selected_layer_textures[material_layer] == material_layer.mask:
-				_selected_layer_textures.erase(material_layer)
+			if layer in _selected_layer_textures and _selected_layer_textures[layer] == layer.mask:
+				_selected_layer_textures.erase(layer)
 			else:
-				_selected_layer_textures[material_layer] = _selected_maps[material_layer]
+				_selected_layer_textures[layer] = layer.mask
 			setup_layer_material(main.editing_layer_material)
 		Buttons.VISIBILITY:
 			layer.visible = not layer.visible
