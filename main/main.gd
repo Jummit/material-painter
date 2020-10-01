@@ -11,6 +11,7 @@ var current_file : SaveFile
 var file_location : String
 var editing_layer_material : LayerMaterial
 var result_size := Vector2(2048, 2048)
+var undo_redo := UndoRedo.new()
 
 const MATERIAL_PATH := "user://materials"
 
@@ -36,6 +37,13 @@ onready var asset_browser : TabContainer = $VBoxContainer/PanelContainer/HBoxCon
 func _ready() -> void:
 	file_menu_button.get_popup().connect("id_pressed", self, "_on_FileMenu_id_pressed")
 	_load_file(SaveFile.new())
+
+
+func _input(event : InputEvent) -> void:
+	if event.is_action_pressed("undo"):
+		undo_redo.undo()
+	elif event.is_action_pressed("redo"):
+		undo_redo.redo()
 
 
 func add_texture_layer(texture_layer, to_layer_texture : LayerTexture, onto_array = null) -> void:
@@ -96,10 +104,16 @@ func _on_FileDialog_file_selected(path : String) -> void:
 
 
 func _on_AddButton_pressed() -> void:
+	var onto_array : Array
 	if layer_tree.get_selected() and layer_tree.get_selected_material_layer() is FolderLayer:
-		add_material_layer(MaterialLayer.new(), layer_tree.get_selected_material_layer().layers)
+		onto_array = layer_tree.get_selected_material_layer().layers
 	else:
-		add_material_layer(MaterialLayer.new(), editing_layer_material.layers)
+		onto_array = editing_layer_material.layers
+	undo_redo.create_action("Add Material Layer")
+	var new_layer := MaterialLayer.new()
+	undo_redo.add_do_method(self, "add_material_layer", new_layer, onto_array)
+	undo_redo.add_undo_method(self, "_delete_layer", new_layer)
+	undo_redo.commit_action()
 
 
 func _on_AddFolderButton_pressed() -> void:
