@@ -8,5 +8,5 @@
 
 [node name="Camera" type="Camera" parent="HorizontalCameraSocket"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.77447 )
-far = 500.0
+far = 2000.0
 script = ExtResource( 1 )
