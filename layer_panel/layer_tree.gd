@@ -97,7 +97,10 @@ func can_drop_data(position : Vector2, data) -> bool:
 	if "asset" in data and (data.asset is String or data.asset is MaterialLayer\
 			or data.asset is FolderLayer):
 		return true
-	if data is Dictionary and "type" in data and data.type == "layers":
+	if data is Dictionary and "type" in data and data.type == "layers" and get_item_at_position(position):
+		for layer in data.layers:
+			if layer == get_item_at_position(position).get_meta("layer"):
+				return false
 		var layer_type : int = data.layer_type
 		var is_folder := get_layer_at_position(position) is FolderLayer
 		var onto_type : int = _get_layer_type(get_item_at_position(position))
