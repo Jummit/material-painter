@@ -69,9 +69,13 @@ func add_material_layer(material_layer, onto : Array) -> void:
 
 func _delete_layer(layer) -> void:
 	var layer_texture : LayerTexture
+	var array_layer_is_in : Array
 	if layer is TextureLayer:
 		layer_texture = editing_layer_material.get_layer_texture_of_texture_layer(layer)
-	editing_layer_material.get_array_layer_is_in(layer).erase(layer)
+		array_layer_is_in = layer_texture.layers
+	else:
+		array_layer_is_in = editing_layer_material.get_array_layer_is_in(layer)
+	array_layer_is_in.erase(layer)
 	if layer_texture:
 		layer_texture.update_result(result_size)
 	_update_results(false)
