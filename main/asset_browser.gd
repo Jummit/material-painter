@@ -29,14 +29,21 @@ class AssetType:
 	
 	func _load(path : String):
 		return load(path)
+	
+	func get_asset_directory() -> String:
+		return "user://".plus_file(directory)
+	
+	func get_cashed_thumbnails_path() -> String:
+		return "user://cashed_thumbnails/" + directory
 
 class TextureAssetType extends AssetType:
-	func _init().("Textures", "user://textures") -> void:
+	func _init().("Textures", "textures") -> void:
 		pass
 	
 	func _generate_preview(asset) -> Texture:
 		var image := Image.new()
 		image.load(asset)
+		image.resize(128, 128)
 		var image_texture := ImageTexture.new()
 		image_texture.create_from_image(image)
 		return image_texture
@@ -49,7 +56,7 @@ class MaterialAssetType extends AssetType:
 	const LayerTexture = preload("res://layers/layer_texture.gd")
 	const LayerMaterial = preload("res://layers/layer_material.gd")
 	
-	func _init().("Materials", "user://materials") -> void:
+	func _init().("Materials", "materials") -> void:
 		pass
 	
 	func _generate_preview(asset : Resource) -> Texture:
@@ -58,7 +65,7 @@ class MaterialAssetType extends AssetType:
 		return yield(PreviewRenderer.get_preview_for_material(material_to_render, Vector2(128, 128)), "completed")
 
 class BrushAssetType extends AssetType:
-	func _init().("Brushes", "user://brushes") -> void:
+	func _init().("Brushes", "brushes") -> void:
 		pass
 	
 	func _generate_preview(asset : Resource) -> Texture:
@@ -83,19 +90,30 @@ func load_assets(asset_type : AssetType) -> void:
 	
 	var dir := Directory.new()
 	dir.make_dir_recursive(asset_type.directory)
-	dir.open(asset_type.directory)
+	dir.open(asset_type.get_asset_directory())
 	dir.list_dir_begin(true)
 	var file_name := dir.get_next()
 	while file_name != "":
-		var file := asset_type.directory.plus_file(file_name)
+		var file := asset_type.get_asset_directory().plus_file(file_name)
 		var asset = asset_type._load(file)
 		var id := item_list.get_item_count()
-		var preview = asset_type._generate_preview(asset)
-		if preview is GDScriptFunctionState:
-			preview = yield(preview, "completed")
+		var cache_thumbnail_path := asset_type.get_cashed_thumbnails_path().plus_file(file_name.get_basename() + ".png")
+		dir.make_dir_recursive(asset_type.get_cashed_thumbnails_path())
+		var preview
+		if dir.file_exists(cache_thumbnail_path):
+			var preview_image := Image.new()
+			preview_image.load(cache_thumbnail_path)
+			preview = ImageTexture.new()
+			preview.create_from_image(preview_image)
+		else:
+			preview = asset_type._generate_preview(asset)
+			if preview is GDScriptFunctionState:
+				preview = yield(preview, "completed")
+			(preview as Texture).get_data().save_png(cache_thumbnail_path)
 		item_list.add_item(file.get_file().get_basename(), preview)
 		item_list.set_item_metadata(id, {type = asset_type.name, asset = asset})
 		file_name = dir.get_next()
+		yield(get_tree(), "idle_frame")
 
 
 func get_drag_data_fw(position : Vector2, _from : Control):
