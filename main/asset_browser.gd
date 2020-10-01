@@ -60,6 +60,9 @@ class MaterialAssetType extends AssetType:
 class BrushAssetType extends AssetType:
 	func _init().("Brushes", "user://brushes") -> void:
 		pass
+	
+	func _generate_preview(asset : Resource) -> Texture:
+		return yield(PreviewRenderer.get_preview_for_brush(asset, Vector2(128, 128)), "completed")
 
 func _ready():
 	if ProjectSettings.get_setting("application/config/load_assets"):

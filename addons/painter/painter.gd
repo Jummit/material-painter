@@ -59,7 +59,7 @@ func paint(from : Vector2, to : Vector2) -> void:
 	_painting = false
 	if _next_position != Vector2.ZERO:
 		_next_position = Vector2.ZERO
-		paint(to, _next_position)
+		yield(paint(to, _next_position), "completed")
 
 
 func set_mesh_instance(to : MeshInstance) -> void:
@@ -69,6 +69,7 @@ func set_mesh_instance(to : MeshInstance) -> void:
 	texture_to_view_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 	yield(VisualServer, "frame_post_draw")
 	seams_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
+	yield(VisualServer, "frame_post_draw")
 
 
 func update_view(viewport : Viewport) -> void:
@@ -95,6 +96,8 @@ func update_view(viewport : Viewport) -> void:
 		paint_material.set_shader_param("brush_size", brush.size / viewport.size)
 	
 	_viewport_size = viewport.size
+	
+	yield(VisualServer, "frame_post_draw")
 
 
 func set_brush(to : Brush) -> void:
@@ -121,6 +124,7 @@ func set_brush(to : Brush) -> void:
 func clear() -> void:
 	initial_texture_rect.texture = null
 	paint_viewport.render_target_clear_mode = Viewport.CLEAR_MODE_ONLY_NEXT_FRAME
+	yield(VisualServer, "frame_post_draw")
 
 
 func _load_image_texture(path : String) -> ImageTexture:

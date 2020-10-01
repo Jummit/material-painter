@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://3d_viewport/model.gd" type="Script" id=1]
 [ext_resource path="res://preview_renderer/preview_renderer.gd" type="Script" id=2]
 [ext_resource path="res://preview_renderer/preview_sphere.obj" type="ArrayMesh" id=3]
+[ext_resource path="res://addons/painter/painter.tscn" type="PackedScene" id=4]
 
 [sub_resource type="Environment" id=1]
 background_mode = 1
@@ -15,6 +16,8 @@ environment = SubResource( 1 )
 
 [sub_resource type="SpatialMaterial" id=3]
 flags_albedo_tex_force_srgb = true
+
+[sub_resource type="QuadMesh" id=4]
 
 [node name="PreviewRenderer" type="Viewport"]
 world = SubResource( 2 )
@@ -35,3 +38,17 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.037, 1.743 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
 transform = Transform( -0.247929, -0.717653, 0.650773, 0, 0.671746, 0.740781, -0.968778, 0.183661, -0.166546, 0, 5, 0 )
+
+[node name="Painter" parent="." instance=ExtResource( 4 )]
+
+[node name="PaintViewport" type="Viewport" parent="."]
+
+[node name="Camera" type="Camera" parent="PaintViewport"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.724 )
+
+[node name="MeshInstance" type="MeshInstance" parent="PaintViewport"]
+mesh = SubResource( 4 )
+material/0 = null
+
+[node name="PaintLine" type="Line2D" parent="."]
+points = PoolVector2Array( 0.179688, 0.164062, 0.851562, 0.414062, 0.15625, 0.617188, 0.609375, 0.804688 )

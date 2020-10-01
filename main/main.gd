@@ -56,9 +56,13 @@ func add_texture_layer(texture_layer, to_layer_texture : LayerTexture, onto_arra
 func add_material_layer(material_layer, onto : Array) -> void:
 	onto.append(material_layer)
 	if material_layer is MaterialLayer:
-		yield(material_layer.update_all_layer_textures(result_size), "completed")
+		var result = material_layer.update_all_layer_textures(result_size)
+		if result is GDScriptFunctionState:
+			yield(result, "completed")
 	else:
-		yield(_update_all_layer_textures(material_layer.layers), "completed")
+		var result = _update_all_layer_textures(material_layer.layers)
+		if result is GDScriptFunctionState:
+			yield(result, "completed")
 	_update_results()
 	layer_tree.setup_layer_material(editing_layer_material)
 
