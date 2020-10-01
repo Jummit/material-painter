@@ -63,7 +63,9 @@ func update_results(result_size : Vector2) -> void:
 func update_all_layer_textures(result_size : Vector2) -> void:
 	var flat_layers := get_flat_layers(layers, false)
 	for layer in flat_layers:
-		yield(layer.update_all_layer_textures(result_size), "completed")
+		var result = layer.update_all_layer_textures(result_size)
+		if result is GDScriptFunctionState:
+			result = yield(result, "completed")
 
 
 func export_textures(to_folder : String) -> void:

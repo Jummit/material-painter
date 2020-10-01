@@ -10,11 +10,13 @@ and how to generate a thumbnail for it.
 
 signal asset_activated(asset)
 
-var ASSET_TYPES := [
-	TextureAssetType.new(),
-	MaterialAssetType.new(),
-	BrushAssetType.new(),
-]
+var asset_type_item_lists : Dictionary
+
+var ASSET_TYPES := {
+	TEXTURE = TextureAssetType.new(),
+	MATERIAL = MaterialAssetType.new(),
+	BRUSH = BrushAssetType.new(),
+}
 
 class AssetType:
 	var name : String
@@ -73,13 +75,16 @@ class BrushAssetType extends AssetType:
 
 func _ready():
 	if ProjectSettings.get_setting("application/config/load_assets"):
-		for asset_type in ASSET_TYPES:
+		for asset_type in ASSET_TYPES.values():
 			load_assets(asset_type)
+	get_tree().connect("files_dropped", self, "_on_SceneTree_files_dropped")
 
 
 func load_assets(asset_type : AssetType) -> void:
 	var item_list := ItemList.new()
 	item_list.name = asset_type.name
+	item_list.set_meta("type", asset_type)
+	asset_type_item_lists[asset_type] = item_list
 	item_list.icon_mode = ItemList.ICON_MODE_TOP
 	item_list.same_column_width = true
 	item_list.max_columns = 100
@@ -94,26 +99,10 @@ func load_assets(asset_type : AssetType) -> void:
 	dir.list_dir_begin(true)
 	var file_name := dir.get_next()
 	while file_name != "":
-		var file := asset_type.get_asset_directory().plus_file(file_name)
-		var asset = asset_type._load(file)
-		var id := item_list.get_item_count()
-		var cache_thumbnail_path := asset_type.get_cashed_thumbnails_path().plus_file(file_name.get_basename() + ".png")
-		dir.make_dir_recursive(asset_type.get_cashed_thumbnails_path())
-		var preview
-		if dir.file_exists(cache_thumbnail_path):
-			var preview_image := Image.new()
-			preview_image.load(cache_thumbnail_path)
-			preview = ImageTexture.new()
-			preview.create_from_image(preview_image)
-		else:
-			preview = asset_type._generate_preview(asset)
-			if preview is GDScriptFunctionState:
-				preview = yield(preview, "completed")
-			(preview as Texture).get_data().save_png(cache_thumbnail_path)
-		item_list.add_item(file.get_file().get_basename(), preview)
-		item_list.set_item_metadata(id, {type = asset_type.name, asset = asset})
+		var result = register_asset(file_name, asset_type)
+		if result is GDScriptFunctionState:
+			result = yield(result, "completed")
 		file_name = dir.get_next()
-		yield(get_tree(), "idle_frame")
 
 
 func get_drag_data_fw(position : Vector2, _from : Control):
@@ -128,5 +117,35 @@ func get_drag_data_fw(position : Vector2, _from : Control):
 		return item_list.get_item_metadata(item)
 
 
+func register_asset(file : String, asset_type : AssetType) -> void:
+	var item_list : ItemList = asset_type_item_lists[asset_type]
+	var asset = asset_type._load(asset_type.get_asset_directory().plus_file(file))
+	var id := item_list.get_item_count()
+	var cache_thumbnail_path := asset_type.get_cashed_thumbnails_path().plus_file(file.get_basename() + ".png")
+	var dir := Directory.new()
+	dir.make_dir_recursive(asset_type.get_cashed_thumbnails_path())
+	var preview
+	if dir.file_exists(cache_thumbnail_path):
+		var preview_image := Image.new()
+		preview_image.load(cache_thumbnail_path)
+		preview = ImageTexture.new()
+		preview.create_from_image(preview_image)
+	else:
+		preview = asset_type._generate_preview(asset)
+		if preview is GDScriptFunctionState:
+			preview = yield(preview, "completed")
+		(preview as Texture).get_data().save_png(cache_thumbnail_path)
+	item_list.add_item(file.get_file().get_basename(), preview)
+	item_list.set_item_metadata(id, {type = asset_type.name, asset = asset})
+
+
 func _on_AssetList_item_activated(index : int, item_list : ItemList) -> void:
 	emit_signal("asset_activated", item_list.get_item_metadata(index))
+
+
+func _on_SceneTree_files_dropped(files : PoolStringArray, _screen : int) -> void:
+	var current_asset_type : AssetType = get_current_tab_control().get_meta("type")
+	var dir := Directory.new()
+	for file in files:
+		dir.copy(file, current_asset_type.get_asset_directory().plus_file(file.get_file()))
+		register_asset(file.get_file(), current_asset_type)

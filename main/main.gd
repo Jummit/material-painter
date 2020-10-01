@@ -28,6 +28,7 @@ const LayerMaterial = preload("res://layers/layer_material.gd")
 const LayerTexture = preload("res://layers/layer_texture.gd")
 const TextureLayer = preload("res://layers/texture_layer.gd")
 const FolderLayer = preload("res://layers/folder_layer.gd")
+const Brush = preload("res://addons/painter/brush.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/TopButtons/FileMenuButton
 onready var file_dialog : FileDialog = $FileDialog
@@ -37,6 +38,7 @@ onready var model : MeshInstance = $"VBoxContainer/PanelContainer/HBoxContainer/
 onready var layer_tree : Tree = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree
 onready var results_item_list : ItemList = $VBoxContainer/PanelContainer/HBoxContainer/ResultsItemList
 onready var painter : Node = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Painter"
+onready var asset_browser : TabContainer = $VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser
 
 func _ready() -> void:
 	file_menu_button.get_popup().connect("id_pressed", self, "_on_FileMenu_id_pressed")
@@ -89,6 +91,8 @@ func _on_FileDialog_file_selected(path : String) -> void:
 			if to_save is SaveFile:
 				file_location = path
 			ResourceSaver.save(path, to_save)
+			if to_save is Brush:
+				asset_browser.register_asset(path.get_file(), asset_browser.ASSET_TYPES.BRUSH)
 		FileDialog.MODE_OPEN_FILE:
 			if path.get_extension() == "tres":
 				file_location = path
@@ -163,6 +167,7 @@ func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
 func _on_MaterialLayerPopupMenu_layer_saved() -> void:
 	var material_layer = layer_tree.get_selected_material_layer()
 	ResourceSaver.save(MATERIAL_PATH.plus_file(material_layer.name) + ".tres", material_layer)
+	asset_browser.register_asset(material_layer.name + ".tres", asset_browser.ASSET_TYPES.MATERIAL)
 
 
 func _on_MaterialLayerPopupMenu_mask_added() -> void:
