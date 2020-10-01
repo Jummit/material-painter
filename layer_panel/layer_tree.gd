@@ -45,6 +45,7 @@ const FileTextureLayer = preload("res://layers/texture_layers/file_texture_layer
 const FolderLayer = preload("res://layers/folder_layer.gd")
 
 onready var main : Control = $"../../../../.."
+onready var undo_redo : UndoRedo = main.undo_redo
 onready var material_layer_popup_menu : PopupMenu = $MaterialLayerPopupMenu
 onready var map_type_popup_menu : PopupMenu = $MapTypePopupMenu
 
@@ -115,6 +116,7 @@ func can_drop_data(position : Vector2, data) -> bool:
 
 func drop_data(position : Vector2, data) -> void:
 	if data is Dictionary and "type" in data and data.type == "layers":
+		undo_redo.create_action("Rearrange Layers")
 		var onto_layer = get_layer_at_position(position)
 		match get_drop_section_at_position(position):
 			0:
@@ -124,7 +126,9 @@ func drop_data(position : Vector2, data) -> void:
 				else:
 					onto_array = onto_layer.layers
 				for layer in data.layers:
-					onto_array.append(layer.duplicate())
+					var new_layer = layer.duplicate()
+					undo_redo.add_do_method(self, "add_layer_to_array", new_layer, onto_array)
+					undo_redo.add_undo_method(self, "remove_layer_from_array", new_layer, onto_array)
 			var section:
 				var onto_array : Array = main.editing_layer_material.get_array_layer_is_in(onto_layer)
 				var onto_position := onto_array.find(onto_layer)
@@ -133,11 +137,18 @@ func drop_data(position : Vector2, data) -> void:
 				onto_position = int(clamp(onto_position, 0, onto_array.size()))
 				data.layers.invert()
 				for layer in data.layers:
-					onto_array.insert(onto_position, layer.duplicate())
+					var new_layer = layer.duplicate()
+					undo_redo.add_do_method(self, "insert_layer_to_array", new_layer, onto_array, onto_position)
+					undo_redo.add_undo_method(self, "remove_layer_from_array", new_layer, onto_array)
 		
 		for layer in data.layers:
-			main.editing_layer_material.get_array_layer_is_in(layer).erase(layer)
-		reload()
+			var in_array : Array = main.editing_layer_material.get_array_layer_is_in(layer)
+			var layer_position = in_array.find(layer)
+			undo_redo.add_do_method(self, "remove_layer_from_array", layer, in_array)
+			undo_redo.add_undo_method(self, "insert_layer_to_array", layer, in_array, layer_position)
+		undo_redo.add_do_method(self, "reload")
+		undo_redo.add_undo_method(self, "reload")
+		undo_redo.commit_action()
 	elif "asset" in data:
 		if data.asset is String:
 			var layer := FileTextureLayer.new()
@@ -146,6 +157,18 @@ func drop_data(position : Vector2, data) -> void:
 			main.add_texture_layer(layer, _selected_layer_textures[get_layer_at_position(position)])
 		elif data.asset is MaterialLayer or data.asset is FolderLayer:
 			main.add_material_layer(data.asset, main.editing_layer_material.layers)
+
+
+func insert_layer_to_array(layer, array : Array, position : int) -> void:
+	array.insert(position, layer)
+
+
+func add_layer_to_array(layer, array : Array) -> void:
+	array.append(layer)
+
+
+func remove_layer_from_array(layer, array : Array) -> void:
+	array.erase(layer)
 
 
 func set_editing_layer_material(to) -> void:
@@ -295,12 +318,12 @@ func _draw_material_layer_item(material_layer_item : TreeItem, item_rect : Rect2
 
 
 func _on_item_edited() -> void:
-	main.undo_redo.create_action("Rename Layer")
+	undo_redo.create_action("Rename Layer")
 	var edited_layer = get_edited().get_meta("layer")
-	main.undo_redo.add_do_property(edited_layer, "name", get_edited().get_text(get_edited_column()))
-	main.undo_redo.add_undo_property(edited_layer, "name", edited_layer.name)
-	main.undo_redo.add_undo_method(_tree_items[edited_layer], "set_text", 1, edited_layer.name)
-	main.undo_redo.commit_action()
+	undo_redo.add_do_property(edited_layer, "name", get_edited().get_text(get_edited_column()))
+	undo_redo.add_undo_property(edited_layer, "name", edited_layer.name)
+	undo_redo.add_undo_method(_tree_items[edited_layer], "set_text", 1, edited_layer.name)
+	undo_redo.commit_action()
 	_lastly_edited_layer = null
 
 
