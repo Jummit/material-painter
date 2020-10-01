@@ -59,7 +59,7 @@ func _gui_input(event : InputEvent) -> void:
 		if layer:
 			material_layer_popup_menu.rect_global_position = event.global_position
 			material_layer_popup_menu.layer = layer
-			material_layer_popup_menu.layer_texture_selected = layer is MaterialLayer
+			material_layer_popup_menu.layer_texture_selected = layer is MaterialLayer and layer in _selected_layer_textures
 			material_layer_popup_menu.popup()
 	elif event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
 		# `get_selected` returns null the first time a layer is clicked
