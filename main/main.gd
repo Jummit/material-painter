@@ -144,9 +144,15 @@ func _on_AddFolderButton_pressed() -> void:
 
 func _on_DeleteButton_pressed() -> void:
 	if layer_tree.get_selected():
-		_delete_layer(layer_tree.get_selected().get_meta("layer"))
-	layer_property_panel.clear()
-	texture_map_buttons.hide()
+		undo_redo.create_action("Delete Layer")
+		var selected_layer = layer_tree.get_selected().get_meta("layer")
+		undo_redo.add_do_method(self, "_delete_layer", selected_layer)
+		undo_redo.add_do_method(layer_property_panel, "clear")
+		undo_redo.add_do_method(texture_map_buttons, "hide")
+		undo_redo.add_undo_method(self, "add_material_layer", selected_layer, editing_layer_material.get_array_layer_is_in(selected_layer))
+		undo_redo.add_undo_method(layer_property_panel, "load_material_layer", selected_layer)
+		undo_redo.add_undo_method(texture_map_buttons, "show")
+		undo_redo.commit_action()
 
 
 func _on_TextureMapButtons_changed(map : String, enabled : bool) -> void:

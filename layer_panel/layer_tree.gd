@@ -295,7 +295,12 @@ func _draw_material_layer_item(material_layer_item : TreeItem, item_rect : Rect2
 
 
 func _on_item_edited() -> void:
-	get_edited().get_meta("layer").name = get_edited().get_text(get_edited_column())
+	main.undo_redo.create_action("Rename Layer")
+	var edited_layer = get_edited().get_meta("layer")
+	main.undo_redo.add_do_property(edited_layer, "name", get_edited().get_text(get_edited_column()))
+	main.undo_redo.add_undo_property(edited_layer, "name", edited_layer.name)
+	main.undo_redo.add_undo_method(_tree_items[edited_layer], "set_text", 1, edited_layer.name)
+	main.undo_redo.commit_action()
 	_lastly_edited_layer = null
 
 
