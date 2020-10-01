@@ -184,10 +184,14 @@ func _on_LayerTree_folder_layer_selected() -> void:
 
 
 func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
+	undo_redo.create_action("Add Texture Layer")
+	var new_layer = layer.new()
 	if layer_tree.material_layer_popup_menu.layer is FolderLayer:
-		add_texture_layer(layer.new(), layer_tree.material_layer_popup_menu.layer)
+		undo_redo.add_do_method(self, "add_texture_layer", new_layer, layer_tree.material_layer_popup_menu.layer)
 	else:
-		add_texture_layer(layer.new(), layer_tree.get_selected_layer_texture_of(layer_tree.material_layer_popup_menu.layer))
+		undo_redo.add_do_method(self, "add_texture_layer", new_layer, layer_tree.get_selected_layer_texture_of(layer_tree.material_layer_popup_menu.layer))
+	undo_redo.add_undo_method(self, "_delete_layer", new_layer)
+	undo_redo.commit_action()
 
 
 func _on_MaterialLayerPopupMenu_layer_saved() -> void:
