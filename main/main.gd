@@ -11,13 +11,6 @@ var current_file : SaveFile
 var file_location : String
 var editing_layer_material : LayerMaterial
 var result_size := Vector2(2048, 2048)
-var selected_tool : int = Tools.PAINT
-
-enum Tools {
-	PAINT,
-	TRIANGLE,
-	UV_ISLANDS,
-}
 
 const MATERIAL_PATH := "user://materials"
 
@@ -191,10 +184,6 @@ func _on_Viewport_painted(layer : TextureLayer) -> void:
 func _on_MaterialLayerPopupMenu_mask_removed() -> void:
 	layer_tree.get_selected_material_layer().mask = null
 	_update_results()
-
-
-func _on_ToolButtonContainer_tool_selected(tool_id : int) -> void:
-	selected_tool = tool_id
 
 
 func _on_SaveButton_pressed() -> void:

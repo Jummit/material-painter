@@ -7,6 +7,7 @@ Only visible when the paint tool is selected.
 """
 
 const Properties = preload("res://addons/property_panel/properties.gd")
+const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_layer.gd")
 
 class TextureAssetProperty extends Properties.FilePathProperty:
 	func _init(_name : String).(_name):
@@ -18,7 +19,7 @@ class TextureAssetProperty extends Properties.FilePathProperty:
 	func _drop_data(control : Control, data) -> void:
 		_set_value(control, data.asset)
 
-onready var main : Control = $"../../../../../../.."
+onready var tool_button_container : VBoxContainer = $"../../HBoxContainer/ToolButtonContainer"
 
 func _ready() -> void:
 	set_properties([
@@ -34,4 +35,17 @@ func _ready() -> void:
 
 
 func _on_ToolButtonContainer_tool_selected(to : int) -> void:
-	get_parent().visible = to == main.Tools.PAINT
+	get_parent().visible = to == tool_button_container.Tools.PAINT
+
+
+func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
+	if texture_layer is BitmapTextureLayer:
+		get_parent().visible = tool_button_container.selected_tool == tool_button_container.Tools.PAINT
+
+
+func _on_LayerTree_material_layer_selected(_material_layer) -> void:
+	get_parent().hide()
+
+
+func _on_LayerTree_folder_layer_selected() -> void:
+	get_parent().hide()
