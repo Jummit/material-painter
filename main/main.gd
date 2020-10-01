@@ -50,7 +50,7 @@ func add_texture_layer(texture_layer, to_layer_texture : LayerTexture, onto_arra
 	yield(to_layer_texture.update_result(result_size), "completed")
 	if texture_layer is TextureLayer:
 		_update_results(false)
-	layer_tree.setup_layer_material(editing_layer_material)
+	layer_tree.reload()
 
 
 func add_material_layer(material_layer, onto : Array) -> void:
@@ -64,7 +64,7 @@ func add_material_layer(material_layer, onto : Array) -> void:
 		if result is GDScriptFunctionState:
 			yield(result, "completed")
 	_update_results()
-	layer_tree.setup_layer_material(editing_layer_material)
+	layer_tree.reload()
 
 
 func _delete_layer(layer) -> void:
@@ -79,7 +79,7 @@ func _delete_layer(layer) -> void:
 	if layer_texture:
 		layer_texture.update_result(result_size)
 	_update_results(false)
-	layer_tree.setup_layer_material(editing_layer_material)
+	layer_tree.reload()
 
 
 func _on_FileDialog_file_selected(path : String) -> void:
@@ -129,7 +129,7 @@ func _on_TextureMapButtons_changed(map : String, enabled : bool) -> void:
 	if enabled:
 		layer_tree.select_map(layer_property_panel.editing_layer, map, true)
 	_update_results(false)
-	layer_tree.setup_layer_material(editing_layer_material)
+	layer_tree.reload()
 
 
 func _on_LayerTree_material_layer_selected(material_layer) -> void:
@@ -168,7 +168,7 @@ func _on_MaterialLayerPopupMenu_layer_saved() -> void:
 func _on_MaterialLayerPopupMenu_mask_added() -> void:
 	var material_layer : MaterialLayer = layer_tree.get_selected_material_layer()
 	material_layer.mask = LayerTexture.new()
-	layer_tree.setup_layer_material(editing_layer_material)
+	layer_tree.reload()
 
 
 func _on_LayerTree_layer_visibility_changed(layer) -> void:
@@ -241,7 +241,7 @@ func _load_file(save_file : SaveFile) -> void:
 	editing_layer_material = current_file.layer_material
 	editing_layer_material.update_all_layer_textures(result_size)
 	_update_results(false)
-	layer_tree.setup_layer_material(editing_layer_material)
+	layer_tree.editing_layer_material = editing_layer_material
 
 
 func _load_model(path : String) -> void:

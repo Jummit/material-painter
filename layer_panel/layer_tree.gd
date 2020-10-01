@@ -8,6 +8,8 @@ of the selected `LayerTexture` below.
 Shows previews of maps and masks as buttons.
 """
 
+var editing_layer_material : LayerMaterial setget set_editing_layer_material
+
 var _root : TreeItem
 var _lastly_edited_layer : TreeItem
 var _empty_texture := preload("res://icons/loading_layer.svg")
@@ -132,7 +134,7 @@ func drop_data(position : Vector2, data) -> void:
 		
 		for layer in data.layers:
 			main.editing_layer_material.get_array_layer_is_in(layer).erase(layer)
-		setup_layer_material(main.editing_layer_material)
+		reload()
 	elif "asset" in data:
 		if data.asset is String:
 			var layer := FileTextureLayer.new()
@@ -143,13 +145,18 @@ func drop_data(position : Vector2, data) -> void:
 			main.add_material_layer(data.asset, main.editing_layer_material.layers)
 
 
-func setup_layer_material(layer_material : LayerMaterial) -> void:
+func set_editing_layer_material(to) -> void:
+	editing_layer_material = to
 	_tree_items = {}
 	clear()
 	_root = create_item()
-	for material_layer in layer_material.layers:
+	for material_layer in editing_layer_material.layers:
 		_setup_material_layer_item(material_layer, _root)
 	update_icons()
+
+
+func reload() -> void:
+	set_editing_layer_material(editing_layer_material)
 
 
 func update_icons() -> void:
@@ -231,13 +238,13 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 					_selected_layer_textures.erase(layer)
 				else:
 					_selected_layer_textures[layer] = _selected_maps[layer]
-				setup_layer_material(main.editing_layer_material)
+				reload()
 		Buttons.MASK:
 			if layer in _selected_layer_textures and _selected_layer_textures[layer] == layer.mask:
 				_selected_layer_textures.erase(layer)
 			else:
 				_selected_layer_textures[layer] = layer.mask
-			setup_layer_material(main.editing_layer_material)
+			reload()
 		Buttons.VISIBILITY:
 			layer.visible = not layer.visible
 			emit_signal("layer_visibility_changed", layer)
@@ -246,7 +253,7 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 				_expanded_folders.erase(layer)
 			else:
 				_expanded_folders.append(layer)
-			setup_layer_material(main.editing_layer_material)
+			reload()
 
 
 func _on_MapTypePopupMenu_about_to_show() -> void:
@@ -264,7 +271,7 @@ func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
 	var selected_map : LayerTexture = layer.maps.values()[id]
 	_selected_maps[layer] = selected_map
 	_selected_layer_textures[layer] = selected_map
-	setup_layer_material(main.editing_layer_material)
+	reload()
 
 
 func _draw_material_layer_item(material_layer_item : TreeItem, item_rect : Rect2) -> void:
