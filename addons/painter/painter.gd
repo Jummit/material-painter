@@ -73,6 +73,9 @@ func set_mesh_instance(to : MeshInstance) -> void:
 
 
 func update_view(viewport : Viewport) -> void:
+	_viewport_size = viewport.size
+	paint_viewport.size = viewport.size
+	
 	var camera := viewport.get_camera()
 	
 	view_to_texture_viewport.size = 2.0 * viewport.size
@@ -94,8 +97,6 @@ func update_view(viewport : Viewport) -> void:
 	
 	if brush:
 		paint_material.set_shader_param("brush_size", brush.size / viewport.size)
-	
-	_viewport_size = viewport.size
 	
 	yield(VisualServer, "frame_post_draw")
 

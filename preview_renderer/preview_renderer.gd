@@ -29,8 +29,7 @@ func get_preview_for_brush(brush : Brush, result_size : Vector2) -> ImageTexture
 		paint_viewport.size = result_size
 		yield(painter.set_mesh_instance(mesh_instance), "completed")
 		yield(painter.update_view(paint_viewport), "completed")
-		
-	paint_viewport.size = result_size
+	
 	painter.brush = brush
 	yield(painter.clear(), "completed")
 	var last_point := paint_line.points[0]

@@ -40,7 +40,6 @@ shader = ExtResource( 3 )
 script = ExtResource( 4 )
 
 [node name="PaintViewport" type="Viewport" parent="."]
-size = Vector2( 2048, 2048 )
 own_world = true
 transparent_bg = true
 usage = 0
@@ -60,7 +59,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="ViewToTextureViewport" type="Viewport" parent="."]
-size = Vector2( 2048, 2048 )
 own_world = true
 transparent_bg = true
 keep_3d_linear = true
@@ -75,7 +73,7 @@ current = true
 material_override = SubResource( 2 )
 
 [node name="TextureToViewViewport" type="Viewport" parent="."]
-size = Vector2( 2048, 2048 )
+size = Vector2( 1024, 1024 )
 own_world = true
 transparent_bg = true
 keep_3d_linear = true
@@ -93,7 +91,7 @@ mesh = ExtResource( 1 )
 material/0 = null
 
 [node name="SeamsViewport" type="Viewport" parent="."]
-size = Vector2( 2048, 2048 )
+size = Vector2( 1024, 1024 )
 own_world = true
 transparent_bg = true
 usage = 0
