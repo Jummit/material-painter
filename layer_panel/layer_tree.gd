@@ -260,8 +260,12 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 				_selected_layer_textures[layer] = layer.mask
 			reload()
 		Buttons.VISIBILITY:
-			layer.visible = not layer.visible
-			emit_signal("layer_visibility_changed", layer)
+			undo_redo.create_action("Toggle Layer Visibility")
+			undo_redo.add_do_property(layer, "visible", not layer.visible)
+			undo_redo.add_do_method(self, "emit_signal", "layer_visibility_changed", layer)
+			undo_redo.add_undo_property(layer, "visible", layer.visible)
+			undo_redo.add_undo_method(self, "emit_signal", "layer_visibility_changed", layer)
+			undo_redo.commit_action()
 		Buttons.ICON:
 			if layer in _expanded_folders:
 				_expanded_folders.erase(layer)
