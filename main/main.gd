@@ -59,26 +59,20 @@ func _input(event : InputEvent) -> void:
 			print("Redo: " + undo_redo.get_current_action_name())
 
 
-func add_texture_layer(texture_layer, to_layer_texture : LayerTexture, onto_array = null) -> void:
-	if not onto_array:
-		onto_array = to_layer_texture.layers
-	onto_array.append(texture_layer)
-	yield(to_layer_texture.update_result(result_size), "completed")
-	if texture_layer is TextureLayer:
-		_update_results(false)
-	layer_tree.reload()
-
-
-func add_material_layer(material_layer, onto : Array) -> void:
-	onto.append(material_layer)
-	if material_layer is MaterialLayer:
-		var result = material_layer.update_all_layer_textures(result_size)
-		if result is GDScriptFunctionState:
-			yield(result, "completed")
+func add_layer(layer, onto):
+	onto.layers.append(layer)
+	var onto_layer_texture : LayerTexture = editing_layer_material.get_layer_texture_of_texture_layer(layer)
+	if onto_layer_texture:
+		yield(editing_layer_material.get_layer_texture_of_texture_layer(layer).update_result(result_size), "completed")
 	else:
-		var result = _update_all_layer_textures(material_layer.layers)
-		if result is GDScriptFunctionState:
-			yield(result, "completed")
+		if layer is MaterialLayer:
+			var result = layer.update_all_layer_textures(result_size)
+			if result is GDScriptFunctionState:
+				yield(result, "completed")
+		else:
+			var result = _update_all_layer_textures(layer.layers)
+			if result is GDScriptFunctionState:
+				yield(result, "completed")
 	_update_results()
 	layer_tree.reload()
 
@@ -90,7 +84,7 @@ func delete_layer(layer) -> void:
 		layer_texture = editing_layer_material.get_layer_texture_of_texture_layer(layer)
 		array_layer_is_in = layer_texture.layers
 	else:
-		array_layer_is_in = editing_layer_material.get_array_layer_is_in(layer)
+		array_layer_is_in = editing_layer_material.get_parent(layer).layers
 	array_layer_is_in.erase(layer)
 	if layer_texture:
 		layer_texture.update_result(result_size)
@@ -117,29 +111,36 @@ func _on_FileDialog_file_selected(path : String) -> void:
 
 
 func _on_AddButton_pressed() -> void:
-	var onto_array : Array
-	if layer_tree.get_selected() and layer_tree.get_selected_material_layer() is FolderLayer:
-		onto_array = layer_tree.get_selected_material_layer().layers
+	var onto
+	if layer_tree.get_selected() and layer_tree.get_selected_layer() is FolderLayer:
+		onto = layer_tree.get_selected_layer()
 	else:
-		onto_array = editing_layer_material.layers
+		onto = editing_layer_material
 	undo_redo.create_action("Add Material Layer")
 	var new_layer := MaterialLayer.new()
-	undo_redo.add_do_method(self, "add_material_layer", new_layer, onto_array)
+	undo_redo.add_do_method(self, "add_layer", new_layer, onto)
 	undo_redo.add_undo_method(self, "delete_layer", new_layer)
 	undo_redo.commit_action()
 
 
 func _on_AddFolderButton_pressed() -> void:
+	undo_redo.create_action("Add Folder Layer")
+	var new_layer := FolderLayer.new()
+	var onto
 	if layer_tree.get_selected():
-		if layer_tree.get_selected_material_layer() is FolderLayer:
-			add_material_layer(FolderLayer.new(), layer_tree.get_selected_material_layer().layers)
-		elif layer_tree.get_selected_material_layer() is MaterialLayer:
-			if layer_tree.get_selected_layer_texture_of(layer_tree.get_selected_material_layer()):
-				add_material_layer(FolderLayer.new(), layer_tree.get_selected_layer_texture().layers)
+		var selected_layer = layer_tree.get_selected_layer()
+		if selected_layer is FolderLayer:
+			onto = selected_layer
+		elif selected_layer is MaterialLayer:
+			if layer_tree.get_selected_layer_texture(selected_layer):
+				onto = layer_tree.get_selected_layer_texture(selected_layer)
 			else:
-				add_material_layer(FolderLayer.new(), editing_layer_material.layers)
+				onto = editing_layer_material
 	else:
-		add_material_layer(FolderLayer.new(), editing_layer_material.layers)
+		onto = editing_layer_material
+	undo_redo.add_do_method(self, "add_layer", new_layer, onto)
+	undo_redo.add_undo_method(self, "delete_layer", new_layer)
+	undo_redo.commit_action()
 
 
 func _on_DeleteButton_pressed() -> void:
@@ -149,7 +150,7 @@ func _on_DeleteButton_pressed() -> void:
 		undo_redo.add_do_method(self, "delete_layer", selected_layer)
 		undo_redo.add_do_method(layer_property_panel, "clear")
 		undo_redo.add_do_method(texture_map_buttons, "hide")
-		undo_redo.add_undo_method(self, "add_material_layer", selected_layer, editing_layer_material.get_array_layer_is_in(selected_layer))
+		undo_redo.add_undo_method(self, "add_layer", selected_layer, editing_layer_material.get_parent(selected_layer))
 		undo_redo.add_undo_method(layer_property_panel, "load_material_layer", selected_layer)
 		undo_redo.add_undo_method(texture_map_buttons, "show")
 		undo_redo.commit_action()
@@ -196,21 +197,21 @@ func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
 	undo_redo.create_action("Add Texture Layer")
 	var new_layer = layer.new()
 	if layer_tree.material_layer_popup_menu.layer is FolderLayer:
-		undo_redo.add_do_method(self, "add_texture_layer", new_layer, layer_tree.material_layer_popup_menu.layer)
+		undo_redo.add_do_method(self, "add_layer", new_layer, layer_tree.material_layer_popup_menu.layer)
 	else:
-		undo_redo.add_do_method(self, "add_texture_layer", new_layer, layer_tree.get_selected_layer_texture_of(layer_tree.material_layer_popup_menu.layer))
+		undo_redo.add_do_method(self, "add_layer", new_layer, layer_tree.get_selected_layer_texture(layer_tree.material_layer_popup_menu.layer))
 	undo_redo.add_undo_method(self, "delete_layer", new_layer)
 	undo_redo.commit_action()
 
 
 func _on_MaterialLayerPopupMenu_layer_saved() -> void:
-	var material_layer = layer_tree.get_selected_material_layer()
+	var material_layer = layer_tree.get_selected_layer()
 	ResourceSaver.save(MATERIAL_PATH.plus_file(material_layer.name) + ".tres", material_layer)
 	asset_browser.register_asset(material_layer.name + ".tres", asset_browser.ASSET_TYPES.MATERIAL)
 
 
 func _on_MaterialLayerPopupMenu_mask_added() -> void:
-	var material_layer : MaterialLayer = layer_tree.get_selected_material_layer()
+	var material_layer : MaterialLayer = layer_tree.get_selected_layer()
 	material_layer.mask = LayerTexture.new()
 	layer_tree.reload()
 
@@ -228,7 +229,7 @@ func _on_Viewport_painted(layer : TextureLayer) -> void:
 
 
 func _on_MaterialLayerPopupMenu_mask_removed() -> void:
-	layer_tree.get_selected_material_layer().mask = null
+	layer_tree.get_selected_layer().mask = null
 	_update_results()
 
 

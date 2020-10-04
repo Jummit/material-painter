@@ -39,3 +39,20 @@ func get_flat_layers(layer_array : Array = layers, add_hidden := true) -> Array:
 		else:
 			flat_layers.append(layer)
 	return flat_layers
+
+
+func get_folders(layer_array : Array = layers) -> Array:
+	var folders := []
+	for layer in layer_array:
+		if layer is FolderLayer:
+			folders.append(layer)
+			folders += get_folders(layer.layers)
+	return folders
+
+
+func get_parent(layer):
+	if layer in layers:
+		return self
+	for folder in get_folders():
+		if layer in folder:
+			return folder

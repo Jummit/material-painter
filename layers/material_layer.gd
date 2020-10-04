@@ -40,3 +40,10 @@ func get_layer_texture_of_texture_layer(texture_layer):
 		if layer_texture:
 			if texture_layer in layer_texture.get_flat_layers():
 				return layer_texture
+
+
+func get_layer_textures() -> Array:
+	var layer_textures := maps.values()
+	if mask:
+		layer_textures.append(mask)
+	return layer_textures

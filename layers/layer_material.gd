@@ -110,11 +110,16 @@ func get_folders(layer_array : Array = layers) -> Array:
 	return folders
 
 
-func get_array_layer_is_in(layer) -> Array:
+func get_parent(layer):
 	if layer in layers:
-		return layers
+		return self
 	else:
 		for folder in get_folders():
 			if layer in folder.layers:
-				return folder.layers
+				return folder
+	for layer in get_flat_layers():
+		for layer_texture in layer.get_layer_textures():
+			var parent = layer_texture.get_parent(layer)
+			if parent:
+				return parent
 	return []

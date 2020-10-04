@@ -130,7 +130,7 @@ func drop_data(position : Vector2, data) -> void:
 					undo_redo.add_do_method(self, "add_layer_to_array", new_layer, onto_array)
 					undo_redo.add_undo_method(self, "remove_layer_from_array", new_layer, onto_array)
 			var section:
-				var onto_array : Array = main.editing_layer_material.get_array_layer_is_in(onto_layer)
+				var onto_array : Array = main.editing_layer_material.get_parent(onto_layer).layers
 				var onto_position := onto_array.find(onto_layer)
 				if section == 1:
 					onto_position += 1
@@ -142,7 +142,7 @@ func drop_data(position : Vector2, data) -> void:
 					undo_redo.add_undo_method(self, "remove_layer_from_array", new_layer, onto_array)
 		
 		for layer in data.layers:
-			var in_array : Array = main.editing_layer_material.get_array_layer_is_in(layer)
+			var in_array : Array = main.editing_layer_material.get_parent(layer).layers
 			var layer_position = in_array.find(layer)
 			undo_redo.add_do_method(self, "remove_layer_from_array", layer, in_array)
 			undo_redo.add_undo_method(self, "insert_layer_to_array", layer, in_array, layer_position)
@@ -155,12 +155,12 @@ func drop_data(position : Vector2, data) -> void:
 			var layer := FileTextureLayer.new()
 			layer.name = data.asset.get_file().get_basename()
 			layer.path = data.asset
-			undo_redo.add_do_method(main, "add_texture_layer", layer, _selected_layer_textures[get_layer_at_position(position)])
+			undo_redo.add_do_method(main, "add_layer", layer, _selected_layer_textures[get_layer_at_position(position)])
 			undo_redo.add_undo_method(main, "delete_layer", layer)
 			undo_redo.commit_action()
 		elif data.asset is MaterialLayer or data.asset is FolderLayer:
 			undo_redo.create_action("Add Material From Library")
-			undo_redo.add_do_method(main, "add_material_layer", data.asset, main.editing_layer_material.layers)
+			undo_redo.add_do_method(main, "add_layer", data.asset, main.editing_layer_material)
 			undo_redo.add_undo_method(main, "delete_layer", data.asset)
 			undo_redo.commit_action()
 
@@ -219,32 +219,14 @@ func get_layer_at_position(position : Vector2):
 		return get_item_at_position(position).get_meta("layer")
 
 
-func get_selected_layer_texture_of(material_layer : MaterialLayer) -> LayerTexture:
+func get_selected_layer_texture(material_layer : MaterialLayer) -> LayerTexture:
 	if material_layer in _selected_layer_textures:
 		return _selected_layer_textures[material_layer]
 	return null
 
 
-func get_selected_material_layer():
-	return _get_selected_material_layer_item().get_meta("layer")
-
-
-func get_selected_texture_layer() -> TextureLayer:
-	return get_selected().get_meta("layer") as TextureLayer
-
-
-func get_selected_layer_texture() -> LayerTexture:
-	return _selected_layer_textures[get_selected_material_layer()] as LayerTexture
-
-
-func get_material_layer_from_layer(layer) -> MaterialLayer:
-	var parent_layer = _tree_items[layer].get_parent().get_meta("layer")
-	if not parent_layer:
-		return null
-	if parent_layer is MaterialLayer:
-		return parent_layer
-	else:
-		return get_material_layer_from_layer(parent_layer)
+func get_selected_layer():
+	return get_selected().get_meta("layer")
 
 
 func _on_cell_selected() -> void:
@@ -335,12 +317,6 @@ func _on_item_edited() -> void:
 
 func _get_layer_type(layer_item : TreeItem) -> int:
 	return LayerType.TEXTURE_LAYER if layer_item.has_meta("layer_texture") else LayerType.MATERIAL_LAYER
-
-
-func _get_selected_material_layer_item() -> TreeItem:
-	if get_selected().get_meta("layer") is MaterialLayer or get_selected().get_meta("layer") is FolderLayer:
-		return get_selected()
-	return null
 
 
 func _setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
