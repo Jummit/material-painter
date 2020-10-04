@@ -83,7 +83,7 @@ func add_material_layer(material_layer, onto : Array) -> void:
 	layer_tree.reload()
 
 
-func _delete_layer(layer) -> void:
+func delete_layer(layer) -> void:
 	var layer_texture : LayerTexture
 	var array_layer_is_in : Array
 	if layer is TextureLayer:
@@ -125,7 +125,7 @@ func _on_AddButton_pressed() -> void:
 	undo_redo.create_action("Add Material Layer")
 	var new_layer := MaterialLayer.new()
 	undo_redo.add_do_method(self, "add_material_layer", new_layer, onto_array)
-	undo_redo.add_undo_method(self, "_delete_layer", new_layer)
+	undo_redo.add_undo_method(self, "delete_layer", new_layer)
 	undo_redo.commit_action()
 
 
@@ -146,7 +146,7 @@ func _on_DeleteButton_pressed() -> void:
 	if layer_tree.get_selected():
 		undo_redo.create_action("Delete Layer")
 		var selected_layer = layer_tree.get_selected().get_meta("layer")
-		undo_redo.add_do_method(self, "_delete_layer", selected_layer)
+		undo_redo.add_do_method(self, "delete_layer", selected_layer)
 		undo_redo.add_do_method(layer_property_panel, "clear")
 		undo_redo.add_do_method(texture_map_buttons, "hide")
 		undo_redo.add_undo_method(self, "add_material_layer", selected_layer, editing_layer_material.get_array_layer_is_in(selected_layer))
@@ -199,7 +199,7 @@ func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
 		undo_redo.add_do_method(self, "add_texture_layer", new_layer, layer_tree.material_layer_popup_menu.layer)
 	else:
 		undo_redo.add_do_method(self, "add_texture_layer", new_layer, layer_tree.get_selected_layer_texture_of(layer_tree.material_layer_popup_menu.layer))
-	undo_redo.add_undo_method(self, "_delete_layer", new_layer)
+	undo_redo.add_undo_method(self, "delete_layer", new_layer)
 	undo_redo.commit_action()
 
 

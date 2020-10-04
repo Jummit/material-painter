@@ -151,12 +151,18 @@ func drop_data(position : Vector2, data) -> void:
 		undo_redo.commit_action()
 	elif "asset" in data:
 		if data.asset is String:
+			undo_redo.create_action("Add Texture From Library")
 			var layer := FileTextureLayer.new()
 			layer.name = data.asset.get_file().get_basename()
 			layer.path = data.asset
-			main.add_texture_layer(layer, _selected_layer_textures[get_layer_at_position(position)])
+			undo_redo.add_do_method(main, "add_texture_layer", layer, _selected_layer_textures[get_layer_at_position(position)])
+			undo_redo.add_undo_method(main, "delete_layer", layer)
+			undo_redo.commit_action()
 		elif data.asset is MaterialLayer or data.asset is FolderLayer:
-			main.add_material_layer(data.asset, main.editing_layer_material.layers)
+			undo_redo.create_action("Add Material From Library")
+			undo_redo.add_do_method(main, "add_material_layer", data.asset, main.editing_layer_material.layers)
+			undo_redo.add_undo_method(main, "delete_layer", data.asset)
+			undo_redo.commit_action()
 
 
 func insert_layer_to_array(layer, array : Array, position : int) -> void:
