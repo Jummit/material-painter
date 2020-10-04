@@ -27,8 +27,20 @@ func _ready() -> void:
 
 func load_material_layer(material_layer : MaterialLayer) -> void:
 	for button in get_children():
-		silently_set_button_pressed(button, button.name in material_layer.maps)
+		_silently_set_button_pressed(button, button.name in material_layer.maps)
 	show()
+
+
+func _on_LayerTree_folder_layer_selected() -> void:
+	hide()
+
+
+func _on_LayerTree_texture_layer_selected(_texture_layer) -> void:
+	hide()
+
+
+func _on_LayerTree_material_layer_selected(material_layer) -> void:
+	load_material_layer(material_layer)
 
 
 func _on_Button_toggled(button_pressed : bool, map : String) -> void:
@@ -36,29 +48,29 @@ func _on_Button_toggled(button_pressed : bool, map : String) -> void:
 	if button_pressed:
 		if not map in maps:
 			undo_redo.create_action("Enable Texture Map")
-			undo_redo.add_do_method(self, "enable_map", layer_property_panel.editing_layer, map)
-			undo_redo.add_undo_method(self, "disable_map", layer_property_panel.editing_layer, map)
-			undo_redo.add_undo_method(self, "silently_set_button_pressed", buttons[map], false)
+			undo_redo.add_do_method(self, "_enable_map", layer_property_panel.editing_layer, map)
+			undo_redo.add_undo_method(self, "_disable_map", layer_property_panel.editing_layer, map)
+			undo_redo.add_undo_method(self, "_silently_set_button_pressed", buttons[map], false)
 			undo_redo.commit_action()
 	else:
 		undo_redo.create_action("Disable Texture Map")
-		undo_redo.add_do_method(self, "disable_map", layer_property_panel.editing_layer, map)
-		undo_redo.add_undo_method(self, "enable_map", layer_property_panel.editing_layer, map)
-		undo_redo.add_undo_method(self, "silently_set_button_pressed", buttons[map], true)
+		undo_redo.add_do_method(self, "_disable_map", layer_property_panel.editing_layer, map)
+		undo_redo.add_undo_method(self, "_enable_map", layer_property_panel.editing_layer, map)
+		undo_redo.add_undo_method(self, "_silently_set_button_pressed", buttons[map], true)
 		undo_redo.commit_action()
 	emit_signal("changed", map, button_pressed)
 
 
 # block `toggled` signals to avoid emitting the `changed` signal
-func silently_set_button_pressed(button : Button, pressed : bool) -> void:
+func _silently_set_button_pressed(button : Button, pressed : bool) -> void:
 	button.set_block_signals(true)
 	button.pressed = pressed
 	button.set_block_signals(false)
 
 
-func enable_map(on_layer : MaterialLayer, map : String) -> void:
+func _enable_map(on_layer : MaterialLayer, map : String) -> void:
 	on_layer.maps[map] = LayerTexture.new()
 
 
-func disable_map(on_layer : MaterialLayer, map : String) -> void:
+func _disable_map(on_layer : MaterialLayer, map : String) -> void:
 	on_layer.maps.erase(map)

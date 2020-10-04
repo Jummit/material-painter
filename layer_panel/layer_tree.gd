@@ -378,3 +378,8 @@ func _setup_texture_layer_item(texture_layer, parent_item : TreeItem, layer_text
 	if texture_layer is FolderLayer and texture_layer in _expanded_folders:
 		for layer in texture_layer.layers:
 			_setup_texture_layer_item(layer, texture_layer_item, layer_texture)
+
+
+func _on_MaterialLayerPopupMenu_mask_added() -> void:
+	get_selected_layer().mask = LayerTexture.new()
+	reload()

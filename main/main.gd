@@ -40,11 +40,6 @@ func _ready() -> void:
 	undo_redo.connect("version_changed", self, "_on_UndoRedo_version_changed")
 
 
-func _on_UndoRedo_version_changed() -> void:
-	if undo_redo.get_current_action_name():
-		print(undo_redo.get_current_action_name())
-
-
 func _input(event : InputEvent) -> void:
 	if event.is_action_pressed("undo"):
 		var action := undo_redo.get_current_action_name()
@@ -59,7 +54,7 @@ func _input(event : InputEvent) -> void:
 			print("Redo: " + undo_redo.get_current_action_name())
 
 
-func add_layer(layer, onto):
+func add_layer(layer, onto) -> void:
 	onto.layers.append(layer)
 	var onto_layer_texture : LayerTexture = editing_layer_material.get_layer_texture_of_texture_layer(layer)
 	if onto_layer_texture:
@@ -159,13 +154,15 @@ func _on_DeleteButton_pressed() -> void:
 func _on_TextureMapButtons_changed(map : String, enabled : bool) -> void:
 	if enabled:
 		layer_tree.select_map(layer_property_panel.editing_layer, map, true)
-	_update_results(false)
 	layer_tree.reload()
+	_update_results(false)
 
 
-func _on_LayerTree_material_layer_selected(material_layer) -> void:
-	layer_property_panel.load_material_layer(material_layer)
-	texture_map_buttons.load_material_layer(material_layer)
+func _on_LayerTree_layer_visibility_changed(layer) -> void:
+	if layer is TextureLayer:
+		var affected_layer := editing_layer_material.get_depending_layer_texture(layer)
+		affected_layer.update_result(result_size)
+	_update_results()
 
 
 func _on_LayerPropertyPanel_property_changed(property : String, value) -> void:
@@ -184,15 +181,6 @@ func _on_LayerPropertyPanel_property_changed(property : String, value) -> void:
 	undo_redo.commit_action()
 
 
-func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
-	layer_property_panel.load_texture_layer(texture_layer)
-	texture_map_buttons.hide()
-
-
-func _on_LayerTree_folder_layer_selected() -> void:
-	texture_map_buttons.hide()
-
-
 func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
 	undo_redo.create_action("Add Texture Layer")
 	var new_layer = layer.new()
@@ -208,19 +196,6 @@ func _on_MaterialLayerPopupMenu_layer_saved() -> void:
 	var material_layer = layer_tree.get_selected_layer()
 	ResourceSaver.save(MATERIAL_PATH.plus_file(material_layer.name) + ".tres", material_layer)
 	asset_browser.register_asset(material_layer.name + ".tres", asset_browser.ASSET_TYPES.MATERIAL)
-
-
-func _on_MaterialLayerPopupMenu_mask_added() -> void:
-	var material_layer : MaterialLayer = layer_tree.get_selected_layer()
-	material_layer.mask = LayerTexture.new()
-	layer_tree.reload()
-
-
-func _on_LayerTree_layer_visibility_changed(layer) -> void:
-	if layer is TextureLayer:
-		var affected_layer := editing_layer_material.get_depending_layer_texture(layer)
-		affected_layer.update_result(result_size)
-	_update_results()
 
 
 func _on_Viewport_painted(layer : TextureLayer) -> void:
@@ -273,6 +248,11 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 			file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
 			file_dialog.current_file = ""
 			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
+
+
+func _on_UndoRedo_version_changed() -> void:
+	if undo_redo.get_current_action_name():
+		print(undo_redo.get_current_action_name())
 
 
 func _load_file(save_file : SaveFile) -> void:
