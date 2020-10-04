@@ -29,8 +29,8 @@ config/initialize_painter.debug=true
 
 Globals="*res://main/globals.gd"
 LayerBlendViewportManager="*res://addons/layer_blending_viewport/layer_blend_viewport_manager.gd"
-NormalMapGenerationViewport="*res://addons/normal_map_generation_viewport/normal_map_generation_viewport.gd"
 PreviewRenderer="*res://preview_renderer/preview_renderer.tscn"
+NormalMapGenerationViewport="*res://addons/normal_map_generation_viewport/normal_map_generation_viewport.tscn"
 
 [debug]
 
