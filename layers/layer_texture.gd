@@ -48,11 +48,3 @@ func get_folders(layer_array : Array = layers) -> Array:
 			folders.append(layer)
 			folders += get_folders(layer.layers)
 	return folders
-
-
-func get_parent(layer):
-	if layer in layers:
-		return self
-	for folder in get_folders():
-		if layer in folder:
-			return folder
