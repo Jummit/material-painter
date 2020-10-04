@@ -94,7 +94,7 @@ func load_assets(asset_type : AssetType) -> void:
 	add_child(item_list)
 	
 	var dir := Directory.new()
-	dir.make_dir_recursive(asset_type.directory)
+	dir.make_dir_recursive(asset_type.get_asset_directory())
 	dir.open(asset_type.get_asset_directory())
 	dir.list_dir_begin(true)
 	var file_name := dir.get_next()
