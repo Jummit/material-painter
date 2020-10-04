@@ -42,6 +42,7 @@ func set_initial_texture(texture : Texture) -> void:
 	initial_texture_rect.show()
 	initial_texture_rect.texture = texture
 	paint_rect.hide()
+	paint_viewport.render_target_clear_mode = Viewport.CLEAR_MODE_ONLY_NEXT_FRAME
 	paint_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 	yield(VisualServer, "frame_post_draw")
 	initial_texture_rect.hide()

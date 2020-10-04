@@ -22,13 +22,6 @@ func _init() -> void:
 	resource_local_to_scene = true
 
 
-func get_depending_layer_texture(texture_layer : TextureLayer) -> LayerTexture:
-	for layer in maps.values():
-		if texture_layer in layer.get_flat_layers():
-			return layer
-	return null
-
-
 func update_all_layer_textures(result_size : Vector2) -> void:
 	for layer_texture in maps.values() + [mask]:
 		if layer_texture:

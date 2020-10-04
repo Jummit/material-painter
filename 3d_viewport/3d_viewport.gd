@@ -35,6 +35,11 @@ func _ready() -> void:
 
 
 func _gui_input(event : InputEvent) -> void:
+	if event is InputEventMouseButton and (not event.pressed) and event.button_index == BUTTON_LEFT and tool_button_container.selected_tool == tool_button_container.Tools.PAINT:
+		var selected_layer = layer_tree.get_selected_layer()
+		if selected_layer is BitmapTextureLayer:
+			selected_layer.image_data = selected_layer.temp_texture.get_data()
+			selected_layer.temp_texture = null
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
 		if _can_paint_with_tool(tool_button_container.Tools.TRIANGLE):
 			var camera : Camera = $Viewport.get_camera()
@@ -87,9 +92,12 @@ func _on_ToolButtonContainer_tool_selected(tool_id : int):
 func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
 	if texture_layer is BitmapTextureLayer:
 		painter.clear()
+		var texture := ImageTexture.new()
+		texture.create_from_image(texture_layer.image_data)
+		painter.set_initial_texture(texture)
 
 
-func _on_ToolSettingsPropertyPanel_values_changed() -> void:
+func _on_ToolSettingsPropertyPanel_property_changed(_property, _value) -> void:
 	var new_brush := Brush.new()
 	tool_settings_property_panel.store_values(new_brush)
 	new_brush.size = Vector2.ONE * tool_settings_property_panel.get_property_value("size")

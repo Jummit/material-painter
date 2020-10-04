@@ -160,15 +160,14 @@ func _on_TextureMapButtons_changed(map : String, enabled : bool) -> void:
 
 func _on_LayerTree_layer_visibility_changed(layer) -> void:
 	if layer is TextureLayer:
-		var affected_layer := editing_layer_material.get_depending_layer_texture(layer)
-		affected_layer.update_result(result_size)
+		editing_layer_material.get_parent(layer).update_result(result_size)
 	_update_results()
 
 
 func _on_LayerPropertyPanel_property_changed(property : String, value) -> void:
 	undo_redo.create_action("Set Layer Property")
 	undo_redo.add_do_property(layer_property_panel.editing_layer, property, value)
-	var affected_layer : LayerTexture = editing_layer_material.get_depending_layer_texture(layer_property_panel.editing_layer)
+	var affected_layer : LayerTexture = editing_layer_material.get_parent(layer_property_panel.editing_layer)
 	if not affected_layer:
 		return
 	undo_redo.add_do_method(layer_property_panel, "set_property_value", property, value)
@@ -199,7 +198,7 @@ func _on_MaterialLayerPopupMenu_layer_saved() -> void:
 
 
 func _on_Viewport_painted(layer : TextureLayer) -> void:
-	editing_layer_material.get_depending_layer_texture(layer).update_result(result_size)
+	editing_layer_material.get_parent(layer).update_result(result_size)
 	_update_results()
 
 
