@@ -25,7 +25,7 @@ func _draw() -> void:
 func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
 		if layer_tree.get_selected():
-			var layer_texture := layer_tree.get_selected_texture_layer() as BitmapTextureLayer
+			var layer_texture := layer_tree.get_selected_layer() as BitmapTextureLayer
 			if layer_texture:
 				var selected_face := _get_selected_face(get_local_mouse_position())
 				if selected_face != -1:

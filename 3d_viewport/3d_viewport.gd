@@ -40,16 +40,16 @@ func _gui_input(event : InputEvent) -> void:
 			var camera : Camera = $Viewport.get_camera()
 			var camera_world_position := camera.project_position(event.position, 0.0)
 			var clicked_world_position := camera.project_position(event.position, 1000.0)
-			var selected_texture_layer : BitmapTextureLayer = layer_tree.get_selected_texture_layer()
+			var selected_texture_layer : BitmapTextureLayer = layer_tree.get_selected_layer()
 			var selected_face := _get_nearest_intersecting_face(camera_world_position, clicked_world_position, model.mesh, Input.is_key_pressed(KEY_CONTROL))
 			if selected_face != -1:
 				MeshUtils.paint_face(selected_texture_layer.image_data, selected_face, Color.white, model.mesh)
 				emit_signal("painted", selected_texture_layer)
 		if _can_paint_with_tool(tool_button_container.Tools.PAINT):
-			_paint(layer_tree.get_selected_texture_layer(), event.position, event.position)
+			_paint(layer_tree.get_selected_layer(), event.position, event.position)
 			last_painted_position = event.position
 	if not get_viewport().gui_is_dragging() and event is InputEventMouseMotion and Input.is_mouse_button_pressed(BUTTON_LEFT) and _can_paint_with_tool(tool_button_container.Tools.PAINT):
-		_paint(layer_tree.get_selected_texture_layer(), last_painted_position, event.position)
+		_paint(layer_tree.get_selected_layer(), last_painted_position, event.position)
 		last_painted_position = event.position
 	
 	if event is InputEventMouseButton and event.pressed and event.button_mask == BUTTON_MASK_RIGHT:
@@ -73,7 +73,7 @@ func _on_Model_mesh_changed() -> void:
 
 
 func _on_ToolButtonContainer_tool_selected(tool_id : int):
-	var bitmap_texture_layer : BitmapTextureLayer = layer_tree.get_selected_texture_layer()
+	var bitmap_texture_layer : BitmapTextureLayer = layer_tree.get_selected_layer()
 	if tool_id == tool_button_container.Tools.PAINT:
 		var image_texture := ImageTexture.new()
 		image_texture.create_from_image(bitmap_texture_layer.image_data)
@@ -128,7 +128,7 @@ func _get_nearest_intersecting_face(start : Vector3, direction : Vector3, mesh :
 
 func _can_paint_with_tool(tool_id : int) -> bool:
 	return layer_tree.get_selected() and\
-			layer_tree.get_selected_texture_layer() is BitmapTextureLayer\
+			layer_tree.get_selected_layer() is BitmapTextureLayer\
 			and tool_button_container.selected_tool == tool_id
 
 

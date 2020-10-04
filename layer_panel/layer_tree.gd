@@ -22,6 +22,7 @@ var _expanded_folders : Array
 signal material_layer_selected(material_layer)
 signal texture_layer_selected(texture_layer)
 signal folder_layer_selected
+# warning-ignore:unused_signal
 signal layer_visibility_changed(layer)
 
 enum Buttons {
