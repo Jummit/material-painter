@@ -41,15 +41,21 @@ func _on_Button_toggled(button_pressed : bool, map : String) -> void:
 			undo_redo.create_action("Enable Texture Map")
 			undo_redo.add_do_method(self, "enable_map", layer_property_panel.editing_layer, map)
 			undo_redo.add_undo_method(self, "disable_map", layer_property_panel.editing_layer, map)
-			undo_redo.add_undo_property(buttons[map], "pressed", false)
+			undo_redo.add_undo_method(self, "silently_set_button_pressed", buttons[map], false)
 			undo_redo.commit_action()
 	else:
 		undo_redo.create_action("Disable Texture Map")
 		undo_redo.add_do_method(self, "disable_map", layer_property_panel.editing_layer, map)
 		undo_redo.add_undo_method(self, "enable_map", layer_property_panel.editing_layer, map)
-		undo_redo.add_undo_property(buttons[map], "pressed", true)
+		undo_redo.add_undo_method(self, "silently_set_button_pressed", buttons[map], true)
 		undo_redo.commit_action()
 	emit_signal("changed", map, button_pressed)
+
+
+func silently_set_button_pressed(button : Button, pressed : bool) -> void:
+	button.set_block_signals(true)
+	button.pressed = pressed
+	button.set_block_signals(false)
 
 
 func enable_map(on_layer : MaterialLayer, map : String) -> void:

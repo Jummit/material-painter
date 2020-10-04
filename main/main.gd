@@ -167,11 +167,20 @@ func _on_LayerTree_material_layer_selected(material_layer) -> void:
 	texture_map_buttons.load_material_layer(material_layer)
 
 
-func _on_LayerPropertyPanel_values_changed() -> void:
-	layer_property_panel.store_values(layer_property_panel.editing_layer)
+func _on_LayerPropertyPanel_property_changed(property : String, value) -> void:
+	undo_redo.create_action("Set Layer Property")
+	undo_redo.add_do_property(layer_property_panel.editing_layer, property, value)
 	var affected_layer : LayerTexture = editing_layer_material.get_depending_layer_texture(layer_property_panel.editing_layer)
-	affected_layer.update_result(result_size)
-	_update_results()
+	if not affected_layer:
+		return
+	undo_redo.add_do_method(layer_property_panel, "set_property_value", property, value)
+	undo_redo.add_do_method(affected_layer, "update_result", result_size)
+	undo_redo.add_do_method(self, "_update_results")
+	undo_redo.add_undo_property(layer_property_panel.editing_layer, property, layer_property_panel.editing_layer.get(property))
+	undo_redo.add_undo_method(affected_layer, "update_result", result_size)
+	undo_redo.add_undo_method(layer_property_panel, "set_property_value", property, layer_property_panel.editing_layer.get(property))
+	undo_redo.add_undo_method(self, "_update_results")
+	undo_redo.commit_action()
 
 
 func _on_LayerTree_texture_layer_selected(texture_layer) -> void:

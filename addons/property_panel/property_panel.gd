@@ -23,7 +23,7 @@ enum Orientation {
 
 export(Orientation) var orientation := Orientation.VERTICAL
 
-signal values_changed
+signal property_changed(property, value)
 
 var properties := [] setget set_properties
 
@@ -54,7 +54,7 @@ func setup_property_containers() -> void:
 		property = property
 		var property_container = load("res://addons/property_panel/property_container/property_container.tscn").instance()
 		property_container.name = property.name
-		property_container.connect("property_changed", self, "_on_Property_changed")
+		property_container.connect("property_changed", self, "_on_Property_changed", [property_container])
 
 		properties_container.add_child(property_container)
 		property_container.setup(property)
@@ -92,5 +92,5 @@ func clear() -> void:
 	set_properties([])
 
 
-func _on_Property_changed():
-	emit_signal("values_changed")
+func _on_Property_changed(value, property_container : Control):
+	emit_signal("property_changed", property_container.property.name, value)

@@ -8,7 +8,7 @@ Emmits the `property_changed` signal when the `property_control`
 emitted the `changed_signal` the `property` specified.
 """
 
-signal property_changed
+signal property_changed(value)
 
 var property : Property
 var property_control : Control
@@ -48,7 +48,7 @@ func set_value(to) -> void:
 
 
 func _on_PropertyControl_changed(_a, _b, _c, _d, _e):
-	emit_signal("property_changed")
+	emit_signal("property_changed", get_value())
 
 
 func can_drop_data_fw(_position : Vector2, data, _control : Control) -> bool:
@@ -57,4 +57,4 @@ func can_drop_data_fw(_position : Vector2, data, _control : Control) -> bool:
 
 func drop_data_fw(_position : Vector2, data, _control : Control) -> void:
 	property._drop_data(property_control, data)
-	emit_signal("property_changed")
+	emit_signal("property_changed", get_value())
