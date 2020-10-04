@@ -27,10 +27,7 @@ func _ready() -> void:
 
 func load_material_layer(material_layer : MaterialLayer) -> void:
 	for button in get_children():
-		# block `toggled` signals to avoid emitting the `changed` signal
-		button.set_block_signals(true)
-		button.pressed = button.name in material_layer.maps
-		button.set_block_signals(false)
+		silently_set_button_pressed(button, button.name in material_layer.maps)
 	show()
 
 
@@ -52,6 +49,7 @@ func _on_Button_toggled(button_pressed : bool, map : String) -> void:
 	emit_signal("changed", map, button_pressed)
 
 
+# block `toggled` signals to avoid emitting the `changed` signal
 func silently_set_button_pressed(button : Button, pressed : bool) -> void:
 	button.set_block_signals(true)
 	button.pressed = pressed
