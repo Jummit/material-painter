@@ -15,8 +15,8 @@ export var opacity := 1.0
 export var blend_mode := "normal"
 export var visible := true
 
-const TextureLayer = preload("res://layers/texture_layer.gd")
-const LayerTexture = preload("res://layers/layer_texture.gd")
+const TextureLayer = preload("res://resources/texture_layer.gd")
+const LayerTexture = preload("res://resources/layer_texture.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true

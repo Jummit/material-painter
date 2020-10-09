@@ -1,4 +1,4 @@
-extends "res://layers/texture_layer.gd"
+extends "res://resources/texture_layer.gd"
 
 """
 A texture layer that uses a loaded file to generate the result

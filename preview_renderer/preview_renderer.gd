@@ -1,7 +1,7 @@
 extends Viewport
 
 const TextureUtils = preload("res://utils/texture_utils.gd")
-const LayerMaterial = preload("res://layers/layer_material.gd")
+const LayerMaterial = preload("res://resources/layer_material.gd")
 const Brush = preload("res://addons/painter/brush.gd")
 
 onready var model : MeshInstance = $Model

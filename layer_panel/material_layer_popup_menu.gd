@@ -19,7 +19,7 @@ enum Items {
 	ADD_LAYER,
 }
 
-const MaterialLayer = preload("res://layers/material_layer.gd")
+const MaterialLayer = preload("res://resources/material_layer.gd")
 
 func _on_about_to_show() -> void:
 	clear()

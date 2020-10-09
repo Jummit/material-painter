@@ -4,10 +4,10 @@ extends Node
 Global constants
 """
 
-const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_layer.gd")
-const ColorTextureLayer = preload("res://layers/texture_layers/color_texture_layer.gd")
-const ScalarTextureLayer = preload("res://layers/texture_layers/scalar_texture_layer.gd")
-const FileTextureLayer = preload("res://layers/texture_layers/file_texture_layer.gd")
+const BitmapTextureLayer = preload("res://resources/texture_layers/bitmap_texture_layer.gd")
+const ColorTextureLayer = preload("res://resources/texture_layers/color_texture_layer.gd")
+const ScalarTextureLayer = preload("res://resources/texture_layers/scalar_texture_layer.gd")
+const FileTextureLayer = preload("res://resources/texture_layers/file_texture_layer.gd")
 
 const TEXTURE_MAP_TYPES := ["albedo", "emission", "height",
 		"ao", "metallic", "roughness"]

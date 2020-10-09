@@ -7,7 +7,7 @@ Only visible when the paint tool is selected.
 """
 
 const Properties = preload("res://addons/property_panel/properties.gd")
-const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_layer.gd")
+const BitmapTextureLayer = preload("res://resources/texture_layers/bitmap_texture_layer.gd")
 
 class TextureAssetProperty extends Properties.FilePathProperty:
 	func _init(_name : String).(_name):

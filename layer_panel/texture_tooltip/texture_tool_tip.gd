@@ -7,7 +7,7 @@ Used in `TextureLayerTree` to show the result of a `TextureLayer`.
 It consists of a name and a big `TextureRect`.
 """
 
-const TextureLayer = preload("res://layers/texture_layer.gd")
+const TextureLayer = preload("res://resources/texture_layer.gd")
 
 onready var texture_rect : TextureRect = $VBoxContainer/TextureRect
 onready var name_label : Label = $VBoxContainer/Name

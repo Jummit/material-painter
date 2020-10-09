@@ -16,12 +16,12 @@ var undo_redo := UndoRedo.new()
 const MATERIAL_PATH := "user://materials"
 
 const ObjParser = preload("res://addons/gd-obj/obj_parser.gd")
-const SaveFile = preload("res://main/save_file.gd")
-const MaterialLayer = preload("res://layers/material_layer.gd")
-const LayerMaterial = preload("res://layers/layer_material.gd")
-const LayerTexture = preload("res://layers/layer_texture.gd")
-const TextureLayer = preload("res://layers/texture_layer.gd")
-const FolderLayer = preload("res://layers/folder_layer.gd")
+const SaveFile = preload("res://resources/save_file.gd")
+const MaterialLayer = preload("res://resources/material_layer.gd")
+const LayerMaterial = preload("res://resources/layer_material.gd")
+const LayerTexture = preload("res://resources/layer_texture.gd")
+const TextureLayer = preload("res://resources/texture_layer.gd")
+const FolderLayer = preload("res://resources/folder_layer.gd")
 const Brush = preload("res://addons/painter/brush.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/TopButtons/FileMenuButton

@@ -38,12 +38,12 @@ enum LayerType {
 	TEXTURE_LAYER,
 }
 
-const LayerMaterial = preload("res://layers/layer_material.gd")
-const MaterialLayer = preload("res://layers/material_layer.gd")
-const LayerTexture = preload("res://layers/layer_texture.gd")
-const TextureLayer = preload("res://layers/texture_layer.gd")
-const FileTextureLayer = preload("res://layers/texture_layers/file_texture_layer.gd")
-const FolderLayer = preload("res://layers/folder_layer.gd")
+const LayerMaterial = preload("res://resources/layer_material.gd")
+const MaterialLayer = preload("res://resources/material_layer.gd")
+const LayerTexture = preload("res://resources/layer_texture.gd")
+const TextureLayer = preload("res://resources/texture_layer.gd")
+const FileTextureLayer = preload("res://resources/texture_layers/file_texture_layer.gd")
+const FolderLayer = preload("res://resources/folder_layer.gd")
 
 onready var main : Control = $"../../../../.."
 onready var undo_redo : UndoRedo = main.undo_redo

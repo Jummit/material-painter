@@ -54,9 +54,9 @@ class TextureAssetType extends AssetType:
 		return path
 
 class MaterialAssetType extends AssetType:
-	const MaterialLayer = preload("res://layers/material_layer.gd")
-	const LayerTexture = preload("res://layers/layer_texture.gd")
-	const LayerMaterial = preload("res://layers/layer_material.gd")
+	const MaterialLayer = preload("res://resources/material_layer.gd")
+	const LayerTexture = preload("res://resources/layer_texture.gd")
+	const LayerMaterial = preload("res://resources/layer_material.gd")
 	
 	func _init().("Materials", "materials") -> void:
 		pass

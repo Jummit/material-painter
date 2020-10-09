@@ -8,7 +8,7 @@ var _mesh_tool := MeshDataTool.new()
 
 signal painted(layer)
 
-const BitmapTextureLayer = preload("res://layers/texture_layers/bitmap_texture_layer.gd")
+const BitmapTextureLayer = preload("res://resources/texture_layers/bitmap_texture_layer.gd")
 const MeshUtils = preload("res://utils/mesh_utils.gd")
 
 onready var model : MeshInstance = $"../3DViewport/Viewport/Model"

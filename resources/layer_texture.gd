@@ -12,7 +12,7 @@ export var name := "Untitled Texture"
 
 var result : Texture
 
-const FolderLayer = preload("res://layers/folder_layer.gd")
+const FolderLayer = preload("res://resources/folder_layer.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
