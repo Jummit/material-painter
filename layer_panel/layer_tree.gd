@@ -99,19 +99,22 @@ func can_drop_data(position : Vector2, data) -> bool:
 	if "asset" in data and (data.asset is String or data.asset is MaterialLayer\
 			or data.asset is FolderLayer):
 		return true
-	if data is Dictionary and "type" in data and data.type == "layers" and get_item_at_position(position):
-		for layer in data.layers:
-			if layer == get_item_at_position(position).get_meta("layer"):
-				return false
+	if data is Dictionary and "type" in data and data.type == "layers":
 		var layer_type : int = data.layer_type
-		var is_folder := get_layer_at_position(position) is FolderLayer
-		var onto_type : int = _get_layer_type(get_item_at_position(position))
-		if get_drop_section_at_position(position) == 0:
-			return (layer_type == LayerType.TEXTURE_LAYER and\
-					onto_type == LayerType.MATERIAL_LAYER and not is_folder) or\
-					(layer_type == onto_type and is_folder)
+		if get_item_at_position(position):
+			for layer in data.layers:
+				if layer == get_item_at_position(position).get_meta("layer"):
+					return false
+			var is_folder := get_layer_at_position(position) is FolderLayer
+			var onto_type : int = _get_layer_type(get_item_at_position(position))
+			if get_drop_section_at_position(position) == 0:
+				return (layer_type == LayerType.TEXTURE_LAYER and\
+						onto_type == LayerType.MATERIAL_LAYER and not is_folder) or\
+						(layer_type == onto_type and is_folder)
+			else:
+				return layer_type == onto_type or layer_type == LayerType.MATERIAL_LAYER
 		else:
-			return layer_type == onto_type
+			return layer_type == LayerType.MATERIAL_LAYER
 	return false
 
 
@@ -130,8 +133,14 @@ func drop_data(position : Vector2, data) -> void:
 					var new_layer = layer.duplicate()
 					undo_redo.add_do_method(self, "add_layer_to_array", new_layer, onto_array)
 					undo_redo.add_undo_method(self, "remove_layer_from_array", new_layer, onto_array)
+			-100:
+				var onto_array := editing_layer_material.layers
+				for layer in data.layers:
+					var new_layer = layer.duplicate()
+					undo_redo.add_do_method(self, "add_layer_to_array", new_layer, onto_array)
+					undo_redo.add_undo_method(self, "remove_layer_from_array", new_layer, onto_array)
 			var section:
-				var onto_array : Array = main.editing_layer_material.get_parent(onto_layer).layers
+				var onto_array : Array = editing_layer_material.get_parent(onto_layer).layers
 				var onto_position := onto_array.find(onto_layer)
 				if section == 1:
 					onto_position += 1
@@ -143,7 +152,7 @@ func drop_data(position : Vector2, data) -> void:
 					undo_redo.add_undo_method(self, "remove_layer_from_array", new_layer, onto_array)
 		
 		for layer in data.layers:
-			var in_array : Array = main.editing_layer_material.get_parent(layer).layers
+			var in_array : Array = editing_layer_material.get_parent(layer).layers
 			var layer_position = in_array.find(layer)
 			undo_redo.add_do_method(self, "remove_layer_from_array", layer, in_array)
 			undo_redo.add_undo_method(self, "insert_layer_to_array", layer, in_array, layer_position)
@@ -161,7 +170,7 @@ func drop_data(position : Vector2, data) -> void:
 			undo_redo.commit_action()
 		elif data.asset is MaterialLayer or data.asset is FolderLayer:
 			undo_redo.create_action("Add Material From Library")
-			undo_redo.add_do_method(main, "add_layer", data.asset, main.editing_layer_material)
+			undo_redo.add_do_method(main, "add_layer", data.asset, editing_layer_material)
 			undo_redo.add_undo_method(main, "delete_layer", data.asset)
 			undo_redo.commit_action()
 
@@ -323,7 +332,10 @@ func _on_item_edited() -> void:
 
 
 func _get_layer_type(layer_item : TreeItem) -> int:
-	return LayerType.TEXTURE_LAYER if layer_item.has_meta("layer_texture") else LayerType.MATERIAL_LAYER
+	if editing_layer_material.is_inside_layer_texture(layer_item.get_meta("layer")):
+		return LayerType.TEXTURE_LAYER
+	else:
+		return LayerType.MATERIAL_LAYER
 
 
 func _setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
@@ -366,7 +378,6 @@ func _setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
 func _setup_texture_layer_item(texture_layer, parent_item : TreeItem, layer_texture : LayerTexture) -> void:
 	var texture_layer_item := create_item(parent_item)
 	texture_layer_item.set_meta("layer", texture_layer)
-	texture_layer_item.set_meta("layer_texture", layer_texture)
 	texture_layer_item.custom_minimum_height = 16
 	
 	if texture_layer is TextureLayer:

@@ -73,6 +73,10 @@ func export_textures(to_folder : String) -> void:
 		results[type].get_data().save_png(to_folder.plus_file(type) + ".png")
 
 
+func is_inside_layer_texture(layer) -> bool:
+	return get_layer_texture_of_texture_layer(layer)
+
+
 func get_layer_texture_of_texture_layer(texture_layer):
 	for layer in get_flat_layers():
 		var layer_texture = layer.get_layer_texture_of_texture_layer(texture_layer)
