@@ -122,40 +122,36 @@ func drop_data(position : Vector2, data) -> void:
 	if data is Dictionary and "type" in data and data.type == "layers":
 		undo_redo.create_action("Rearrange Layers")
 		var onto_layer = get_layer_at_position(position)
+		var onto_array : Array
+		var onto_position : int
 		match get_drop_section_at_position(position):
 			0:
-				var onto_array : Array
 				if onto_layer is MaterialLayer:
 					onto_array = _selected_layer_textures[onto_layer].layers
 				else:
 					onto_array = onto_layer.layers
-				for layer in data.layers:
-					var new_layer = layer.duplicate()
-					undo_redo.add_do_method(self, "add_layer_to_array", new_layer, onto_array)
-					undo_redo.add_undo_method(self, "remove_layer_from_array", new_layer, onto_array)
+				onto_position = onto_array.size()
 			-100:
-				var onto_array := editing_layer_material.layers
-				for layer in data.layers:
-					var new_layer = layer.duplicate()
-					undo_redo.add_do_method(self, "add_layer_to_array", new_layer, onto_array)
-					undo_redo.add_undo_method(self, "remove_layer_from_array", new_layer, onto_array)
+				onto_array = editing_layer_material.layers
+				onto_position = onto_array.size()
 			var section:
-				var onto_array : Array = editing_layer_material.get_parent(onto_layer).layers
-				var onto_position := onto_array.find(onto_layer)
+				onto_array = editing_layer_material.get_parent(onto_layer).layers
+				onto_position = onto_array.find(onto_layer)
 				if section == 1:
 					onto_position += 1
 				onto_position = int(clamp(onto_position, 0, onto_array.size()))
 				data.layers.invert()
-				for layer in data.layers:
-					var new_layer = layer.duplicate()
-					undo_redo.add_do_method(self, "insert_layer_to_array", new_layer, onto_array, onto_position)
-					undo_redo.add_undo_method(self, "remove_layer_from_array", new_layer, onto_array)
 		
 		for layer in data.layers:
 			var in_array : Array = editing_layer_material.get_parent(layer).layers
 			var layer_position = in_array.find(layer)
-			undo_redo.add_do_method(self, "remove_layer_from_array", layer, in_array)
-			undo_redo.add_undo_method(self, "insert_layer_to_array", layer, in_array, layer_position)
+			var new_layer = layer.duplicate()
+			
+			undo_redo.add_do_method(self, "_insert_layer_to_array", new_layer, onto_array, onto_position)
+			undo_redo.add_do_method(self, "_remove_layer_from_array", layer, in_array)
+			undo_redo.add_undo_method(self, "_remove_layer_from_array", new_layer, onto_array)
+			undo_redo.add_undo_method(self, "_insert_layer_to_array", layer, in_array, layer_position)
+		
 		undo_redo.add_do_method(self, "reload")
 		undo_redo.add_undo_method(self, "reload")
 		undo_redo.commit_action()
@@ -173,18 +169,6 @@ func drop_data(position : Vector2, data) -> void:
 			undo_redo.add_do_method(main, "add_layer", data.asset, editing_layer_material)
 			undo_redo.add_undo_method(main, "delete_layer", data.asset)
 			undo_redo.commit_action()
-
-
-func insert_layer_to_array(layer, array : Array, position : int) -> void:
-	array.insert(position, layer)
-
-
-func add_layer_to_array(layer, array : Array) -> void:
-	array.append(layer)
-
-
-func remove_layer_from_array(layer, array : Array) -> void:
-	array.erase(layer)
 
 
 func set_editing_layer_material(to) -> void:
@@ -331,11 +315,9 @@ func _on_item_edited() -> void:
 	_lastly_edited_layer = null
 
 
-func _get_layer_type(layer_item : TreeItem) -> int:
-	if editing_layer_material.is_inside_layer_texture(layer_item.get_meta("layer")):
-		return LayerType.TEXTURE_LAYER
-	else:
-		return LayerType.MATERIAL_LAYER
+func _on_MaterialLayerPopupMenu_mask_added() -> void:
+	get_selected_layer().mask = LayerTexture.new()
+	reload()
 
 
 func _setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
@@ -393,6 +375,16 @@ func _setup_texture_layer_item(texture_layer, parent_item : TreeItem, layer_text
 			_setup_texture_layer_item(layer, texture_layer_item, layer_texture)
 
 
-func _on_MaterialLayerPopupMenu_mask_added() -> void:
-	get_selected_layer().mask = LayerTexture.new()
-	reload()
+func _get_layer_type(layer_item : TreeItem) -> int:
+	if editing_layer_material.is_inside_layer_texture(layer_item.get_meta("layer")):
+		return LayerType.TEXTURE_LAYER
+	else:
+		return LayerType.MATERIAL_LAYER
+
+
+func _insert_layer_to_array(layer, array : Array, position : int) -> void:
+	array.insert(position, layer)
+
+
+func _remove_layer_from_array(layer, array : Array) -> void:
+	array.erase(layer)
