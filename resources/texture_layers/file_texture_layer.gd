@@ -1,4 +1,4 @@
-extends "res://resources/texture_layer.gd"
+extends "res://resources/blending_texture_layer.gd"
 
 """
 A texture layer that uses a loaded file to generate the result
@@ -11,18 +11,18 @@ var cashed_image : Texture
 
 export var path := ""
 
-func _init(_name := "File").("file"):
-	name = _name
+func _init().("file", "texture({texture}, uv)") -> void:
+	pass
 
 
 func get_properties() -> Array:
 	return .get_properties() + [Properties.FilePathProperty.new("path")]
 
 
-func _get_as_shader_layer() -> BlendingLayer:
-	var layer := ._get_as_shader_layer()
-	layer.code = "texture({0}, UV).rgb"
-	layer.uniform_types = ["sampler2D"]
+func _get_as_shader_layer():
+	var layer : BlendingLayer = ._get_as_shader_layer()
+	layer.uniform_types.append("sampler2D")
+	layer.uniform_names.append("texture")
 	
 	if cashed_path != path:
 		var image := Image.new()
@@ -31,5 +31,5 @@ func _get_as_shader_layer() -> BlendingLayer:
 		cashed_image.create_from_image(image)
 		cashed_path = path
 	
-	layer.uniform_values = [cashed_image]
+	layer.uniform_values.append(cashed_image)
 	return layer

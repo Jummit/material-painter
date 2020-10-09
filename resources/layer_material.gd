@@ -37,13 +37,15 @@ func update_results(result_size : Vector2) -> void:
 			var map_layer_texture : LayerTexture = layer.maps[map]
 			map_layer_texture.update_result(result_size)
 			
-			var blending_layer := BlendingLayer.new()
+			var blending_layer : BlendingLayer
 			if layer.mask:
 				layer.mask.update_result(result_size)
-				blending_layer.mask = layer.mask.result
-			blending_layer.code = "texture({0}, UV).rgb"
-			blending_layer.uniform_types = ["sampler2D"]
-			blending_layer.uniform_values = [map_layer_texture.result]
+				blending_layer = BlendingLayer.new("texture({layer_result}, uv)", "normal", 1.0, layer.mask.result)
+			else:
+				blending_layer = BlendingLayer.new("texture({layer_result}, uv)")
+			blending_layer.uniform_types.append("sampler2D")
+			blending_layer.uniform_names.append("layer_result")
+			blending_layer.uniform_values.append(map_layer_texture.result)
 			blending_layers.append(blending_layer)
 		
 		if blending_layers.empty():
@@ -57,7 +59,6 @@ func update_results(result_size : Vector2) -> void:
 			map = "normal"
 			result = yield(NormalMapGenerationViewport.get_normal_map(result), "completed")
 		results[map] = result
-
 
 
 func update_all_layer_textures(result_size : Vector2) -> void:

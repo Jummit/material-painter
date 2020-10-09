@@ -12,14 +12,29 @@ applied to a `ColorRect` and then rendered using `render_texture`.
 
 const Constants = preload("constants.gd")
 
-class BlendingLayer:
+class Layer:
 	var code : String
-	var uniform_types : PoolStringArray
+	var uniform_types : Array
+	var uniform_names : Array
 	var uniform_values : Array
-# warning-ignore:unused_class_variable
-	var blend_mode := "normal"
-	var opacity := 1.0
-	var mask : Texture
+
+class BlendingLayer extends Layer:
+	func _init(generation_code : String, blend_mode := "normal", opacity := 1.0, mask : Texture = null) -> void:
+		if mask:
+			code = "return blend{mode}({previous}(uv), {code}, texture({mask}, uv).r);".format({
+				mode = blend_mode,
+				code = generation_code,
+			})
+			uniform_types.append("sampler2D")
+			uniform_names.append("mask")
+			uniform_values.append(mask)
+		else:
+			code = "return blend{mode}({previous}(uv), {code}, {opacity});".format({
+				mode = blend_mode,
+				code = generation_code,
+				opacity = opacity,
+			})
+
 
 func blend(layers : Array, result_size : Vector2) -> ViewportTexture:
 	if layers.size() == 0:
@@ -45,57 +60,38 @@ func blend(layers : Array, result_size : Vector2) -> ViewportTexture:
 
 static func _generate_blending_shader(layers : Array) -> String:
 	var uniform_declaration := ""
-	var preparing_code := ""
-	var blending_code := ""
-	var blend_result_count := 0
+	var generator_functions := Constants.GENERATOR_FUNCTION_TEMPLATE.format({
+		name = _function_name(-1),
+		code = "return vec4(1.0);",
+	}) + "\n"
 	var uniform_count := 0
 	
 	for layer_num in layers.size():
-		var layer := layers[layer_num] as BlendingLayer
-		var prepared_shader := Constants.RESULT_TEMPLATE.format({
-			result = _result_var(layer_num),
+		var layer := layers[layer_num] as Layer
+		var generator_function := Constants.GENERATOR_FUNCTION_TEMPLATE.format({
+			name = _function_name(layer_num),
 			code = layer.code,
 		})
-		
-		if layer.mask:
-			uniform_declaration += "uniform sampler2D %s;\n" % _mask_var(layer_num)
 		
 		for uniform in layer.uniform_types.size():
 			uniform_declaration += "uniform %s %s;\n" % [
 					layer.uniform_types[uniform],
 					_uniform_var(uniform_count)]
-			prepared_shader = prepared_shader.replace(
-					"{%s}" % uniform,
+			generator_function = generator_function.replace(
+					"{%s}" % layer.uniform_names[uniform],
 					_uniform_var(uniform_count))
 			uniform_count += 1
+		generator_function = generator_function.replace(
+				"{previous}",
+				_function_name(layer_num - 1))
 		
-		preparing_code += prepared_shader + "\n"
-		
-		if layer_num > 0:
-			var template : String
-			if layer.mask:
-				template = Constants.MASKED_BLEND_TEMPLATE
-			else:
-				template = Constants.BLEND_TEMPLATE
-			
-			blending_code += template.format({
-					result = _blend_result_var(blend_result_count + 1),
-					a = _result_var(0) if layer_num == 1 else _blend_result_var(blend_result_count),
-					b = _result_var(layer_num),
-					mode = layer.blend_mode,
-# warning-ignore:incompatible_ternary
-# warning-ignore:incompatible_ternary
-					opacity = _mask_var(layer_num) if layer.mask else layer.opacity,
-				})
-			blending_code += "\n"
-			blend_result_count += 1
+		generator_functions += generator_function + "\n"
 	
 	var shader_code := Constants.SHADER_TEMPLATE.format({
 		uniform_declaration = uniform_declaration,
 		blend_shaders = Constants.BLEND_SHADERS,
-		preparing_code = preparing_code,
-		blending_code = blending_code,
-		result = _blend_result_var(blend_result_count) if layers.size() > 1 else _result_var(0),
+		generator_functions = generator_functions,
+		result_func = _function_name(layers.size() - 1),
 	})
 	
 	return shader_code
@@ -104,11 +100,7 @@ static func _generate_blending_shader(layers : Array) -> String:
 static func _setup_shader_vars(material : Material, layers : Array) -> void:
 	var uniform_count := 0
 	for layer_num in layers.size():
-		var layer := layers[layer_num] as BlendingLayer
-		
-		if layer.mask:
-			material.set_shader_param(_mask_var(layer_num), layer.mask)
-		
+		var layer := layers[layer_num] as Layer
 		for uniform in layer.uniform_types.size():
 			material.set_shader_param(
 					_uniform_var(uniform_count),
@@ -116,17 +108,9 @@ static func _setup_shader_vars(material : Material, layers : Array) -> void:
 			uniform_count += 1
 
 
+static func _function_name(num : int) -> String:
+	return "gen_func_%s" % (num + 1)
+
+
 static func _uniform_var(num : int) -> String:
 	return "uniform_%s" % num
-
-
-static func _result_var(num : int) -> String:
-	return "result_%s" % num
-
-
-static func _blend_result_var(num : int) -> String:
-	return "blend_result_%s" % num
-
-
-static func _mask_var(num : int) -> String:
-	return "mask_%s" % num

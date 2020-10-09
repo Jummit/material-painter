@@ -61,6 +61,10 @@ redo={
  ]
 }
 
+[logging]
+
+file_logging/enable_file_logging=true
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"
