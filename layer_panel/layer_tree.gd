@@ -227,6 +227,8 @@ func get_selected_layer_texture(material_layer : MaterialLayer) -> LayerTexture:
 
 
 func get_selected_layer():
+	if not get_selected():
+		return null
 	return get_selected().get_meta("layer")
 
 

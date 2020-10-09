@@ -107,7 +107,7 @@ func _on_FileDialog_file_selected(path : String) -> void:
 
 func _on_AddButton_pressed() -> void:
 	var onto
-	if layer_tree.get_selected() and layer_tree.get_selected_layer() is FolderLayer:
+	if layer_tree.get_selected_layer() is FolderLayer:
 		onto = layer_tree.get_selected_layer()
 	else:
 		onto = editing_layer_material
@@ -122,15 +122,11 @@ func _on_AddFolderButton_pressed() -> void:
 	undo_redo.create_action("Add Folder Layer")
 	var new_layer := FolderLayer.new()
 	var onto
-	if layer_tree.get_selected():
-		var selected_layer = layer_tree.get_selected_layer()
-		if selected_layer is FolderLayer:
-			onto = selected_layer
-		elif selected_layer is MaterialLayer:
-			if layer_tree.get_selected_layer_texture(selected_layer):
-				onto = layer_tree.get_selected_layer_texture(selected_layer)
-			else:
-				onto = editing_layer_material
+	var selected_layer = layer_tree.get_selected_layer()
+	if selected_layer is FolderLayer:
+		onto = selected_layer
+	elif selected_layer is MaterialLayer and layer_tree.get_selected_layer_texture(selected_layer):
+		onto = layer_tree.get_selected_layer_texture(selected_layer)
 	else:
 		onto = editing_layer_material
 	undo_redo.add_do_method(self, "add_layer", new_layer, onto)

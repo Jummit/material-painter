@@ -35,31 +35,42 @@ func _ready() -> void:
 
 
 func _gui_input(event : InputEvent) -> void:
-	if event is InputEventMouseButton and (not event.pressed) and event.button_index == BUTTON_LEFT and tool_button_container.selected_tool == tool_button_container.Tools.PAINT:
-		var selected_layer = layer_tree.get_selected_layer()
-		if selected_layer is BitmapTextureLayer:
-			selected_layer.image_data = selected_layer.temp_texture.get_data()
-			selected_layer.temp_texture = null
-	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
-		if _can_paint_with_tool(tool_button_container.Tools.TRIANGLE):
-			var camera : Camera = $Viewport.get_camera()
-			var camera_world_position := camera.project_position(event.position, 0.0)
-			var clicked_world_position := camera.project_position(event.position, 1000.0)
-			var selected_texture_layer : BitmapTextureLayer = layer_tree.get_selected_layer()
-			var selected_face := _get_nearest_intersecting_face(camera_world_position, clicked_world_position, model.mesh, Input.is_key_pressed(KEY_CONTROL))
-			if selected_face != -1:
-				MeshUtils.paint_face(selected_texture_layer.image_data, selected_face, Color.white, model.mesh)
-				emit_signal("painted", selected_texture_layer)
-		if _can_paint_with_tool(tool_button_container.Tools.PAINT):
-			_paint(layer_tree.get_selected_layer(), event.position, event.position)
-			last_painted_position = event.position
-	if not get_viewport().gui_is_dragging() and event is InputEventMouseMotion and Input.is_mouse_button_pressed(BUTTON_LEFT) and _can_paint_with_tool(tool_button_container.Tools.PAINT):
+	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
+		if event.pressed:
+			if _can_paint_with_tool(tool_button_container.Tools.TRIANGLE):
+				var camera : Camera = $Viewport.get_camera()
+				var camera_world_position := camera.project_position(event.position, 0.0)
+				var clicked_world_position := camera.project_position(event.position, 1000.0)
+				var selected_texture_layer : BitmapTextureLayer = layer_tree.get_selected_layer()
+				var selected_face := _get_nearest_intersecting_face(
+						camera_world_position, clicked_world_position,
+						model.mesh, Input.is_key_pressed(KEY_CONTROL))
+				if selected_face != -1:
+					MeshUtils.paint_face(
+							selected_texture_layer.image_data,
+							selected_face, Color.white, model.mesh)
+					emit_signal("painted", selected_texture_layer)
+			elif _can_paint_with_tool(tool_button_container.Tools.PAINT):
+				_paint(layer_tree.get_selected_layer(), event.position, event.position)
+				last_painted_position = event.position
+		
+		if not event.pressed and tool_button_container.selected_tool == tool_button_container.Tools.PAINT:
+			var selected_layer = layer_tree.get_selected_layer()
+			if selected_layer is BitmapTextureLayer:
+				selected_layer.image_data = selected_layer.temp_texture.get_data()
+				selected_layer.temp_texture = null
+	
+	if not get_viewport().gui_is_dragging() and event is InputEventMouseMotion\
+			and Input.is_mouse_button_pressed(BUTTON_LEFT) and\
+			_can_paint_with_tool(tool_button_container.Tools.PAINT):
 		_paint(layer_tree.get_selected_layer(), last_painted_position, event.position)
 		last_painted_position = event.position
 	
-	if event is InputEventMouseButton and event.pressed and event.button_mask == BUTTON_MASK_RIGHT:
+	if event is InputEventMouseButton and event.pressed and\
+			event.button_mask == BUTTON_MASK_RIGHT:
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(BUTTON_RIGHT) and event.button_mask == BUTTON_MASK_RIGHT:
+	if event is InputEventMouseMotion and Input.is_mouse_button_pressed(BUTTON_RIGHT)\
+			and event.button_mask == BUTTON_MASK_RIGHT:
 		directional_light.rotate_y(event.relative.x * sensitity)
 	if event is InputEventMouseButton and not event.pressed:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
