@@ -11,7 +11,7 @@ export var image_data : Image
 
 var temp_texture : Texture
 
-func _init().("bitmap", "texture({1}, uv)") -> void:
+func _init().("bitmap", "texture({texture}, uv)") -> void:
 	image_data = Image.new()
 	image_data.create(1024, 1024, false, Image.FORMAT_RGB8)
 	image_data.lock()
@@ -20,6 +20,7 @@ func _init().("bitmap", "texture({1}, uv)") -> void:
 func _get_as_shader_layer():
 	var layer : BlendingLayer = ._get_as_shader_layer()
 	layer.uniform_types.append("sampler2D")
+	layer.uniform_names.append("texture")
 	var texture : Texture
 	if temp_texture:
 		texture = temp_texture
