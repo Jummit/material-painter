@@ -16,6 +16,7 @@ var undo_redo := UndoRedo.new()
 const MATERIAL_PATH := "user://materials"
 
 const ObjParser = preload("res://addons/gd-obj/obj_parser.gd")
+const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
 const SaveFile = preload("res://resources/save_file.gd")
 const MaterialLayer = preload("res://resources/material_layer.gd")
 const LayerMaterial = preload("res://resources/layer_material.gd")
@@ -35,7 +36,14 @@ onready var painter : Node = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxCo
 onready var asset_browser : TabContainer = $VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser
 
 func _ready() -> void:
-	file_menu_button.get_popup().connect("id_pressed", self, "_on_FileMenu_id_pressed")
+	var popup := file_menu_button.get_popup()
+	popup.connect("id_pressed", self, "_on_FileMenu_id_pressed")
+	popup.set_item_shortcut(0, ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_N))
+	popup.set_item_shortcut(1, ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_O))
+	popup.set_item_shortcut(2, ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_S))
+	popup.set_item_shortcut(3, ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_E))
+	popup.set_item_shortcut(4, ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_M))
+	popup.set_item_shortcut(5, ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_Q))
 	_load_file(SaveFile.new())
 	undo_redo.connect("version_changed", self, "_on_UndoRedo_version_changed")
 

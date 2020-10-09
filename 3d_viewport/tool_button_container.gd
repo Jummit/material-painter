@@ -24,6 +24,7 @@ func _ready() -> void:
 	for tool_name in Tools:
 		var tool_button := Button.new()
 		tool_button.name = tool_name
+		tool_button.pressed = selected_tool == Tools[tool_name]
 		tool_button.connect("pressed", self, "_on_ToolButton_pressed", [Tools[tool_name]])
 		tool_button.icon = load("res://icons/tools/%s.svg" % tool_name.to_lower())
 		add_child(tool_button)
