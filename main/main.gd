@@ -243,6 +243,8 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 			file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
 			file_dialog.current_file = ""
 			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
+		5:
+			get_tree().quit()
 
 
 func _on_UndoRedo_version_changed() -> void:

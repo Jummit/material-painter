@@ -60,7 +60,7 @@ __meta__ = {
 margin_right = 35.0
 margin_bottom = 20.0
 text = "File"
-items = [ "New", null, 0, false, false, 0, 0, null, "", false, "Open", null, 0, false, false, 1, 0, null, "", false, "Save", null, 0, false, false, 2, 0, null, "", false, "Export", null, 0, false, false, 3, 0, null, "", false, "Load mesh", null, 0, false, false, 4, 0, null, "", false ]
+items = [ "New", null, 0, false, false, 0, 0, null, "", false, "Open", null, 0, false, false, 1, 0, null, "", false, "Save", null, 0, false, false, 2, 0, null, "", false, "Export", null, 0, false, false, 3, 0, null, "", false, "Load mesh", null, 0, false, false, 4, 0, null, "", false, "Quit", null, 0, false, false, 5, 0, null, "", false ]
 switch_on_hover = true
 
 [node name="EditMenuButton" type="MenuButton" parent="VBoxContainer/TopButtonBar/TopButtons"]
