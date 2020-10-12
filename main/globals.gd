@@ -9,6 +9,8 @@ const ColorTextureLayer = preload("res://resources/texture_layers/color_texture_
 const ScalarTextureLayer = preload("res://resources/texture_layers/scalar_texture_layer.gd")
 const FileTextureLayer = preload("res://resources/texture_layers/file_texture_layer.gd")
 
+const BlurTextureLayer = preload("res://resources/effects/blur_texture_layer.gd")
+
 const TEXTURE_MAP_TYPES := ["albedo", "emission", "height",
 		"ao", "metallic", "roughness"]
 const BLEND_MODES := ["normal", "add", "subtract", "multiply",
@@ -20,4 +22,5 @@ var TEXTURE_LAYER_TYPES := [
 	BitmapTextureLayer,
 	ColorTextureLayer,
 	ScalarTextureLayer,
+	BlurTextureLayer,
 ]

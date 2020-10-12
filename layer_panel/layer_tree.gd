@@ -69,7 +69,7 @@ func _gui_input(event : InputEvent) -> void:
 		if get_selected():
 			get_selected().set_editable(1, true)
 			# if a layer was set editable reset it to not editable again
-			if _lastly_edited_layer:
+			if is_instance_valid(_lastly_edited_layer):
 				_lastly_edited_layer.set_editable(1, false)
 			_lastly_edited_layer = get_selected()
 
