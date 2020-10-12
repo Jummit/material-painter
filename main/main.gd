@@ -15,7 +15,7 @@ var undo_redo := UndoRedo.new()
 
 const MATERIAL_PATH := "user://materials"
 
-const ObjParser = preload("res://addons/gd-obj/obj_parser.gd")
+const ObjParser = preload("res://addons/obj_parser/obj_parser.gd")
 const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
 const SaveFile = preload("res://resources/save_file.gd")
 const MaterialLayer = preload("res://resources/material_layer.gd")
