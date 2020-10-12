@@ -11,6 +11,7 @@ const FileTextureLayer = preload("res://resources/texture_layers/file_texture_la
 
 const BlurTextureLayer = preload("res://resources/effects/blur_texture_layer.gd")
 const HSVAdjustTextureLayer = preload("res://resources/effects/hsv_adjust_texture_layer.gd")
+const IsolateColorTextureLayer = preload("res://resources/effects/isolate_color_texture_layer.gd")
 
 const TEXTURE_MAP_TYPES := ["albedo", "emission", "height",
 		"ao", "metallic", "roughness"]
@@ -25,4 +26,5 @@ var TEXTURE_LAYER_TYPES := [
 	ScalarTextureLayer,
 	BlurTextureLayer,
 	HSVAdjustTextureLayer,
+	IsolateColorTextureLayer,
 ]
