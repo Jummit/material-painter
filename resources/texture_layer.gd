@@ -17,9 +17,11 @@ export var visible := true
 var type_name : String
 
 const Layer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").Layer
-func _init(_type_name : String):
+
+func _init(_type_name : String, _name):
 	resource_local_to_scene = true
 	type_name = _type_name
+	name = _name
 
 
 func get_properties() -> Array:

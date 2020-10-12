@@ -11,7 +11,7 @@ var cashed_image : Texture
 
 export var path := ""
 
-func _init().("file", "texture({texture}, uv)") -> void:
+func _init().("file", "File", "texture({texture}, uv)") -> void:
 	pass
 
 
