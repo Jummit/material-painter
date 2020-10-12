@@ -15,7 +15,7 @@ onready var result : ViewportTexture = $PaintViewport.get_texture()
 var _painting := false
 var _next_position : Vector2
 var _viewport_size : Vector2
-var _cashed_images : Dictionary = {}
+var _cached_images : Dictionary = {}
 
 const Brush = preload("res://addons/painter/brush.gd")
 
@@ -130,11 +130,11 @@ func clear() -> void:
 
 
 func _load_image_texture(path : String) -> ImageTexture:
-	if path in _cashed_images:
-		return _cashed_images[path]
+	if path in _cached_images:
+		return _cached_images[path]
 	var image := Image.new()
 	image.load(path)
 	var image_texture := ImageTexture.new()
 	image_texture.create_from_image(image)
-	_cashed_images[path] = image_texture
+	_cached_images[path] = image_texture
 	return image_texture

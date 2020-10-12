@@ -19,11 +19,5 @@ func get_properties() -> Array:
 			]
 
 
-func generate_result(result_size : Vector2, keep_viewport := false) -> Texture:
-	return yield(LayerBlendViewportManager.blend(
-			[_get_as_shader_layer()], result_size,
-			get_instance_id() if keep_viewport else -1), "completed")
-
-
 func _get_as_shader_layer():
 	return BlendingLayer.new(code, blend_mode, opacity)

@@ -10,7 +10,7 @@ signal painted(layer)
 
 var sensitity := 0.01
 var last_painted_position : Vector2
-var cashed_camera_transform : Transform
+var cached_camera_transform : Transform
 
 const Brush = preload("res://addons/painter/brush.gd")
 const BitmapTextureLayer = preload("res://resources/texture_layers/bitmap_texture_layer.gd")
@@ -154,9 +154,9 @@ func _can_paint_with_tool(tool_id : int) -> bool:
 func _paint(on_texture_layer : BitmapTextureLayer, from : Vector2, to : Vector2) -> void:
 	var camera : Camera = viewport.get_camera()
 	var camera_transform = camera.global_transform
-	if camera_transform != cashed_camera_transform:
+	if camera_transform != cached_camera_transform:
 		yield(painter.update_view(viewport), "completed")
-	cashed_camera_transform = camera_transform
+	cached_camera_transform = camera_transform
 	painter.paint(from / rect_size, to / rect_size)
 	on_texture_layer.temp_texture = painter.result
 	emit_signal("painted", on_texture_layer)

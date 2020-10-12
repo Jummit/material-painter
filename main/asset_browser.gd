@@ -35,8 +35,8 @@ class AssetType:
 	func get_asset_directory() -> String:
 		return "user://".plus_file(directory)
 	
-	func get_cashed_thumbnails_path() -> String:
-		return "user://cashed_thumbnails/" + directory
+	func get_cached_thumbnails_path() -> String:
+		return "user://cached_thumbnails/" + directory
 
 class TextureAssetType extends AssetType:
 	func _init().("Textures", "textures") -> void:
@@ -121,9 +121,9 @@ func register_asset(file : String, asset_type : AssetType) -> void:
 	var item_list : ItemList = asset_type_item_lists[asset_type]
 	var asset = asset_type._load(asset_type.get_asset_directory().plus_file(file))
 	var id := item_list.get_item_count()
-	var cache_thumbnail_path := asset_type.get_cashed_thumbnails_path().plus_file(file.get_basename() + ".png")
+	var cache_thumbnail_path := asset_type.get_cached_thumbnails_path().plus_file(file.get_basename() + ".png")
 	var dir := Directory.new()
-	dir.make_dir_recursive(asset_type.get_cashed_thumbnails_path())
+	dir.make_dir_recursive(asset_type.get_cached_thumbnails_path())
 	var preview
 	if dir.file_exists(cache_thumbnail_path):
 		var preview_image := Image.new()

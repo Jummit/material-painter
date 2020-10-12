@@ -17,7 +17,7 @@ func _ready() -> void:
 	add_child(one_time_viewport)
 
 
-func blend(layers : Array, result_size : Vector2, id := -1) -> Texture:
+func blend(layers : Array, result_size : Vector2, id := -1, use_cached_shader := false) -> Texture:
 	var layer_blend_viewport : LayerBlendingViewport
 	if id != -1:
 		if has_node(str(id)):
@@ -28,7 +28,7 @@ func blend(layers : Array, result_size : Vector2, id := -1) -> Texture:
 			add_child(layer_blend_viewport)
 	else:
 		layer_blend_viewport = one_time_viewport
-	var result : Texture = yield(layer_blend_viewport.blend(layers, result_size), "completed")
+	var result : Texture = yield(layer_blend_viewport.blend(layers, result_size, use_cached_shader), "completed")
 	if id == -1:
 		result = TextureUtils.viewport_to_image(result)
 	return result

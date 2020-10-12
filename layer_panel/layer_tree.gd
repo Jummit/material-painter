@@ -189,16 +189,16 @@ func update_icons() -> void:
 	for layer in _tree_items:
 		var tree_item : TreeItem = _tree_items[layer]
 		if layer is TextureLayer:
-			tree_item.set_button(0, 0, yield(layer.generate_result(Vector2(16, 16), false), "completed"))
+			tree_item.set_button(0, 0, yield(layer.generate_result(Vector2(16, 16), true, 1), "completed"))
 		elif layer is MaterialLayer:
 			var button_count := 0
 			if layer.mask:
-				tree_item.set_button(0, 0, yield(layer.mask.generate_result(Vector2(32, 32), false), "completed"))
+				tree_item.set_button(0, 0, yield(layer.mask.generate_result(Vector2(32, 32), false, true, 1), "completed"))
 				button_count += 1
 			if layer.maps.size() > 0:
 				if layer in _selected_maps:
 					var selected_map : LayerTexture = _selected_maps[layer]
-					tree_item.set_button(0, button_count, yield(selected_map.generate_result(Vector2(32, 32), false), "completed"))
+					tree_item.set_button(0, button_count, yield(selected_map.generate_result(Vector2(32, 32), false, true, 1), "completed"))
 		tree_item.set_button(1, 0, preload("res://icons/icon_visible.svg") if layer.visible else preload("res://icons/icon_hidden.svg"))
 
 

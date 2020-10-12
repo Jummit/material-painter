@@ -174,13 +174,14 @@ func _on_LayerPropertyPanel_property_changed(property : String, value) -> void:
 	var affected_layer : LayerTexture = editing_layer_material.get_parent(layer_property_panel.editing_layer)
 	if not affected_layer:
 		return
+	var use_cashed_shader = not property in ["opacity", "blend_mode"]
 	undo_redo.add_do_method(layer_property_panel, "set_property_value", property, value)
-	undo_redo.add_do_method(affected_layer, "update_result", result_size)
-	undo_redo.add_do_method(self, "_update_results")
+	undo_redo.add_do_method(affected_layer, "update_result", result_size, true, use_cashed_shader)
+	undo_redo.add_do_method(self, "_update_results", true, use_cashed_shader)
 	undo_redo.add_undo_property(layer_property_panel.editing_layer, property, layer_property_panel.editing_layer.get(property))
-	undo_redo.add_undo_method(affected_layer, "update_result", result_size)
+	undo_redo.add_undo_method(affected_layer, "update_result", result_size, true, use_cashed_shader)
 	undo_redo.add_undo_method(layer_property_panel, "set_property_value", property, layer_property_panel.editing_layer.get(property))
-	undo_redo.add_undo_method(self, "_update_results")
+	undo_redo.add_undo_method(self, "_update_results", true, use_cashed_shader)
 	undo_redo.commit_action()
 
 
@@ -202,8 +203,8 @@ func _on_MaterialLayerPopupMenu_layer_saved() -> void:
 
 
 func _on_Viewport_painted(layer : TextureLayer) -> void:
-	editing_layer_material.get_parent(layer).update_result(result_size)
-	_update_results()
+	editing_layer_material.get_parent(layer).update_result(result_size, true, true)
+	_update_results(false, true)
 
 
 func _on_MaterialLayerPopupMenu_mask_removed() -> void:
@@ -274,8 +275,8 @@ func _load_model(path : String) -> void:
 	model.set_mesh(ObjParser.parse_obj(path))
 
 
-func _update_results(update_icons := true) -> void:
-	var result = editing_layer_material.update_results(result_size)
+func _update_results(update_icons := true, use_cached_shader := false) -> void:
+	var result = editing_layer_material.update_results(result_size, use_cached_shader)
 	if result is GDScriptFunctionState:
 		yield(result, "completed")
 	results_item_list.load_layer_material(editing_layer_material)

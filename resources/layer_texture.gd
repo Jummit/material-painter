@@ -18,15 +18,15 @@ func _init() -> void:
 	resource_local_to_scene = true
 
 
-func update_result(result_size : Vector2, keep_viewport := true) -> void:
-	result = yield(generate_result(result_size, keep_viewport), "completed")
+func update_result(result_size : Vector2, keep_viewport := true, use_cached_shader := false) -> void:
+	result = yield(generate_result(result_size, keep_viewport, use_cached_shader), "completed")
 
 
-func generate_result(result_size : Vector2, keep_viewport := true) -> Texture:
+func generate_result(result_size : Vector2, keep_viewport := true, use_cached_shader := false, custom_id := 0) -> Texture:
 	var blending_layers := []
 	for layer in get_flat_layers(layers, false):
 		blending_layers.append(layer._get_as_shader_layer())
-	return yield(LayerBlendViewportManager.blend(blending_layers, result_size, get_instance_id() if keep_viewport else -1), "completed")
+	return yield(LayerBlendViewportManager.blend(blending_layers, result_size, get_instance_id() + custom_id if keep_viewport else -1, use_cached_shader), "completed")
 
 
 func get_flat_layers(layer_array : Array = layers, add_hidden := true) -> Array:

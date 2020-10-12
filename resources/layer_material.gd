@@ -27,7 +27,7 @@ func _init() -> void:
 	resource_local_to_scene = true
 
 
-func update_results(result_size : Vector2) -> void:
+func update_results(result_size : Vector2, use_cached_shader := false) -> void:
 	var flat_layers := get_flat_layers(layers, false)
 	for map in Globals.TEXTURE_MAP_TYPES:
 		var blending_layers := []
@@ -35,11 +35,11 @@ func update_results(result_size : Vector2) -> void:
 			if not (map in layer.maps and layer.maps[map]):
 				continue
 			var map_layer_texture : LayerTexture = layer.maps[map]
-			map_layer_texture.update_result(result_size)
+			map_layer_texture.update_result(result_size, true, use_cached_shader)
 			
 			var blending_layer : BlendingLayer
 			if layer.mask:
-				layer.mask.update_result(result_size)
+				layer.mask.update_result(result_size, true, use_cached_shader)
 				blending_layer = BlendingLayer.new("texture({layer_result}, uv)", "normal", 1.0, layer.mask.result)
 			else:
 				blending_layer = BlendingLayer.new("texture({layer_result}, uv)")
@@ -53,7 +53,7 @@ func update_results(result_size : Vector2) -> void:
 			continue
 		
 		var result : Texture = yield(LayerBlendViewportManager.blend(
-				blending_layers, result_size, map.hash()), "completed")
+				blending_layers, result_size, map.hash(), use_cached_shader), "completed")
 		
 		if map == "height":
 			map = "normal"
