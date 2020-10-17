@@ -34,6 +34,7 @@ onready var layer_tree : Tree = $VBoxContainer/PanelContainer/HBoxContainer/Laye
 onready var results_item_list : ItemList = $VBoxContainer/PanelContainer/HBoxContainer/ResultsItemList
 onready var painter : Node = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Painter"
 onready var asset_browser : TabContainer = $VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser
+onready var material_option_button : OptionButton = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/HBoxContainer/MaterialOptionButton
 
 func _ready() -> void:
 	var popup := file_menu_button.get_popup()
@@ -265,14 +266,19 @@ func _load_file(save_file : SaveFile) -> void:
 	current_file = save_file
 	if current_file.model_path:
 		_load_model(current_file.model_path)
-	editing_layer_material = current_file.layer_material
-	editing_layer_material.update_all_layer_textures(result_size)
-	_update_results(false)
-	layer_tree.editing_layer_material = editing_layer_material
+		editing_layer_material = current_file.layer_materials.front()
+		for layer_material in current_file.layer_materials:
+			layer_material.update_all_layer_textures(result_size)
+		_update_results(false)
+		layer_tree.editing_layer_material = editing_layer_material
 
 
 func _load_model(path : String) -> void:
-	model.set_mesh(ObjParser.parse_obj(path))
+	var mesh := ObjParser.parse_obj(path)
+	model.set_mesh(mesh)
+	for surface in mesh.get_surface_count():
+		material_option_button.add_item(str(surface))
+		current_file.layer_materials.append(LayerMaterial.new())
 
 
 func _update_results(update_icons := true, use_cached_shader := false) -> void:
@@ -280,7 +286,7 @@ func _update_results(update_icons := true, use_cached_shader := false) -> void:
 	if result is GDScriptFunctionState:
 		yield(result, "completed")
 	results_item_list.load_layer_material(editing_layer_material)
-	model.load_layer_material_maps(editing_layer_material)
+	model.load_layer_materials(current_file.layer_materials)
 	if update_icons:
 		layer_tree.update_icons()
 
@@ -294,4 +300,5 @@ func _update_all_layer_textures(layers : Array) -> void:
 
 
 func _on_MaterialOptionButton_item_selected(index : int) -> void:
-	pass # Replace with function body.
+	editing_layer_material = current_file.layer_materials[index]
+	layer_tree.editing_layer_material = editing_layer_material
