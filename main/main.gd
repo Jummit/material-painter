@@ -12,6 +12,7 @@ var file_location : String
 var editing_layer_material : LayerMaterial
 var result_size := Vector2(2048, 2048)
 var undo_redo := UndoRedo.new()
+var currently_viewing_map : String setget set_currently_viewing_map
 
 const MATERIAL_PATH := "user://materials"
 
@@ -63,6 +64,8 @@ func _input(event : InputEvent) -> void:
 			print("Nothing to redo.")
 		else:
 			print("Redo: " + undo_redo.get_current_action_name())
+	elif event.is_action_pressed("ui_cancel"):
+		set_currently_viewing_map("")
 
 
 func add_layer(layer, onto) -> void:
@@ -231,35 +234,40 @@ func _on_MaterialOptionButton_item_selected(index : int) -> void:
 	layer_tree.editing_layer_material = editing_layer_material
 
 
+func _on_ResultsItemList_item_activated(index : int) -> void:
+	set_currently_viewing_map(editing_layer_material.results.keys()[index])
+
+
+
 func _on_FileMenu_id_pressed(id : int) -> void:
 	match id:
 		0:
 			_load_file(SaveFile.new())
 		1:
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
+			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 			file_dialog.filters = ["*.tres;Material Painter File"]
-			file_dialog.popup_centered()
 			file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
 			file_dialog.current_file = ""
-			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
+			file_dialog.popup_centered()
 		2:
 			file_dialog.mode = FileDialog.MODE_SAVE_FILE
+			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 			file_dialog.filters = ["*.tres;Material Painter File"]
 			file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
 			file_dialog.current_file = ""
 			file_dialog.set_meta("to_save", current_file)
 			file_dialog.popup_centered()
-			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 		3:
 			if file_location:
 				editing_layer_material.export_textures(file_location.get_base_dir())
 		4:
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
+			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 			file_dialog.filters = ["*.obj;Object File"]
-			file_dialog.popup_centered()
 			file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
 			file_dialog.current_file = ""
-			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
+			file_dialog.popup_centered()
 		5:
 			get_tree().quit()
 
@@ -295,7 +303,8 @@ func _update_results(update_icons := true, use_cached_shader := false) -> void:
 	if result is GDScriptFunctionState:
 		yield(result, "completed")
 	results_item_list.load_layer_material(editing_layer_material)
-	model.load_layer_materials(current_file.layer_materials)
+	if not currently_viewing_map:
+		model.load_layer_materials(current_file.layer_materials)
 	if update_icons:
 		layer_tree.update_icons()
 
@@ -306,3 +315,17 @@ func _update_all_layer_textures(layers : Array) -> void:
 			yield(layer.update_all_layer_textures(result_size), "completed")
 		else:
 			yield(_update_all_layer_textures(layer.layers), "completed")
+
+
+func set_currently_viewing_map(to : String) -> void:
+	currently_viewing_map = to
+	if currently_viewing_map:
+		var textures := []
+		for layer_material in current_file.layer_materials:
+			if currently_viewing_map in layer_material.results:
+				textures.append(layer_material.results[currently_viewing_map])
+			else:
+				textures.append(null)
+		model.load_albedo_textures(textures)
+	else:
+		model.load_layer_materials(current_file.layer_materials)

@@ -34,3 +34,11 @@ func load_layer_materials(layer_materials : Array) -> void:
 			
 			if map == "metallic":
 				material.set("metallic", int(map in layer_material.results.keys()))
+
+
+func load_albedo_textures(textures : Array) -> void:
+	for texture_num in textures.size():
+		var material := SpatialMaterial.new()
+		material.albedo_texture = textures[texture_num]
+		material.flags_albedo_tex_force_srgb = true
+		set_surface_material(texture_num, material)
