@@ -295,6 +295,8 @@ func _draw_material_layer_item(material_layer_item : TreeItem, item_rect : Rect2
 	var icon_rect := Rect2(Vector2(68, 3 + item_rect.position.y), Vector2(32, 32))
 	if _selected_layer_textures[material_layer] == material_layer.mask and material_layer.maps.size() > 0:
 		icon_rect.position.x = 25
+	if material_layer.get_layer_textures().size() > 1:
+		icon_rect.position.x -= 25
 	draw_rect(icon_rect, Color.dodgerblue, false, 2.0)
 
 
