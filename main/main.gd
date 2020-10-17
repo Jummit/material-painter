@@ -291,3 +291,7 @@ func _update_all_layer_textures(layers : Array) -> void:
 			yield(layer.update_all_layer_textures(result_size), "completed")
 		else:
 			yield(_update_all_layer_textures(layer.layers), "completed")
+
+
+func _on_MaterialOptionButton_item_selected(index : int) -> void:
+	pass # Replace with function body.
