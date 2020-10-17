@@ -66,7 +66,6 @@ func blend(layers : Array, result_size : Vector2, use_cached_shader := false) ->
 
 
 static func _generate_blending_shader(layers : Array) -> String:
-	print("generating blending shader")
 	var uniform_declaration := ""
 	var generator_functions := Constants.GENERATOR_FUNCTION_TEMPLATE.format({
 		name = _function_name(-1),

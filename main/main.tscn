@@ -1,7 +1,6 @@
-[gd_scene load_steps=24 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://main/2d_viewport.gd" type="Script" id=1]
-[ext_resource path="res://3d_viewport/material.tres" type="Material" id=2]
 [ext_resource path="res://main/main.gd" type="Script" id=3]
 [ext_resource path="res://3d_viewport/cube.obj" type="ArrayMesh" id=4]
 [ext_resource path="res://main/view_menu_button.gd" type="Script" id=5]
@@ -133,6 +132,7 @@ script = ExtResource( 15 )
 orientation = 1
 
 [node name="SaveButton" type="Button" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/ToolSettingsContainer"]
+visible = false
 margin_left = 674.0
 margin_right = 756.0
 margin_bottom = 40.0
@@ -183,7 +183,6 @@ msaa = 1
 render_target_update_mode = 3
 
 [node name="Model" type="MeshInstance" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
-material_override = ExtResource( 2 )
 mesh = ExtResource( 4 )
 material/0 = null
 script = ExtResource( 8 )
@@ -242,7 +241,6 @@ margin_bottom = 22.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "Stone"
-items = [ "Stone", null, false, 0, null, "Glass", null, false, 1, null ]
 selected = 0
 
 [node name="AddLayerButton" type="Button" parent="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/HBoxContainer"]

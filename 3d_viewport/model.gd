@@ -14,16 +14,16 @@ func set_mesh(to) -> void:
 
 
 func load_layer_materials(layer_materials : Array) -> void:
-	print(get_surface_material_count())
+	var material_maps = Globals.TEXTURE_MAP_TYPES.duplicate()
+	material_maps.erase("height")
+	material_maps.append("normal")
+	
 	for layer_material_count in layer_materials.size():
 		if not get_surface_material(layer_material_count):
-			set_surface_material(layer_material_count, preload("res://3d_viewport/material.tres"))
+			set_surface_material(layer_material_count, preload("res://3d_viewport/material.tres").duplicate())
 		var material := get_surface_material(layer_material_count)
 		var layer_material : LayerMaterial = layer_materials[layer_material_count]
 		
-		var material_maps = Globals.TEXTURE_MAP_TYPES.duplicate()
-		material_maps.erase("height")
-		material_maps.append("normal")
 		for map in material_maps:
 			if map in layer_material.results.keys():
 				material.set(map + "_enabled", true)

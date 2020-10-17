@@ -45,7 +45,9 @@ func _ready() -> void:
 	popup.set_item_shortcut(3, ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_E))
 	popup.set_item_shortcut(4, ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_M))
 	popup.set_item_shortcut(5, ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_Q))
-	_load_file(SaveFile.new())
+	var file := SaveFile.new()
+	file.model_path = "res://3d_viewport/cube.obj"
+	_load_file(file)
 	undo_redo.connect("version_changed", self, "_on_UndoRedo_version_changed")
 
 
@@ -224,6 +226,11 @@ func _on_SaveButton_pressed() -> void:
 	file_dialog.popup_centered()
 
 
+func _on_MaterialOptionButton_item_selected(index : int) -> void:
+	editing_layer_material = current_file.layer_materials[index]
+	layer_tree.editing_layer_material = editing_layer_material
+
+
 func _on_FileMenu_id_pressed(id : int) -> void:
 	match id:
 		0:
@@ -276,6 +283,8 @@ func _load_file(save_file : SaveFile) -> void:
 func _load_model(path : String) -> void:
 	var mesh := ObjParser.parse_obj(path)
 	model.set_mesh(mesh)
+	material_option_button.clear()
+	current_file.layer_materials = []
 	for surface in mesh.get_surface_count():
 		material_option_button.add_item(str(surface))
 		current_file.layer_materials.append(LayerMaterial.new())
@@ -297,8 +306,3 @@ func _update_all_layer_textures(layers : Array) -> void:
 			yield(layer.update_all_layer_textures(result_size), "completed")
 		else:
 			yield(_update_all_layer_textures(layer.layers), "completed")
-
-
-func _on_MaterialOptionButton_item_selected(index : int) -> void:
-	editing_layer_material = current_file.layer_materials[index]
-	layer_tree.editing_layer_material = editing_layer_material

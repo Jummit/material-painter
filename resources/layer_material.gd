@@ -53,7 +53,7 @@ func update_results(result_size : Vector2, use_cached_shader := false) -> void:
 			continue
 		
 		var result : Texture = yield(LayerBlendViewportManager.blend(
-				blending_layers, result_size, map.hash(), use_cached_shader), "completed")
+				blending_layers, result_size, get_instance_id() + map.hash(), use_cached_shader), "completed")
 		
 		if map == "height":
 			map = "normal"
