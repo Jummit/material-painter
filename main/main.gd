@@ -36,6 +36,7 @@ onready var results_item_list : ItemList = $VBoxContainer/PanelContainer/HBoxCon
 onready var painter : Node = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Painter"
 onready var asset_browser : TabContainer = $VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser
 onready var material_option_button : OptionButton = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/HBoxContainer/MaterialOptionButton
+onready var camera : Camera = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport/RotatingCamera/HorizontalCameraSocket/Camera"
 
 func _ready() -> void:
 	var popup := file_menu_button.get_popup()
@@ -237,6 +238,14 @@ func _on_MaterialOptionButton_item_selected(index : int) -> void:
 func _on_ResultsItemList_item_activated(index : int) -> void:
 	set_currently_viewing_map(editing_layer_material.results.keys()[index])
 
+
+# hacky way of preventing zoom when the file dialog is in the way
+func _on_FileDialog_about_to_show() -> void:
+	camera.set_process_input(false)
+
+
+func _on_FileDialog_popup_hide() -> void:
+	camera.set_process_input(true)
 
 
 func _on_FileMenu_id_pressed(id : int) -> void:

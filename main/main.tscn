@@ -179,6 +179,7 @@ script = ExtResource( 20 )
 size = Vector2( 748, 329 )
 handle_input_locally = false
 msaa = 1
+render_target_update_mode = 3
 shadow_atlas_size = 4096
 
 [node name="Model" type="MeshInstance" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
@@ -237,8 +238,6 @@ margin_right = 173.0
 margin_bottom = 22.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "Stone"
-selected = 0
 
 [node name="AddLayerButton" type="Button" parent="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/HBoxContainer"]
 margin_left = 177.0
@@ -345,11 +344,11 @@ __meta__ = {
 [connection signal="material_layer_selected" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/ToolSettingsContainer/ToolSettingsPropertyPanel" method="_on_LayerTree_material_layer_selected"]
 [connection signal="material_layer_selected" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" to="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerPropertyPanel" method="_on_LayerTree_material_layer_selected"]
 [connection signal="material_layer_selected" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" to="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/TextureMapButtons" method="_on_LayerTree_material_layer_selected"]
-[connection signal="texture_layer_selected" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ToolButtonContainer" method="_on_LayerTree_texture_layer_selected"]
 [connection signal="texture_layer_selected" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport" method="_on_LayerTree_texture_layer_selected"]
 [connection signal="texture_layer_selected" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/ToolSettingsContainer/ToolSettingsPropertyPanel" method="_on_LayerTree_texture_layer_selected"]
 [connection signal="texture_layer_selected" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" to="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerPropertyPanel" method="_on_LayerTree_texture_layer_selected"]
 [connection signal="texture_layer_selected" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" to="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/TextureMapButtons" method="_on_LayerTree_texture_layer_selected"]
+[connection signal="texture_layer_selected" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ToolButtonContainer" method="_on_LayerTree_texture_layer_selected"]
 [connection signal="about_to_show" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MaterialLayerPopupMenu" to="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MaterialLayerPopupMenu" method="_on_about_to_show"]
 [connection signal="id_pressed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MaterialLayerPopupMenu" to="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MaterialLayerPopupMenu" method="_on_id_pressed"]
 [connection signal="index_pressed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MaterialLayerPopupMenu" to="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MaterialLayerPopupMenu" method="_on_index_pressed"]
@@ -361,6 +360,8 @@ __meta__ = {
 [connection signal="id_pressed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree/MapTypePopupMenu" to="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree" method="_on_MapTypePopupMenu_id_pressed"]
 [connection signal="changed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/TextureMapButtons" to="." method="_on_TextureMapButtons_changed"]
 [connection signal="property_changed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerPropertyPanel" to="." method="_on_LayerPropertyPanel_property_changed"]
+[connection signal="about_to_show" from="FileDialog" to="." method="_on_FileDialog_about_to_show"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]
+[connection signal="popup_hide" from="FileDialog" to="." method="_on_FileDialog_popup_hide"]
 
 [editable path="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/ToolSettingsContainer/ToolSettingsPropertyPanel"]
