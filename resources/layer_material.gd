@@ -115,6 +115,8 @@ func get_parent(layer):
 				return folder
 	for material_layer in get_flat_layers():
 		for layer_texture in material_layer.get_layer_textures():
+			if layer_texture == layer:
+				return material_layer
 			if layer in layer_texture.layers:
 				return layer_texture
 			for folder in layer_texture.get_folders():

@@ -8,7 +8,6 @@ Stores a `result` which is updated when settings of the layers change.
 
 export var layers : Array
 # warning-ignore:unused_class_variable
-export var name := "Untitled Texture"
 
 var result : Texture
 

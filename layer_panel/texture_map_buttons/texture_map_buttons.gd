@@ -6,6 +6,7 @@ Buttons used to specify the enabled maps of the selected `MaterialLayer`
 
 var buttons : Dictionary
 
+# warning-ignore:unused_signal
 signal changed(map, enabled)
 
 const LayerTexture = preload("res://resources/layer_texture.gd")
@@ -49,16 +50,19 @@ func _on_Button_toggled(button_pressed : bool, map : String) -> void:
 		if not map in maps:
 			undo_redo.create_action("Enable Texture Map")
 			undo_redo.add_do_method(self, "_enable_map", layer_property_panel.editing_layer, map)
+			undo_redo.add_do_method(self, "emit_signal", "changed", map, button_pressed)
 			undo_redo.add_undo_method(self, "_disable_map", layer_property_panel.editing_layer, map)
 			undo_redo.add_undo_method(self, "_silently_set_button_pressed", buttons[map], false)
+			undo_redo.add_undo_method(self, "emit_signal", "changed", map, not button_pressed)
 			undo_redo.commit_action()
 	else:
 		undo_redo.create_action("Disable Texture Map")
 		undo_redo.add_do_method(self, "_disable_map", layer_property_panel.editing_layer, map)
+		undo_redo.add_do_method(self, "emit_signal", "changed", map, button_pressed)
 		undo_redo.add_undo_method(self, "_enable_map", layer_property_panel.editing_layer, map)
 		undo_redo.add_undo_method(self, "_silently_set_button_pressed", buttons[map], true)
+		undo_redo.add_undo_method(self, "emit_signal", "changed", map, not button_pressed)
 		undo_redo.commit_action()
-	emit_signal("changed", map, button_pressed)
 
 
 # block `toggled` signals to avoid emitting the `changed` signal

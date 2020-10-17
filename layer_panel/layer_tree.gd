@@ -320,9 +320,12 @@ func _setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
 	
 	if material_layer is MaterialLayer:
 		if material_layer in _selected_layer_textures:
-			var selected_layer_texture : LayerTexture = _selected_layer_textures[material_layer]
-			for texture_layer in selected_layer_texture.layers:
-				_setup_texture_layer_item(texture_layer, material_layer_item, selected_layer_texture)
+			if editing_layer_material.get_parent(_selected_layer_textures[material_layer]) != material_layer:
+				_selected_layer_textures.erase(material_layer)
+			else:
+				var selected_layer_texture : LayerTexture = _selected_layer_textures[material_layer]
+				for texture_layer in selected_layer_texture.layers:
+					_setup_texture_layer_item(texture_layer, material_layer_item, selected_layer_texture)
 		
 		if not material_layer in _selected_maps and material_layer.maps.size() > 0:
 			_selected_maps[material_layer] = material_layer.maps.values().front()
