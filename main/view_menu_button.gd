@@ -20,6 +20,7 @@ var background_submenu_popup := PopupMenu.new()
 
 enum Item {
 	SHOW_BACKGROUND,
+	ENABLE_SHADOWS,
 	CHANGE_BACKGROUND,
 	VIEW_RESULTS,
 }
@@ -30,11 +31,13 @@ signal show_background_toggled
 const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
 
 onready var results_item_list : ItemList = $"../../../PanelContainer/HBoxContainer/ResultsItemList"
+onready var directional_light : DirectionalLight = $"../../../PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport/DirectionalLight"
 
 func _ready() -> void:
 	var popup := get_popup()
 	popup.add_check_item("Show Background", Item.SHOW_BACKGROUND)
 	popup.set_item_shortcut(Item.SHOW_BACKGROUND, ShortcutUtils.shortcut(KEY_B))
+	popup.add_check_item("Enable Shadows", Item.ENABLE_SHADOWS)
 	background_submenu_popup.name = "Background"
 	popup.add_child(background_submenu_popup)
 	popup.add_submenu_item("Change Background", "Background", Item.CHANGE_BACKGROUND)
@@ -48,6 +51,10 @@ func _ready() -> void:
 
 func _on_Popup_id_pressed(id : int) -> void:
 	match id:
+		Item.ENABLE_SHADOWS:
+			var checked := get_popup().is_item_checked(Item.ENABLE_SHADOWS)
+			directional_light.shadow_enabled = not checked
+			get_popup().set_item_checked(Item.ENABLE_SHADOWS, not checked)
 		Item.SHOW_BACKGROUND:
 			show_background = not show_background
 			get_popup().set_item_checked(get_popup().get_item_index(Item.SHOW_BACKGROUND), show_background)

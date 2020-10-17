@@ -14,10 +14,6 @@ const MeshUtils = preload("res://utils/mesh_utils.gd")
 onready var model : MeshInstance = $"../3DViewport/Viewport/Model"
 onready var layer_tree : Tree = $"../../../../../LayerPanelContainer/LayerTree"
 
-func _ready() -> void:
-	_mesh_tool.create_from_surface(model.mesh, 0)
-
-
 func _draw() -> void:
 	draw_faces_as_lines()
 

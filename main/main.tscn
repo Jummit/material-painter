@@ -1,8 +1,7 @@
-[gd_scene load_steps=23 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://main/2d_viewport.gd" type="Script" id=1]
 [ext_resource path="res://main/main.gd" type="Script" id=3]
-[ext_resource path="res://3d_viewport/cube.obj" type="ArrayMesh" id=4]
 [ext_resource path="res://main/view_menu_button.gd" type="Script" id=5]
 [ext_resource path="res://layer_panel/layer_property_panel.gd" type="Script" id=6]
 [ext_resource path="res://3d_viewport/color_skybox.tres" type="Material" id=7]
@@ -180,11 +179,9 @@ script = ExtResource( 20 )
 size = Vector2( 748, 329 )
 handle_input_locally = false
 msaa = 1
-render_target_update_mode = 3
+shadow_atlas_size = 4096
 
 [node name="Model" type="MeshInstance" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport"]
-mesh = ExtResource( 4 )
-material/0 = null
 script = ExtResource( 8 )
 
 [node name="RotatingCamera" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport" instance=ExtResource( 19 )]
