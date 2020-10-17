@@ -286,7 +286,7 @@ func _load_model(path : String) -> void:
 	material_option_button.clear()
 	current_file.layer_materials = []
 	for surface in mesh.get_surface_count():
-		material_option_button.add_item(str(surface))
+		material_option_button.add_item("Material %s" % surface)
 		current_file.layer_materials.append(LayerMaterial.new())
 
 
