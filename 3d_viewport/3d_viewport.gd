@@ -15,6 +15,8 @@ var cached_camera_transform : Transform
 const Brush = preload("res://addons/painter/brush.gd")
 const BitmapTextureLayer = preload("res://resources/texture_layers/bitmap_texture_layer.gd")
 const MeshUtils = preload("res://utils/mesh_utils.gd")
+const Asset = preload("res://main/asset_browser.gd").Asset
+const BrushAssetType = preload("res://main/asset_browser.gd").BrushAssetType
 
 onready var model : MeshInstance = $Viewport/Model
 onready var layer_tree : Tree = $"../../../../../LayerPanelContainer/LayerTree"
@@ -115,11 +117,10 @@ func _on_ToolSettingsPropertyPanel_property_changed(_property, _value) -> void:
 	painter.brush = new_brush
 
 
-func _on_AssetBrowser_asset_activated(asset : Dictionary) -> void:
-	if asset.type != "Brushes":
-		return
-	painter.brush = asset.asset
-	tool_settings_property_panel.load_values(asset.asset)
+func _on_AssetBrowser_asset_activated(asset : Asset) -> void:
+	if asset.type is BrushAssetType:
+		painter.brush = asset.data
+		tool_settings_property_panel.load_values(asset.data)
 
 
 func _get_nearest_intersecting_face(start : Vector3, direction : Vector3, mesh : Mesh, fast := false) -> int:

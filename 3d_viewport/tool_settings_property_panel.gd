@@ -8,16 +8,18 @@ Only visible when the paint tool is selected.
 
 const Properties = preload("res://addons/property_panel/properties.gd")
 const BitmapTextureLayer = preload("res://resources/texture_layers/bitmap_texture_layer.gd")
+const Asset = preload("res://main/asset_browser.gd").Asset
+const TextureAssetType = preload("res://main/asset_browser.gd").TextureAssetType
 
 class TextureAssetProperty extends Properties.FilePathProperty:
 	func _init(_name : String).(_name):
 		pass
 	
 	func _can_drop_data(_control : Control, data) -> bool:
-		return data is Dictionary and "type" in data and data.type == "Textures"
+		return data is Asset and data.type is TextureAssetType
 	
 	func _drop_data(control : Control, data) -> void:
-		_set_value(control, data.asset)
+		_set_value(control, data.data)
 
 onready var tool_button_container : VBoxContainer = $"../../HBoxContainer/ToolButtonContainer"
 

@@ -44,6 +44,9 @@ const LayerTexture = preload("res://resources/layer_texture.gd")
 const TextureLayer = preload("res://resources/texture_layer.gd")
 const FileTextureLayer = preload("res://resources/texture_layers/file_texture_layer.gd")
 const FolderLayer = preload("res://resources/folder_layer.gd")
+const Asset = preload("res://main/asset_browser.gd").Asset
+const TextureAssetType = preload("res://main/asset_browser.gd").TextureAssetType
+const MaterialAssetType = preload("res://main/asset_browser.gd").MaterialAssetType
 
 onready var main : Control = $"../../../../.."
 onready var undo_redo : UndoRedo = main.undo_redo
@@ -96,8 +99,7 @@ func get_drag_data(_position : Vector2):
 
 
 func can_drop_data(position : Vector2, data) -> bool:
-	if "asset" in data and (data.asset is String or data.asset is MaterialLayer\
-			or data.asset is FolderLayer):
+	if data is Asset and (data.type is TextureAssetType or data.type is MaterialAssetType):
 		return true
 	if data is Dictionary and "type" in data and data.type == "layers":
 		var layer_type : int = data.layer_type
@@ -155,19 +157,19 @@ func drop_data(position : Vector2, data) -> void:
 		undo_redo.add_do_method(self, "reload")
 		undo_redo.add_undo_method(self, "reload")
 		undo_redo.commit_action()
-	elif "asset" in data:
-		if data.asset is String:
+	elif data is Asset:
+		if data.type is TextureAssetType:
 			undo_redo.create_action("Add Texture From Library")
 			var layer := FileTextureLayer.new()
-			layer.name = data.asset.get_file().get_basename()
-			layer.path = data.asset
+			layer.name = data.name
+			layer.path = data.data
 			undo_redo.add_do_method(main, "add_layer", layer, _selected_layer_textures[get_layer_at_position(position)])
 			undo_redo.add_undo_method(main, "delete_layer", layer)
 			undo_redo.commit_action()
-		elif data.asset is MaterialLayer or data.asset is FolderLayer:
+		elif data.type is MaterialAssetType:
 			undo_redo.create_action("Add Material From Library")
-			undo_redo.add_do_method(main, "add_layer", data.asset, editing_layer_material)
-			undo_redo.add_undo_method(main, "delete_layer", data.asset)
+			undo_redo.add_do_method(main, "add_layer", data.data, editing_layer_material)
+			undo_redo.add_undo_method(main, "delete_layer", data.data)
 			undo_redo.commit_action()
 
 

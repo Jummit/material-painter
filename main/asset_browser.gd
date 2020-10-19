@@ -105,6 +105,8 @@ class Asset:
 	var data
 
 func _ready():
+	asset_list.set_drag_forwarding(self)
+	
 	if ProjectSettings.get_setting("application/config/load_assets"):
 		for asset_type in ASSET_TYPES.values():
 			load_assets(asset_type)
@@ -149,8 +151,8 @@ func add_asset(asset : Asset) -> void:
 		tagged_assets[tag].append(asset)
 
 
-func _on_AssetList_item_activated(index : int, item_list : ItemList) -> void:
-	emit_signal("asset_activated", item_list.get_item_metadata(index))
+func _on_AssetList_item_activated(index : int) -> void:
+	emit_signal("asset_activated", asset_list.get_item_metadata(index))
 
 
 func _update_tag_list() -> void:
@@ -202,5 +204,5 @@ func _get_tags(asset_name : String) -> PoolStringArray:
 	return asset_name.to_lower().split("_", false)
 
 
-func _on_SearchEdit_text_changed(new_text: String) -> void:
+func _on_SearchEdit_text_changed(_new_text: String) -> void:
 	_update_asset_list()
