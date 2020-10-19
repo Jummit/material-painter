@@ -1,4 +1,4 @@
-extends TabContainer
+extends HBoxContainer
 
 """
 A list of assets that can be drag and dropped onto different UI elements
@@ -11,12 +11,17 @@ and how to generate a thumbnail for it.
 signal asset_activated(asset)
 
 var asset_type_item_lists : Dictionary
+var current_tag := "all"
+var tags : PoolStringArray = ["all", "texture", "material", "brush"]
 
 var ASSET_TYPES := {
 	TEXTURE = TextureAssetType.new(),
 	MATERIAL = MaterialAssetType.new(),
 	BRUSH = BrushAssetType.new(),
 }
+
+onready var asset_list : ItemList = $AssetList
+onready var tag_list : Tree = $TagList
 
 class AssetType:
 	var name : String
@@ -73,11 +78,16 @@ class BrushAssetType extends AssetType:
 	func _generate_preview(asset : Resource) -> Texture:
 		return yield(PreviewRenderer.get_preview_for_brush(asset, Vector2(128, 128)), "completed")
 
+class Asset:
+	var tags : PoolStringArray
+	var name : String
+	var type : AssetType
+	var file : String
+
 func _ready():
 	if ProjectSettings.get_setting("application/config/load_assets"):
 		for asset_type in ASSET_TYPES.values():
 			load_assets(asset_type)
-	get_tree().connect("files_dropped", self, "_on_SceneTree_files_dropped")
 
 
 func load_assets(asset_type : AssetType) -> void:
@@ -106,15 +116,14 @@ func load_assets(asset_type : AssetType) -> void:
 
 
 func get_drag_data_fw(position : Vector2, _from : Control):
-	var item_list : ItemList = get_child(current_tab)
-	var item := item_list.get_item_at_position(position, true)
+	var item := asset_list.get_item_at_position(position, true)
 	if item != -1:
 		var preview := TextureRect.new()
 		preview.rect_size = Vector2(64, 64)
 		preview.expand = true
-		preview.texture = item_list.get_item_icon(item)
+		preview.texture = asset_list.get_item_icon(item)
 		set_drag_preview(preview)
-		return item_list.get_item_metadata(item)
+		return asset_list.get_item_metadata(item)
 
 
 func register_asset(file : String, asset_type : AssetType) -> void:
@@ -143,9 +152,9 @@ func _on_AssetList_item_activated(index : int, item_list : ItemList) -> void:
 	emit_signal("asset_activated", item_list.get_item_metadata(index))
 
 
-func _on_SceneTree_files_dropped(files : PoolStringArray, _screen : int) -> void:
-	var current_asset_type : AssetType = get_current_tab_control().get_meta("type")
-	var dir := Directory.new()
-	for file in files:
-		dir.copy(file, current_asset_type.get_asset_directory().plus_file(file.get_file()))
-		register_asset(file.get_file(), current_asset_type)
+func _on_RemoveTagButton_pressed() -> void:
+	pass # Replace with function body.
+
+
+func _on_AddTagButton_pressed() -> void:
+	pass # Replace with function body.
