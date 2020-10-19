@@ -11,7 +11,7 @@ and how to generate a thumbnail for it.
 signal asset_activated(asset)
 
 var current_tag := "all"
-var tags : PoolStringArray = ["all", "texture", "material", "brush"]
+var tags := ["all", "texture", "material", "brush"]
 var tagged_assets := {}
 
 var ASSET_TYPES := {
@@ -170,11 +170,15 @@ func _update_asset_list() -> void:
 
 
 func _on_RemoveTagButton_pressed() -> void:
-	pass # Replace with function body.
+	tags.erase(tag_list.get_selected().get_text(0))
+	_update_tag_list()
 
 
 func _on_AddTagButton_pressed() -> void:
-	pass # Replace with function body.
+	if tag_name_edit.text and not tag_name_edit.text in tags:
+		tags.append(tag_name_edit.text)
+		current_tag = tag_name_edit.text
+		_update_tag_list()
 
 
 func _on_TagList_cell_selected() -> void:
