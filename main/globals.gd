@@ -28,3 +28,5 @@ var TEXTURE_LAYER_TYPES := [
 	HSVAdjustTextureLayer,
 	IsolateColorTextureLayer,
 ]
+
+var mesh : Mesh

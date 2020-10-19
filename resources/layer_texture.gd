@@ -24,7 +24,10 @@ func update_result(result_size : Vector2, keep_viewport := true, use_cached_shad
 func generate_result(result_size : Vector2, keep_viewport := true, use_cached_shader := false, custom_id := 0) -> Texture:
 	var blending_layers := []
 	for layer in get_flat_layers(layers, false):
-		blending_layers.append(layer._get_as_shader_layer())
+		var shader_layer = layer._get_as_shader_layer()
+		if shader_layer is GDScriptFunctionState:
+			shader_layer = yield(shader_layer, "completed")
+		blending_layers.append(shader_layer)
 	return yield(LayerBlendViewportManager.blend(blending_layers, result_size, get_instance_id() + custom_id if keep_viewport else -1, use_cached_shader), "completed")
 
 

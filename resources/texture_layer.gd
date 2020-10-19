@@ -29,8 +29,11 @@ func get_properties() -> Array:
 
 
 func generate_result(result_size : Vector2, keep_viewport := false, custom_id := 0) -> Texture:
+	var shader_layer = _get_as_shader_layer()
+	if shader_layer is GDScriptFunctionState:
+		shader_layer = yield(shader_layer, "completed")
 	return yield(LayerBlendViewportManager.blend(
-			[_get_as_shader_layer()], result_size,
+			[shader_layer], result_size,
 			get_instance_id() + custom_id if keep_viewport else -1, true), "completed")
 
 

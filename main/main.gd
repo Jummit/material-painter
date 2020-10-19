@@ -251,7 +251,9 @@ func _on_FileDialog_popup_hide() -> void:
 func _on_FileMenu_id_pressed(id : int) -> void:
 	match id:
 		0:
-			_load_file(SaveFile.new())
+			var file := SaveFile.new()
+			file.model_path = "res://3d_viewport/cube.obj"
+			_load_file(file)
 		1:
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
 			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
@@ -299,6 +301,7 @@ func _load_file(save_file : SaveFile) -> void:
 
 func _load_model(path : String) -> void:
 	var mesh := ObjParser.parse_obj(path)
+	Globals.mesh = mesh
 	model.set_mesh(mesh)
 	material_option_button.clear()
 	current_file.layer_materials = []
