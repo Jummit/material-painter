@@ -256,6 +256,7 @@ margin_bottom = 194.0
 rect_min_size = Vector2( 200, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
+hide_root = true
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser"]
 margin_left = 221.0
@@ -274,6 +275,10 @@ margin_right = 535.0
 margin_bottom = 194.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
+max_columns = 100
+same_column_width = true
+icon_mode = 0
+fixed_icon_size = Vector2( 128, 128 )
 
 [node name="LayerPanelContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer/HBoxContainer"]
 margin_left = 760.0
@@ -384,6 +389,7 @@ __meta__ = {
 [connection signal="painted" from="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/2DViewport" to="." method="_on_Viewport_painted"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser/VBoxContainer/HBoxContainer/AddTagButton" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser" method="_on_AddTagButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser/VBoxContainer/HBoxContainer/RemoveTagButton" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser" method="_on_RemoveTagButton_pressed"]
+[connection signal="cell_selected" from="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser/VBoxContainer/TagList" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser" method="_on_TagList_cell_selected"]
 [connection signal="item_selected" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/HBoxContainer/MaterialOptionButton" to="." method="_on_MaterialOptionButton_item_selected"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/HBoxContainer/AddLayerButton" to="." method="_on_AddButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/HBoxContainer/AddFolderButton" to="." method="_on_AddFolderButton_pressed"]
