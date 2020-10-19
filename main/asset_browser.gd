@@ -135,6 +135,7 @@ func load_assets(asset_type : AssetType) -> void:
 		asset.name = file_name.get_basename()
 		asset.type = asset_type
 		asset.tags.append(asset_type.tag)
+		asset.tags += Array(_get_tags(asset.name))
 		asset.file = asset_dir.plus_file(file_name)
 		asset.data = asset_type._load(asset)
 		add_asset(asset)
@@ -165,8 +166,14 @@ func _update_asset_list() -> void:
 	if not current_tag in tagged_assets:
 		return
 	for asset in tagged_assets[current_tag]:
-		asset_list.add_item(asset.name, asset.type.get_preview(asset))
-		asset_list.set_item_metadata(asset_list.get_item_count() - 1, asset)
+		var searched_for := not search_edit.text
+		for tag in asset.tags:
+			if search_edit.text in tag:
+				searched_for = true
+				break
+		if searched_for:
+			asset_list.add_item(asset.name, asset.type.get_preview(asset))
+			asset_list.set_item_metadata(asset_list.get_item_count() - 1, asset)
 
 
 func _on_RemoveTagButton_pressed() -> void:
@@ -183,4 +190,17 @@ func _on_AddTagButton_pressed() -> void:
 
 func _on_TagList_cell_selected() -> void:
 	current_tag = tag_list.get_selected().get_text(0)
+	_update_asset_list()
+
+
+func _get_tags(asset_name : String) -> PoolStringArray:
+	for letter in asset_name:
+		if int(letter):
+			asset_name = asset_name.replace(letter, "")
+		if letter.to_upper() == letter:
+			asset_name = asset_name.replace(letter, "_" + letter)
+	return asset_name.to_lower().split("_", false)
+
+
+func _on_SearchEdit_text_changed(new_text: String) -> void:
 	_update_asset_list()

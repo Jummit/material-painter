@@ -390,6 +390,7 @@ __meta__ = {
 [connection signal="pressed" from="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser/VBoxContainer/HBoxContainer/AddTagButton" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser" method="_on_AddTagButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser/VBoxContainer/HBoxContainer/RemoveTagButton" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser" method="_on_RemoveTagButton_pressed"]
 [connection signal="cell_selected" from="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser/VBoxContainer/TagList" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser" method="_on_TagList_cell_selected"]
+[connection signal="text_changed" from="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser/VBoxContainer2/SearchEdit" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser" method="_on_SearchEdit_text_changed"]
 [connection signal="item_selected" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/HBoxContainer/MaterialOptionButton" to="." method="_on_MaterialOptionButton_item_selected"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/HBoxContainer/AddLayerButton" to="." method="_on_AddButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/HBoxContainer/AddFolderButton" to="." method="_on_AddFolderButton_pressed"]
