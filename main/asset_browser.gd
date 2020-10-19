@@ -16,8 +16,8 @@ var tagged_assets := {}
 
 var ASSET_TYPES := {
 	TEXTURE = TextureAssetType.new(),
-#	MATERIAL = MaterialAssetType.new(),
-#	BRUSH = BrushAssetType.new(),
+	MATERIAL = MaterialAssetType.new(),
+	BRUSH = BrushAssetType.new(),
 }
 
 onready var tag_name_edit : LineEdit = $VBoxContainer/HBoxContainer/TagNameEdit
