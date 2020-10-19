@@ -257,9 +257,20 @@ rect_min_size = Vector2( 200, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="AssetList" type="ItemList" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser"]
 margin_left = 221.0
 margin_right = 756.0
+margin_bottom = 194.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SearchEdit" type="LineEdit" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser/VBoxContainer2"]
+margin_right = 535.0
+margin_bottom = 24.0
+
+[node name="AssetList" type="ItemList" parent="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser/VBoxContainer2"]
+margin_top = 28.0
+margin_right = 535.0
 margin_bottom = 194.0
 size_flags_horizontal = 3
 size_flags_vertical = 3

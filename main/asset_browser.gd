@@ -20,8 +20,10 @@ var ASSET_TYPES := {
 	BRUSH = BrushAssetType.new(),
 }
 
-onready var asset_list : ItemList = $AssetList
-onready var tag_list : Tree = $TagList
+onready var tag_name_edit : LineEdit = $VBoxContainer/HBoxContainer/TagNameEdit
+onready var asset_list : ItemList = $VBoxContainer2/AssetList
+onready var search_edit : LineEdit = $VBoxContainer2/SearchEdit
+onready var tag_list : Tree = $VBoxContainer/TagList
 
 class AssetType:
 	var name : String
