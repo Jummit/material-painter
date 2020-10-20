@@ -75,6 +75,12 @@ func _gui_input(event : InputEvent) -> void:
 			if is_instance_valid(_lastly_edited_layer):
 				_lastly_edited_layer.set_editable(1, false)
 			_lastly_edited_layer = get_selected()
+	elif event is InputEventKey and event.pressed and event.scancode == KEY_DELETE:
+		var layer = get_selected_layer()
+		undo_redo.create_action("Delete Layer")
+		undo_redo.add_do_method(main, "delete_layer", layer)
+		undo_redo.add_undo_method(main, "add_layer", layer, editing_layer_material.get_parent(layer))
+		undo_redo.commit_action()
 
 
 func get_drag_data(_position : Vector2):
