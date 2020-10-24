@@ -86,6 +86,8 @@ func _gui_input(event : InputEvent) -> void:
 func get_drag_data(_position : Vector2):
 	var selected_layers := []
 	var selected = get_next_selected(null)
+	if not selected:
+		return
 	var preview := VBoxContainer.new()
 	var type = _get_layer_type(selected)
 	while selected:
