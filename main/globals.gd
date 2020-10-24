@@ -29,4 +29,5 @@ var TEXTURE_LAYER_TYPES := [
 	IsolateColorTextureLayer,
 ]
 
+# warning-ignore:unused_class_variable
 var mesh : Mesh

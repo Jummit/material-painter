@@ -110,7 +110,8 @@ func _on_FileDialog_file_selected(path : String) -> void:
 				file_location = path
 			ResourceSaver.save(path, to_save)
 			if to_save is Brush:
-				asset_browser.register_asset(path.get_file(), asset_browser.ASSET_TYPES.BRUSH)
+				asset_browser.load_asset(path.get_file(), asset_browser.ASSET_TYPES.BRUSH)
+				asset_browser.update_asset_list()
 		FileDialog.MODE_OPEN_FILE:
 			if path.get_extension() == "tres":
 				file_location = path
@@ -206,7 +207,8 @@ func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
 func _on_MaterialLayerPopupMenu_layer_saved() -> void:
 	var material_layer = layer_tree.get_selected_layer()
 	ResourceSaver.save(MATERIAL_PATH.plus_file(material_layer.name) + ".tres", material_layer)
-	asset_browser.register_asset(material_layer.name + ".tres", asset_browser.ASSET_TYPES.MATERIAL)
+	asset_browser.load_asset(material_layer.name + ".tres", asset_browser.ASSET_TYPES.MATERIAL)
+	asset_browser.update_asset_list()
 
 
 func _on_Viewport_painted(layer : TextureLayer) -> void:

@@ -10,9 +10,9 @@ and how to generate a thumbnail for it.
 
 signal asset_activated(asset)
 
-var current_tag := "all"
-var tags := ["all", "texture", "material", "brush"]
 var tagged_assets := {}
+var tags := ["all", "texture", "material", "brush"]
+var current_tag := "all"
 
 var ASSET_TYPES := {
 	TEXTURE = TextureAssetType.new(),
@@ -111,7 +111,7 @@ func _ready():
 		for asset_type in ASSET_TYPES.values():
 			load_assets(asset_type)
 	_update_tag_list()
-	_update_asset_list()
+	update_asset_list()
 
 
 func get_drag_data_fw(position : Vector2, _from : Control):
@@ -133,15 +133,19 @@ func load_assets(asset_type : AssetType) -> void:
 	dir.list_dir_begin(true)
 	var file_name := dir.get_next()
 	while file_name != "":
-		var asset := Asset.new()
-		asset.name = file_name.get_basename()
-		asset.type = asset_type
-		asset.tags.append(asset_type.tag)
-		asset.tags += Array(_get_tags(asset.name))
-		asset.file = asset_dir.plus_file(file_name)
-		asset.data = asset_type._load(asset)
-		add_asset(asset)
+		load_asset(file_name, asset_type)
 		file_name = dir.get_next()
+
+
+func load_asset(file_name : String, asset_type : AssetType) -> void:
+	var asset := Asset.new()
+	asset.name = file_name.get_basename()
+	asset.type = asset_type
+	asset.tags.append(asset_type.tag)
+	asset.tags += Array(_get_tags(asset.name))
+	asset.file = asset_type.get_asset_directory().plus_file(file_name)
+	asset.data = asset_type._load(asset)
+	add_asset(asset)
 
 
 func add_asset(asset : Asset) -> void:
@@ -163,14 +167,14 @@ func _update_tag_list() -> void:
 		tag_item.set_text(0, tag)
 
 
-func _update_asset_list() -> void:
+func update_asset_list() -> void:
 	asset_list.clear()
 	if not current_tag in tagged_assets:
 		return
 	for asset in tagged_assets[current_tag]:
 		var searched_for := not search_edit.text
 		for tag in asset.tags:
-			if search_edit.text in tag:
+			if search_edit.text.to_lower() in tag:
 				searched_for = true
 				break
 		if searched_for:
@@ -184,15 +188,16 @@ func _on_RemoveTagButton_pressed() -> void:
 
 
 func _on_AddTagButton_pressed() -> void:
-	if tag_name_edit.text and not tag_name_edit.text in tags:
-		tags.append(tag_name_edit.text)
-		current_tag = tag_name_edit.text
+	var new_tag := tag_name_edit.text.to_lower()
+	if new_tag and not new_tag in tags:
+		tags.append(new_tag)
+		current_tag = new_tag
 		_update_tag_list()
 
 
 func _on_TagList_cell_selected() -> void:
 	current_tag = tag_list.get_selected().get_text(0)
-	_update_asset_list()
+	update_asset_list()
 
 
 func _get_tags(asset_name : String) -> PoolStringArray:
@@ -205,4 +210,4 @@ func _get_tags(asset_name : String) -> PoolStringArray:
 
 
 func _on_SearchEdit_text_changed(_new_text: String) -> void:
-	_update_asset_list()
+	update_asset_list()
