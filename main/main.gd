@@ -16,6 +16,26 @@ var currently_viewing_map : String setget set_currently_viewing_map
 
 const MATERIAL_PATH := "user://materials"
 
+var file_menu_shortcuts := [
+	ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_N),
+	ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_O),
+	ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_S),
+	ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_MASK_SHIFT + KEY_S),
+	ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_E),
+	ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_M),
+	ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_Q),
+]
+
+enum FILE_MENU_ITEMS {
+	NEW,
+	OPEN,
+	SAVE,
+	SAVE_AS,
+	EXPORT,
+	LOAD_MESH,
+	QUIT,
+}
+
 const ObjParser = preload("res://addons/obj_parser/obj_parser.gd")
 const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
 const SaveFile = preload("res://resources/save_file.gd")
@@ -41,12 +61,9 @@ onready var camera : Camera = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxC
 func _ready() -> void:
 	var popup := file_menu_button.get_popup()
 	popup.connect("id_pressed", self, "_on_FileMenu_id_pressed")
-	popup.set_item_shortcut(0, ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_N))
-	popup.set_item_shortcut(1, ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_O))
-	popup.set_item_shortcut(2, ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_S))
-	popup.set_item_shortcut(3, ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_E))
-	popup.set_item_shortcut(4, ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_M))
-	popup.set_item_shortcut(5, ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_Q))
+	for id in file_menu_shortcuts.size():
+		popup.set_item_shortcut(id, file_menu_shortcuts[id])
+	
 	var file := SaveFile.new()
 	file.model_path = "res://3d_viewport/cube.obj"
 	_load_file(file)
@@ -252,36 +269,35 @@ func _on_FileDialog_popup_hide() -> void:
 
 func _on_FileMenu_id_pressed(id : int) -> void:
 	match id:
-		0:
+		FILE_MENU_ITEMS.NEW:
 			var file := SaveFile.new()
 			file.model_path = "res://3d_viewport/cube.obj"
 			_load_file(file)
-		1:
+		FILE_MENU_ITEMS.OPEN:
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
 			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 			file_dialog.filters = ["*.tres;Material Painter File"]
 			file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
 			file_dialog.current_file = ""
 			file_dialog.popup_centered()
-		2:
-			file_dialog.mode = FileDialog.MODE_SAVE_FILE
-			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
-			file_dialog.filters = ["*.tres;Material Painter File"]
-			file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
-			file_dialog.current_file = ""
-			file_dialog.set_meta("to_save", current_file)
-			file_dialog.popup_centered()
-		3:
+		FILE_MENU_ITEMS.SAVE:
+			if not file_location:
+				_open_save_project_dialog()
+			else:
+				ResourceSaver.save(file_location, current_file)
+		FILE_MENU_ITEMS.SAVE_AS:
+			_open_save_project_dialog()
+		FILE_MENU_ITEMS.EXPORT:
 			if file_location:
 				editing_layer_material.export_textures(file_location.get_base_dir())
-		4:
+		FILE_MENU_ITEMS.LOAD_MESH:
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
 			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 			file_dialog.filters = ["*.obj;Object File"]
 			file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
 			file_dialog.current_file = ""
 			file_dialog.popup_centered()
-		5:
+		FILE_MENU_ITEMS.QUIT:
 			get_tree().quit()
 
 
@@ -329,6 +345,16 @@ func _update_all_layer_textures(layers : Array) -> void:
 			yield(layer.update_all_layer_textures(result_size), "completed")
 		else:
 			yield(_update_all_layer_textures(layer.layers), "completed")
+
+
+func _open_save_project_dialog() -> void:
+	file_dialog.mode = FileDialog.MODE_SAVE_FILE
+	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
+	file_dialog.filters = ["*.tres;Material Painter File"]
+	file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
+	file_dialog.current_file = ""
+	file_dialog.set_meta("to_save", current_file)
+	file_dialog.popup_centered()
 
 
 func set_currently_viewing_map(to : String) -> void:
