@@ -107,6 +107,8 @@ class Asset:
 func _ready():
 	asset_list.set_drag_forwarding(self)
 	
+	get_tree().connect("files_dropped", self, "_on_SceneTree_files_dropped")
+	
 	if ProjectSettings.get_setting("application/config/load_assets"):
 		for asset_type in ASSET_TYPES.values():
 			load_assets(asset_type)
@@ -155,18 +157,6 @@ func add_asset(asset : Asset) -> void:
 		tagged_assets[tag].append(asset)
 
 
-func _on_AssetList_item_activated(index : int) -> void:
-	emit_signal("asset_activated", asset_list.get_item_metadata(index))
-
-
-func _update_tag_list() -> void:
-	tag_list.clear()
-	var root := tag_list.create_item()
-	for tag in tags:
-		var tag_item := tag_list.create_item(root)
-		tag_item.set_text(0, tag)
-
-
 func update_asset_list() -> void:
 	asset_list.clear()
 	if not current_tag in tagged_assets:
@@ -180,6 +170,10 @@ func update_asset_list() -> void:
 		if searched_for:
 			asset_list.add_item(asset.name, asset.type.get_preview(asset))
 			asset_list.set_item_metadata(asset_list.get_item_count() - 1, asset)
+
+
+func _on_AssetList_item_activated(index : int) -> void:
+	emit_signal("asset_activated", asset_list.get_item_metadata(index))
 
 
 func _on_RemoveTagButton_pressed() -> void:
@@ -200,6 +194,30 @@ func _on_TagList_cell_selected() -> void:
 	update_asset_list()
 
 
+func _on_SearchEdit_text_changed(_new_text: String) -> void:
+	update_asset_list()
+
+
+func _on_SceneTree_files_dropped(files : PoolStringArray, _screen : int) -> void:
+	var dir := Directory.new()
+	for file in files:
+		var new_asset_path : String = ASSET_TYPES.TEXTURE.get_asset_directory().plus_file(file.get_file())
+		if dir.file_exists(new_asset_path):
+			return
+		if file.get_extension() == "png":
+			dir.copy(file, new_asset_path)
+			load_asset(file.get_file(), ASSET_TYPES.TEXTURE)
+			update_asset_list()
+
+
+func _update_tag_list() -> void:
+	tag_list.clear()
+	var root := tag_list.create_item()
+	for tag in tags:
+		var tag_item := tag_list.create_item(root)
+		tag_item.set_text(0, tag)
+
+
 func _get_tags(asset_name : String) -> PoolStringArray:
 	for letter in asset_name:
 		if int(letter):
@@ -207,7 +225,3 @@ func _get_tags(asset_name : String) -> PoolStringArray:
 		if letter.to_upper() == letter:
 			asset_name = asset_name.replace(letter, "_" + letter)
 	return asset_name.to_lower().split("_", false)
-
-
-func _on_SearchEdit_text_changed(_new_text: String) -> void:
-	update_asset_list()

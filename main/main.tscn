@@ -333,7 +333,6 @@ select_mode = 2
 script = ExtResource( 21 )
 
 [node name="MaterialLayerPopupMenu" type="PopupMenu" parent="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree"]
-toplevel = false
 margin_right = 133.0
 margin_bottom = 52.0
 size_flags_horizontal = 4
@@ -344,7 +343,6 @@ __meta__ = {
 }
 
 [node name="MapTypePopupMenu" type="PopupMenu" parent="VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree"]
-toplevel = false
 margin_right = 99.0
 margin_bottom = 88.0
 __meta__ = {
@@ -366,7 +364,6 @@ size_flags_vertical = 3
 script = ExtResource( 6 )
 
 [node name="FileDialog" type="FileDialog" parent="."]
-toplevel = false
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
