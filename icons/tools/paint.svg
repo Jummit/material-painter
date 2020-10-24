@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.959798"
-     inkscape:cx="-26.168264"
-     inkscape:cy="-4.9811606"
+     inkscape:zoom="0.9983453"
+     inkscape:cx="-40.942227"
+     inkscape:cy="97.431265"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -70,16 +70,16 @@
      id="layer1"
      transform="translate(0,-288.53332)">
     <path
-       style="fill:#dedede;fill-opacity:1;stroke:#000000;stroke-width:0.40172383;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       d="m 4.3755373,291.03718 0.8687815,0.50044 c 0.00808,0.4195 -1.0572775,3.99926 -2.9720999,5.20533 l -0.8272464,-0.4765 c 0.4220055,-2.75993 2.459005,-4.9329 2.9305648,-5.22927 z"
-       id="path1386"
+       style="fill:#ececec;fill-opacity:1;stroke:none;stroke-width:0.00873549px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 3.7261121,294.93092 c -0.3067853,0.13816 -1.6595979,-1.17415 -1.5207161,-1.47924 0.1388809,-0.30506 5.2119706,-4.39262 5.2119706,-4.39262 0.4386563,-0.40263 0.7087538,-0.30528 0.837543,-0.18001 0.1272387,0.12379 0.2199842,0.37944 -0.1705433,0.82881 0,0 -4.0514725,5.08487 -4.3582542,5.22306 z"
+       id="path815"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccccc" />
+       sodipodi:nodetypes="zzcscz" />
     <path
-       style="fill:#6e6e6e;fill-opacity:1;stroke:#000000;stroke-width:0.40172383;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;paint-order:normal"
-       d="m 4.3755373,291.03718 c -0.244542,-2.16008 2.3141257,-2.61893 3.1375605,-1.58988 -1.6445843,0.24669 -1.3736653,1.70466 -2.2687794,2.09032"
-       id="path1398"
+       style="fill:#ececec;fill-opacity:1;stroke:none;stroke-width:0.00873549px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 2.1359743,294.13059 c 0.14314,0.0248 1.01169,0.96236 1.01633,1.06157 0.005,0.0991 -0.25651,1.33112 -1.57352,1.35301 -0.95664998,0.0159 -1.42910998,-0.80536 -1.42910998,-0.80536 0,0 0.72286,-0.0677 0.83642,-0.71674 0.16642998,-0.95129 1.00666998,-0.91726 1.14980998,-0.89243 z"
+       id="path817"
        inkscape:connector-curvature="0"
-       sodipodi:nodetypes="ccc" />
+       sodipodi:nodetypes="zzscsz" />
   </g>
 </svg>
