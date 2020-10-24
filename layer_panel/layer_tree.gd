@@ -107,7 +107,11 @@ func get_drag_data(_position : Vector2):
 
 
 func can_drop_data(position : Vector2, data) -> bool:
-	if data is Asset and (data.type is TextureAssetType or data.type is MaterialAssetType):
+	if data is Asset and data.type is TextureAssetType and\
+			get_layer_at_position(position) is MaterialLayer and\
+			get_selected_layer_texture(get_layer_at_position(position)):
+		return true
+	if data is Asset and data.type is MaterialAssetType:
 		return true
 	if data is Dictionary and "type" in data and data.type == "layers":
 		var layer_type : int = data.layer_type
