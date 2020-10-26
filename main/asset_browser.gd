@@ -143,19 +143,19 @@ func load_assets(directory : String, asset_type : AssetType, common_tag := "") -
 	dir.list_dir_begin(true)
 	var file_name := dir.get_next()
 	while file_name != "":
-		load_asset(file_name, asset_type, common_tag)
+		load_asset(directory.plus_file(file_name), asset_type, common_tag)
 		file_name = dir.get_next()
 
 
-func load_asset(file_name : String, asset_type : AssetType, tag := "") -> void:
+func load_asset(path : String, asset_type : AssetType, tag := "") -> void:
 	var asset := Asset.new()
-	asset.name = file_name.get_basename()
+	asset.name = path.get_file().get_basename()
 	asset.type = asset_type
 	asset.tags.append(asset_type.tag)
 	asset.tags += Array(_get_tags(asset.name))
 	if tag:
 		asset.tags.append(tag)
-	asset.file = asset_type.get_asset_directory().plus_file(file_name)
+	asset.file = path
 	asset.data = asset_type._load(asset)
 	add_asset(asset)
 
@@ -224,7 +224,7 @@ func _on_SceneTree_files_dropped(files : PoolStringArray, _screen : int) -> void
 			return
 		if file.get_extension() == "png":
 			dir.copy(file, new_asset_path)
-			load_asset(file.get_file(), ASSET_TYPES.TEXTURE)
+			load_asset(file, ASSET_TYPES.TEXTURE)
 			update_asset_list()
 
 

@@ -14,6 +14,8 @@ var result_size := Vector2(2048, 2048)
 var undo_redo := UndoRedo.new()
 var currently_viewing_map : String setget set_currently_viewing_map
 
+var _mesh_maps_generator = preload("res://main/mesh_maps_generator.gd").new()
+
 const MATERIAL_PATH := "user://materials"
 
 var file_menu_shortcuts := [
@@ -48,6 +50,7 @@ const Brush = preload("res://addons/painter/brush.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/TopButtons/FileMenuButton
 onready var file_dialog : FileDialog = $FileDialog
+onready var edit_menu_button : MenuButton = $VBoxContainer/TopButtonBar/TopButtons/EditMenuButton
 onready var layer_property_panel : Panel = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerPropertyPanel
 onready var texture_map_buttons : GridContainer = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/TextureMapButtons
 onready var model : MeshInstance = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport/Model"
@@ -63,6 +66,8 @@ func _ready() -> void:
 	popup.connect("id_pressed", self, "_on_FileMenu_id_pressed")
 	for id in file_menu_shortcuts.size():
 		popup.set_item_shortcut(id, file_menu_shortcuts[id])
+	
+	edit_menu_button.get_popup().connect("id_pressed", self, "_on_EditMenu_id_pressed")
 	
 	var file := SaveFile.new()
 	file.model_path = "res://3d_viewport/cube.obj"
@@ -127,12 +132,13 @@ func _on_FileDialog_file_selected(path : String) -> void:
 				file_location = path
 			ResourceSaver.save(path, to_save)
 			if to_save is Brush:
-				asset_browser.load_asset(path.get_file(), asset_browser.ASSET_TYPES.BRUSH)
+				asset_browser.load_asset(path, asset_browser.ASSET_TYPES.BRUSH)
 				asset_browser.update_asset_list()
 		FileDialog.MODE_OPEN_FILE:
 			if path.get_extension() == "tres":
 				file_location = path
-				_load_file(load(path))
+				_load_file(ResourceLoader.load(path, "", true))
+#				_load_file(load(path))
 				asset_browser.load_local_assets(file_location)
 				if not "local" in asset_browser.tags:
 					asset_browser.tags.append("local")
@@ -140,6 +146,8 @@ func _on_FileDialog_file_selected(path : String) -> void:
 			elif path.get_extension() == "obj":
 				current_file.model_path = path
 				_load_model(path)
+				editing_layer_material = current_file.layer_materials.front()
+				layer_tree.editing_layer_material = current_file.layer_materials.front()
 
 
 func _on_AddButton_pressed() -> void:
@@ -227,8 +235,9 @@ func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
 
 func _on_MaterialLayerPopupMenu_layer_saved() -> void:
 	var material_layer = layer_tree.get_selected_layer()
-	ResourceSaver.save(MATERIAL_PATH.plus_file(material_layer.name) + ".tres", material_layer)
-	asset_browser.load_asset(material_layer.name + ".tres", asset_browser.ASSET_TYPES.MATERIAL)
+	var save_path := MATERIAL_PATH.plus_file(material_layer.name) + ".tres"
+	ResourceSaver.save(save_path, material_layer)
+	asset_browser.load_asset(save_path, asset_browser.ASSET_TYPES.MATERIAL)
 	asset_browser.update_asset_list()
 
 
@@ -305,6 +314,16 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 			get_tree().quit()
 
 
+func _on_EditMenu_id_pressed(_id : int) -> void:
+	var mesh_maps : Dictionary = yield(_mesh_maps_generator.generate_mesh_maps(Globals.mesh, Vector2(1024, 1024)), "completed")
+	var texture_dir : String = asset_browser.ASSET_TYPES.TEXTURE.get_local_asset_directory(file_location)
+	for map in mesh_maps:
+		var file := texture_dir.plus_file(map) + ".png"
+		mesh_maps[map].get_data().save_png(file)
+		asset_browser.load_asset(file, asset_browser.ASSET_TYPES.TEXTURE, "local")
+	asset_browser.update_asset_list()
+
+
 func _on_UndoRedo_version_changed() -> void:
 	if undo_redo.get_current_action_name():
 		print(undo_redo.get_current_action_name())
@@ -314,11 +333,14 @@ func _load_file(save_file : SaveFile) -> void:
 	current_file = save_file
 	if current_file.model_path:
 		_load_model(current_file.model_path)
-		editing_layer_material = current_file.layer_materials.front()
 		for layer_material in current_file.layer_materials:
-			layer_material.update_all_layer_textures(result_size)
+			var result = layer_material.update_all_layer_textures(result_size)
+			if result is GDScriptFunctionState:
+				yield(result, "completed")
+		editing_layer_material = current_file.layer_materials.front()
 		_update_results(false)
 		layer_tree.editing_layer_material = editing_layer_material
+		update_material_options()
 
 
 func _load_model(path : String) -> void:
@@ -326,12 +348,16 @@ func _load_model(path : String) -> void:
 	Globals.mesh = mesh
 	model.set_mesh(mesh)
 	material_option_button.clear()
-	current_file.layer_materials = []
+	current_file.layer_materials.resize(mesh.get_surface_count())
 	for surface in mesh.get_surface_count():
-		material_option_button.add_item("Material %s" % surface)
-		current_file.layer_materials.append(LayerMaterial.new())
-	editing_layer_material = current_file.layer_materials.front()
-	layer_tree.editing_layer_material = current_file.layer_materials.front()
+		if not current_file.layer_materials[surface]:
+			current_file.layer_materials[surface] = LayerMaterial.new()
+
+
+func update_material_options() -> void:
+	material_option_button.clear()
+	for material_num in current_file.layer_materials.size():
+		material_option_button.add_item("Material %s" % material_num)
 
 
 func _update_results(update_icons := true, use_cached_shader := false) -> void:

@@ -19,5 +19,5 @@ func _get_as_shader_layer() -> Layer:
 	layer.uniform_types.append("vec4")
 	layer.uniform_names.append("color")
 	layer.uniform_values.append(color)
-	layer.code = "return {previous}(uv) == {color} ? {color} : vec4(0.0);"
+	layer.code = "return {previous}(uv) == {color} ? vec4(1.0) : vec4(0.0, 0.0, 0.0, 1.0);"
 	return layer
