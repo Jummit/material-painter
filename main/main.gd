@@ -326,6 +326,8 @@ func _load_model(path : String) -> void:
 	for surface in mesh.get_surface_count():
 		material_option_button.add_item("Material %s" % surface)
 		current_file.layer_materials.append(LayerMaterial.new())
+	editing_layer_material = current_file.layer_materials.front()
+	layer_tree.editing_layer_material = current_file.layer_materials.front()
 
 
 func _update_results(update_icons := true, use_cached_shader := false) -> void:
