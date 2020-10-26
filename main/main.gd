@@ -133,6 +133,10 @@ func _on_FileDialog_file_selected(path : String) -> void:
 			if path.get_extension() == "tres":
 				file_location = path
 				_load_file(load(path))
+				asset_browser.load_local_assets(file_location)
+				if not "local" in asset_browser.tags:
+					asset_browser.tags.append("local")
+					asset_browser.update_tag_list()
 			elif path.get_extension() == "obj":
 				current_file.model_path = path
 				_load_model(path)

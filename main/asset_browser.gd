@@ -59,6 +59,9 @@ class AssetType:
 	func get_asset_directory() -> String:
 		return "user://".plus_file(name.to_lower())
 	
+	func get_local_asset_directory(project_file : String) -> String:
+		return project_file.get_base_dir().plus_file("assets").plus_file(name.to_lower())
+	
 	func get_cached_thumbnails_path() -> String:
 		return "user://cached_thumbnails/" + name.to_lower()
 
@@ -111,8 +114,8 @@ func _ready():
 	
 	if ProjectSettings.get_setting("application/config/load_assets"):
 		for asset_type in ASSET_TYPES.values():
-			load_assets(asset_type)
-	_update_tag_list()
+			load_assets(asset_type.get_asset_directory(), asset_type)
+	update_tag_list()
 	update_asset_list()
 
 
@@ -127,24 +130,31 @@ func get_drag_data_fw(position : Vector2, _from : Control):
 		return asset_list.get_item_metadata(item)
 
 
-func load_assets(asset_type : AssetType) -> void:
+func load_local_assets(project_file : String) -> void:
+	if ProjectSettings.get_setting("application/config/load_assets"):
+		for asset_type in ASSET_TYPES.values():
+			load_assets(asset_type.get_local_asset_directory(project_file), asset_type, "local")
+
+
+func load_assets(directory : String, asset_type : AssetType, common_tag := "") -> void:
 	var dir := Directory.new()
-	var asset_dir := asset_type.get_asset_directory()
-	dir.make_dir_recursive(asset_dir)
-	dir.open(asset_dir)
+	dir.make_dir_recursive(directory)
+	dir.open(directory)
 	dir.list_dir_begin(true)
 	var file_name := dir.get_next()
 	while file_name != "":
-		load_asset(file_name, asset_type)
+		load_asset(file_name, asset_type, common_tag)
 		file_name = dir.get_next()
 
 
-func load_asset(file_name : String, asset_type : AssetType) -> void:
+func load_asset(file_name : String, asset_type : AssetType, tag := "") -> void:
 	var asset := Asset.new()
 	asset.name = file_name.get_basename()
 	asset.type = asset_type
 	asset.tags.append(asset_type.tag)
 	asset.tags += Array(_get_tags(asset.name))
+	if tag:
+		asset.tags.append(tag)
 	asset.file = asset_type.get_asset_directory().plus_file(file_name)
 	asset.data = asset_type._load(asset)
 	add_asset(asset)
@@ -172,13 +182,21 @@ func update_asset_list() -> void:
 			asset_list.set_item_metadata(asset_list.get_item_count() - 1, asset)
 
 
+func update_tag_list() -> void:
+	tag_list.clear()
+	var root := tag_list.create_item()
+	for tag in tags:
+		var tag_item := tag_list.create_item(root)
+		tag_item.set_text(0, tag)
+
+
 func _on_AssetList_item_activated(index : int) -> void:
 	emit_signal("asset_activated", asset_list.get_item_metadata(index))
 
 
 func _on_RemoveTagButton_pressed() -> void:
 	tags.erase(tag_list.get_selected().get_text(0))
-	_update_tag_list()
+	update_tag_list()
 
 
 func _on_AddTagButton_pressed() -> void:
@@ -186,7 +204,7 @@ func _on_AddTagButton_pressed() -> void:
 	if new_tag and not new_tag in tags:
 		tags.append(new_tag)
 		current_tag = new_tag
-		_update_tag_list()
+		update_tag_list()
 
 
 func _on_TagList_cell_selected() -> void:
@@ -208,14 +226,6 @@ func _on_SceneTree_files_dropped(files : PoolStringArray, _screen : int) -> void
 			dir.copy(file, new_asset_path)
 			load_asset(file.get_file(), ASSET_TYPES.TEXTURE)
 			update_asset_list()
-
-
-func _update_tag_list() -> void:
-	tag_list.clear()
-	var root := tag_list.create_item()
-	for tag in tags:
-		var tag_item := tag_list.create_item(root)
-		tag_item.set_text(0, tag)
 
 
 func _get_tags(asset_name : String) -> PoolStringArray:
