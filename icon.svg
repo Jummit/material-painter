@@ -38,30 +38,30 @@
        inkscape:collect="always"
        xlink:href="#linearGradient973"
        id="linearGradient963"
-       x1="51.779434"
-       y1="21.531929"
-       x2="52.973721"
-       y2="27.756153"
+       x1="51.870182"
+       y1="21.853455"
+       x2="52.336487"
+       y2="27.269499"
        gradientUnits="userSpaceOnUse"
        gradientTransform="translate(0.84190354,-2.8287089)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient973"
        id="linearGradient965"
-       x1="44.346214"
-       y1="22.585094"
-       x2="46.077293"
-       y2="32.741337"
+       x1="44.621593"
+       y1="23.619781"
+       x2="45.557575"
+       y2="30.331739"
        gradientUnits="userSpaceOnUse"
        gradientTransform="translate(0,-0.40090429)" />
     <linearGradient
        inkscape:collect="always"
        xlink:href="#linearGradient973"
        id="linearGradient967"
-       x1="38.422184"
-       y1="23.339096"
-       x2="40.258137"
-       y2="32.895107"
+       x1="39.551529"
+       y1="26.24515"
+       x2="40.04937"
+       y2="32.30315"
        gradientUnits="userSpaceOnUse"
        gradientTransform="translate(0.04033881,-0.39886969)" />
   </defs>
@@ -72,9 +72,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.959798"
-     inkscape:cx="15.518395"
-     inkscape:cy="49.868934"
+     inkscape:zoom="1.979899"
+     inkscape:cx="-43.14616"
+     inkscape:cy="81.030748"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -93,7 +93,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
