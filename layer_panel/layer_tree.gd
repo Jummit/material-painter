@@ -203,11 +203,17 @@ func update_icons() -> void:
 	for layer in _tree_items:
 		var tree_item : TreeItem = _tree_items[layer]
 		if layer is TextureLayer:
-			tree_item.set_button(0, 0, yield(layer.generate_result(Vector2(16, 16), true, 1), "completed"))
+			var icon : ViewportTexture = yield(layer.generate_result(Vector2(16, 16), true, 1), "completed")
+			if not is_instance_valid(tree_item):
+				continue
+			tree_item.set_button(0, 0, icon)
 		elif layer is MaterialLayer:
 			var button_count := 0
 			if layer.mask:
-				tree_item.set_button(0, 0, yield(layer.mask.generate_result(Vector2(32, 32), false, true, 1), "completed"))
+				var icon : ImageTexture = yield(layer.mask.generate_result(Vector2(32, 32), false, true, 1), "completed")
+				if not is_instance_valid(tree_item):
+					continue
+				tree_item.set_button(0, 0, icon)
 				button_count += 1
 			if layer.maps.size() > 0:
 				if layer in _selected_maps:
@@ -322,11 +328,6 @@ func _on_item_edited() -> void:
 	undo_redo.add_undo_method(_tree_items[edited_layer], "set_text", 1, edited_layer.name)
 	undo_redo.commit_action()
 	_lastly_edited_layer = null
-
-
-func _on_MaterialLayerPopupMenu_mask_added() -> void:
-	get_selected_layer().mask = LayerTexture.new()
-	reload()
 
 
 func _setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:

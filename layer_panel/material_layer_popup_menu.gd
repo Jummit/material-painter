@@ -11,13 +11,15 @@ var _copied_mask : LayerTexture
 
 signal layer_selected(layer)
 signal layer_saved
-signal mask_added
+signal mask_added(mask)
 signal mask_pasted(mask)
 signal mask_removed
 
 enum Items {
 	SAVE_TO_LIBRARY,
-	ADD_MASK,
+	ADD_EMPTY_MASK,
+	ADD_BLACK_MASK,
+	ADD_WHITE_MASK,
 	REMOVE_MASK,
 	ADD_LAYER,
 	COPY_MASK,
@@ -26,6 +28,7 @@ enum Items {
 
 const MaterialLayer = preload("res://resources/material_layer.gd")
 const LayerTexture = preload("res://resources/layer_texture.gd")
+const BitmapTextureLayer = preload("res://resources/texture_layers/bitmap_texture_layer.gd")
 
 func _on_about_to_show() -> void:
 	clear()
@@ -34,7 +37,9 @@ func _on_about_to_show() -> void:
 		if layer.mask:
 			add_item("Remove Mask", Items.REMOVE_MASK)
 		else:
-			add_item("Add Mask", Items.ADD_MASK)
+			add_item("Add Empty Mask", Items.ADD_EMPTY_MASK)
+			add_item("Add Black Mask", Items.ADD_BLACK_MASK)
+			add_item("Add White Mask", Items.ADD_WHITE_MASK)
 		add_item("Copy Mask", Items.COPY_MASK)
 		if _copied_mask:
 			add_item("Paste Mask", Items.PASTE_MASK)
@@ -48,8 +53,19 @@ func _on_id_pressed(id : int) -> void:
 	match id:
 		Items.SAVE_TO_LIBRARY:
 			emit_signal("layer_saved")
-		Items.ADD_MASK:
-			emit_signal("mask_added")
+		Items.ADD_EMPTY_MASK:
+			emit_signal("mask_added", LayerTexture.new())
+		Items.ADD_BLACK_MASK:
+			var mask := LayerTexture.new()
+			mask.layers.append(BitmapTextureLayer.new())
+			emit_signal("mask_added", mask)
+		Items.ADD_WHITE_MASK:
+			var bitmap := BitmapTextureLayer.new()
+			bitmap.image_data.fill(Color.white)
+			var mask := LayerTexture.new()
+			mask.layers.append(bitmap)
+			yield(get_tree(), "idle_frame")
+			emit_signal("mask_added", mask)
 		Items.REMOVE_MASK:
 			emit_signal("mask_removed")
 		Items.COPY_MASK:

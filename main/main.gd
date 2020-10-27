@@ -16,6 +16,9 @@ var currently_viewing_map : String setget set_currently_viewing_map
 
 var _mesh_maps_generator = preload("res://main/mesh_maps_generator.gd").new()
 
+# to avoid https://github.com/godotengine/godot/issues/36895,
+# this is passed to add_do_action instead of null
+var NO_MASK := LayerTexture.new()
 const MATERIAL_PATH := "user://materials"
 
 var file_menu_shortcuts := [
@@ -121,6 +124,15 @@ func delete_layer(layer) -> void:
 	if layer_texture:
 		layer_texture.update_result(result_size)
 	_update_results(false)
+	layer_tree.reload()
+
+
+func set_mask(layer : MaterialLayer, mask : LayerTexture) -> void:
+	if mask == NO_MASK:
+		layer.mask = null
+	else:
+		layer.mask = mask
+	_update_results()
 	layer_tree.reload()
 
 
@@ -246,22 +258,16 @@ func _on_Viewport_painted(layer : TextureLayer) -> void:
 	_update_results(false, true)
 
 
+func _on_MaterialLayerPopupMenu_mask_added(mask : LayerTexture) -> void:
+	_create_change_mask_action("Add Mask", layer_tree.get_selected_layer(), mask)
+
+
 func _on_MaterialLayerPopupMenu_mask_removed() -> void:
-	layer_tree.get_selected_layer().mask = null
-	_update_results()
-#	layer_tree.reload()
+	_create_change_mask_action("Remove Mask", layer_tree.get_selected_layer(), NO_MASK)
 
 
 func _on_MaterialLayerPopupMenu_mask_pasted(mask : LayerTexture) -> void:
-	undo_redo.create_action("Paste Mask")
-	var old_mask : LayerTexture = layer_tree.get_selected_layer().mask
-	undo_redo.add_do_property(layer_tree.get_selected_layer(), "mask", mask.duplicate())
-	undo_redo.add_do_method(self, "_update_results")
-	undo_redo.add_do_method(layer_tree, "reload")
-	undo_redo.add_undo_property(layer_tree.get_selected_layer(), "mask", old_mask)
-	undo_redo.add_undo_method(self, "_update_results")
-	undo_redo.add_undo_method(layer_tree, "reload")
-	undo_redo.commit_action()
+	_create_change_mask_action("Paste Mask", layer_tree.get_selected_layer(), mask)
 
 
 func _on_SaveButton_pressed() -> void:
@@ -400,6 +406,13 @@ func _open_save_project_dialog() -> void:
 	file_dialog.current_file = ""
 	file_dialog.set_meta("to_save", current_file)
 	file_dialog.popup_centered()
+
+
+func _create_change_mask_action(action_name : String, layer : MaterialLayer, mask : LayerTexture) -> void:
+	undo_redo.create_action(action_name)
+	undo_redo.add_do_method(self, "set_mask", layer, mask)
+	undo_redo.add_undo_method(self, "set_mask", layer, layer.mask)
+	undo_redo.commit_action()
 
 
 func set_currently_viewing_map(to : String) -> void:
