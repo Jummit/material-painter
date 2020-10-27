@@ -249,6 +249,19 @@ func _on_Viewport_painted(layer : TextureLayer) -> void:
 func _on_MaterialLayerPopupMenu_mask_removed() -> void:
 	layer_tree.get_selected_layer().mask = null
 	_update_results()
+#	layer_tree.reload()
+
+
+func _on_MaterialLayerPopupMenu_mask_pasted(mask : LayerTexture) -> void:
+	undo_redo.create_action("Paste Mask")
+	var old_mask : LayerTexture = layer_tree.get_selected_layer().mask
+	undo_redo.add_do_property(layer_tree.get_selected_layer(), "mask", mask.duplicate())
+	undo_redo.add_do_method(self, "_update_results")
+	undo_redo.add_do_method(layer_tree, "reload")
+	undo_redo.add_undo_property(layer_tree.get_selected_layer(), "mask", old_mask)
+	undo_redo.add_undo_method(self, "_update_results")
+	undo_redo.add_undo_method(layer_tree, "reload")
+	undo_redo.commit_action()
 
 
 func _on_SaveButton_pressed() -> void:

@@ -7,9 +7,12 @@ The context menu that is shown when right-clicking a `MaterialLayer`
 var layer
 var layer_texture_selected : bool
 
+var _copied_mask : LayerTexture
+
 signal layer_selected(layer)
 signal layer_saved
 signal mask_added
+signal mask_pasted(mask)
 signal mask_removed
 
 enum Items {
@@ -17,9 +20,12 @@ enum Items {
 	ADD_MASK,
 	REMOVE_MASK,
 	ADD_LAYER,
+	COPY_MASK,
+	PASTE_MASK,
 }
 
 const MaterialLayer = preload("res://resources/material_layer.gd")
+const LayerTexture = preload("res://resources/layer_texture.gd")
 
 func _on_about_to_show() -> void:
 	clear()
@@ -29,6 +35,9 @@ func _on_about_to_show() -> void:
 			add_item("Remove Mask", Items.REMOVE_MASK)
 		else:
 			add_item("Add Mask", Items.ADD_MASK)
+		add_item("Copy Mask", Items.COPY_MASK)
+		if _copied_mask:
+			add_item("Paste Mask", Items.PASTE_MASK)
 	if layer_texture_selected:
 		for layer_type in Globals.TEXTURE_LAYER_TYPES:
 			add_item("Add %s Layer" % layer_type.new().type_name, Items.ADD_LAYER)
@@ -43,9 +52,12 @@ func _on_id_pressed(id : int) -> void:
 			emit_signal("mask_added")
 		Items.REMOVE_MASK:
 			emit_signal("mask_removed")
+		Items.COPY_MASK:
+			_copied_mask = layer.mask
+		Items.PASTE_MASK:
+			emit_signal("mask_pasted", _copied_mask)
 
 
 func _on_index_pressed(index : int) -> void:
 	if get_item_id(index) == Items.ADD_LAYER:
 		emit_signal("layer_selected", get_item_metadata(index))
-
