@@ -50,6 +50,7 @@ const LayerTexture = preload("res://resources/layer_texture.gd")
 const TextureLayer = preload("res://resources/texture_layer.gd")
 const FolderLayer = preload("res://resources/folder_layer.gd")
 const Brush = preload("res://addons/painter/brush.gd")
+const ResourceUtils = preload("res://utils/resource_utils.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/TopButtons/FileMenuButton
 onready var file_dialog : FileDialog = $FileDialog
@@ -268,6 +269,14 @@ func _on_MaterialLayerPopupMenu_mask_removed() -> void:
 
 func _on_MaterialLayerPopupMenu_mask_pasted(mask : LayerTexture) -> void:
 	_create_change_mask_action("Paste Mask", layer_tree.get_selected_layer(), mask)
+
+
+func _on_MaterialLayerPopupMenu_duplicated() -> void:
+	undo_redo.create_action("Duplicate Layer")
+	var new_layer = ResourceUtils.deep_copy_of_resource(layer_tree.get_selected_layer())
+	undo_redo.add_do_method(self, "add_layer", new_layer, editing_layer_material)
+	undo_redo.add_undo_method(self, "delete_layer", new_layer)
+	undo_redo.commit_action()
 
 
 func _on_SaveButton_pressed() -> void:

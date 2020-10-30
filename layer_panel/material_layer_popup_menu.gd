@@ -14,6 +14,7 @@ signal layer_saved
 signal mask_added(mask)
 signal mask_pasted(mask)
 signal mask_removed
+signal duplicated
 
 enum Items {
 	SAVE_TO_LIBRARY,
@@ -24,6 +25,7 @@ enum Items {
 	ADD_LAYER,
 	COPY_MASK,
 	PASTE_MASK,
+	DUPLICATE,
 }
 
 const MaterialLayer = preload("res://resources/material_layer.gd")
@@ -36,11 +38,12 @@ func _on_about_to_show() -> void:
 	if layer is MaterialLayer:
 		if layer.mask:
 			add_item("Remove Mask", Items.REMOVE_MASK)
+			add_item("Copy Mask", Items.COPY_MASK)
 		else:
 			add_item("Add Empty Mask", Items.ADD_EMPTY_MASK)
 			add_item("Add Black Mask", Items.ADD_BLACK_MASK)
 			add_item("Add White Mask", Items.ADD_WHITE_MASK)
-		add_item("Copy Mask", Items.COPY_MASK)
+		add_item("Duplicate", Items.DUPLICATE)
 		if _copied_mask:
 			add_item("Paste Mask", Items.PASTE_MASK)
 	if layer_texture_selected:
@@ -72,6 +75,8 @@ func _on_id_pressed(id : int) -> void:
 			_copied_mask = layer.mask
 		Items.PASTE_MASK:
 			emit_signal("mask_pasted", _copied_mask)
+		Items.DUPLICATE:
+			emit_signal("duplicated")
 
 
 func _on_index_pressed(index : int) -> void:
