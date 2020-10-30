@@ -1,6 +1,7 @@
-[gd_scene load_steps=22 format=2]
+[gd_scene load_steps=23 format=2]
 
 [ext_resource path="res://main/2d_viewport.gd" type="Script" id=1]
+[ext_resource path="res://main/edit_menu_button.gd" type="Script" id=2]
 [ext_resource path="res://main/main.gd" type="Script" id=3]
 [ext_resource path="res://main/view_menu_button.gd" type="Script" id=5]
 [ext_resource path="res://layer_panel/layer_property_panel.gd" type="Script" id=6]
@@ -68,6 +69,7 @@ margin_bottom = 20.0
 text = "Edit"
 items = [ "Bake Mesh Maps", null, 0, false, false, 0, 0, null, "", false ]
 switch_on_hover = true
+script = ExtResource( 2 )
 
 [node name="ViewMenuButton" type="MenuButton" parent="VBoxContainer/TopButtonBar/TopButtons"]
 margin_left = 79.0
@@ -377,6 +379,8 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[connection signal="bake_mesh_maps_pressed" from="VBoxContainer/TopButtonBar/TopButtons/EditMenuButton" to="." method="_on_EditMenuButton_bake_mesh_maps_pressed"]
+[connection signal="size_selected" from="VBoxContainer/TopButtonBar/TopButtons/EditMenuButton" to="." method="_on_EditMenuButton_size_selected"]
 [connection signal="hdri_selected" from="VBoxContainer/TopButtonBar/TopButtons/ViewMenuButton" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport" method="_on_ViewMenuButton_hdri_selected"]
 [connection signal="show_background_toggled" from="VBoxContainer/TopButtonBar/TopButtons/ViewMenuButton" to="VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport" method="_on_ViewMenuButton_show_background_toggled"]
 [connection signal="item_activated" from="VBoxContainer/PanelContainer/HBoxContainer/ResultsItemList" to="." method="_on_ResultsItemList_item_activated"]

@@ -54,7 +54,6 @@ const ResourceUtils = preload("res://utils/resource_utils.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/TopButtons/FileMenuButton
 onready var file_dialog : FileDialog = $FileDialog
-onready var edit_menu_button : MenuButton = $VBoxContainer/TopButtonBar/TopButtons/EditMenuButton
 onready var layer_property_panel : Panel = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerPropertyPanel
 onready var texture_map_buttons : GridContainer = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/TextureMapButtons
 onready var model : MeshInstance = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport/Model"
@@ -70,8 +69,6 @@ func _ready() -> void:
 	popup.connect("id_pressed", self, "_on_FileMenu_id_pressed")
 	for id in file_menu_shortcuts.size():
 		popup.set_item_shortcut(id, file_menu_shortcuts[id])
-	
-	edit_menu_button.get_popup().connect("id_pressed", self, "_on_EditMenu_id_pressed")
 	
 	var file := SaveFile.new()
 	file.model_path = "res://3d_viewport/cube.obj"
@@ -308,6 +305,21 @@ func _on_FileDialog_popup_hide() -> void:
 	camera.set_process_input(true)
 
 
+func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
+	var mesh_maps : Dictionary = yield(_mesh_maps_generator.generate_mesh_maps(Globals.mesh, Vector2(1024, 1024)), "completed")
+	var texture_dir : String = asset_browser.ASSET_TYPES.TEXTURE.get_local_asset_directory(file_location)
+	for map in mesh_maps:
+		var file := texture_dir.plus_file(map) + ".png"
+		mesh_maps[map].get_data().save_png(file)
+		asset_browser.load_asset(file, asset_browser.ASSET_TYPES.TEXTURE, "local")
+	asset_browser.update_asset_list()
+
+
+func _on_EditMenuButton_size_selected(size) -> void:
+	result_size = size
+	_update_results(false, true)
+
+
 func _on_FileMenu_id_pressed(id : int) -> void:
 	match id:
 		FILE_MENU_ITEMS.NEW:
@@ -340,16 +352,6 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 			file_dialog.popup_centered()
 		FILE_MENU_ITEMS.QUIT:
 			get_tree().quit()
-
-
-func _on_EditMenu_id_pressed(_id : int) -> void:
-	var mesh_maps : Dictionary = yield(_mesh_maps_generator.generate_mesh_maps(Globals.mesh, Vector2(1024, 1024)), "completed")
-	var texture_dir : String = asset_browser.ASSET_TYPES.TEXTURE.get_local_asset_directory(file_location)
-	for map in mesh_maps:
-		var file := texture_dir.plus_file(map) + ".png"
-		mesh_maps[map].get_data().save_png(file)
-		asset_browser.load_asset(file, asset_browser.ASSET_TYPES.TEXTURE, "local")
-	asset_browser.update_asset_list()
 
 
 func _on_UndoRedo_version_changed() -> void:
