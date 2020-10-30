@@ -31,6 +31,7 @@ IDMapGenerator="*res://addons/id_map_generator/id_map_generator.tscn"
 
 [debug]
 
+gdscript/warnings/treat_warnings_as_errors=true
 gdscript/warnings/exclude_addons=false
 gdscript/warnings/unused_class_variable=true
 gdscript/warnings/return_value_discarded=false
