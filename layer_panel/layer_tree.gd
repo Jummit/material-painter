@@ -308,18 +308,6 @@ func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
 	reload()
 
 
-func _draw_material_layer_item(material_layer_item : TreeItem, item_rect : Rect2) -> void:
-	var material_layer = material_layer_item.get_meta("layer")
-	if not material_layer is MaterialLayer or not material_layer in _selected_layer_textures:
-		return
-	var icon_rect := Rect2(Vector2(68, 3 + item_rect.position.y), Vector2(32, 32))
-	if _selected_layer_textures[material_layer] == material_layer.mask and material_layer.maps.size() > 0:
-		icon_rect.position.x = 25
-	if material_layer.get_layer_textures().size() > 1:
-		icon_rect.position.x -= 25
-	draw_rect(icon_rect, Color.dodgerblue, false, 2.0)
-
-
 func _on_item_edited() -> void:
 	undo_redo.create_action("Rename Layer")
 	var edited_layer = get_edited().get_meta("layer")
@@ -328,6 +316,18 @@ func _on_item_edited() -> void:
 	undo_redo.add_undo_method(_tree_items[edited_layer], "set_text", 1, edited_layer.name)
 	undo_redo.commit_action()
 	_lastly_edited_layer = null
+
+
+func _draw_material_layer_item(material_layer_item : TreeItem, item_rect : Rect2) -> void:
+	var material_layer : MaterialLayer = material_layer_item.get_meta("layer")
+	if not material_layer is MaterialLayer or not material_layer in _selected_layer_textures:
+		return
+	var icon_rect := Rect2(Vector2(68, 3 + item_rect.position.y), Vector2(32, 32))
+	if _selected_layer_textures[material_layer] == material_layer.mask and material_layer.maps.size() > 0:
+		icon_rect.position.x = 25
+	if material_layer.maps.size() > 1:
+		icon_rect.position.x -= 25
+	draw_rect(icon_rect, Color.dodgerblue, false, 2.0)
 
 
 func _setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
