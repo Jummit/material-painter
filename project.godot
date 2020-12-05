@@ -28,6 +28,7 @@ PreviewRenderer="*res://preview_renderer/preview_renderer.tscn"
 NormalMapGenerationViewport="*res://addons/normal_map_generation_viewport/normal_map_generation_viewport.tscn"
 TriplanarTextureGenerator="*res://addons/triplanar_texture_generator/triplanar_texture_generator.tscn"
 IDMapGenerator="*res://addons/id_map_generator/id_map_generator.tscn"
+CurvatureBaker="*res://addons/curvature_baker/curvature_baker.tscn"
 
 [debug]
 
