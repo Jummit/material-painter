@@ -17,8 +17,16 @@ class IDMeshMapGenerator extends MeshMapGenerator:
 		return TextureUtils.viewport_to_image(
 				yield(IDMapGenerator.generate_id_map(mesh, result_size), "completed"))
 
+class CurvatureMapGenerator extends MeshMapGenerator:
+	func _init().("CurvatureMap") -> void:
+		pass
+	
+	func _generate_map(mesh : Mesh, result_size : Vector2) -> Texture:
+		return yield(CurvatureBaker.bake_curvature_map(mesh, result_size), "completed")
+
 var MESH_MAP_GENERATORS := [
-	IDMeshMapGenerator.new()
+	IDMeshMapGenerator.new(),
+	CurvatureMapGenerator.new(),
 ]
 
 func generate_mesh_maps(mesh : Mesh, result_size : Vector2) -> Dictionary:
