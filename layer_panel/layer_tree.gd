@@ -179,9 +179,10 @@ func drop_data(position : Vector2, data) -> void:
 			undo_redo.add_undo_method(main, "delete_layer", layer)
 			undo_redo.commit_action()
 		elif data.type is MaterialAssetType:
+			var new_layer : Resource = data.data.duplicate()
 			undo_redo.create_action("Add Material From Library")
-			undo_redo.add_do_method(main, "add_layer", data.data, editing_layer_material)
-			undo_redo.add_undo_method(main, "delete_layer", data.data)
+			undo_redo.add_do_method(main, "add_layer", new_layer, editing_layer_material)
+			undo_redo.add_undo_method(main, "delete_layer", new_layer)
 			undo_redo.commit_action()
 
 
