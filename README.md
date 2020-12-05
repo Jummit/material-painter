@@ -4,7 +4,7 @@ A Substance Painter alternative made in the Godot Engine.
 
 ![screenshot](screenshot.png)
 
-**Note:** Because a git submodule is used,
+**Note:** Because git submodules are used,
 
 ```bash
 git submodule update --init
