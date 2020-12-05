@@ -1,3 +1,6 @@
 [submodule "addons/gd-obj"]
 	path = addons/obj_parser
 	url = git@github.com:Jummit/gd-obj.git
+[submodule "addon_repos/curvature-baker"]
+	path = addon_repos/curvature-baker
+	url = git@github.com:Jummit/curvature-baker.git
