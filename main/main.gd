@@ -149,10 +149,10 @@ func _on_FileDialog_file_selected(path : String) -> void:
 				file_location = path
 				_load_file(ResourceLoader.load(path, "", true))
 #				_load_file(load(path))
-				asset_browser.load_local_assets(file_location)
 				if not "local" in asset_browser.tags:
 					asset_browser.tags.append("local")
 					asset_browser.update_tag_list()
+				asset_browser.load_local_assets(file_location)
 			elif path.get_extension() == "obj":
 				current_file.model_path = path
 				_load_model(path)
@@ -308,6 +308,8 @@ func _on_FileDialog_popup_hide() -> void:
 func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 	var mesh_maps : Dictionary = yield(_mesh_maps_generator.generate_mesh_maps(Globals.mesh, Vector2(1024, 1024)), "completed")
 	var texture_dir : String = asset_browser.ASSET_TYPES.TEXTURE.get_local_asset_directory(file_location)
+	var dir := Directory.new()
+	dir.make_dir_recursive(texture_dir)
 	for map in mesh_maps:
 		var file := texture_dir.plus_file(map) + ".png"
 		mesh_maps[map].get_data().save_png(file)
