@@ -69,11 +69,6 @@ func update_all_layer_textures(result_size : Vector2) -> void:
 			result = yield(result, "completed")
 
 
-func export_textures(to_folder : String) -> void:
-	for type in results.keys():
-		results[type].get_data().save_png(to_folder.plus_file(type) + ".png")
-
-
 func is_inside_layer_texture(layer) -> bool:
 	return get_layer_texture_of_texture_layer(layer)
 

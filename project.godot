@@ -16,7 +16,7 @@ run/main_scene="res://main/main.tscn"
 run/low_processor_mode=true
 config/icon="res://icon.svg"
 config/load_assets=true
-config/load_assets.debug=false
+config/load_assets.debug=true
 config/initialize_painter=true
 config/initialize_painter.debug=true
 

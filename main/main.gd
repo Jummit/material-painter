@@ -63,6 +63,7 @@ onready var painter : Node = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxCo
 onready var asset_browser : HBoxContainer = $VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser
 onready var material_option_button : OptionButton = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/HBoxContainer/MaterialOptionButton
 onready var camera : Camera = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport/RotatingCamera/HorizontalCameraSocket/Camera"
+onready var progress_dialog : PopupDialog = $ProgressDialog
 
 func _ready() -> void:
 	var popup := file_menu_button.get_popup()
@@ -344,7 +345,16 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 			_open_save_project_dialog()
 		FILE_MENU_ITEMS.EXPORT:
 			if file_location:
-				editing_layer_material.export_textures(file_location.get_base_dir())
+				progress_dialog.start_task("Export Textures", editing_layer_material.results.size())
+				for type in editing_layer_material.results:
+					progress_dialog.start_action(type)
+					var export_folder := file_location.get_base_dir().plus_file("export")
+					var dir := Directory.new()
+					dir.make_dir_recursive(export_folder)
+					var result_data : Image = editing_layer_material.results[type].get_data()
+					result_data.save_png(export_folder.plus_file(type) + ".png")
+					yield(get_tree(), "idle_frame")
+				progress_dialog.complete_task()
 		FILE_MENU_ITEMS.LOAD_MESH:
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
 			file_dialog.access = FileDialog.ACCESS_FILESYSTEM

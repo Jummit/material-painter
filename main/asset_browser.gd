@@ -24,6 +24,7 @@ onready var tag_name_edit : LineEdit = $VBoxContainer/HBoxContainer/TagNameEdit
 onready var asset_list : ItemList = $VBoxContainer2/AssetList
 onready var search_edit : LineEdit = $VBoxContainer2/SearchEdit
 onready var tag_list : Tree = $VBoxContainer/TagList
+onready var progress_dialog : PopupDialog = $"../../../../../ProgressDialog"
 
 class AssetType:
 	var name : String
@@ -112,9 +113,19 @@ func _ready():
 	
 	get_tree().connect("files_dropped", self, "_on_SceneTree_files_dropped")
 	
+	yield(progress_dialog, "ready")
+	
 	if ProjectSettings.get_setting("application/config/load_assets"):
+		var total_files := 0
 		for asset_type in ASSET_TYPES.values():
-			load_assets(asset_type.get_asset_directory(), asset_type)
+			total_files += _get_files_in_folder(asset_type.get_asset_directory()).size()
+		
+		progress_dialog.start_task("Load Assets", total_files)
+		
+		for asset_type in ASSET_TYPES.values():
+			yield(load_assets(asset_type.get_asset_directory(), asset_type), "completed")
+		
+		progress_dialog.complete_task()
 	update_tag_list()
 	update_asset_list()
 
@@ -139,12 +150,11 @@ func load_local_assets(project_file : String) -> void:
 func load_assets(directory : String, asset_type : AssetType, common_tag := "") -> void:
 	var dir := Directory.new()
 	dir.make_dir_recursive(directory)
-	dir.open(directory)
-	dir.list_dir_begin(true)
-	var file_name := dir.get_next()
-	while file_name != "":
-		load_asset(directory.plus_file(file_name), asset_type, common_tag)
-		file_name = dir.get_next()
+	var files := _get_files_in_folder(directory)
+	for file in files:
+		progress_dialog.start_action(file)
+		load_asset(directory.plus_file(file), asset_type, common_tag)
+		yield(get_tree(), "idle_frame")
 
 
 func load_asset(path : String, asset_type : AssetType, tag := "") -> void:
@@ -235,3 +245,15 @@ func _get_tags(asset_name : String) -> PoolStringArray:
 		if letter.to_upper() == letter:
 			asset_name = asset_name.replace(letter, "_" + letter)
 	return asset_name.to_lower().split("_", false)
+
+
+func _get_files_in_folder(folder : String) -> PoolStringArray:
+	var dir := Directory.new()
+	dir.open(folder)
+	dir.list_dir_begin(true)
+	var file_name := dir.get_next()
+	var files : PoolStringArray = []
+	while file_name != "":
+		files.append(file_name)
+		file_name = dir.get_next()
+	return files
