@@ -311,11 +311,16 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 	var texture_dir : String = asset_browser.ASSET_TYPES.TEXTURE.get_local_asset_directory(file_location)
 	var dir := Directory.new()
 	dir.make_dir_recursive(texture_dir)
+	progress_dialog.start_task("Bake Mesh Maps", mesh_maps.size())
+	yield(get_tree(), "idle_frame")
 	for map in mesh_maps:
 		var file := texture_dir.plus_file(map) + ".png"
+		progress_dialog.start_action(file)
 		mesh_maps[map].get_data().save_png(file)
 		asset_browser.load_asset(file, asset_browser.ASSET_TYPES.TEXTURE, "local")
+		yield(get_tree(), "idle_frame")
 	asset_browser.update_asset_list()
+	progress_dialog.complete_task()
 
 
 func _on_EditMenuButton_size_selected(size) -> void:
@@ -346,6 +351,7 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 		FILE_MENU_ITEMS.EXPORT:
 			if file_location:
 				progress_dialog.start_task("Export Textures", editing_layer_material.results.size())
+				yield(get_tree(), "idle_frame")
 				for type in editing_layer_material.results:
 					progress_dialog.start_action(type)
 					var export_folder := file_location.get_base_dir().plus_file("export")
