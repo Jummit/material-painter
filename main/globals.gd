@@ -8,6 +8,7 @@ const BitmapTextureLayer = preload("res://resources/texture_layers/bitmap_textur
 const ColorTextureLayer = preload("res://resources/texture_layers/color_texture_layer.gd")
 const ScalarTextureLayer = preload("res://resources/texture_layers/scalar_texture_layer.gd")
 const FileTextureLayer = preload("res://resources/texture_layers/file_texture_layer.gd")
+const BrightnessContrastTextureLayer = preload("res://resources/effects/brightness_contrast_texture_layer.gd")
 
 const BlurTextureLayer = preload("res://resources/effects/blur_texture_layer.gd")
 const HSVAdjustTextureLayer = preload("res://resources/effects/hsv_adjust_texture_layer.gd")
@@ -27,6 +28,7 @@ var TEXTURE_LAYER_TYPES := [
 	BlurTextureLayer,
 	HSVAdjustTextureLayer,
 	IsolateColorTextureLayer,
+	BrightnessContrastTextureLayer,
 ]
 
 # warning-ignore:unused_class_variable
