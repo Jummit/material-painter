@@ -44,6 +44,7 @@ const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
 const TextureFolder = preload("res://resources/texture/texture_folder.gd")
+const MaterialFolder = preload("res://resources/material/material_folder.gd")
 const Asset = preload("res://main/asset_browser.gd").Asset
 const TextureAssetType = preload("res://main/asset_browser.gd").TextureAssetType
 const MaterialAssetType = preload("res://main/asset_browser.gd").MaterialAssetType
@@ -119,7 +120,7 @@ func can_drop_data(position : Vector2, data) -> bool:
 			for layer in data.layers:
 				if layer == get_item_at_position(position).get_meta("layer"):
 					return false
-			var is_folder := get_layer_at_position(position) is TextureFolder
+			var is_folder := folder_selected()
 			var onto_type : int = _get_layer_type(get_item_at_position(position))
 			if get_drop_section_at_position(position) == 0:
 				return (layer_type == LayerType.TEXTURE_LAYER and\
@@ -246,6 +247,11 @@ func get_selected_layer():
 	return get_selected().get_meta("layer")
 
 
+func folder_selected() -> void:
+	get_layer_at_position(position) is TextureFolder\
+			or get_layer_at_position(position) is MaterialFolder
+
+
 func _on_cell_selected() -> void:
 	var layer = get_selected().get_meta("layer")
 	if layer is MaterialLayer:
@@ -366,7 +372,7 @@ func _setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
 	
 	_tree_items[material_layer] = material_layer_item
 	
-	if material_layer is TextureFolder and material_layer in _expanded_folders:
+	if material_layer is MaterialFolder and material_layer in _expanded_folders:
 		for layer in material_layer.layers:
 			_setup_material_layer_item(layer, material_layer_item)
 
