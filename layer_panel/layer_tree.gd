@@ -120,7 +120,7 @@ func can_drop_data(position : Vector2, data) -> bool:
 			for layer in data.layers:
 				if layer == get_item_at_position(position).get_meta("layer"):
 					return false
-			var is_folder := folder_selected()
+			var is_folder := is_folder(get_layer_at_position(position))
 			var onto_type : int = _get_layer_type(get_item_at_position(position))
 			if get_drop_section_at_position(position) == 0:
 				return (layer_type == LayerType.TEXTURE_LAYER and\
@@ -247,9 +247,8 @@ func get_selected_layer():
 	return get_selected().get_meta("layer")
 
 
-func folder_selected() -> void:
-	get_layer_at_position(position) is TextureFolder\
-			or get_layer_at_position(position) is MaterialFolder
+func is_folder(layer) -> bool:
+	return layer is TextureFolder or layer is MaterialFolder
 
 
 func _on_cell_selected() -> void:
@@ -326,7 +325,7 @@ func _on_item_edited() -> void:
 
 
 func _draw_material_layer_item(material_layer_item : TreeItem, item_rect : Rect2) -> void:
-	var material_layer : MaterialLayer = material_layer_item.get_meta("layer")
+	var material_layer = material_layer_item.get_meta("layer")
 	if not material_layer is MaterialLayer or not material_layer in _selected_layer_textures:
 		return
 	var icon_rect := Rect2(Vector2(68, 3 + item_rect.position.y), Vector2(32, 32))

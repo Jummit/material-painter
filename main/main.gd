@@ -46,6 +46,7 @@ const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
 const SaveFile = preload("res://resources/save_file.gd")
 const MaterialLayer = preload("res://resources/material/material_layer.gd")
 const LayerMaterial = preload("res://resources/material/layer_material.gd")
+const MaterialFolder = preload("res://resources/material/material_folder.gd")
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 const TextureFolder = preload("res://resources/texture/texture_folder.gd")
@@ -163,7 +164,7 @@ func _on_FileDialog_file_selected(path : String) -> void:
 
 func _on_AddButton_pressed() -> void:
 	var onto
-	if layer_tree.folder_selected():
+	if layer_tree.is_folder(layer_tree.get_selected_layer()):
 		onto = layer_tree.get_selected_layer()
 	else:
 		onto = editing_layer_material
@@ -178,7 +179,7 @@ func _on_AddFolderButton_pressed() -> void:
 	undo_redo.create_action("Add Folder Layer")
 	var onto
 	var selected_layer = layer_tree.get_selected_layer()
-	if layer_tree.folder_selected():
+	if layer_tree.is_folder(layer_tree.get_selected_layer()):
 		onto = selected_layer
 	elif selected_layer is MaterialLayer and layer_tree.get_selected_layer_texture(selected_layer):
 		onto = layer_tree.get_selected_layer_texture(selected_layer)
@@ -186,7 +187,7 @@ func _on_AddFolderButton_pressed() -> void:
 		onto = editing_layer_material
 	
 	var new_layer
-	if onto is MaterialLayer:
+	if onto is LayerMaterial or onto is MaterialFolder:
 		new_layer = MaterialFolder.new()
 	else:
 		new_layer = TextureFolder.new()
