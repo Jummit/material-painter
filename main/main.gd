@@ -243,7 +243,15 @@ func _on_LayerPropertyPanel_property_changed(property : String, value) -> void:
 func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
 	undo_redo.create_action("Add Texture Layer")
 	var new_layer = layer.new()
-	undo_redo.add_do_method(self, "add_layer", new_layer, layer_tree.get_selected_layer_texture(layer_tree.material_layer_popup_menu.layer))
+	var onto
+	var selected_layer = layer_tree.layer_popup_menu.layer
+	if selected_layer is MaterialLayer:
+		onto = layer_tree.get_selected_layer_texture(selected_layer)
+	elif selected_layer is TextureFolder:
+		onto = selected_layer
+	else:
+		onto = editing_layer_material.get_layer_texture_of_texture_layer(selected_layer)
+	undo_redo.add_do_method(self, "add_layer", new_layer, onto)
 	undo_redo.add_undo_method(self, "delete_layer", new_layer)
 	undo_redo.commit_action()
 

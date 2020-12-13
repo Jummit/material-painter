@@ -31,14 +31,14 @@ func generate_result(result_size : Vector2, keep_viewport := true, use_cached_sh
 	return yield(LayerBlendViewportManager.blend(blending_layers, result_size, get_instance_id() + custom_id if keep_viewport else -1, use_cached_shader), "completed")
 
 
-func get_flat_layers(layer_array : Array = layers, add_hidden := true) -> Array:
+func get_flat_layers(layer_array : Array = layers, add_hidden := true, add_folders := false) -> Array:
 	var flat_layers := []
 	for layer in layer_array:
 		if (not add_hidden) and not layer.visible:
 			continue
 		if layer is TextureFolder:
 			flat_layers += get_flat_layers(layer.layers, add_hidden)
-		else:
+		if (not layer is TextureFolder) or add_folders:
 			flat_layers.append(layer)
 	return flat_layers
 

@@ -51,7 +51,7 @@ const MaterialAssetType = preload("res://main/asset_browser.gd").MaterialAssetTy
 
 onready var main : Control = $"../../../../.."
 onready var undo_redo : UndoRedo = main.undo_redo
-onready var material_layer_popup_menu : PopupMenu = $MaterialLayerPopupMenu
+onready var layer_popup_menu : PopupMenu = $LayerPopupMenu
 onready var map_type_popup_menu : PopupMenu = $MapTypePopupMenu
 
 func _ready() -> void:
@@ -62,11 +62,13 @@ func _ready() -> void:
 func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == BUTTON_RIGHT and event.pressed:
 		var layer = get_layer_at_position(event.position)
-		if layer as MaterialLayer:
-			material_layer_popup_menu.rect_global_position = event.global_position
-			material_layer_popup_menu.layer = layer
-			material_layer_popup_menu.layer_texture_selected = layer is MaterialLayer and layer in _selected_layer_textures
-			material_layer_popup_menu.popup()
+		layer_popup_menu.rect_global_position = event.global_position
+		layer_popup_menu.layer = layer
+		if layer is MaterialLayer and layer in _selected_layer_textures:
+			layer_popup_menu.layer_texture = _selected_layer_textures[layer]
+		elif layer is TextureFolder:
+			layer_popup_menu.layer_texture = editing_layer_material.get_layer_texture_of_texture_layer(layer)
+		layer_popup_menu.popup()
 	elif event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
 		# `get_selected` returns null the first time a layer is clicked
 		# if it doesn't, in thin case it means the layer was "double clicked"

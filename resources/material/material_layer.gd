@@ -31,7 +31,7 @@ func update_all_layer_textures(result_size : Vector2) -> void:
 func get_layer_texture_of_texture_layer(texture_layer):
 	for layer_texture in maps.values() + [mask]:
 		if layer_texture:
-			if texture_layer in layer_texture.get_flat_layers():
+			if texture_layer in layer_texture.get_flat_layers(layer_texture.layers, true, true):
 				return layer_texture
 
 
