@@ -13,7 +13,7 @@ var last_painted_position : Vector2
 var cached_camera_transform : Transform
 
 const Brush = preload("res://addons/painter/brush.gd")
-const BitmapTextureLayer = preload("res://resources/texture_layers/bitmap_texture_layer.gd")
+const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
 const MeshUtils = preload("res://utils/mesh_utils.gd")
 const Asset = preload("res://main/asset_browser.gd").Asset
 const BrushAssetType = preload("res://main/asset_browser.gd").BrushAssetType

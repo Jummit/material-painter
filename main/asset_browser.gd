@@ -82,9 +82,9 @@ class TextureAssetType extends AssetType:
 		return asset.file
 
 class MaterialAssetType extends AssetType:
-	const MaterialLayer = preload("res://resources/material_layer.gd")
-	const LayerTexture = preload("res://resources/layer_texture.gd")
-	const LayerMaterial = preload("res://resources/layer_material.gd")
+	const MaterialLayer = preload("res://resources/material/material_layer.gd")
+	const LayerTexture = preload("res://resources/texture/layer_texture.gd")
+	const LayerMaterial = preload("res://resources/material/layer_material.gd")
 	
 	func _init().("Materials", "material") -> void:
 		pass

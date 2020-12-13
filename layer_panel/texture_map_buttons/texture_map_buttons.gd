@@ -9,8 +9,8 @@ var buttons : Dictionary
 # warning-ignore:unused_signal
 signal changed(map, enabled)
 
-const LayerTexture = preload("res://resources/layer_texture.gd")
-const MaterialLayer = preload("res://resources/material_layer.gd")
+const LayerTexture = preload("res://resources/texture/layer_texture.gd")
+const MaterialLayer = preload("res://resources/material/material_layer.gd")
 
 onready var layer_property_panel : Panel = $"../LayerPropertyPanel"
 onready var undo_redo : UndoRedo = $"../../../../..".undo_redo

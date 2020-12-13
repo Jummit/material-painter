@@ -11,7 +11,7 @@ export var layers : Array
 
 var result : Texture
 
-const FolderLayer = preload("res://resources/folder_layer.gd")
+const FolderLayer = preload("res://resources/texture/texture_folder.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true

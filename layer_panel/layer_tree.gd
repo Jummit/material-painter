@@ -38,12 +38,12 @@ enum LayerType {
 	TEXTURE_LAYER,
 }
 
-const LayerMaterial = preload("res://resources/layer_material.gd")
-const MaterialLayer = preload("res://resources/material_layer.gd")
-const LayerTexture = preload("res://resources/layer_texture.gd")
-const TextureLayer = preload("res://resources/texture_layer.gd")
-const FileTextureLayer = preload("res://resources/texture_layers/file_texture_layer.gd")
-const FolderLayer = preload("res://resources/folder_layer.gd")
+const LayerMaterial = preload("res://resources/material/layer_material.gd")
+const MaterialLayer = preload("res://resources/material/material_layer.gd")
+const LayerTexture = preload("res://resources/texture/layer_texture.gd")
+const TextureLayer = preload("res://resources/texture/texture_layer.gd")
+const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
+const FolderLayer = preload("res://resources/texture/texture_folder.gd")
 const Asset = preload("res://main/asset_browser.gd").Asset
 const TextureAssetType = preload("res://main/asset_browser.gd").TextureAssetType
 const MaterialAssetType = preload("res://main/asset_browser.gd").MaterialAssetType

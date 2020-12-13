@@ -1,4 +1,4 @@
-extends "res://resources/blending_texture_layer.gd"
+extends "res://resources/texture/blending_texture_layer.gd"
 
 """
 A texture layer that uses a color to generate the result

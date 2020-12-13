@@ -17,11 +17,11 @@ export var layers : Array
 
 var results : Dictionary
 
-const TextureLayer = preload("res://resources/texture_layer.gd")
-const MaterialLayer = preload("res://resources/material_layer.gd")
+const TextureLayer = preload("res://resources/texture/texture_layer.gd")
+const MaterialLayer = preload("res://resources/material/material_layer.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
-const LayerTexture = preload("res://resources/layer_texture.gd")
-const FolderLayer = preload("res://resources/folder_layer.gd")
+const LayerTexture = preload("res://resources/texture/layer_texture.gd")
+const FolderLayer = preload("res://resources/texture/texture_folder.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true

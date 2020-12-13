@@ -6,9 +6,9 @@ The `PropertyPanel` that shows the properties of the selected layer
 
 var editing_layer
 
-const LayerTexture = preload("res://resources/layer_texture.gd")
-const TextureLayer = preload("res://resources/texture_layer.gd")
-const MaterialLayer = preload("res://resources/material_layer.gd")
+const LayerTexture = preload("res://resources/texture/layer_texture.gd")
+const TextureLayer = preload("res://resources/texture/texture_layer.gd")
+const MaterialLayer = preload("res://resources/material/material_layer.gd")
 const Properties = preload("res://addons/property_panel/properties.gd")
 
 func load_texture_layer(texture_layer : TextureLayer) -> void:

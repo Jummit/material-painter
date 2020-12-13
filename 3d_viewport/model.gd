@@ -6,7 +6,7 @@ The mesh that is used to preview the generated material
 
 signal mesh_changed
 
-const LayerMaterial = preload("res://resources/layer_material.gd")
+const LayerMaterial = preload("res://resources/material/layer_material.gd")
 
 func set_mesh(to) -> void:
 	mesh = to

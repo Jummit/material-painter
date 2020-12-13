@@ -7,7 +7,7 @@ Only visible when the paint tool is selected.
 """
 
 const Properties = preload("res://addons/property_panel/properties.gd")
-const BitmapTextureLayer = preload("res://resources/texture_layers/bitmap_texture_layer.gd")
+const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
 const Asset = preload("res://main/asset_browser.gd").Asset
 const TextureAssetType = preload("res://main/asset_browser.gd").TextureAssetType
 

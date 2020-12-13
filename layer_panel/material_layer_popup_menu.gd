@@ -28,9 +28,9 @@ enum Items {
 	DUPLICATE,
 }
 
-const MaterialLayer = preload("res://resources/material_layer.gd")
-const LayerTexture = preload("res://resources/layer_texture.gd")
-const BitmapTextureLayer = preload("res://resources/texture_layers/bitmap_texture_layer.gd")
+const MaterialLayer = preload("res://resources/material/material_layer.gd")
+const LayerTexture = preload("res://resources/texture/layer_texture.gd")
+const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
 
 func _on_about_to_show() -> void:
 	clear()

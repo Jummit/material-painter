@@ -8,3 +8,4 @@ A folder layer used in a `LayerMaterial` for organization and optimization
 export var name := "Untitled Folder"
 export var visible := true
 export var layers : Array
+export var icon : 

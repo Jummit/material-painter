@@ -18,7 +18,7 @@ enum Tools {
 
 signal tool_selected(tool_id)
 
-const BitmapTextureLayer = preload("res://resources/texture_layers/bitmap_texture_layer.gd")
+const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
 
 func _ready() -> void:
 	for tool_name in Tools:

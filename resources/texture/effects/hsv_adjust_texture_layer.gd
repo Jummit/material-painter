@@ -1,4 +1,4 @@
-extends "res://resources/texture_layer.gd"
+extends "res://resources/texture/texture_layer.gd"
 
 export var hue := 1.0
 export var saturation := 1.0
