@@ -48,7 +48,7 @@ const MaterialLayer = preload("res://resources/material/material_layer.gd")
 const LayerMaterial = preload("res://resources/material/layer_material.gd")
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")
-const FolderLayer = preload("res://resources/texture/texture_folder.gd")
+const TextureFolder = preload("res://resources/texture/texture_folder.gd")
 const Brush = preload("res://addons/painter/brush.gd")
 const ResourceUtils = preload("res://utils/resource_utils.gd")
 
@@ -163,7 +163,7 @@ func _on_FileDialog_file_selected(path : String) -> void:
 
 func _on_AddButton_pressed() -> void:
 	var onto
-	if layer_tree.get_selected_layer() is FolderLayer:
+	if layer_tree.get_selected_layer() is TextureFolder:
 		onto = layer_tree.get_selected_layer()
 	else:
 		onto = editing_layer_material
@@ -176,10 +176,10 @@ func _on_AddButton_pressed() -> void:
 
 func _on_AddFolderButton_pressed() -> void:
 	undo_redo.create_action("Add Folder Layer")
-	var new_layer := FolderLayer.new()
+	var new_layer := TextureFolder.new()
 	var onto
 	var selected_layer = layer_tree.get_selected_layer()
-	if selected_layer is FolderLayer:
+	if selected_layer is TextureFolder:
 		onto = selected_layer
 	elif selected_layer is MaterialLayer and layer_tree.get_selected_layer_texture(selected_layer):
 		onto = layer_tree.get_selected_layer_texture(selected_layer)
@@ -236,7 +236,7 @@ func _on_LayerPropertyPanel_property_changed(property : String, value) -> void:
 func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
 	undo_redo.create_action("Add Texture Layer")
 	var new_layer = layer.new()
-	if layer_tree.material_layer_popup_menu.layer is FolderLayer:
+	if layer_tree.material_layer_popup_menu.layer is TextureFolder:
 		undo_redo.add_do_method(self, "add_layer", new_layer, layer_tree.material_layer_popup_menu.layer)
 	else:
 		undo_redo.add_do_method(self, "add_layer", new_layer, layer_tree.get_selected_layer_texture(layer_tree.material_layer_popup_menu.layer))

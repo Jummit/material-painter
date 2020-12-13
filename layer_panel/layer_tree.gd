@@ -43,7 +43,7 @@ const MaterialLayer = preload("res://resources/material/material_layer.gd")
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
-const FolderLayer = preload("res://resources/texture/texture_folder.gd")
+const TextureFolder = preload("res://resources/texture/texture_folder.gd")
 const Asset = preload("res://main/asset_browser.gd").Asset
 const TextureAssetType = preload("res://main/asset_browser.gd").TextureAssetType
 const MaterialAssetType = preload("res://main/asset_browser.gd").MaterialAssetType
@@ -119,7 +119,7 @@ func can_drop_data(position : Vector2, data) -> bool:
 			for layer in data.layers:
 				if layer == get_item_at_position(position).get_meta("layer"):
 					return false
-			var is_folder := get_layer_at_position(position) is FolderLayer
+			var is_folder := get_layer_at_position(position) is TextureFolder
 			var onto_type : int = _get_layer_type(get_item_at_position(position))
 			if get_drop_section_at_position(position) == 0:
 				return (layer_type == LayerType.TEXTURE_LAYER and\
@@ -366,7 +366,7 @@ func _setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
 	
 	_tree_items[material_layer] = material_layer_item
 	
-	if material_layer is FolderLayer and material_layer in _expanded_folders:
+	if material_layer is TextureFolder and material_layer in _expanded_folders:
 		for layer in material_layer.layers:
 			_setup_material_layer_item(layer, material_layer_item)
 
@@ -384,7 +384,7 @@ func _setup_texture_layer_item(texture_layer, parent_item : TreeItem, layer_text
 	texture_layer_item.set_text(1, texture_layer.name)
 	texture_layer_item.add_button(1, _empty_texture, Buttons.VISIBILITY)
 	_tree_items[texture_layer] = texture_layer_item
-	if texture_layer is FolderLayer and texture_layer in _expanded_folders:
+	if texture_layer is TextureFolder and texture_layer in _expanded_folders:
 		for layer in texture_layer.layers:
 			_setup_texture_layer_item(layer, texture_layer_item, layer_texture)
 

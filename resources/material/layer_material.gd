@@ -21,7 +21,7 @@ const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 const MaterialLayer = preload("res://resources/material/material_layer.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
-const FolderLayer = preload("res://resources/texture/texture_folder.gd")
+const TextureFolder = preload("res://resources/texture/texture_folder.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
@@ -85,7 +85,7 @@ func get_flat_layers(layer_array : Array = layers, add_hidden := true) -> Array:
 	for layer in layer_array:
 		if (not add_hidden) and not layer.visible:
 			continue
-		if layer is FolderLayer:
+		if layer is TextureFolder:
 			flat_layers += get_flat_layers(layer.layers, add_hidden)
 		else:
 			flat_layers.append(layer)
@@ -95,7 +95,7 @@ func get_flat_layers(layer_array : Array = layers, add_hidden := true) -> Array:
 func get_folders(layer_array : Array = layers) -> Array:
 	var folders := []
 	for layer in layer_array:
-		if layer is FolderLayer:
+		if layer is TextureFolder:
 			folders.append(layer)
 			folders += get_folders(layer.layers)
 	return folders
