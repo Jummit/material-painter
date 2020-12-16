@@ -123,7 +123,9 @@ func _ready():
 		progress_dialog.start_task("Load Assets", total_files)
 		
 		for asset_type in ASSET_TYPES.values():
-			yield(load_assets(asset_type.get_asset_directory(), asset_type), "completed")
+			var result = load_assets(asset_type.get_asset_directory(), asset_type)
+			if result is GDScriptFunctionState:
+				yield(result, "completed")
 		
 		progress_dialog.complete_task()
 	update_tag_list()
