@@ -22,7 +22,7 @@ class CurvatureMapGenerator extends MeshMapGenerator:
 		pass
 	
 	func _generate_map(mesh : Mesh, result_size : Vector2) -> Texture:
-		return yield(CurvatureBaker.bake_curvature_map(mesh, result_size), "completed")
+		return yield(CurvatureBaker.bake_curvature_map(mesh, result_size, 0.003), "completed")
 
 var MESH_MAP_GENERATORS := [
 	IDMeshMapGenerator.new(),

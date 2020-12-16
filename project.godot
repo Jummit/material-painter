@@ -32,7 +32,6 @@ CurvatureBaker="*res://addons/curvature_baker/curvature_baker.tscn"
 
 [debug]
 
-settings/gdscript/max_call_stack=10240
 gdscript/warnings/treat_warnings_as_errors=true
 gdscript/warnings/exclude_addons=false
 gdscript/warnings/unused_class_variable=true

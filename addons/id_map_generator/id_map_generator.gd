@@ -9,10 +9,10 @@ func generate_id_map(mesh : Mesh, result_size : Vector2) -> ViewportTexture:
 	data_tool.create_from_surface(joined_data.mesh, 0)
 	
 	var ids := []
-	var already_added_faces := []
+	var checked := {}
 	for face in data_tool.get_face_count():
-		if not face in already_added_faces:
-			ids.append(_get_connected_faces(data_tool, face, already_added_faces))
+		if not face in checked:
+			ids.append(_get_connected_faces(data_tool, face, checked))
 	
 	for id_num in ids.size():
 		for face in ids[id_num]:
@@ -29,15 +29,23 @@ func generate_id_map(mesh : Mesh, result_size : Vector2) -> ViewportTexture:
 	return get_texture()
 
 
-static func _get_connected_faces(data_tool : MeshDataTool, face : int, already_added_faces : Array) -> PoolIntArray:
-	var connected : PoolIntArray = [face]
-	already_added_faces.append(face)
-	for edge in 3:
-		var connected_faces : Array = data_tool.get_edge_faces(data_tool.get_face_edge(face, edge))
-		connected_faces.erase(face)
-		for connected_face in connected_faces:
-			if not connected_face in already_added_faces:
-				connected += _get_connected_faces(data_tool, connected_face, already_added_faces)
+static func _get_connected_faces(data_tool : MeshDataTool, face : int, checked : Dictionary) -> PoolIntArray:
+	var to_check := []
+	var current := face
+	while true:
+		if to_check.empty():
+			break
+		current = to_check.pop_front()
+		for edge in 3:
+			for connected_face in data_tool.get_edge_faces(data_tool.get_face_edge(current, edge)):
+				if not connected_face in checked:
+					to_check.append(connected_face)
+		checked[current] = true
+	
+	var connected : PoolIntArray = []
+	for face in checked:
+		connected.append(face)
+	
 	return connected
 
 
