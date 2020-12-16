@@ -101,6 +101,8 @@ static func _generate_blending_shader(layers : Array) -> String:
 		result_func = _function_name(layers.size() - 1),
 	})
 	
+	print(shader_code)
+	
 	return shader_code
 
 

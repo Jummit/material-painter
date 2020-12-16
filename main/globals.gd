@@ -13,6 +13,7 @@ const BrightnessContrastTextureLayer = preload("res://resources/texture/effects/
 const BlurTextureLayer = preload("res://resources/texture/effects/blur_texture_layer.gd")
 const HSVAdjustTextureLayer = preload("res://resources/texture/effects/hsv_adjust_texture_layer.gd")
 const IsolateColorTextureLayer = preload("res://resources/texture/effects/isolate_color_texture_layer.gd")
+const InvertTextureLayer = preload("res://resources/texture/effects/invert_texture_layer.gd")
 
 const TEXTURE_MAP_TYPES := ["albedo", "emission", "height",
 		"ao", "metallic", "roughness"]
@@ -29,6 +30,7 @@ var TEXTURE_LAYER_TYPES := [
 	HSVAdjustTextureLayer,
 	IsolateColorTextureLayer,
 	BrightnessContrastTextureLayer,
+	InvertTextureLayer,
 ]
 
 # warning-ignore:unused_class_variable
