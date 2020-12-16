@@ -9,10 +9,13 @@ func generate_id_map(mesh : Mesh, result_size : Vector2) -> ViewportTexture:
 	data_tool.create_from_surface(joined_data.mesh, 0)
 	
 	var ids := []
-	var checked := {}
+	var checked := []
 	for face in data_tool.get_face_count():
 		if not face in checked:
-			ids.append(_get_connected_faces(data_tool, face, checked))
+			var connected := _get_connected_faces(data_tool, face)
+			for connected_face in connected:
+				checked.append(connected_face)
+			ids.append(connected)
 	
 	for id_num in ids.size():
 		for face in ids[id_num]:
@@ -29,18 +32,22 @@ func generate_id_map(mesh : Mesh, result_size : Vector2) -> ViewportTexture:
 	return get_texture()
 
 
-static func _get_connected_faces(data_tool : MeshDataTool, face : int, checked : Dictionary) -> PoolIntArray:
+static func _get_connected_faces(data_tool : MeshDataTool, face : int) -> PoolIntArray:
 	var to_check := []
 	var current := face
+	var checked := {}
+	
 	while true:
+		for edge in 3:
+			for connected_face in data_tool.get_edge_faces(data_tool.get_face_edge(current, edge)):
+				if not connected_face == current and\
+						not connected_face in checked and\
+						not connected_face in to_check:
+					to_check.append(connected_face)
+		checked[current] = true
 		if to_check.empty():
 			break
 		current = to_check.pop_front()
-		for edge in 3:
-			for connected_face in data_tool.get_edge_faces(data_tool.get_face_edge(current, edge)):
-				if not connected_face in checked:
-					to_check.append(connected_face)
-		checked[current] = true
 	
 	var connected : PoolIntArray = []
 	for face in checked:
@@ -59,7 +66,7 @@ static func _get_triangle_bounds(a : Vector2, b : Vector2, c : Vector2) -> Rect2
 
 static func _join_duplicates(mesh : Mesh) -> Dictionary:
 	var data_tool := MeshDataTool.new()
-	if not data_tool.create_from_surface(mesh, 0) == OK:
+	if not data_tool.create_from_surface(_deindex(mesh), 0) == OK:
 		return {}
 	
 	var old_vertex_ids := {}
@@ -101,3 +108,10 @@ static func _join_duplicates(mesh : Mesh) -> Dictionary:
 	return {
 			mesh = surface_tool.commit(),
 			original_face_ids = original_face_ids}
+
+
+static func _deindex(mesh : Mesh) -> Mesh:
+	var surface_tool := SurfaceTool.new()
+	surface_tool.create_from(mesh, 0)
+	surface_tool.deindex()
+	return surface_tool.commit()
