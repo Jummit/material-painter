@@ -165,6 +165,8 @@ func load_asset(path : String, asset_type : AssetType, tag := "") -> void:
 	asset.type = asset_type
 	asset.tags.append(asset_type.tag)
 	asset.tags += Array(_get_tags(asset.name))
+	if not tag in tags:
+		tags.append(tag)
 	if tag:
 		asset.tags.append(tag)
 	asset.file = path

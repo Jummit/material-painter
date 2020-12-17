@@ -8,7 +8,6 @@ Manages the menu bar, saving and loading.
 """
 
 var current_file : SaveFile
-var file_location : String
 var editing_layer_material : LayerMaterial
 var result_size := Vector2(2048, 2048)
 var undo_redo := UndoRedo.new()
@@ -140,26 +139,20 @@ func _on_FileDialog_file_selected(path : String) -> void:
 	match file_dialog.mode:
 		FileDialog.MODE_SAVE_FILE:
 			var to_save = file_dialog.get_meta("to_save")
-			if to_save is SaveFile:
-				file_location = path
-			ResourceSaver.save(path, to_save)
+			ResourceSaver.save(path, to_save, ResourceSaver.FLAG_CHANGE_PATH)
 			if to_save is Brush:
 				asset_browser.load_asset(path, asset_browser.ASSET_TYPES.BRUSH)
 				asset_browser.update_asset_list()
 		FileDialog.MODE_OPEN_FILE:
-			if path.get_extension() == "tres":
-				file_location = path
-				_load_file(ResourceLoader.load(path, "", true))
-#				_load_file(load(path))
-				if not "local" in asset_browser.tags:
-					asset_browser.tags.append("local")
-					asset_browser.update_tag_list()
-				asset_browser.load_local_assets(file_location)
-			elif path.get_extension() == "obj":
-				current_file.model_path = path
-				_load_model(path)
-				editing_layer_material = current_file.layer_materials.front()
-				layer_tree.editing_layer_material = current_file.layer_materials.front()
+			match path.get_extension():
+				"tres":
+					_load_file(ResourceLoader.load(path, "", true))
+					asset_browser.load_local_assets(current_file.resource_path)
+				"obj":
+					current_file.model_path = path
+					_load_model(path)
+					editing_layer_material = current_file.layer_materials.front()
+					layer_tree.editing_layer_material = current_file.layer_materials.front()
 
 
 func _on_AddButton_pressed() -> void:
@@ -320,7 +313,7 @@ func _on_FileDialog_popup_hide() -> void:
 
 func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 	var mesh_maps : Dictionary = yield(_mesh_maps_generator.generate_mesh_maps(Globals.mesh, Vector2(1024, 1024)), "completed")
-	var texture_dir : String = asset_browser.ASSET_TYPES.TEXTURE.get_local_asset_directory(file_location)
+	var texture_dir : String = asset_browser.ASSET_TYPES.TEXTURE.get_local_asset_directory(current_file.resource_path)
 	var dir := Directory.new()
 	dir.make_dir_recursive(texture_dir)
 	progress_dialog.start_task("Bake Mesh Maps", mesh_maps.size())
@@ -354,19 +347,19 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 			file_dialog.current_file = ""
 			file_dialog.popup_centered()
 		FILE_MENU_ITEMS.SAVE:
-			if not file_location:
+			if not current_file.resource_path:
 				_open_save_project_dialog()
 			else:
-				ResourceSaver.save(file_location, current_file)
+				ResourceSaver.save(current_file.resource_path, current_file)
 		FILE_MENU_ITEMS.SAVE_AS:
 			_open_save_project_dialog()
 		FILE_MENU_ITEMS.EXPORT:
-			if file_location:
+			if current_file.resource_path:
 				progress_dialog.start_task("Export Textures", editing_layer_material.results.size())
 				yield(get_tree(), "idle_frame")
 				for type in editing_layer_material.results:
 					progress_dialog.start_action(type)
-					var export_folder := file_location.get_base_dir().plus_file("export")
+					var export_folder := current_file.resource_path.get_base_dir().plus_file("export")
 					var dir := Directory.new()
 					dir.make_dir_recursive(export_folder)
 					var result_data : Image = editing_layer_material.results[type].get_data()
