@@ -40,7 +40,7 @@ func draw_faces_as_lines(color := Color.white, line_width := 2.0) -> void:
 		draw_multiline(points, color, line_width)
 
 
-func _on_Model_mesh_changed() -> void:
+func _on_Main_mesh_changed() -> void:
 	_mesh_tool.create_from_surface(model.mesh, 0)
 	update()
 

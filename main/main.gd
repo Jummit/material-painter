@@ -7,11 +7,10 @@ It handles most callbacks and updates the results of the layer stacks when somet
 Manages the menu bar, saving and loading.
 """
 
-var current_file : SaveFile
+var current_file : SaveFile setget set_current_file
 var editing_layer_material : LayerMaterial
 var result_size := Vector2(2048, 2048)
 var undo_redo := UndoRedo.new()
-var currently_viewing_map : String setget set_currently_viewing_map
 
 var _mesh_maps_generator = preload("res://main/mesh_maps_generator.gd").new()
 
@@ -29,6 +28,8 @@ var file_menu_shortcuts := [
 	ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_M),
 	ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_Q),
 ]
+
+signal mesh_changed
 
 enum FILE_MENU_ITEMS {
 	NEW,
@@ -71,9 +72,7 @@ func _ready() -> void:
 	for id in file_menu_shortcuts.size():
 		popup.set_item_shortcut(id, file_menu_shortcuts[id])
 	
-	var file := SaveFile.new()
-	file.model_path = "res://3d_viewport/cube.obj"
-	_load_file(file)
+	_start_empty_project()
 	undo_redo.connect("version_changed", self, "_on_UndoRedo_version_changed")
 
 
@@ -89,8 +88,6 @@ func _input(event : InputEvent) -> void:
 			print("Nothing to redo.")
 		else:
 			print("Redo: " + undo_redo.get_current_action_name())
-	elif event.is_action_pressed("ui_cancel"):
-		set_currently_viewing_map("")
 
 
 func add_layer(layer, onto) -> void:
@@ -135,18 +132,36 @@ func set_mask(layer : MaterialLayer, mask : LayerTexture) -> void:
 	layer_tree.reload()
 
 
+func set_current_file(save_file : SaveFile) -> void:
+	current_file = save_file
+	_load_model(current_file.model_path)
+	for layer_material in current_file.layer_materials:
+		var result = layer_material.update_all_layer_textures(result_size)
+		if result is GDScriptFunctionState:
+			yield(result, "completed")
+	editing_layer_material = current_file.layer_materials.front()
+	_update_results(false)
+	layer_tree.editing_layer_material = editing_layer_material
+	
+	material_option_button.clear()
+	for material_num in current_file.layer_materials.size():
+		material_option_button.add_item("Material %s" % material_num)
+
+
 func _on_FileDialog_file_selected(path : String) -> void:
 	match file_dialog.mode:
 		FileDialog.MODE_SAVE_FILE:
 			var to_save = file_dialog.get_meta("to_save")
-			ResourceSaver.save(path, to_save, ResourceSaver.FLAG_CHANGE_PATH)
+			ResourceSaver.save(path, to_save)
+			# ResourceSaver.FLAG_CHANGE_PATH doesn't work for some reason
+			to_save.resource_path = path
 			if to_save is Brush:
 				asset_browser.load_asset(path, asset_browser.ASSET_TYPES.BRUSH)
 				asset_browser.update_asset_list()
 		FileDialog.MODE_OPEN_FILE:
 			match path.get_extension():
 				"tres":
-					_load_file(ResourceLoader.load(path, "", true))
+					set_current_file(ResourceLoader.load(path, "", true))
 					asset_browser.load_local_assets(current_file.resource_path)
 				"obj":
 					current_file.model_path = path
@@ -298,10 +313,6 @@ func _on_MaterialOptionButton_item_selected(index : int) -> void:
 	layer_tree.editing_layer_material = editing_layer_material
 
 
-func _on_ResultsItemList_item_activated(index : int) -> void:
-	set_currently_viewing_map(editing_layer_material.results.keys()[index])
-
-
 # hacky way of preventing zoom when the file dialog is in the way
 func _on_FileDialog_about_to_show() -> void:
 	camera.set_process_input(false)
@@ -336,9 +347,7 @@ func _on_EditMenuButton_size_selected(size) -> void:
 func _on_FileMenu_id_pressed(id : int) -> void:
 	match id:
 		FILE_MENU_ITEMS.NEW:
-			var file := SaveFile.new()
-			file.model_path = "res://3d_viewport/cube.obj"
-			_load_file(file)
+			_start_empty_project()
 		FILE_MENU_ITEMS.OPEN:
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
 			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
@@ -382,24 +391,17 @@ func _on_UndoRedo_version_changed() -> void:
 		print(undo_redo.get_current_action_name())
 
 
-func _load_file(save_file : SaveFile) -> void:
-	current_file = save_file
-	if current_file.model_path:
-		_load_model(current_file.model_path)
-		for layer_material in current_file.layer_materials:
-			var result = layer_material.update_all_layer_textures(result_size)
-			if result is GDScriptFunctionState:
-				yield(result, "completed")
-		editing_layer_material = current_file.layer_materials.front()
-		_update_results(false)
-		layer_tree.editing_layer_material = editing_layer_material
-		update_material_options()
+func _start_empty_project() -> void:
+	var new_file := SaveFile.new()
+	new_file.model_path = "res://3d_viewport/cube.obj"
+	set_current_file(new_file)
 
 
 func _load_model(path : String) -> void:
 	var mesh := ObjParser.parse_obj(path)
 	Globals.mesh = mesh
-	model.set_mesh(mesh)
+	model.mesh = mesh
+	emit_signal("mesh_changed")
 	material_option_button.clear()
 	current_file.layer_materials.resize(mesh.get_surface_count())
 	for surface in mesh.get_surface_count():
@@ -407,19 +409,12 @@ func _load_model(path : String) -> void:
 			current_file.layer_materials[surface] = LayerMaterial.new()
 
 
-func update_material_options() -> void:
-	material_option_button.clear()
-	for material_num in current_file.layer_materials.size():
-		material_option_button.add_item("Material %s" % material_num)
-
-
 func _update_results(update_icons := true, use_cached_shader := false) -> void:
 	var result = editing_layer_material.update_results(result_size, use_cached_shader)
 	if result is GDScriptFunctionState:
 		yield(result, "completed")
 	results_item_list.load_layer_material(editing_layer_material)
-	if not currently_viewing_map:
-		model.load_layer_materials(current_file.layer_materials)
+	model.load_materials(current_file.layer_materials)
 	if update_icons:
 		layer_tree.update_icons()
 
@@ -447,17 +442,3 @@ func _create_change_mask_action(action_name : String, layer : MaterialLayer, mas
 	undo_redo.add_do_method(self, "set_mask", layer, mask)
 	undo_redo.add_undo_method(self, "set_mask", layer, layer.mask)
 	undo_redo.commit_action()
-
-
-func set_currently_viewing_map(to : String) -> void:
-	currently_viewing_map = to
-	if currently_viewing_map:
-		var textures := []
-		for layer_material in current_file.layer_materials:
-			if currently_viewing_map in layer_material.results:
-				textures.append(layer_material.results[currently_viewing_map])
-			else:
-				textures.append(null)
-		model.load_albedo_textures(textures)
-	else:
-		model.load_layer_materials(current_file.layer_materials)

@@ -4,6 +4,8 @@ extends ItemList
 A list of map results of the editing `LayerMaterial`
 """
 
+signal map_selected(map)
+
 const MaterialLayer = preload("res://resources/material/material_layer.gd")
 const LayerMaterial = preload("res://resources/material/layer_material.gd")
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
@@ -13,3 +15,8 @@ func load_layer_material(layer : LayerMaterial) -> void:
 	clear()
 	for map in layer.results:
 		add_item(map, layer.results[map])
+		set_item_metadata(get_item_count() - 1, map)
+
+
+func _on_item_activated(index : int) -> void:
+	emit_signal("map_selected", get_item_metadata(index))

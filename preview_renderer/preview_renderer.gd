@@ -18,7 +18,7 @@ func get_preview_for_material(material : LayerMaterial, result_size : Vector2) -
 	if result is GDScriptFunctionState:
 		yield(result, "completed")
 	size = result_size
-	model.load_layer_materials([material])
+	model.material_override = material.get_material()
 	render_target_update_mode = Viewport.UPDATE_ONCE
 	yield(VisualServer, "frame_post_draw")
 	return TextureUtils.viewport_to_image(get_texture())

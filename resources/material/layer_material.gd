@@ -117,3 +117,25 @@ func get_parent(layer):
 			for folder in layer_texture.get_folders():
 				if layer in folder.layers:
 					return folder
+
+func get_material(existing : SpatialMaterial = null) -> SpatialMaterial:
+	var material_maps = Globals.TEXTURE_MAP_TYPES.duplicate()
+	material_maps.erase("height")
+	material_maps.append("normal")
+	
+	var material : SpatialMaterial = existing
+	if not existing:
+		material = preload("res://3d_viewport/material.tres").duplicate()
+	
+	for map in material_maps:
+		if map in results.keys():
+			material.set(map + "_enabled", true)
+			material.set(map + "_texture", results[map])
+		else:
+			material.set(map + "_enabled", false)
+			material.set(map + "_texture", null)
+		
+		if map == "metallic":
+			material.set("metallic", int(map in results.keys()))
+	
+	return material

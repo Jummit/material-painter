@@ -86,7 +86,7 @@ func _on_ViewMenuButton_hdri_selected(hdri : Texture) -> void:
 	world_environment.environment.background_sky.panorama = hdri
 
 
-func _on_Model_mesh_changed() -> void:
+func _on_Main_mesh_changed() -> void:
 	painter.mesh_instance = model
 
 

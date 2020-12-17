@@ -35,20 +35,20 @@ class AssetType:
 		tag = _tag
 	
 	func get_preview(asset : Asset) -> Texture:
-		var cache_thumbnail_path := get_cached_thumbnails_path().plus_file(asset.file.get_file().get_basename() + ".png")
+		var cached_thumbnail_path := get_cached_thumbnails_path().plus_file(asset.file.get_file().get_basename() + ".png")
 		var dir := Directory.new()
 		dir.make_dir_recursive(get_cached_thumbnails_path())
 		var preview
-		if dir.file_exists(cache_thumbnail_path):
+		if dir.file_exists(cached_thumbnail_path):
 			var preview_image := Image.new()
-			preview_image.load(cache_thumbnail_path)
+			preview_image.load(cached_thumbnail_path)
 			preview = ImageTexture.new()
 			preview.create_from_image(preview_image)
 		else:
 			preview = _generate_preview(asset)
 			if preview is GDScriptFunctionState:
 				preview = yield(preview, "completed")
-			preview.get_data().save_png(cache_thumbnail_path)
+			preview.get_data().save_png(cached_thumbnail_path)
 		return preview
 	
 	func _generate_preview(_asset : Asset) -> Texture:
