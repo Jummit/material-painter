@@ -13,8 +13,8 @@ func _init().("hsv_adjust", "HSV Adjust") -> void:
 func get_properties() -> Array:
 	return [
 		Properties.FloatProperty.new("hue", 0, 1),
-		Properties.FloatProperty.new("saturation", 0, 1),
-		Properties.FloatProperty.new("value", 0, 1),
+		Properties.FloatProperty.new("saturation", -1, 1),
+		Properties.FloatProperty.new("value", -1, 1),
 	]
 
 
