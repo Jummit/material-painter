@@ -4,6 +4,21 @@ extends Node
 Global constants
 """
 
+# warning-ignore-all:unused_class_variable
+var mesh : Mesh
+
+var TEXTURE_LAYER_TYPES := [
+	FileTextureLayer,
+	BitmapTextureLayer,
+	ColorTextureLayer,
+	ScalarTextureLayer,
+	BlurTextureLayer,
+	HSVAdjustTextureLayer,
+	IsolateColorTextureLayer,
+	BrightnessContrastTextureLayer,
+	InvertTextureLayer,
+]
+
 const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
 const ColorTextureLayer = preload("res://resources/texture/layers/color_texture_layer.gd")
 const ScalarTextureLayer = preload("res://resources/texture/layers/scalar_texture_layer.gd")
@@ -20,18 +35,3 @@ const TEXTURE_MAP_TYPES := ["albedo", "emission", "height",
 const BLEND_MODES := ["normal", "add", "subtract", "multiply",
 		"overlay", "screen", "darken", "lighten", "soft-light",
 		"color-burn", "color-dodge"]
-# warning-ignore:unused_class_variable
-var TEXTURE_LAYER_TYPES := [
-	FileTextureLayer,
-	BitmapTextureLayer,
-	ColorTextureLayer,
-	ScalarTextureLayer,
-	BlurTextureLayer,
-	HSVAdjustTextureLayer,
-	IsolateColorTextureLayer,
-	BrightnessContrastTextureLayer,
-	InvertTextureLayer,
-]
-
-# warning-ignore:unused_class_variable
-var mesh : Mesh
