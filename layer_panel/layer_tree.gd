@@ -403,6 +403,7 @@ func _get_layer_type(layer_item : TreeItem) -> int:
 		return LayerType.MATERIAL_LAYER
 
 
+# used because UndoRedo only works with `Object`s
 func _insert_layer_to_array(layer, array : Array, position : int) -> void:
 	array.insert(position, layer)
 
