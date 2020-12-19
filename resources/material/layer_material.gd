@@ -18,13 +18,17 @@ export var layers : Array
 var results : Dictionary
 
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")
-const MaterialLayer = preload("res://resources/material/material_layer.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 const MaterialFolder = preload("res://resources/material/material_folder.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
+	# for some reason, NOTIFICATION_POSTINITIALIZE doesn't fire,
+	# so use this hack instead
+	yield(VisualServer, "frame_post_draw")
+	for layer in layers:
+		layer.parent = self
 
 
 func update_results(result_size : Vector2, use_cached_shader := false) -> void:
@@ -69,17 +73,6 @@ func update_all_layer_textures(result_size : Vector2) -> void:
 			result = yield(result, "completed")
 
 
-func is_inside_layer_texture(layer) -> bool:
-	return get_layer_texture_of_texture_layer(layer)
-
-
-func get_layer_texture_of_texture_layer(texture_layer):
-	for layer in get_flat_layers():
-		var layer_texture = layer.get_layer_texture_of_texture_layer(texture_layer)
-		if layer_texture:
-			return layer_texture
-
-
 func get_flat_layers(layer_array : Array = layers, add_hidden := true) -> Array:
 	var flat_layers := []
 	for layer in layer_array:
@@ -91,32 +84,6 @@ func get_flat_layers(layer_array : Array = layers, add_hidden := true) -> Array:
 			flat_layers.append(layer)
 	return flat_layers
 
-
-func get_folders(layer_array : Array = layers) -> Array:
-	var folders := []
-	for layer in layer_array:
-		if layer is MaterialFolder:
-			folders.append(layer)
-			folders += get_folders(layer.layers)
-	return folders
-
-
-func get_parent(layer):
-	if layer in layers:
-		return self
-	else:
-		for folder in get_folders():
-			if layer in folder.layers:
-				return folder
-	for material_layer in get_flat_layers():
-		for layer_texture in material_layer.get_layer_textures():
-			if layer_texture == layer:
-				return material_layer
-			if layer in layer_texture.layers:
-				return layer_texture
-			for folder in layer_texture.get_folders():
-				if layer in folder.layers:
-					return folder
 
 func get_material(existing : SpatialMaterial = null) -> SpatialMaterial:
 	var material_maps = Globals.TEXTURE_MAP_TYPES.duplicate()

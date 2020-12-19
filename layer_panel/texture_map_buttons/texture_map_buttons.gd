@@ -73,7 +73,9 @@ func _silently_set_button_pressed(button : Button, pressed : bool) -> void:
 
 
 func _enable_map(on_layer : MaterialLayer, map : String) -> void:
-	on_layer.maps[map] = LayerTexture.new()
+	var new_layer := LayerTexture.new()
+	new_layer.parent = on_layer
+	on_layer.maps[map] = new_layer
 
 
 func _disable_map(on_layer : MaterialLayer, map : String) -> void:

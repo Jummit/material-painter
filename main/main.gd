@@ -91,10 +91,10 @@ func _input(event : InputEvent) -> void:
 
 
 func add_layer(layer, onto) -> void:
+	layer.parent = onto
 	onto.layers.append(layer)
-	var onto_layer_texture : LayerTexture = editing_layer_material.get_layer_texture_of_texture_layer(layer)
-	if onto_layer_texture:
-		yield(editing_layer_material.get_layer_texture_of_texture_layer(layer).update_result(result_size), "completed")
+	if layer.has_method("get_layer_texture_in"):
+		yield(layer.get_layer_texture_in().update_result(result_size), "completed")
 	else:
 		if layer is MaterialLayer:
 			var result = layer.update_all_layer_textures(result_size)
@@ -109,16 +109,9 @@ func add_layer(layer, onto) -> void:
 
 
 func delete_layer(layer) -> void:
-	var layer_texture : LayerTexture
-	var array_layer_is_in : Array
-	if layer is TextureLayer:
-		layer_texture = editing_layer_material.get_layer_texture_of_texture_layer(layer)
-		array_layer_is_in = layer_texture.layers
-	else:
-		array_layer_is_in = editing_layer_material.get_parent(layer).layers
-	array_layer_is_in.erase(layer)
-	if layer_texture:
-		layer_texture.update_result(result_size)
+	layer.parent.layers.erase(layer)
+	if layer.has_method("get_layer_texture_in"):
+		yield(layer.get_layer_texture_in().update_result(result_size), "completed")
 	_update_results(false)
 	layer_tree.reload()
 
@@ -128,6 +121,7 @@ func set_mask(layer : MaterialLayer, mask : LayerTexture) -> void:
 		layer.mask = null
 	else:
 		layer.mask = mask
+		mask.parent = layer
 	_update_results()
 	layer_tree.reload()
 
@@ -178,6 +172,7 @@ func _on_AddButton_pressed() -> void:
 		onto = editing_layer_material
 	undo_redo.create_action("Add Material Layer")
 	var new_layer := MaterialLayer.new()
+	new_layer.parent = onto
 	undo_redo.add_do_method(self, "add_layer", new_layer, onto)
 	undo_redo.add_undo_method(self, "delete_layer", new_layer)
 	undo_redo.commit_action()
@@ -212,7 +207,7 @@ func _on_DeleteButton_pressed() -> void:
 		undo_redo.add_do_method(self, "delete_layer", selected_layer)
 		undo_redo.add_do_method(layer_property_panel, "clear")
 		undo_redo.add_do_method(texture_map_buttons, "hide")
-		undo_redo.add_undo_method(self, "add_layer", selected_layer, editing_layer_material.get_parent(selected_layer))
+		undo_redo.add_undo_method(self, "add_layer", selected_layer, selected_layer.parent)
 		undo_redo.add_undo_method(layer_property_panel, "load_material_layer", selected_layer)
 		undo_redo.add_undo_method(texture_map_buttons, "show")
 		undo_redo.commit_action()
@@ -227,14 +222,14 @@ func _on_TextureMapButtons_changed(map : String, enabled : bool) -> void:
 
 func _on_LayerTree_layer_visibility_changed(layer) -> void:
 	if layer is TextureLayer:
-		editing_layer_material.get_parent(layer).update_result(result_size)
+		layer.parent.update_result(result_size)
 	_update_results()
 
 
 func _on_LayerPropertyPanel_property_changed(property : String, value) -> void:
 	undo_redo.create_action("Set Layer Property")
 	undo_redo.add_do_property(layer_property_panel.editing_layer, property, value)
-	var affected_layer : LayerTexture = editing_layer_material.get_parent(layer_property_panel.editing_layer)
+	var affected_layer : LayerTexture = layer_property_panel.editing_layer.get_layer_texture_in()
 	if not affected_layer:
 		return
 	var use_cashed_shader = not property in ["opacity", "blend_mode"]
@@ -258,7 +253,7 @@ func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
 	elif selected_layer is TextureFolder:
 		onto = selected_layer
 	else:
-		onto = editing_layer_material.get_layer_texture_of_texture_layer(selected_layer)
+		onto = selected_layer.parent
 	undo_redo.add_do_method(self, "add_layer", new_layer, onto)
 	undo_redo.add_undo_method(self, "delete_layer", new_layer)
 	undo_redo.commit_action()
@@ -273,20 +268,20 @@ func _on_MaterialLayerPopupMenu_layer_saved() -> void:
 
 
 func _on_Viewport_painted(layer : TextureLayer) -> void:
-	editing_layer_material.get_parent(layer).update_result(result_size, true, true)
+	layer.parent.update_result(result_size, true, true)
 	_update_results(false, true)
 
 
 func _on_MaterialLayerPopupMenu_mask_added(mask : LayerTexture) -> void:
-	_create_change_mask_action("Add Mask", layer_tree.get_selected_layer(), mask)
+	_do_change_mask_action("Add Mask", layer_tree.get_selected_layer(), mask)
 
 
 func _on_MaterialLayerPopupMenu_mask_removed() -> void:
-	_create_change_mask_action("Remove Mask", layer_tree.get_selected_layer(), NO_MASK)
+	_do_change_mask_action("Remove Mask", layer_tree.get_selected_layer(), NO_MASK)
 
 
 func _on_MaterialLayerPopupMenu_mask_pasted(mask : LayerTexture) -> void:
-	_create_change_mask_action("Paste Mask", layer_tree.get_selected_layer(), mask)
+	_do_change_mask_action("Paste Mask", layer_tree.get_selected_layer(), mask)
 
 
 func _on_MaterialLayerPopupMenu_duplicated() -> void:
@@ -437,7 +432,7 @@ func _open_save_project_dialog() -> void:
 	file_dialog.popup_centered()
 
 
-func _create_change_mask_action(action_name : String, layer : MaterialLayer, mask : LayerTexture) -> void:
+func _do_change_mask_action(action_name : String, layer : MaterialLayer, mask : LayerTexture) -> void:
 	undo_redo.create_action(action_name)
 	undo_redo.add_do_method(self, "set_mask", layer, mask)
 	undo_redo.add_undo_method(self, "set_mask", layer, layer.mask)

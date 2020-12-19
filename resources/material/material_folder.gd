@@ -8,3 +8,21 @@ A folder layer used in a `LayerMaterial` for organization and optimization
 export var name := "Untitled Folder"
 export var visible := true
 export var layers : Array
+
+var parent
+
+func _init() -> void:
+	resource_local_to_scene = true
+	# for some reason, NOTIFICATION_POSTINITIALIZE doesn't fire,
+	# so use this hack instead
+	yield(VisualServer, "frame_post_draw")
+	for layer in layers:
+		layer.parent = self
+
+
+func get_layer_material_in() -> Resource:
+	# hacky workaround to avoid cycling references
+	if parent.has_method("get_layer_material_in"):
+		return parent.get_layer_material_in()
+	else:
+		return parent

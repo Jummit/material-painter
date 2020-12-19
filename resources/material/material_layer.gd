@@ -15,24 +15,32 @@ export var opacity := 1.0
 export var blend_mode := "normal"
 export var visible := true
 
+var parent
+
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
+const LayerMaterial = preload("res://resources/material/layer_material.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
+	# for some reason, NOTIFICATION_POSTINITIALIZE doesn't fire,
+	# so use this hack instead
+	yield(VisualServer, "frame_post_draw")
+	for layer_texture in get_layer_textures():
+		layer_texture.parent = self
+
+
+func get_layer_material_in() -> LayerMaterial:
+	if parent is LayerMaterial:
+		return parent
+	else:
+		return parent.get_layer_texture_in()
 
 
 func update_all_layer_textures(result_size : Vector2) -> void:
 	for layer_texture in maps.values() + [mask]:
 		if layer_texture:
 			yield(layer_texture.update_result(result_size), "completed")
-
-
-func get_layer_texture_of_texture_layer(texture_layer):
-	for layer_texture in maps.values() + [mask]:
-		if layer_texture:
-			if texture_layer in layer_texture.get_flat_layers(layer_texture.layers, true, true):
-				return layer_texture
 
 
 func get_layer_textures() -> Array:

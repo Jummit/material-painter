@@ -9,12 +9,18 @@ Stores a `result` which is updated when settings of the layers change.
 export var layers : Array
 # warning-ignore:unused_class_variable
 
+var parent
 var result : Texture
 
 const TextureFolder = preload("res://resources/texture/texture_folder.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
+	# for some reason, NOTIFICATION_POSTINITIALIZE doesn't fire,
+	# so use this hack instead
+	yield(VisualServer, "frame_post_draw")
+	for layer in layers:
+		layer.parent = self
 
 
 func update_result(result_size : Vector2, keep_viewport := true, use_cached_shader := false) -> void:
@@ -41,12 +47,3 @@ func get_flat_layers(layer_array : Array = layers, add_hidden := true, add_folde
 		if (not layer is TextureFolder) or add_folders:
 			flat_layers.append(layer)
 	return flat_layers
-
-
-func get_folders(layer_array : Array = layers) -> Array:
-	var folders := []
-	for layer in layer_array:
-		if layer is TextureFolder:
-			folders.append(layer)
-			folders += get_folders(layer.layers)
-	return folders

@@ -4,8 +4,12 @@ extends Tree
 An interactive representation of a `LayerMaterial` as a tree
 
 The tree consists of a list of `MaterialLayer`s with the `TextureLayer`s
-of the selected `LayerTexture` below.
-Shows previews of maps and masks as buttons.
+of the selected `LayerTexture` below. The selected `TextureLayer`,
+which could be a map or a mask, is stored in `_selected_layer_textures`.
+Shows previews of maps and masks as buttons, which can be clicked to select the
+`LayerTexture`. 
+When a `MaterialLayer` has multiple maps enabled, the current map can be selected
+with a dropdown. The selected maps are stored in `_selected_maps`.
 """
 
 var editing_layer_material : LayerMaterial setget set_editing_layer_material
@@ -67,7 +71,7 @@ func _gui_input(event : InputEvent) -> void:
 		if layer is MaterialLayer and layer in _selected_layer_textures:
 			layer_popup_menu.layer_texture = _selected_layer_textures[layer]
 		elif layer is TextureFolder:
-			layer_popup_menu.layer_texture = editing_layer_material.get_layer_texture_of_texture_layer(layer)
+			layer_popup_menu.layer_texture = layer.get_layer_texture_in()
 		layer_popup_menu.popup()
 	elif event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
 		# `get_selected` returns null the first time a layer is clicked
@@ -82,7 +86,7 @@ func _gui_input(event : InputEvent) -> void:
 		var layer = get_selected_layer()
 		undo_redo.create_action("Delete Layer")
 		undo_redo.add_do_method(main, "delete_layer", layer)
-		undo_redo.add_undo_method(main, "add_layer", layer, editing_layer_material.get_parent(layer))
+		undo_redo.add_undo_method(main, "add_layer", layer, layer.parent)
 		undo_redo.commit_action()
 
 
@@ -139,35 +143,34 @@ func drop_data(position : Vector2, data) -> void:
 	if data is Dictionary and "type" in data and data.type == "layers":
 		undo_redo.create_action("Rearrange Layers")
 		var onto_layer = get_layer_at_position(position)
-		var onto_array : Array
+		var onto
 		var onto_position : int
 		match get_drop_section_at_position(position):
 			0:
 				if onto_layer is MaterialLayer:
-					onto_array = _selected_layer_textures[onto_layer].layers
+					onto = _selected_layer_textures[onto_layer]
 				else:
-					onto_array = onto_layer.layers
-				onto_position = onto_array.size()
+					onto = onto_layer
+				onto_position = onto.layers.size()
 			-100:
-				onto_array = editing_layer_material.layers
-				onto_position = onto_array.size()
+				onto = editing_layer_material
+				onto_position = onto.layers.size()
 			var section:
-				onto_array = editing_layer_material.get_parent(onto_layer).layers
-				onto_position = onto_array.find(onto_layer)
+				onto = onto_layer.parent
+				onto_position = onto.layers.find(onto_layer)
 				if section == 1:
 					onto_position += 1
-				onto_position = int(clamp(onto_position, 0, onto_array.size()))
+				onto_position = int(clamp(onto_position, 0, onto.layers.size()))
 				data.layers.invert()
 		
 		for layer in data.layers:
-			var in_array : Array = editing_layer_material.get_parent(layer).layers
-			var layer_position = in_array.find(layer)
+			var layer_position = layer.parent.layers.find(layer)
 			var new_layer = layer.duplicate()
 			
-			undo_redo.add_do_method(self, "_insert_layer_to_array", new_layer, onto_array, onto_position)
-			undo_redo.add_do_method(self, "_remove_layer_from_array", layer, in_array)
-			undo_redo.add_undo_method(self, "_remove_layer_from_array", new_layer, onto_array)
-			undo_redo.add_undo_method(self, "_insert_layer_to_array", layer, in_array, layer_position)
+			undo_redo.add_do_method(self, "_add_layer", new_layer, onto, onto_position)
+			undo_redo.add_do_method(main, "delete_layer", layer)
+			undo_redo.add_undo_method(main, "delete_layer", new_layer)
+			undo_redo.add_undo_method(self, "_add_layer", layer, layer.parent, layer_position)
 		
 		undo_redo.add_do_method(self, "reload")
 		undo_redo.add_undo_method(self, "reload")
@@ -345,7 +348,7 @@ func _setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
 	
 	if material_layer is MaterialLayer:
 		if material_layer in _selected_layer_textures:
-			if editing_layer_material.get_parent(_selected_layer_textures[material_layer]) != material_layer:
+			if _selected_layer_textures[material_layer].parent != material_layer:
 				_selected_layer_textures.erase(material_layer)
 			else:
 				var selected_layer_texture : LayerTexture = _selected_layer_textures[material_layer]
@@ -361,7 +364,7 @@ func _setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
 			material_layer_item.add_button(0, _empty_texture, Buttons.RESULT)
 		if material_layer.maps.size() > 1:
 			material_layer_item.add_button(0, preload("res://icons/down.svg"), Buttons.MAP_DROPDOWN)
-	else:
+	elif material_layer is MaterialFolder:
 		var icon : Texture = preload("res://icons/open_folder.svg") if material_layer in _expanded_folders else preload("res://icons/large_folder.svg")
 		material_layer_item.add_button(0, icon, Buttons.ICON)
 	
@@ -397,16 +400,12 @@ func _setup_texture_layer_item(texture_layer, parent_item : TreeItem, layer_text
 
 
 func _get_layer_type(layer_item : TreeItem) -> int:
-	if editing_layer_material.is_inside_layer_texture(layer_item.get_meta("layer")):
+	if layer_item.get_meta("layer").has_method("get_layer_texture_in"):
 		return LayerType.TEXTURE_LAYER
 	else:
 		return LayerType.MATERIAL_LAYER
 
 
-# used because UndoRedo only works with `Object`s
-func _insert_layer_to_array(layer, array : Array, position : int) -> void:
-	array.insert(position, layer)
-
-
-func _remove_layer_from_array(layer, array : Array) -> void:
-	array.erase(layer)
+func _add_layer(layer, onto, position : int) -> void:
+	onto.layers.insert(position, layer)
+	layer.parent = onto
