@@ -4,3 +4,6 @@
 [submodule "addon_repos/curvature-baker"]
 	path = addon_repos/curvature-baker
 	url = git@github.com:Jummit/curvature-baker.git
+[submodule "addon_repos/customizable_ui"]
+	path = addon_repos/customizable_ui
+	url = git@github.com:Jummit/customizable-ui.git
