@@ -21,7 +21,7 @@ class TextureAssetProperty extends Properties.FilePathProperty:
 	func _drop_data(control : Control, data) -> void:
 		_set_value(control, data.data)
 
-onready var tool_button_container : VBoxContainer = $"../../HBoxContainer/ToolButtonContainer"
+onready var tool_button_container : VBoxContainer = $"../../../HBoxContainer/Window/ToolButtonContainer"
 
 func _ready() -> void:
 	set_properties([

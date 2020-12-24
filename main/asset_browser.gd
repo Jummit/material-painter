@@ -24,7 +24,7 @@ onready var tag_name_edit : LineEdit = $VBoxContainer/HBoxContainer/TagNameEdit
 onready var asset_list : ItemList = $VBoxContainer2/AssetList
 onready var search_edit : LineEdit = $VBoxContainer2/SearchEdit
 onready var tag_list : Tree = $VBoxContainer/TagList
-onready var progress_dialog : PopupDialog = $"../../../../../ProgressDialog"
+onready var progress_dialog : PopupDialog = $"../../../../../../../ProgressDialog"
 
 class AssetType:
 	var name : String

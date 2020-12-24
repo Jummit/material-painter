@@ -11,8 +11,8 @@ signal painted(layer)
 const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
 const MeshUtils = preload("res://utils/mesh_utils.gd")
 
-onready var model : MeshInstance = $"../3DViewport/Viewport/Model"
-onready var layer_tree : Tree = $"../../../../../LayerPanelContainer/LayerTree"
+onready var model : MeshInstance = $"../../Window/3DViewport/Viewport/Model"
+onready var layer_tree : Tree = $"../../../../../../LayerPanelContainer/Window/LayerTree"
 
 func _draw() -> void:
 	draw_faces_as_lines()

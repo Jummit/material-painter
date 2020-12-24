@@ -53,7 +53,7 @@ const Asset = preload("res://main/asset_browser.gd").Asset
 const TextureAssetType = preload("res://main/asset_browser.gd").TextureAssetType
 const MaterialAssetType = preload("res://main/asset_browser.gd").MaterialAssetType
 
-onready var main : Control = $"../../../../.."
+onready var main : Control = $"../../../../../../.."
 onready var undo_redo : UndoRedo = main.undo_redo
 onready var layer_popup_menu : PopupMenu = $LayerPopupMenu
 onready var map_type_popup_menu : PopupMenu = $MapTypePopupMenu

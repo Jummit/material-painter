@@ -13,7 +13,7 @@ const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 const MaterialLayer = preload("res://resources/material/material_layer.gd")
 
 onready var layer_property_panel : Panel = $"../LayerPropertyPanel"
-onready var undo_redo : UndoRedo = $"../../../../..".undo_redo
+onready var undo_redo : UndoRedo = $"../../../../../../../..".undo_redo
 
 func _ready() -> void:
 	for map in Globals.TEXTURE_MAP_TYPES:

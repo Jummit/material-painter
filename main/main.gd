@@ -17,7 +17,9 @@ var _mesh_maps_generator = preload("res://main/mesh_maps_generator.gd").new()
 # to avoid https://github.com/godotengine/godot/issues/36895,
 # this is passed to add_do_action instead of null
 var NO_MASK := LayerTexture.new()
-const MATERIAL_PATH := "user://materials"
+
+const MATERIALS_FOLDER := "user://materials"
+const LAYOUTS_FOLDER := "user://layouts"
 
 var file_menu_shortcuts := [
 	ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_N),
@@ -52,25 +54,32 @@ const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 const TextureFolder = preload("res://resources/texture/texture_folder.gd")
 const Brush = preload("res://addons/painter/brush.gd")
 const ResourceUtils = preload("res://utils/resource_utils.gd")
+const LayoutUtils = preload("res://addons/customizable_ui/layout_utils.gd")
 
-onready var file_menu_button : MenuButton = $VBoxContainer/TopButtonBar/TopButtons/FileMenuButton
+onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/FileMenuButton
 onready var file_dialog : FileDialog = $FileDialog
-onready var layer_property_panel : Panel = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerPropertyPanel
-onready var texture_map_buttons : GridContainer = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/TextureMapButtons
-onready var model : MeshInstance = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport/Model"
-onready var layer_tree : Tree = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/LayerTree
-onready var results_item_list : ItemList = $VBoxContainer/PanelContainer/HBoxContainer/ResultsItemList
-onready var painter : Node = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Painter"
-onready var asset_browser : HBoxContainer = $VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/AssetBrowser
-onready var material_option_button : OptionButton = $VBoxContainer/PanelContainer/HBoxContainer/LayerPanelContainer/HBoxContainer/MaterialOptionButton
-onready var camera : Camera = $"VBoxContainer/PanelContainer/HBoxContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewport/Viewport/RotatingCamera/HorizontalCameraSocket/Camera"
+onready var layer_property_panel : Panel = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer/LayerPropertyPanel
+onready var texture_map_buttons : GridContainer = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer/TextureMapButtons
+onready var model : MeshInstance = $"VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/Window/3DViewport/Viewport/Model"
+onready var layer_tree : Tree = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window/LayerTree
+onready var results_item_list : ItemList = $VBoxContainer/Control/HBoxContainer/Window/ResultsItemList
+onready var painter : Node = $"VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/Window/3DViewport/Painter"
+onready var asset_browser : HBoxContainer = $VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser
+onready var material_option_button : OptionButton = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window/HBoxContainer/MaterialOptionButton
+onready var camera : Camera = $"VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/Window/3DViewport/Viewport/RotatingCamera/HorizontalCameraSocket/Camera"
 onready var progress_dialog : PopupDialog = $ProgressDialog
+onready var save_layout_dialog : ConfirmationDialog = $SaveLayoutDialog
+onready var layout_name_edit : LineEdit = $SaveLayoutDialog/LayoutNameEdit
+onready var root_container : HSplitContainer = $VBoxContainer/Control/HBoxContainer
+onready var root : Control = $VBoxContainer/Control/
 
 func _ready() -> void:
 	var popup := file_menu_button.get_popup()
 	popup.connect("id_pressed", self, "_on_FileMenu_id_pressed")
 	for id in file_menu_shortcuts.size():
 		popup.set_item_shortcut(id, file_menu_shortcuts[id])
+	
+	_initialise_layouts()
 	
 	_start_empty_project()
 	undo_redo.connect("version_changed", self, "_on_UndoRedo_version_changed")
@@ -261,7 +270,7 @@ func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
 
 func _on_MaterialLayerPopupMenu_layer_saved() -> void:
 	var material_layer = layer_tree.get_selected_layer()
-	var save_path := MATERIAL_PATH.plus_file(material_layer.name) + ".tres"
+	var save_path := MATERIALS_FOLDER.plus_file(material_layer.name) + ".tres"
 	ResourceSaver.save(save_path, material_layer)
 	asset_browser.load_asset(save_path, asset_browser.ASSET_TYPES.MATERIAL)
 	asset_browser.update_asset_list()
@@ -337,6 +346,23 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 func _on_EditMenuButton_size_selected(size) -> void:
 	result_size = size
 	_update_results(false, true)
+
+
+func _on_LayoutNameEdit_text_entered(new_text : String) -> void:
+	LayoutUtils.save_layout(root_container, LAYOUTS_FOLDER.plus_file(new_text + ".json"))
+
+
+func _on_SaveLayoutDialog_confirmed() -> void:
+	LayoutUtils.save_layout(root_container, LAYOUTS_FOLDER.plus_file(layout_name_edit.text + ".json"))
+
+
+func _on_ViewMenuButton_layout_selected(layout : String) -> void:
+	LayoutUtils.load_layout(root, LAYOUTS_FOLDER.plus_file(layout))
+	root_container = root.get_child(0)
+
+
+func _on_ViewMenuButton_save_layout_selected() -> void:
+	save_layout_dialog.popup_centered()
 
 
 func _on_FileMenu_id_pressed(id : int) -> void:
@@ -432,8 +458,18 @@ func _open_save_project_dialog() -> void:
 	file_dialog.popup_centered()
 
 
-func _do_change_mask_action(action_name : String, layer : MaterialLayer, mask : LayerTexture) -> void:
+func _do_change_mask_action(action_name : String, layer : MaterialLayer,
+		mask : LayerTexture) -> void:
 	undo_redo.create_action(action_name)
 	undo_redo.add_do_method(self, "set_mask", layer, mask)
 	undo_redo.add_undo_method(self, "set_mask", layer, layer.mask)
 	undo_redo.commit_action()
+
+
+func _initialise_layouts() -> void:
+	var dir := Directory.new()
+	dir.make_dir_recursive("user://layouts")
+	if not dir.file_exists("default.json"):
+		# wait for all windows to be ready
+		yield(get_tree(), "idle_frame")
+		LayoutUtils.save_layout(root_container, LAYOUTS_FOLDER.plus_file("default.json"))

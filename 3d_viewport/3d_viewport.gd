@@ -19,13 +19,13 @@ const Asset = preload("res://main/asset_browser.gd").Asset
 const BrushAssetType = preload("res://main/asset_browser.gd").BrushAssetType
 
 onready var model : MeshInstance = $Viewport/Model
-onready var layer_tree : Tree = $"../../../../../LayerPanelContainer/LayerTree"
+onready var layer_tree : Tree = $"../../../../../../LayerPanelContainer/Window/LayerTree"
 onready var world_environment : WorldEnvironment = $Viewport/WorldEnvironment
 onready var color_skybox : MeshInstance = $Viewport/RotatingCamera/ColorSkybox
 onready var directional_light : DirectionalLight = $Viewport/DirectionalLight
 onready var viewport : Viewport = $Viewport
-onready var tool_settings_property_panel : Panel = $"../../../ToolSettingsContainer/ToolSettingsPropertyPanel"
-onready var tool_button_container : VBoxContainer = $"../../ToolButtonContainer"
+onready var tool_settings_property_panel : Panel = $"../../../../Window/ToolSettingsContainer/ToolSettingsPropertyPanel"
+onready var tool_button_container : VBoxContainer = $"../../../Window/ToolButtonContainer"
 
 onready var painter : Node = $Painter
 
