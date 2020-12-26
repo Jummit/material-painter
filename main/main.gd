@@ -63,15 +63,14 @@ onready var root_container : HSplitContainer = $VBoxContainer/Control/HBoxContai
 onready var root : Control = $VBoxContainer/Control/
 
 func _ready() -> void:
+	undo_redo.connect("version_changed", self, "_on_UndoRedo_version_changed")
 	var popup := file_menu_button.get_popup()
 	popup.connect("id_pressed", self, "_on_FileMenu_id_pressed")
 	for id in file_menu_shortcuts.size():
 		popup.set_item_shortcut(id, file_menu_shortcuts[id])
 	
 	_initialise_layouts()
-	
 	_start_empty_project()
-	undo_redo.connect("version_changed", self, "_on_UndoRedo_version_changed")
 
 
 func _input(event : InputEvent) -> void:
