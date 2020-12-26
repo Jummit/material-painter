@@ -29,6 +29,11 @@ onready var painter : Node = $Painter
 func _ready() -> void:
 	if ProjectSettings.get_setting("application/config/initialize_painter"):
 		painter.mesh_instance = model
+	Globals.connect("mesh_changed", self, "_on_Globals_mesh_changed")
+
+
+func _on_Globals_mesh_changed(_mesh : Mesh) -> void:
+	painter.mesh_instance = model
 
 
 func _gui_input(event : InputEvent) -> void:
@@ -79,10 +84,6 @@ func _on_ViewMenuButton_show_background_toggled() -> void:
 
 func _on_ViewMenuButton_hdri_selected(hdri : Texture) -> void:
 	world_environment.environment.background_sky.panorama = hdri
-
-
-func _on_Main_mesh_changed() -> void:
-	painter.mesh_instance = model
 
 
 func _on_ToolButtonContainer_tool_selected(tool_id : int):

@@ -16,6 +16,12 @@ onready var layer_tree : Tree = $"../../../../../../LayerPanelContainer/Window/L
 
 func _draw() -> void:
 	draw_faces_as_lines()
+	Globals.connect("mesh_changed", self, "_on_Globals_mesh_changed")
+
+
+func _on_Globals_mesh_changed(mesh : Mesh) -> void:
+	_mesh_tool.create_from_surface(mesh, 0)
+	update()
 
 
 func _gui_input(event : InputEvent) -> void:
@@ -38,11 +44,6 @@ func draw_faces_as_lines(color := Color.white, line_width := 2.0) -> void:
 		points.append(points[0])
 		points = Transform2D.IDENTITY.scaled(rect_size).xform(points)
 		draw_multiline(points, color, line_width)
-
-
-func _on_Main_mesh_changed() -> void:
-	_mesh_tool.create_from_surface(model.mesh, 0)
-	update()
 
 
 func _get_selected_face(position : Vector2) -> int:
