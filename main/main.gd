@@ -10,9 +10,9 @@ Manages the menu bar, saving and loading.
 var current_file : SaveFile setget set_current_file
 var editing_layer_material : LayerMaterial
 var result_size := Vector2(2048, 2048)
-var undo_redo := UndoRedo.new()
 
 var _mesh_maps_generator = preload("res://main/mesh_maps_generator.gd").new()
+var undo_redo := Globals.undo_redo
 
 # to avoid https://github.com/godotengine/godot/issues/36895,
 # this is passed to add_do_action instead of null

@@ -6,6 +6,7 @@ Global constants
 
 # warning-ignore-all:unused_class_variable
 var mesh : Mesh
+var undo_redo := UndoRedo.new()
 
 var TEXTURE_LAYER_TYPES := [
 	FileTextureLayer,

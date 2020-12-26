@@ -23,6 +23,8 @@ var _selected_layer_textures : Dictionary
 var _selected_maps : Dictionary
 var _expanded_folders : Array
 
+var undo_redo := Globals.undo_redo
+
 signal material_layer_selected(material_layer)
 signal texture_layer_selected(texture_layer)
 signal folder_layer_selected
@@ -54,7 +56,6 @@ const TextureAssetType = preload("res://main/asset_browser.gd").TextureAssetType
 const MaterialAssetType = preload("res://main/asset_browser.gd").MaterialAssetType
 
 onready var main : Control = $"../../../../../../.."
-onready var undo_redo : UndoRedo = main.undo_redo
 onready var layer_popup_menu : PopupMenu = $LayerPopupMenu
 onready var map_type_popup_menu : PopupMenu = $MapTypePopupMenu
 
