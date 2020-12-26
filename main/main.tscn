@@ -559,8 +559,6 @@ margin_bottom = -35.0
 [connection signal="changed" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer/TextureMapButtons" to="." method="_on_TextureMapButtons_changed"]
 [connection signal="changed" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer/TextureMapButtons" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window/LayerTree" method="_on_TextureMapButtons_changed"]
 [connection signal="property_changed" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer/LayerPropertyPanel" to="." method="_on_LayerPropertyPanel_property_changed"]
-[connection signal="about_to_show" from="FileDialog" to="." method="_on_FileDialog_about_to_show"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]
-[connection signal="popup_hide" from="FileDialog" to="." method="_on_FileDialog_popup_hide"]
 [connection signal="confirmed" from="SaveLayoutDialog" to="." method="_on_SaveLayoutDialog_confirmed"]
 [connection signal="text_entered" from="SaveLayoutDialog/LayoutNameEdit" to="." method="_on_LayoutNameEdit_text_entered"]
