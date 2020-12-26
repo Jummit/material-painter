@@ -16,10 +16,10 @@ func _ready():
 
 
 func _on_Globals_editing_layer_material_changed() -> void:
-	Globals.editing_layer_material.connect("changed", self, "_on_LayerMaterial_changed")
+	Globals.editing_layer_material.connect("results_changed", self, "_on_LayerMaterial_results_changed")
 
 
-func _on_LayerMaterial_changed(_update_icons : bool, _use_cached_shader : bool) -> void:
+func _on_LayerMaterial_results_changed() -> void:
 	clear()
 	for map in Globals.editing_layer_material.results:
 		add_item(map, Globals.editing_layer_material.results[map])

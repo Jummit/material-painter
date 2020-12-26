@@ -94,7 +94,6 @@ func set_mask(layer : MaterialLayer, mask : LayerTexture) -> void:
 		layer.mask = mask
 		mask.parent = layer
 	Globals.editing_layer_material.update()
-	layer_tree.reload()
 
 
 func _on_FileDialog_file_selected(path : String) -> void:
@@ -183,11 +182,11 @@ func _on_LayerPropertyPanel_property_changed(property : String, value) -> void:
 	var use_cashed_shader = not property in ["opacity", "blend_mode"]
 	undo_redo.add_do_method(layer_property_panel, "set_property_value", property, value)
 	undo_redo.add_do_method(affected_layer, "update_result", Globals.result_size, true, use_cashed_shader)
-	undo_redo.add_do_method(self, "Globals.editing_layer_material.update", true, use_cashed_shader)
+	undo_redo.add_do_method(Globals.editing_layer_material, "update", true, use_cashed_shader)
 	undo_redo.add_undo_property(layer_property_panel.editing_layer, property, layer_property_panel.editing_layer.get(property))
 	undo_redo.add_undo_method(affected_layer, "update_result", Globals.result_size, true, use_cashed_shader)
 	undo_redo.add_undo_method(layer_property_panel, "set_property_value", property, layer_property_panel.editing_layer.get(property))
-	undo_redo.add_undo_method(self, "Globals.editing_layer_material.update", true, use_cashed_shader)
+	undo_redo.add_undo_method(Globals.editing_layer_material, "update", true, use_cashed_shader)
 	undo_redo.commit_action()
 
 

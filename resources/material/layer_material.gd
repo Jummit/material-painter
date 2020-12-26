@@ -143,8 +143,8 @@ func _update_all_layer_textures(layers_to_update : Array) -> void:
 			yield(_update_all_layer_textures(layer.layers), "completed")
 
 
-func update(update_icons := true, use_cached_shader := false) -> void:
-	var result = update_results(Globals.result_size, use_cached_shader)
+func update(_update_icons := true, _use_cached_shader := false) -> void:
+	var result = update_results(Globals.result_size, _use_cached_shader)
 	if result is GDScriptFunctionState:
 		yield(result, "completed")
-	emit_signal("changed", update_icons, use_cached_shader)
+	emit_signal("results_changed")

@@ -17,10 +17,10 @@ func _on_Globals_mesh_changed(to : Mesh) -> void:
 
 
 func _on_Globals_editing_layer_material_changed() -> void:
-	Globals.editing_layer_material.connect("changed", self, "_on_LayerMaterial_changed")
+	Globals.editing_layer_material.connect("results_changed", self, "_on_LayerMaterial_results_changed")
 
 
-func _on_LayerMaterial_changed(_update_icons : bool, _use_cached_shader : bool) -> void:
+func _on_LayerMaterial_results_changed() -> void:
 	load_materials(Globals.current_file.layer_materials)
 
 

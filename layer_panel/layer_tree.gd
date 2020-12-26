@@ -64,7 +64,7 @@ func _ready() -> void:
 
 
 func _on_Globals_editing_layer_material_changed() -> void:
-	Globals.editing_layer_material.connect("changed", self, "_on_LayerMaterial_changed")
+	Globals.editing_layer_material.connect("results_changed", self, "_on_LayerMaterial_results_changed")
 	load_layer_material()
 
 
@@ -72,9 +72,9 @@ func _on_Globals_current_file_changed() -> void:
 	load_layer_material()
 
 
-func _on_LayerMaterial_changed(update_icons : bool, _use_cached_shader : bool) -> void:
-	if update_icons:
-		update_icons()
+func _on_LayerMaterial_results_changed() -> void:
+	update_icons()
+	load_layer_material()
 
 
 func _gui_input(event : InputEvent) -> void:
