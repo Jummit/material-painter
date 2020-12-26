@@ -24,15 +24,10 @@ onready var world_environment : WorldEnvironment = $Viewport/WorldEnvironment
 onready var color_skybox : MeshInstance = $Viewport/RotatingCamera/ColorSkybox
 onready var directional_light : DirectionalLight = $Viewport/DirectionalLight
 onready var viewport : Viewport = $Viewport
-onready var tool_settings_property_panel : Panel = $"../../../../Window/ToolSettingsContainer/ToolSettingsPropertyPanel"
-onready var tool_button_container : VBoxContainer = $"../../../Window/ToolButtonContainer"
-
 onready var painter : Node = $Painter
 
 func _ready() -> void:
 	if ProjectSettings.get_setting("application/config/initialize_painter"):
-		tool_settings_property_panel.load_values(Brush.new())
-		tool_settings_property_panel.set_property_value("size", 10.0)
 		painter.mesh_instance = model
 
 
@@ -110,17 +105,9 @@ func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
 		painter.set_initial_texture(texture)
 
 
-func _on_ToolSettingsPropertyPanel_property_changed(_property, _value) -> void:
-	var new_brush := Brush.new()
-	tool_settings_property_panel.store_values(new_brush)
-	new_brush.size = Vector2.ONE * tool_settings_property_panel.get_property_value("size")
-	painter.brush = new_brush
-
-
-func _on_AssetBrowser_asset_activated(asset : Asset) -> void:
-	if asset.type is BrushAssetType:
-		painter.brush = asset.data
-		tool_settings_property_panel.load_values(asset.data)
+func _on_ToolSettingsPropertyPanel_brush_changed(brush : Brush) -> void:
+	yield(self, "tree_entered")
+	painter.brush = brush
 
 
 func _get_nearest_intersecting_face(start : Vector3, direction : Vector3, mesh : Mesh, fast := false) -> int:
@@ -160,3 +147,8 @@ func _paint(on_texture_layer : BitmapTextureLayer, from : Vector2, to : Vector2)
 	painter.paint(from / rect_size, to / rect_size)
 	on_texture_layer.temp_texture = painter.result
 	emit_signal("painted", on_texture_layer)
+
+
+func _on_AssetBrowser_asset_activated(asset):
+	if asset.type is BrushAssetType:
+		painter.brush = asset.data

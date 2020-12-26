@@ -59,7 +59,7 @@ func _ready() -> void:
 	for layout_file in get_files("user://layouts"):
 		layouts_submenu_popup.add_item(layout_file.get_basename())
 		layouts_submenu_popup.set_item_metadata(layouts_submenu_popup.get_item_count() - 1, layout_file)
-		layouts_submenu_popup.connect("id_pressed", self, "_on_Layouts_id_pressed")
+	layouts_submenu_popup.connect("id_pressed", self, "_on_Layouts_id_pressed")
 	popup.add_child(layouts_submenu_popup)
 
 

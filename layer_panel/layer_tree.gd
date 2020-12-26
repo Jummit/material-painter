@@ -12,8 +12,6 @@ When a `MaterialLayer` has multiple maps enabled, the current map can be selecte
 with a dropdown. The selected maps are stored in `_selected_maps`.
 """
 
-var editing_layer_material : LayerMaterial setget set_editing_layer_material
-
 var _root : TreeItem
 var _lastly_edited_layer : TreeItem
 var _empty_texture := preload("res://icons/loading_layer.svg")
@@ -55,13 +53,28 @@ const Asset = preload("res://main/asset_browser.gd").Asset
 const TextureAssetType = preload("res://main/asset_browser.gd").TextureAssetType
 const MaterialAssetType = preload("res://main/asset_browser.gd").MaterialAssetType
 
-onready var main : Control = $"../../../../../../.."
 onready var layer_popup_menu : PopupMenu = $LayerPopupMenu
 onready var map_type_popup_menu : PopupMenu = $MapTypePopupMenu
 
 func _ready() -> void:
 	set_column_expand(0, false)
 	set_column_min_width(0, 100)
+	Globals.connect("current_file_changed", self, "_on_Globals_current_file_changed")
+	Globals.connect("editing_layer_material_changed", self, "_on_Globals_editing_layer_material_changed")
+
+
+func _on_Globals_editing_layer_material_changed() -> void:
+	Globals.editing_layer_material.connect("changed", self, "_on_LayerMaterial_changed")
+	load_layer_material()
+
+
+func _on_Globals_current_file_changed() -> void:
+	load_layer_material()
+
+
+func _on_LayerMaterial_changed(update_icons : bool, _use_cached_shader : bool) -> void:
+	if update_icons:
+		update_icons()
 
 
 func _gui_input(event : InputEvent) -> void:
@@ -86,8 +99,8 @@ func _gui_input(event : InputEvent) -> void:
 	elif event is InputEventKey and event.pressed and event.scancode == KEY_DELETE:
 		var layer = get_selected_layer()
 		undo_redo.create_action("Delete Layer")
-		undo_redo.add_do_method(main, "delete_layer", layer)
-		undo_redo.add_undo_method(main, "add_layer", layer, layer.parent)
+		undo_redo.add_do_method(Globals.editing_layer_material, "delete_layer", layer)
+		undo_redo.add_undo_method(Globals.editing_layer_material, "add_layer", layer, layer.parent)
 		undo_redo.commit_action()
 
 
@@ -154,7 +167,7 @@ func drop_data(position : Vector2, data) -> void:
 					onto = onto_layer
 				onto_position = onto.layers.size()
 			-100:
-				onto = editing_layer_material
+				onto = Globals.editing_layer_material
 				onto_position = onto.layers.size()
 			var section:
 				onto = onto_layer.parent
@@ -169,12 +182,12 @@ func drop_data(position : Vector2, data) -> void:
 			var new_layer = layer.duplicate()
 			
 			undo_redo.add_do_method(self, "_add_layer", new_layer, onto, onto_position)
-			undo_redo.add_do_method(main, "delete_layer", layer)
-			undo_redo.add_undo_method(main, "delete_layer", new_layer)
+			undo_redo.add_do_method(Globals.editing_layer_material, "delete_layer", layer)
+			undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer", new_layer)
 			undo_redo.add_undo_method(self, "_add_layer", layer, layer.parent, layer_position)
 		
-		undo_redo.add_do_method(self, "reload")
-		undo_redo.add_undo_method(self, "reload")
+		undo_redo.add_do_method(self, "load_layer_material")
+		undo_redo.add_undo_method(self, "load_layer_material")
 		undo_redo.commit_action()
 	elif data is Asset:
 		if data.type is TextureAssetType:
@@ -182,29 +195,24 @@ func drop_data(position : Vector2, data) -> void:
 			var layer := FileTextureLayer.new()
 			layer.name = data.name
 			layer.path = data.data
-			undo_redo.add_do_method(main, "add_layer", layer, _selected_layer_textures[get_layer_at_position(position)])
-			undo_redo.add_undo_method(main, "delete_layer", layer)
+			undo_redo.add_do_method(Globals.editing_layer_material, "add_layer", layer, _selected_layer_textures[get_layer_at_position(position)])
+			undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer", layer)
 			undo_redo.commit_action()
 		elif data.type is MaterialAssetType:
 			var new_layer : Resource = data.data.duplicate()
 			undo_redo.create_action("Add Material From Library")
-			undo_redo.add_do_method(main, "add_layer", new_layer, editing_layer_material)
-			undo_redo.add_undo_method(main, "delete_layer", new_layer)
+			undo_redo.add_do_method(Globals.editing_layer_material, "add_layer", new_layer, Globals.editing_layer_material)
+			undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer", new_layer)
 			undo_redo.commit_action()
 
 
-func set_editing_layer_material(to) -> void:
-	editing_layer_material = to
+func load_layer_material() -> void:
 	_tree_items = {}
 	clear()
 	_root = create_item()
-	for material_layer in editing_layer_material.layers:
+	for material_layer in Globals.editing_layer_material.layers:
 		_setup_material_layer_item(material_layer, _root)
 	update_icons()
-
-
-func reload() -> void:
-	set_editing_layer_material(editing_layer_material)
 
 
 func update_icons() -> void:
@@ -280,13 +288,13 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 					_selected_layer_textures.erase(layer)
 				else:
 					_selected_layer_textures[layer] = _selected_maps[layer]
-				reload()
+				load_layer_material()
 		Buttons.MASK:
 			if layer in _selected_layer_textures and _selected_layer_textures[layer] == layer.mask:
 				_selected_layer_textures.erase(layer)
 			else:
 				_selected_layer_textures[layer] = layer.mask
-			reload()
+			load_layer_material()
 		Buttons.VISIBILITY:
 			undo_redo.create_action("Toggle Layer Visibility")
 			undo_redo.add_do_property(layer, "visible", not layer.visible)
@@ -299,7 +307,7 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 				_expanded_folders.erase(layer)
 			else:
 				_expanded_folders.append(layer)
-			reload()
+			load_layer_material()
 
 
 func _on_MapTypePopupMenu_about_to_show() -> void:
@@ -317,7 +325,7 @@ func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
 	var selected_map : LayerTexture = layer.maps.values()[id]
 	_selected_maps[layer] = selected_map
 	_selected_layer_textures[layer] = selected_map
-	reload()
+	load_layer_material()
 
 
 func _on_item_edited() -> void:
@@ -410,3 +418,9 @@ func _get_layer_type(layer_item : TreeItem) -> int:
 func _add_layer(layer, onto, position : int) -> void:
 	onto.layers.insert(position, layer)
 	layer.parent = onto
+
+
+func _on_TextureMapButtons_changed(map : String, enabled : bool) -> void:
+	if enabled:
+		select_map(get_selected_layer(), map, true)
+	load_layer_material()

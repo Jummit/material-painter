@@ -11,10 +11,18 @@ const LayerMaterial = preload("res://resources/material/layer_material.gd")
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 
-func load_layer_material(layer : LayerMaterial) -> void:
+func _ready():
+	Globals.connect("editing_layer_material_changed", self, "_on_Globals_editing_layer_material_changed")
+
+
+func _on_Globals_editing_layer_material_changed() -> void:
+	Globals.editing_layer_material.connect("changed", self, "_on_LayerMaterial_changed")
+
+
+func _on_LayerMaterial_changed(_update_icons : bool, _use_cached_shader : bool) -> void:
 	clear()
-	for map in layer.results:
-		add_item(map, layer.results[map])
+	for map in Globals.editing_layer_material.results:
+		add_item(map, Globals.editing_layer_material.results[map])
 		set_item_metadata(get_item_count() - 1, map)
 
 

@@ -17,6 +17,8 @@ export var layers : Array
 
 var results : Dictionary
 
+signal results_changed
+
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
@@ -63,6 +65,7 @@ func update_results(result_size : Vector2, use_cached_shader := false) -> void:
 			map = "normal"
 			result = yield(NormalMapGenerationViewport.get_normal_map(result), "completed")
 		results[map] = result
+	emit_signal("results_changed")
 
 
 func update_all_layer_textures(result_size : Vector2) -> void:
@@ -106,3 +109,42 @@ func get_material(existing : SpatialMaterial = null) -> SpatialMaterial:
 			material.set("metallic", int(map in results.keys()))
 	
 	return material
+
+
+func add_layer(layer, onto) -> void:
+	layer.parent = onto
+	onto.layers.append(layer)
+	if layer.has_method("get_layer_texture_in"):
+		yield(layer.get_layer_texture_in().update_result(Globals.result_size), "completed")
+	else:
+		if layer.get_script() == load("res://resources/material/material_layer.gd"):
+			var result = layer.update_all_layer_textures(Globals.result_size)
+			if result is GDScriptFunctionState:
+				yield(result, "completed")
+		else:
+			var result = _update_all_layer_textures(layer.layers)
+			if result is GDScriptFunctionState:
+				yield(result, "completed")
+	update_results(Globals.result_size)
+
+
+func delete_layer(layer) -> void:
+	layer.parent.layers.erase(layer)
+	if layer.has_method("get_layer_texture_in"):
+		yield(layer.get_layer_texture_in().update_result(Globals.result_size), "completed")
+	update_results(Globals.result_size, false)
+
+
+func _update_all_layer_textures(layers_to_update : Array) -> void:
+	for layer in layers_to_update:
+		if layer.get_script() == load("res://resources/material/layer_material.gd"):
+			yield(layer.update_all_layer_textures(Globals.result_size), "completed")
+		else:
+			yield(_update_all_layer_textures(layer.layers), "completed")
+
+
+func update(update_icons := true, use_cached_shader := false) -> void:
+	var result = update_results(Globals.result_size, use_cached_shader)
+	if result is GDScriptFunctionState:
+		yield(result, "completed")
+	emit_signal("changed", update_icons, use_cached_shader)

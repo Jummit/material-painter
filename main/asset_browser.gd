@@ -111,6 +111,7 @@ class Asset:
 func _ready():
 	asset_list.set_drag_forwarding(self)
 	
+	Globals.connect("current_file_changed", self, "_on_Globals_current_file_changed")
 	get_tree().connect("files_dropped", self, "_on_SceneTree_files_dropped")
 	
 	yield(progress_dialog, "ready")
@@ -130,6 +131,10 @@ func _ready():
 		progress_dialog.complete_task()
 	update_tag_list()
 	update_asset_list()
+
+
+func _on_Globals_current_file_changed():
+	load_local_assets(Globals.current_file.resource_path)
 
 
 func get_drag_data_fw(position : Vector2, _from : Control):

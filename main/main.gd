@@ -7,10 +7,6 @@ It handles most callbacks and updates the results of the layer stacks when somet
 Manages the menu bar, saving and loading.
 """
 
-var current_file : SaveFile setget set_current_file
-var editing_layer_material : LayerMaterial
-var result_size := Vector2(2048, 2048)
-
 var _mesh_maps_generator = preload("res://main/mesh_maps_generator.gd").new()
 var undo_redo := Globals.undo_redo
 
@@ -31,8 +27,6 @@ var file_menu_shortcuts := [
 	ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_Q),
 ]
 
-signal mesh_changed
-
 enum FILE_MENU_ITEMS {
 	NEW,
 	OPEN,
@@ -43,7 +37,6 @@ enum FILE_MENU_ITEMS {
 	QUIT,
 }
 
-const ObjParser = preload("res://addons/obj_parser/obj_parser.gd")
 const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
 const SaveFile = preload("res://resources/save_file.gd")
 const MaterialLayer = preload("res://resources/material/material_layer.gd")
@@ -60,13 +53,9 @@ onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/File
 onready var file_dialog : FileDialog = $FileDialog
 onready var layer_property_panel : Panel = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer/LayerPropertyPanel
 onready var texture_map_buttons : GridContainer = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer/TextureMapButtons
-onready var model : MeshInstance = $"VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/Window/3DViewport/Viewport/Model"
 onready var layer_tree : Tree = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window/LayerTree
-onready var results_item_list : ItemList = $VBoxContainer/Control/HBoxContainer/Window/ResultsItemList
 onready var painter : Node = $"VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/Window/3DViewport/Painter"
 onready var asset_browser : HBoxContainer = $VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser
-onready var material_option_button : OptionButton = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window/HBoxContainer/MaterialOptionButton
-onready var camera : Camera = $"VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/Window/3DViewport/Viewport/RotatingCamera/HorizontalCameraSocket/Camera"
 onready var progress_dialog : PopupDialog = $ProgressDialog
 onready var save_layout_dialog : ConfirmationDialog = $SaveLayoutDialog
 onready var layout_name_edit : LineEdit = $SaveLayoutDialog/LayoutNameEdit
@@ -99,56 +88,14 @@ func _input(event : InputEvent) -> void:
 			print("Redo: " + undo_redo.get_current_action_name())
 
 
-func add_layer(layer, onto) -> void:
-	layer.parent = onto
-	onto.layers.append(layer)
-	if layer.has_method("get_layer_texture_in"):
-		yield(layer.get_layer_texture_in().update_result(result_size), "completed")
-	else:
-		if layer is MaterialLayer:
-			var result = layer.update_all_layer_textures(result_size)
-			if result is GDScriptFunctionState:
-				yield(result, "completed")
-		else:
-			var result = _update_all_layer_textures(layer.layers)
-			if result is GDScriptFunctionState:
-				yield(result, "completed")
-	_update_results()
-	layer_tree.reload()
-
-
-func delete_layer(layer) -> void:
-	layer.parent.layers.erase(layer)
-	if layer.has_method("get_layer_texture_in"):
-		yield(layer.get_layer_texture_in().update_result(result_size), "completed")
-	_update_results(false)
-	layer_tree.reload()
-
-
 func set_mask(layer : MaterialLayer, mask : LayerTexture) -> void:
 	if mask == NO_MASK:
 		layer.mask = null
 	else:
 		layer.mask = mask
 		mask.parent = layer
-	_update_results()
+	Globals.editing_layer_material.update()
 	layer_tree.reload()
-
-
-func set_current_file(save_file : SaveFile) -> void:
-	current_file = save_file
-	_load_model(current_file.model_path)
-	for layer_material in current_file.layer_materials:
-		var result = layer_material.update_all_layer_textures(result_size)
-		if result is GDScriptFunctionState:
-			yield(result, "completed")
-	editing_layer_material = current_file.layer_materials.front()
-	_update_results(false)
-	layer_tree.editing_layer_material = editing_layer_material
-	
-	material_option_button.clear()
-	for material_num in current_file.layer_materials.size():
-		material_option_button.add_item("Material %s" % material_num)
 
 
 func _on_FileDialog_file_selected(path : String) -> void:
@@ -164,13 +111,9 @@ func _on_FileDialog_file_selected(path : String) -> void:
 		FileDialog.MODE_OPEN_FILE:
 			match path.get_extension():
 				"tres":
-					set_current_file(ResourceLoader.load(path, "", true))
-					asset_browser.load_local_assets(current_file.resource_path)
+					Globals.current_file = ResourceLoader.load(path, "", true)
 				"obj":
-					current_file.model_path = path
-					_load_model(path)
-					editing_layer_material = current_file.layer_materials.front()
-					layer_tree.editing_layer_material = current_file.layer_materials.front()
+					Globals.load_model(path)
 
 
 func _on_AddButton_pressed() -> void:
@@ -178,12 +121,12 @@ func _on_AddButton_pressed() -> void:
 	if layer_tree.is_folder(layer_tree.get_selected_layer()):
 		onto = layer_tree.get_selected_layer()
 	else:
-		onto = editing_layer_material
+		onto = Globals.editing_layer_material
 	undo_redo.create_action("Add Material Layer")
 	var new_layer := MaterialLayer.new()
 	new_layer.parent = onto
-	undo_redo.add_do_method(self, "add_layer", new_layer, onto)
-	undo_redo.add_undo_method(self, "delete_layer", new_layer)
+	undo_redo.add_do_method(Globals.editing_layer_material, "add_layer", new_layer, onto)
+	undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer", new_layer)
 	undo_redo.commit_action()
 
 
@@ -196,7 +139,7 @@ func _on_AddFolderButton_pressed() -> void:
 	elif selected_layer is MaterialLayer and layer_tree.get_selected_layer_texture(selected_layer):
 		onto = layer_tree.get_selected_layer_texture(selected_layer)
 	else:
-		onto = editing_layer_material
+		onto = Globals.editing_layer_material
 	
 	var new_layer
 	if onto is LayerMaterial or onto is MaterialFolder:
@@ -204,8 +147,8 @@ func _on_AddFolderButton_pressed() -> void:
 	else:
 		new_layer = TextureFolder.new()
 	
-	undo_redo.add_do_method(self, "add_layer", new_layer, onto)
-	undo_redo.add_undo_method(self, "delete_layer", new_layer)
+	undo_redo.add_do_method(Globals.editing_layer_material, "add_layer", new_layer, onto)
+	undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer", new_layer)
 	undo_redo.commit_action()
 
 
@@ -213,26 +156,23 @@ func _on_DeleteButton_pressed() -> void:
 	if layer_tree.get_selected():
 		undo_redo.create_action("Delete Layer")
 		var selected_layer = layer_tree.get_selected().get_meta("layer")
-		undo_redo.add_do_method(self, "delete_layer", selected_layer)
+		undo_redo.add_do_method(Globals.editing_layer_material, "delete_layer", selected_layer)
 		undo_redo.add_do_method(layer_property_panel, "clear")
 		undo_redo.add_do_method(texture_map_buttons, "hide")
-		undo_redo.add_undo_method(self, "add_layer", selected_layer, selected_layer.parent)
+		undo_redo.add_undo_method(Globals.editing_layer_material, "add_layer", selected_layer, selected_layer.parent)
 		undo_redo.add_undo_method(layer_property_panel, "load_material_layer", selected_layer)
 		undo_redo.add_undo_method(texture_map_buttons, "show")
 		undo_redo.commit_action()
 
 
-func _on_TextureMapButtons_changed(map : String, enabled : bool) -> void:
-	if enabled:
-		layer_tree.select_map(layer_property_panel.editing_layer, map, true)
-	layer_tree.reload()
-	_update_results(false)
+func _on_TextureMapButtons_changed(_map : String, _enabled : bool) -> void:
+	Globals.editing_layer_material.update(false)
 
 
 func _on_LayerTree_layer_visibility_changed(layer) -> void:
 	if layer is TextureLayer:
-		layer.parent.update_result(result_size)
-	_update_results()
+		layer.parent.update_result(Globals.result_size)
+	Globals.editing_layer_material.update()
 
 
 func _on_LayerPropertyPanel_property_changed(property : String, value) -> void:
@@ -243,12 +183,12 @@ func _on_LayerPropertyPanel_property_changed(property : String, value) -> void:
 		return
 	var use_cashed_shader = not property in ["opacity", "blend_mode"]
 	undo_redo.add_do_method(layer_property_panel, "set_property_value", property, value)
-	undo_redo.add_do_method(affected_layer, "update_result", result_size, true, use_cashed_shader)
-	undo_redo.add_do_method(self, "_update_results", true, use_cashed_shader)
+	undo_redo.add_do_method(affected_layer, "update_result", Globals.result_size, true, use_cashed_shader)
+	undo_redo.add_do_method(self, "Globals.editing_layer_material.update", true, use_cashed_shader)
 	undo_redo.add_undo_property(layer_property_panel.editing_layer, property, layer_property_panel.editing_layer.get(property))
-	undo_redo.add_undo_method(affected_layer, "update_result", result_size, true, use_cashed_shader)
+	undo_redo.add_undo_method(affected_layer, "update_result", Globals.result_size, true, use_cashed_shader)
 	undo_redo.add_undo_method(layer_property_panel, "set_property_value", property, layer_property_panel.editing_layer.get(property))
-	undo_redo.add_undo_method(self, "_update_results", true, use_cashed_shader)
+	undo_redo.add_undo_method(self, "Globals.editing_layer_material.update", true, use_cashed_shader)
 	undo_redo.commit_action()
 
 
@@ -263,8 +203,8 @@ func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
 		onto = selected_layer
 	else:
 		onto = selected_layer.parent
-	undo_redo.add_do_method(self, "add_layer", new_layer, onto)
-	undo_redo.add_undo_method(self, "delete_layer", new_layer)
+	undo_redo.add_do_method(Globals.editing_layer_material, "add_layer", new_layer, onto)
+	undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer", new_layer)
 	undo_redo.commit_action()
 
 
@@ -277,8 +217,8 @@ func _on_MaterialLayerPopupMenu_layer_saved() -> void:
 
 
 func _on_Viewport_painted(layer : TextureLayer) -> void:
-	layer.parent.update_result(result_size, true, true)
-	_update_results(false, true)
+	layer.parent.update_result(Globals.result_size, true, true)
+	Globals.editing_layer_material.update(false, true)
 
 
 func _on_MaterialLayerPopupMenu_mask_added(mask : LayerTexture) -> void:
@@ -296,8 +236,8 @@ func _on_MaterialLayerPopupMenu_mask_pasted(mask : LayerTexture) -> void:
 func _on_MaterialLayerPopupMenu_duplicated() -> void:
 	undo_redo.create_action("Duplicate Layer")
 	var new_layer = ResourceUtils.deep_copy_of_resource(layer_tree.get_selected_layer())
-	undo_redo.add_do_method(self, "add_layer", new_layer, editing_layer_material)
-	undo_redo.add_undo_method(self, "delete_layer", new_layer)
+	undo_redo.add_do_method(Globals.editing_layer_material, "add_layer", new_layer, Globals.editing_layer_material)
+	undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer", new_layer)
 	undo_redo.commit_action()
 
 
@@ -313,22 +253,13 @@ func _on_SaveButton_pressed() -> void:
 
 
 func _on_MaterialOptionButton_item_selected(index : int) -> void:
-	editing_layer_material = current_file.layer_materials[index]
-	layer_tree.editing_layer_material = editing_layer_material
-
-
-# hacky way of preventing zoom when the file dialog is in the way
-func _on_FileDialog_about_to_show() -> void:
-	camera.set_process_input(false)
-
-
-func _on_FileDialog_popup_hide() -> void:
-	camera.set_process_input(true)
+	Globals.editing_layer_material = Globals.current_file.layer_materials[index]
+	layer_tree.editing_layer_material = Globals.editing_layer_material
 
 
 func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 	var mesh_maps : Dictionary = yield(_mesh_maps_generator.generate_mesh_maps(Globals.mesh, Vector2(1024, 1024)), "completed")
-	var texture_dir : String = asset_browser.ASSET_TYPES.TEXTURE.get_local_asset_directory(current_file.resource_path)
+	var texture_dir : String = asset_browser.ASSET_TYPES.TEXTURE.get_local_asset_directory(Globals.current_file.resource_path)
 	var dir := Directory.new()
 	dir.make_dir_recursive(texture_dir)
 	progress_dialog.start_task("Bake Mesh Maps", mesh_maps.size())
@@ -344,8 +275,8 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 
 
 func _on_EditMenuButton_size_selected(size) -> void:
-	result_size = size
-	_update_results(false, true)
+	Globals.result_size = size
+	Globals.editing_layer_material.update(false, true)
 
 
 func _on_LayoutNameEdit_text_entered(new_text : String) -> void:
@@ -377,22 +308,22 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 			file_dialog.current_file = ""
 			file_dialog.popup_centered()
 		FILE_MENU_ITEMS.SAVE:
-			if not current_file.resource_path:
+			if not Globals.current_file.resource_path:
 				_open_save_project_dialog()
 			else:
-				ResourceSaver.save(current_file.resource_path, current_file)
+				ResourceSaver.save(Globals.current_file.resource_path, Globals.current_file)
 		FILE_MENU_ITEMS.SAVE_AS:
 			_open_save_project_dialog()
 		FILE_MENU_ITEMS.EXPORT:
-			if current_file.resource_path:
-				progress_dialog.start_task("Export Textures", editing_layer_material.results.size())
+			if Globals.current_file.resource_path:
+				progress_dialog.start_task("Export Textures", Globals.editing_layer_material.results.size())
 				yield(get_tree(), "idle_frame")
-				for type in editing_layer_material.results:
+				for type in Globals.editing_layer_material.results:
 					progress_dialog.start_action(type)
-					var export_folder := current_file.resource_path.get_base_dir().plus_file("export")
+					var export_folder := Globals.current_file.resource_path.get_base_dir().plus_file("export")
 					var dir := Directory.new()
 					dir.make_dir_recursive(export_folder)
-					var result_data : Image = editing_layer_material.results[type].get_data()
+					var result_data : Image = Globals.editing_layer_material.results[type].get_data()
 					result_data.save_png(export_folder.plus_file(type) + ".png")
 					yield(get_tree(), "idle_frame")
 				progress_dialog.complete_task()
@@ -415,37 +346,7 @@ func _on_UndoRedo_version_changed() -> void:
 func _start_empty_project() -> void:
 	var new_file := SaveFile.new()
 	new_file.model_path = "res://3d_viewport/cube.obj"
-	set_current_file(new_file)
-
-
-func _load_model(path : String) -> void:
-	var mesh := ObjParser.parse_obj(path)
-	Globals.mesh = mesh
-	model.mesh = mesh
-	emit_signal("mesh_changed")
-	material_option_button.clear()
-	current_file.layer_materials.resize(mesh.get_surface_count())
-	for surface in mesh.get_surface_count():
-		if not current_file.layer_materials[surface]:
-			current_file.layer_materials[surface] = LayerMaterial.new()
-
-
-func _update_results(update_icons := true, use_cached_shader := false) -> void:
-	var result = editing_layer_material.update_results(result_size, use_cached_shader)
-	if result is GDScriptFunctionState:
-		yield(result, "completed")
-	results_item_list.load_layer_material(editing_layer_material)
-	model.load_materials(current_file.layer_materials)
-	if update_icons:
-		layer_tree.update_icons()
-
-
-func _update_all_layer_textures(layers : Array) -> void:
-	for layer in layers:
-		if layer is MaterialLayer:
-			yield(layer.update_all_layer_textures(result_size), "completed")
-		else:
-			yield(_update_all_layer_textures(layer.layers), "completed")
+	Globals.current_file = new_file
 
 
 func _open_save_project_dialog() -> void:
@@ -454,7 +355,7 @@ func _open_save_project_dialog() -> void:
 	file_dialog.filters = ["*.tres;Material Painter File"]
 	file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
 	file_dialog.current_file = ""
-	file_dialog.set_meta("to_save", current_file)
+	file_dialog.set_meta("to_save", Globals.current_file)
 	file_dialog.popup_centered()
 
 

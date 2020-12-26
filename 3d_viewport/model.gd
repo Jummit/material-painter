@@ -7,7 +7,17 @@ The mesh that is used to preview the generated material
 # the name of the currently viewing map, for example "albedo"
 var isolated_map : String
 
-onready var main : Control = $"../../../../../../../../../../../.."
+func _ready():
+	Globals.connect("editing_layer_material_changed", self, "_on_Globals_editing_layer_material_changed")
+
+
+func _on_Globals_editing_layer_material_changed() -> void:
+	Globals.editing_layer_material.connect("changed", self, "_on_LayerMaterial_changed")
+
+
+func _on_LayerMaterial_changed(_update_icons : bool, _use_cached_shader : bool) -> void:
+	load_materials(Globals.current_file.layer_materials)
+
 
 func load_materials(layer_materials : Array) -> void:
 	if not isolated_map:
@@ -18,11 +28,11 @@ func load_materials(layer_materials : Array) -> void:
 func _on_ResultsItemList_map_selected(map : String) -> void:
 	if map == isolated_map:
 		isolated_map = ""
-		load_materials(main.current_file.layer_materials)
+		load_materials(Globals.current_file.layer_materials)
 	else:
 		isolated_map = map
-		for material_num in main.current_file.layer_materials.size():
-			var results : Dictionary = main.current_file.layer_materials[material_num].results
+		for material_num in Globals.current_file.layer_materials.size():
+			var results : Dictionary = Globals.current_file.layer_materials[material_num].results
 			if map in results:
 				var material := SpatialMaterial.new()
 				material.albedo_texture = results[map]
