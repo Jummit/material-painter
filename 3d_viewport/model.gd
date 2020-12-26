@@ -9,6 +9,11 @@ var isolated_map : String
 
 func _ready():
 	Globals.connect("editing_layer_material_changed", self, "_on_Globals_editing_layer_material_changed")
+	Globals.connect("mesh_changed", self, "_on_Globals_mesh_changed")
+
+
+func _on_Globals_mesh_changed(to : Mesh) -> void:
+	mesh = to
 
 
 func _on_Globals_editing_layer_material_changed() -> void:
