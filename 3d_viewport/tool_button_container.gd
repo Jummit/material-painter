@@ -31,13 +31,13 @@ func _ready() -> void:
 
 
 func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
-	visible = texture_layer is BitmapTextureLayer
+	get_parent().visible = texture_layer is BitmapTextureLayer
 	if texture_layer is BitmapTextureLayer:
 		emit_signal("tool_selected", selected_tool)
 
 
 func _on_LayerTree_cell_selected() -> void:
-	hide()
+	get_parent().hide()
 
 
 func _on_ToolButton_pressed(tool_id : int) -> void:
