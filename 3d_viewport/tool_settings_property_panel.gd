@@ -6,6 +6,8 @@ The `PropertyPanel` that exposes the settings of the current brush
 Only visible when the paint tool is selected.
 """
 
+var correct_tool_selected := false
+
 const Properties = preload("res://addons/property_panel/properties.gd")
 const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
 const Asset = preload("res://main/asset_browser.gd").Asset
@@ -21,7 +23,7 @@ class TextureAssetProperty extends Properties.FilePathProperty:
 	func _drop_data(control : Control, data) -> void:
 		_set_value(control, data.data)
 
-onready var tool_button_container : VBoxContainer = $"../../../HBoxContainer/Window/ToolButtonContainer"
+onready var Tools : Dictionary = $"../../../HBoxContainer/Window/ToolButtonContainer".Tools
 
 func _ready() -> void:
 	set_properties([
@@ -37,16 +39,17 @@ func _ready() -> void:
 
 
 func _on_ToolButtonContainer_tool_selected(to : int) -> void:
-	get_parent().visible = to == tool_button_container.Tools.PAINT
+	correct_tool_selected = to == Tools.PAINT
+	get_parent().get_parent().visible = correct_tool_selected
 
 
 func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
 	if texture_layer is BitmapTextureLayer:
-		get_parent().visible = tool_button_container.selected_tool == tool_button_container.Tools.PAINT
+		get_parent().get_parent().visible = correct_tool_selected
 
 
 func _on_LayerTree_material_layer_selected(_material_layer) -> void:
-	get_parent().hide()
+	get_parent().get_parent().hide()
 
 
 func _on_LayerTree_folder_layer_selected() -> void:
