@@ -6,7 +6,14 @@ Global constants
 
 # warning-ignore-all:unused_class_variable
 var mesh : Mesh
+var selected_tool : int = Tools.PAINT
 var undo_redo := UndoRedo.new()
+
+enum Tools {
+	PAINT,
+	TRIANGLE,
+	UV_ISLANDS,
+}
 
 var TEXTURE_LAYER_TYPES := [
 	FileTextureLayer,
