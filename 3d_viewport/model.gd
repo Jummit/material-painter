@@ -7,11 +7,12 @@ The mesh that is used to preview the generated material
 # the name of the currently viewing map, for example "albedo"
 var isolated_map : String
 
-onready var main : Control = $"../../../../../../../../../.."
+onready var main : Control = $"../../../../../../../../../../../.."
 
 func load_materials(layer_materials : Array) -> void:
-	for surface in layer_materials.size():
-		set_surface_material(surface, layer_materials[surface].get_material(get_surface_material(surface)))
+	if not isolated_map:
+		for surface in layer_materials.size():
+			set_surface_material(surface, layer_materials[surface].get_material(get_surface_material(surface)))
 
 
 func _on_ResultsItemList_map_selected(map : String) -> void:
