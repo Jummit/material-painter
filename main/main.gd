@@ -59,8 +59,7 @@ onready var asset_browser : HBoxContainer = $VBoxContainer/Control/HBoxContainer
 onready var progress_dialog : PopupDialog = $ProgressDialog
 onready var save_layout_dialog : ConfirmationDialog = $SaveLayoutDialog
 onready var layout_name_edit : LineEdit = $SaveLayoutDialog/LayoutNameEdit
-onready var root_container : HSplitContainer = $VBoxContainer/Control/HBoxContainer
-onready var root : Control = $VBoxContainer/Control/
+onready var root : Control = $VBoxContainer/Control
 
 func _ready() -> void:
 	undo_redo.connect("version_changed", self, "_on_UndoRedo_version_changed")
@@ -269,16 +268,15 @@ func _on_EditMenuButton_size_selected(size) -> void:
 
 
 func _on_LayoutNameEdit_text_entered(new_text : String) -> void:
-	LayoutUtils.save_layout(root_container, LAYOUTS_FOLDER.plus_file(new_text + ".json"))
+	LayoutUtils.save_layout(root.get_child(0), LAYOUTS_FOLDER.plus_file(new_text + ".json"))
 
 
 func _on_SaveLayoutDialog_confirmed() -> void:
-	LayoutUtils.save_layout(root_container, LAYOUTS_FOLDER.plus_file(layout_name_edit.text + ".json"))
+	LayoutUtils.save_layout(root.get_child(0), LAYOUTS_FOLDER.plus_file(layout_name_edit.text + ".json"))
 
 
 func _on_ViewMenuButton_layout_selected(layout : String) -> void:
 	LayoutUtils.load_layout(root, LAYOUTS_FOLDER.plus_file(layout))
-	root_container = root.get_child(0)
 
 
 func _on_ViewMenuButton_save_layout_selected() -> void:
@@ -362,4 +360,4 @@ func _initialise_layouts() -> void:
 	if not dir.file_exists("default.json"):
 		# wait for all windows to be ready
 		yield(get_tree(), "idle_frame")
-		LayoutUtils.save_layout(root_container, LAYOUTS_FOLDER.plus_file("default.json"))
+		LayoutUtils.save_layout(root.get_child(0), LAYOUTS_FOLDER.plus_file("default.json"))
