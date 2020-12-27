@@ -226,7 +226,6 @@ __meta__ = {
 size = Vector2( 824, 322 )
 handle_input_locally = false
 msaa = 1
-render_target_update_mode = 3
 shadow_atlas_size = 4096
 
 [node name="Model" type="MeshInstance" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/Window/3DViewport/Viewport"]
