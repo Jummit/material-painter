@@ -62,7 +62,7 @@ func load_model(path : String) -> void:
 	for surface in mesh.get_surface_count():
 		if not current_file.layer_materials[surface]:
 			current_file.layer_materials[surface] = LayerMaterial.new()
-	current_file.layer_materials.front().update(false)
+	current_file.layer_materials.front().update(true)
 	set_editing_layer_material(current_file.layer_materials.front())
 	emit_signal("mesh_changed", mesh)
 
@@ -71,7 +71,7 @@ func set_current_file(save_file : SaveFile) -> void:
 	current_file = save_file
 	load_model(current_file.model_path)
 	for layer_material in current_file.layer_materials:
-		var result = layer_material.update()
+		var result = layer_material.update(true)
 		if result is GDScriptFunctionState:
 			yield(result, "completed")
 	emit_signal("current_file_changed")

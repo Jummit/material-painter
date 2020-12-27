@@ -175,10 +175,10 @@ func drop_data(position : Vector2, data) -> void:
 			var layer_position = layer.parent.layers.find(layer)
 			var new_layer = layer.duplicate()
 			
-			undo_redo.add_do_method(self, "_add_layer", new_layer, onto, onto_position)
+			undo_redo.add_do_method(Globals.editing_layer_material, "add_layer", new_layer, onto, onto_position)
 			undo_redo.add_do_method(Globals.editing_layer_material, "delete_layer", layer)
 			undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer", new_layer)
-			undo_redo.add_undo_method(self, "_add_layer", layer, layer.parent, layer_position)
+			undo_redo.add_undo_method(Globals.editing_layer_material, "add_layer", layer, layer.parent, layer_position)
 		
 		undo_redo.add_do_method(self, "load_layer_material")
 		undo_redo.add_undo_method(self, "load_layer_material")
@@ -267,8 +267,10 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 		Buttons.VISIBILITY:
 			undo_redo.create_action("Toggle Layer Visibility")
 			undo_redo.add_do_property(layer, "visible", not layer.visible)
+			undo_redo.add_do_method(layer.get_layer_texture_in(), "mark_dirty", true)
 			undo_redo.add_do_method(Globals.editing_layer_material, "update")
 			undo_redo.add_undo_property(layer, "visible", layer.visible)
+			undo_redo.add_undo_method(layer.get_layer_texture_in(), "mark_dirty", true)
 			undo_redo.add_undo_method(Globals.editing_layer_material, "update")
 			undo_redo.commit_action()
 		Buttons.ICON:
@@ -379,11 +381,6 @@ func _get_layer_type(layer_item : TreeItem) -> int:
 		return LayerType.TEXTURE_LAYER
 	else:
 		return LayerType.MATERIAL_LAYER
-
-
-func _add_layer(layer, onto, position : int) -> void:
-	onto.layers.insert(position, layer)
-	layer.parent = onto
 
 
 func _on_TextureMapButtons_changed(map : String, enabled : bool) -> void:

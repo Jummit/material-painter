@@ -16,14 +16,18 @@ this and every `Resource` class that is used inside of it has to be local to sce
 export var layers : Array
 
 var results : Dictionary
+var dirty := true
+var shader_dirty := false
 var busy := false
 
 signal results_changed
 
-const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
-const LayerTexture = preload("res://resources/texture/layer_texture.gd")
+const MaterialLayer = preload("res://resources/material/material_layer.gd")
 const MaterialFolder = preload("res://resources/material/material_folder.gd")
+const LayerTexture = preload("res://resources/texture/layer_texture.gd")
+const TextureLayer = preload("res://resources/texture/texture_layer.gd")
+const TextureFolder = preload("res://resources/texture/texture_folder.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
@@ -34,25 +38,37 @@ func _init() -> void:
 		layer.parent = self
 
 
-func add_layer(layer, onto) -> void:
+func add_layer(layer, onto, position := -1) -> void:
 	layer.parent = onto
-	onto.layers.append(layer)
+	if position == -1:
+		onto.layers.append(layer)
+	else:
+		onto.layers.insert(layer, position)
+	layer.mark_dirty(true)
 	update()
 
 
 func delete_layer(layer) -> void:
 	layer.parent.layers.erase(layer)
+	layer.parent.mark_dirty(true)
 	update()
 
 
-func update(update_shaders := false) -> void:
-	if busy:
+func mark_dirty(shader_too := false) -> void:
+	dirty = true
+	shader_dirty = shader_too
+
+
+func update(force_all := false) -> void:
+	if busy or not dirty:
 		return
+	
 	busy = true
+	
 	var flat_layers := _get_flat_layers(layers, false)
 	
 	for layer in flat_layers:
-		var result = layer.update()
+		var result = layer.update(force_all)
 		if result is GDScriptFunctionState:
 			result = yield(result, "completed")
 	
@@ -62,11 +78,9 @@ func update(update_shaders := false) -> void:
 			if not (map in layer.maps and layer.maps[map]):
 				continue
 			var map_layer_texture : LayerTexture = layer.maps[map]
-			map_layer_texture.update(true)
 			
 			var blending_layer : BlendingLayer
 			if layer.mask:
-				layer.mask.update(true)
 				blending_layer = BlendingLayer.new(
 					"texture({layer_result}, uv)", "normal", 1.0, layer.mask.result)
 			else:
@@ -82,13 +96,15 @@ func update(update_shaders := false) -> void:
 		
 		var result : Texture = yield(LayerBlendViewportManager.blend(
 				blending_layers, Globals.result_size,
-				get_instance_id() + map.hash(), update_shaders), "completed")
+				get_instance_id() + map.hash(), shader_dirty), "completed")
 		
 		if map == "height":
 			map = "normal"
 			result = yield(NormalMapGenerationViewport.get_normal_map(result),
 					"completed")
 		results[map] = result
+	dirty = false
+	shader_dirty = false
 	busy = false
 	emit_signal("results_changed")
 

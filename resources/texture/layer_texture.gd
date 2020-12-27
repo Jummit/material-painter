@@ -12,6 +12,8 @@ export var layers : Array
 var parent
 var result : Texture
 var icon : Texture
+var dirty := true
+var shader_dirty := false
 
 const TextureFolder = preload("res://resources/texture/texture_folder.gd")
 
@@ -24,21 +26,29 @@ func _init() -> void:
 		layer.parent = self
 
 
-func update(keep_viewport := true, update_shader := false) -> void:
-	result = yield(generate_result(Globals.result_size, keep_viewport, update_shader), "completed")
-	icon = yield(generate_result(Vector2(32, 32), false), "completed")
-	for layer in layers:
-		yield(layer.update_icons(), "completed")
+func update(force_all := false) -> void:
+	if not dirty and not force_all:
+		return
+	for layer in get_flat_layers(layers, false):
+		var update_result = layer.update(force_all)
+		if update_result is GDScriptFunctionState:
+			yield(update_result, "completed")
+	result = yield(generate_result(
+			Globals.result_size, shader_dirty or force_all), "completed")
+	icon = yield(generate_result(Vector2(32, 32), false, 1), "completed")
+	shader_dirty = false
+	dirty = false
 
 
-func generate_result(result_size : Vector2, update_shader := false, keep_viewport := true, custom_id := 0) -> Texture:
+func generate_result(result_size : Vector2, update_shader := false, custom_id := 0) -> Texture:
 	var blending_layers := []
 	for layer in get_flat_layers(layers, false):
 		var shader_layer = layer._get_as_shader_layer()
 		if shader_layer is GDScriptFunctionState:
 			shader_layer = yield(shader_layer, "completed")
 		blending_layers.append(shader_layer)
-	return yield(LayerBlendViewportManager.blend(blending_layers, result_size, get_instance_id() + custom_id if keep_viewport else -1, update_shader), "completed")
+	return yield(LayerBlendViewportManager.blend(blending_layers, result_size,
+			get_instance_id() + custom_id, update_shader), "completed")
 
 
 func get_flat_layers(layer_array : Array = layers, add_hidden := true, add_folders := false) -> Array:
@@ -51,3 +61,9 @@ func get_flat_layers(layer_array : Array = layers, add_hidden := true, add_folde
 		if (not layer is TextureFolder) or add_folders:
 			flat_layers.append(layer)
 	return flat_layers
+
+
+func mark_dirty(shader_too := false) -> void:
+	dirty = true
+	shader_dirty = shader_too
+	parent.mark_dirty(shader_too)

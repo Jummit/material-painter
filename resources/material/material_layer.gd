@@ -16,10 +16,11 @@ export var blend_mode := "normal"
 export var visible := true
 
 var parent
+var dirty := true
 
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
-const LayerMaterial = preload("res://resources/material/layer_material.gd")
+const MaterialFolder = preload("res://resources/material/material_folder.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
@@ -30,16 +31,21 @@ func _init() -> void:
 		layer_texture.parent = self
 
 
-func get_layer_material_in() -> LayerMaterial:
-	if parent is LayerMaterial:
-		return parent
-	else:
+func update(force_all := false) -> void:
+	if not dirty and not force_all:
+		return
+	for layer in get_layer_textures():
+		var result = layer.update(force_all)
+		if result is GDScriptFunctionState:
+			yield(result, "completed")
+	dirty = false
+
+
+func get_layer_material_in() -> Resource:
+	if parent is MaterialFolder:
 		return parent.get_layer_texture_in()
-
-
-func update() -> void:
-	for layer_texture in get_layer_textures():
-		yield(layer_texture.update(), "completed")
+	else:
+		return parent
 
 
 func get_layer_textures() -> Array:
@@ -47,3 +53,8 @@ func get_layer_textures() -> Array:
 	if mask:
 		layer_textures.append(mask)
 	return layer_textures
+
+
+func mark_dirty(shader_dirty := false) -> void:
+	dirty = true
+	get_layer_material_in().mark_dirty(shader_dirty)

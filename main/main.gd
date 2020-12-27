@@ -93,6 +93,8 @@ func set_mask(layer : MaterialLayer, mask : LayerTexture) -> void:
 	else:
 		layer.mask = mask
 		mask.parent = layer
+		mask.mark_dirty()
+	layer.mark_dirty()
 	Globals.editing_layer_material.update()
 
 
@@ -164,17 +166,17 @@ func _on_DeleteButton_pressed() -> void:
 
 
 func _on_LayerPropertyPanel_property_changed(property : String, value) -> void:
-	var affected_layer : LayerTexture = layer_property_panel.editing_layer.get_layer_texture_in()
-	if not affected_layer:
-		return
-	var use_cashed_shader = not property in ["opacity", "blend_mode"]
+	var layer = layer_property_panel.editing_layer
+	var update_shader = property in ["opacity", "blend_mode"]
 	undo_redo.create_action("Set Layer Property")
-	undo_redo.add_do_property(layer_property_panel.editing_layer, property, value)
+	undo_redo.add_do_property(layer, property, value)
 	undo_redo.add_do_method(layer_property_panel, "set_property_value", property, value)
-	undo_redo.add_do_method(Globals.editing_layer_material, "update", use_cashed_shader)
-	undo_redo.add_undo_property(layer_property_panel.editing_layer, property, layer_property_panel.editing_layer.get(property))
-	undo_redo.add_undo_method(layer_property_panel, "set_property_value", property, layer_property_panel.editing_layer.get(property))
-	undo_redo.add_undo_method(Globals.editing_layer_material, "update", use_cashed_shader)
+	undo_redo.add_do_method(layer, "mark_dirty", update_shader)
+	undo_redo.add_do_method(Globals.editing_layer_material, "update")
+	undo_redo.add_undo_property(layer, property, layer.get(property))
+	undo_redo.add_undo_method(layer_property_panel, "set_property_value", property, layer.get(property))
+	undo_redo.add_undo_method(layer, "mark_dirty", update_shader)
+	undo_redo.add_undo_method(Globals.editing_layer_material, "update")
 	undo_redo.commit_action()
 
 
@@ -204,6 +206,7 @@ func _on_MaterialLayerPopupMenu_layer_saved() -> void:
 
 func _on_Viewport_painted(layer : TextureLayer) -> void:
 	layer.parent.update_result(Globals.result_size, true, true)
+	layer.mark_dirty()
 	Globals.editing_layer_material.update()
 
 
@@ -262,7 +265,7 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 
 func _on_EditMenuButton_size_selected(size) -> void:
 	Globals.result_size = size
-	Globals.editing_layer_material.update()
+	Globals.editing_layer_material.update(true)
 
 
 func _on_LayoutNameEdit_text_entered(new_text : String) -> void:

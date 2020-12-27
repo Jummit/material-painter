@@ -17,6 +17,7 @@ export var visible := true
 var parent
 var type_name : String
 var icon : Texture
+var dirty := true
 
 const Layer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").Layer
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
@@ -27,10 +28,27 @@ func _init(_type_name : String, _name):
 	name = _name
 
 
+func mark_dirty(shader_dirty := false) -> void:
+	dirty = true
+	get_layer_texture_in().mark_dirty(shader_dirty)
+
+
+func update(force_all := false) -> void:
+	if not dirty and not force_all:
+		return
+	var shader_layer = _get_as_shader_layer()
+	if shader_layer is GDScriptFunctionState:
+		shader_layer = yield(shader_layer, "completed")
+	icon = yield(LayerBlendViewportManager.blend(
+			[shader_layer], Vector2(16, 16), get_instance_id()), "completed")
+	dirty = false
+
+
 func get_layer_texture_in() -> LayerTexture:
 	if parent is LayerTexture:
 		return parent
 	else:
+		# parent is a `TextureFolder`
 		return parent.get_layer_texture_in()
 
 
@@ -38,18 +56,5 @@ func get_properties() -> Array:
 	return []
 
 
-func generate_result(result_size : Vector2, keep_viewport := false, custom_id := 0) -> Texture:
-	var shader_layer = _get_as_shader_layer()
-	if shader_layer is GDScriptFunctionState:
-		shader_layer = yield(shader_layer, "completed")
-	return yield(LayerBlendViewportManager.blend(
-			[shader_layer], result_size,
-			get_instance_id() + custom_id if keep_viewport else -1, true), "completed")
-
-
 func _get_as_shader_layer() -> Layer:
 	return null
-
-
-func update_icons() -> void:
-	icon = yield(generate_result(Vector2(16, 16)), "completed")
