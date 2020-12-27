@@ -82,7 +82,8 @@ func update(force_all := false) -> void:
 			var blending_layer : BlendingLayer
 			if layer.mask:
 				blending_layer = BlendingLayer.new(
-					"texture({layer_result}, uv)", "normal", 1.0, layer.mask.result)
+					"texture({layer_result}, uv)",
+					"normal", 1.0, layer.mask.result)
 			else:
 				blending_layer = BlendingLayer.new("texture({layer_result}, uv)")
 			blending_layer.uniform_types.append("sampler2D")
