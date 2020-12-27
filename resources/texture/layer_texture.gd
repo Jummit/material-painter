@@ -31,7 +31,7 @@ func update(keep_viewport := true, update_shader := false) -> void:
 		yield(layer.update_icons(), "completed")
 
 
-func generate_result(result_size : Vector2, keep_viewport := true, custom_id := 0) -> Texture:
+func generate_result(result_size : Vector2, update_shader := false, keep_viewport := true, custom_id := 0) -> Texture:
 	var blending_layers := []
 	for layer in get_flat_layers(layers, false):
 		var shader_layer = layer._get_as_shader_layer()

@@ -45,7 +45,7 @@ func delete_layer(layer) -> void:
 	update()
 
 
-func update() -> void:
+func update(update_shaders := false) -> void:
 	if busy:
 		return
 	busy = true
@@ -82,7 +82,7 @@ func update() -> void:
 		
 		var result : Texture = yield(LayerBlendViewportManager.blend(
 				blending_layers, Globals.result_size,
-				get_instance_id() + map.hash()), "completed")
+				get_instance_id() + map.hash(), update_shaders), "completed")
 		
 		if map == "height":
 			map = "normal"
