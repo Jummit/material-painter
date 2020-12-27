@@ -50,8 +50,8 @@ __meta__ = {
 
 [node name="Panel" type="Panel" parent="VBoxContainer"]
 margin_right = 1024.0
-margin_bottom = 20.0
-rect_min_size = Vector2( 0, 20 )
+margin_bottom = 23.0
+rect_min_size = Vector2( 0, 23 )
 
 [node name="TopButtons" type="HBoxContainer" parent="VBoxContainer/Panel"]
 anchor_right = 1.0
@@ -85,7 +85,7 @@ switch_on_hover = true
 script = ExtResource( 5 )
 
 [node name="Control" type="Control" parent="VBoxContainer"]
-margin_top = 24.0
+margin_top = 27.0
 margin_right = 1024.0
 margin_bottom = 600.0
 size_flags_horizontal = 3
@@ -123,17 +123,17 @@ __meta__ = {
 
 [node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer/Control/HBoxContainer"]
 margin_right = 1024.0
-margin_bottom = 576.0
+margin_bottom = 573.0
 split_offset = 2056
 
 [node name="VBoxContainer" type="VSplitContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer"]
 margin_right = 772.0
-margin_bottom = 576.0
+margin_bottom = 573.0
 split_offset = 1730
 
 [node name="VBoxContainer" type="VSplitContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer"]
 margin_right = 772.0
-margin_bottom = 384.0
+margin_bottom = 381.0
 
 [node name="Window" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer" instance=ExtResource( 22 )]
 visible = false
@@ -174,7 +174,7 @@ __meta__ = {
 
 [node name="HBoxContainer" type="HSplitContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer"]
 margin_right = 772.0
-margin_bottom = 384.0
+margin_bottom = 381.0
 
 [node name="Window" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 22 )]
 visible = false
@@ -199,7 +199,7 @@ __meta__ = {
 
 [node name="ViewportTabContainer" type="TabContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
 margin_right = 772.0
-margin_bottom = 384.0
+margin_bottom = 381.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 drag_to_rearrange_enabled = true
@@ -225,7 +225,7 @@ __meta__ = {
 }
 
 [node name="Viewport" type="Viewport" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/Window/3DViewport"]
-size = Vector2( 772, 329 )
+size = Vector2( 772, 326 )
 handle_input_locally = false
 msaa = 1
 render_target_update_mode = 3
@@ -274,16 +274,16 @@ __meta__ = {
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 0.0
-margin_top = 396.0
+margin_top = 393.0
 margin_right = 772.0
-margin_bottom = 576.0
+margin_bottom = 573.0
 rect_min_size = Vector2( 400, 180 )
 title = "Asset Browser"
 
 [node name="AssetBrowser" type="HBoxContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = 17.0
+margin_top = 22.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.55
@@ -294,7 +294,7 @@ __meta__ = {
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser"]
 margin_right = 230.0
-margin_bottom = 163.0
+margin_bottom = 158.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser/VBoxContainer"]
 margin_right = 230.0
@@ -319,7 +319,7 @@ text = "Remove Tag"
 [node name="TagList" type="Tree" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser/VBoxContainer"]
 margin_top = 33.0
 margin_right = 230.0
-margin_bottom = 163.0
+margin_bottom = 158.0
 rect_min_size = Vector2( 200, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -328,7 +328,7 @@ hide_root = true
 [node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser"]
 margin_left = 234.0
 margin_right = 772.0
-margin_bottom = 163.0
+margin_bottom = 158.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -340,7 +340,7 @@ placeholder_text = "search..."
 [node name="AssetList" type="ItemList" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser/VBoxContainer2"]
 margin_top = 23.0
 margin_right = 538.0
-margin_bottom = 163.0
+margin_bottom = 158.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 max_columns = 100
@@ -351,7 +351,7 @@ fixed_icon_size = Vector2( 128, 128 )
 [node name="LayerPanelContainer" type="VSplitContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer"]
 margin_left = 784.0
 margin_right = 1024.0
-margin_bottom = 576.0
+margin_bottom = 573.0
 split_offset = 164
 
 [node name="Window" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer" instance=ExtResource( 22 )]
@@ -366,7 +366,7 @@ title = "Material"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window"]
 anchor_right = 1.0
-margin_top = 24.0
+margin_top = 22.0
 margin_bottom = 22.0
 alignment = 2
 __meta__ = {
@@ -401,7 +401,7 @@ text = "-"
 [node name="LayerTree" type="Tree" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = 52.0
+margin_top = 53.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 custom_colors/drop_position_color = Color( 0.709804, 0.764706, 0.909804, 1 )
@@ -440,15 +440,14 @@ anchor_bottom = 0.0
 margin_left = 0.0
 margin_top = 276.0
 margin_right = 240.0
-margin_bottom = 576.0
+margin_bottom = 573.0
 rect_min_size = Vector2( 240, 200 )
 title = "Properties"
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = 15.0
-margin_right = -1.52588e-05
+margin_top = 22.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -459,8 +458,8 @@ margin_right = 179.0
 margin_bottom = 0.0
 
 [node name="LayerPropertyPanel" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer" instance=ExtResource( 17 )]
-margin_right = 239.0
-margin_bottom = 285.0
+margin_right = 240.0
+margin_bottom = 275.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 6 )
