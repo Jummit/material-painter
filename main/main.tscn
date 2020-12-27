@@ -124,16 +124,16 @@ __meta__ = {
 [node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer/Control/HBoxContainer"]
 margin_right = 1024.0
 margin_bottom = 573.0
-split_offset = 2056
 
 [node name="VBoxContainer" type="VSplitContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer"]
 margin_right = 772.0
 margin_bottom = 573.0
-split_offset = 1730
+size_flags_horizontal = 3
 
 [node name="VBoxContainer" type="VSplitContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer"]
 margin_right = 772.0
 margin_bottom = 381.0
+size_flags_vertical = 3
 
 [node name="Window" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer" instance=ExtResource( 22 )]
 visible = false
@@ -352,7 +352,7 @@ fixed_icon_size = Vector2( 128, 128 )
 margin_left = 784.0
 margin_right = 1024.0
 margin_bottom = 573.0
-split_offset = 164
+split_offset = 187
 
 [node name="Window" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer" instance=ExtResource( 22 )]
 anchor_right = 0.0
@@ -360,7 +360,7 @@ anchor_bottom = 0.0
 margin_left = 0.0
 margin_top = 0.0
 margin_right = 240.0
-margin_bottom = 264.0
+margin_bottom = 287.0
 rect_min_size = Vector2( 180, 100 )
 title = "Material"
 
@@ -438,7 +438,7 @@ __meta__ = {
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 0.0
-margin_top = 276.0
+margin_top = 299.0
 margin_right = 240.0
 margin_bottom = 573.0
 rect_min_size = Vector2( 240, 200 )
@@ -459,7 +459,7 @@ margin_bottom = 0.0
 
 [node name="LayerPropertyPanel" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer" instance=ExtResource( 17 )]
 margin_right = 240.0
-margin_bottom = 275.0
+margin_bottom = 252.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 6 )
