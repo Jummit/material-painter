@@ -16,6 +16,7 @@ export var visible := true
 
 var parent
 var type_name : String
+var icon : Texture
 
 const Layer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").Layer
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
@@ -48,3 +49,7 @@ func generate_result(result_size : Vector2, keep_viewport := false, custom_id :=
 
 func _get_as_shader_layer() -> Layer:
 	return null
+
+
+func update_icons() -> void:
+	icon = yield(generate_result(Vector2(16, 16)), "completed")

@@ -10,6 +10,7 @@ export var visible := true
 export var layers : Array
 
 var parent
+var icon : Texture
 
 func _init():
 	resource_local_to_scene = true

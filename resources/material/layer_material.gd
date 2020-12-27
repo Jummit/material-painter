@@ -16,6 +16,7 @@ this and every `Resource` class that is used inside of it has to be local to sce
 export var layers : Array
 
 var results : Dictionary
+var busy := false
 
 signal results_changed
 
@@ -33,20 +34,41 @@ func _init() -> void:
 		layer.parent = self
 
 
-func update_results(result_size : Vector2, use_cached_shader := false) -> void:
-	var flat_layers := get_flat_layers(layers, false)
+func add_layer(layer, onto) -> void:
+	layer.parent = onto
+	onto.layers.append(layer)
+	update()
+
+
+func delete_layer(layer) -> void:
+	layer.parent.layers.erase(layer)
+	update()
+
+
+func update() -> void:
+	if busy:
+		return
+	busy = true
+	var flat_layers := _get_flat_layers(layers, false)
+	
+	for layer in flat_layers:
+		var result = layer.update()
+		if result is GDScriptFunctionState:
+			result = yield(result, "completed")
+	
 	for map in Globals.TEXTURE_MAP_TYPES:
 		var blending_layers := []
 		for layer in flat_layers:
 			if not (map in layer.maps and layer.maps[map]):
 				continue
 			var map_layer_texture : LayerTexture = layer.maps[map]
-			map_layer_texture.update_result(result_size, true, use_cached_shader)
+			map_layer_texture.update(true)
 			
 			var blending_layer : BlendingLayer
 			if layer.mask:
-				layer.mask.update_result(result_size, true, use_cached_shader)
-				blending_layer = BlendingLayer.new("texture({layer_result}, uv)", "normal", 1.0, layer.mask.result)
+				layer.mask.update(true)
+				blending_layer = BlendingLayer.new(
+					"texture({layer_result}, uv)", "normal", 1.0, layer.mask.result)
 			else:
 				blending_layer = BlendingLayer.new("texture({layer_result}, uv)")
 			blending_layer.uniform_types.append("sampler2D")
@@ -59,33 +81,16 @@ func update_results(result_size : Vector2, use_cached_shader := false) -> void:
 			continue
 		
 		var result : Texture = yield(LayerBlendViewportManager.blend(
-				blending_layers, result_size, get_instance_id() + map.hash(), use_cached_shader), "completed")
+				blending_layers, Globals.result_size,
+				get_instance_id() + map.hash()), "completed")
 		
 		if map == "height":
 			map = "normal"
-			result = yield(NormalMapGenerationViewport.get_normal_map(result), "completed")
+			result = yield(NormalMapGenerationViewport.get_normal_map(result),
+					"completed")
 		results[map] = result
+	busy = false
 	emit_signal("results_changed")
-
-
-func update_all_layer_textures(result_size : Vector2) -> void:
-	var flat_layers := get_flat_layers(layers, false)
-	for layer in flat_layers:
-		var result = layer.update_all_layer_textures(result_size)
-		if result is GDScriptFunctionState:
-			result = yield(result, "completed")
-
-
-func get_flat_layers(layer_array : Array = layers, add_hidden := true) -> Array:
-	var flat_layers := []
-	for layer in layer_array:
-		if (not add_hidden) and not layer.visible:
-			continue
-		if layer is MaterialFolder:
-			flat_layers += get_flat_layers(layer.layers, add_hidden)
-		else:
-			flat_layers.append(layer)
-	return flat_layers
 
 
 func get_material(existing : SpatialMaterial = null) -> SpatialMaterial:
@@ -111,40 +116,13 @@ func get_material(existing : SpatialMaterial = null) -> SpatialMaterial:
 	return material
 
 
-func add_layer(layer, onto) -> void:
-	layer.parent = onto
-	onto.layers.append(layer)
-	if layer.has_method("get_layer_texture_in"):
-		yield(layer.get_layer_texture_in().update_result(Globals.result_size), "completed")
-	else:
-		if layer.get_script() == load("res://resources/material/material_layer.gd"):
-			var result = layer.update_all_layer_textures(Globals.result_size)
-			if result is GDScriptFunctionState:
-				yield(result, "completed")
+func _get_flat_layers(layer_array : Array = layers, add_hidden := true) -> Array:
+	var flat_layers := []
+	for layer in layer_array:
+		if (not add_hidden) and not layer.visible:
+			continue
+		if layer is MaterialFolder:
+			flat_layers += _get_flat_layers(layer.layers, add_hidden)
 		else:
-			var result = _update_all_layer_textures(layer.layers)
-			if result is GDScriptFunctionState:
-				yield(result, "completed")
-	update_results(Globals.result_size)
-
-
-func delete_layer(layer) -> void:
-	layer.parent.layers.erase(layer)
-	if layer.has_method("get_layer_texture_in"):
-		yield(layer.get_layer_texture_in().update_result(Globals.result_size), "completed")
-	update_results(Globals.result_size, false)
-
-
-func _update_all_layer_textures(layers_to_update : Array) -> void:
-	for layer in layers_to_update:
-		if layer.get_script() == load("res://resources/material/layer_material.gd"):
-			yield(layer.update_all_layer_textures(Globals.result_size), "completed")
-		else:
-			yield(_update_all_layer_textures(layer.layers), "completed")
-
-
-func update(_update_icons := true, _use_cached_shader := false) -> void:
-	var result = update_results(Globals.result_size, _use_cached_shader)
-	if result is GDScriptFunctionState:
-		yield(result, "completed")
-	emit_signal("results_changed")
+			flat_layers.append(layer)
+	return flat_layers

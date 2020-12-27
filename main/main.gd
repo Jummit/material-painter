@@ -163,30 +163,18 @@ func _on_DeleteButton_pressed() -> void:
 		undo_redo.commit_action()
 
 
-func _on_TextureMapButtons_changed(_map : String, _enabled : bool) -> void:
-	Globals.editing_layer_material.update(false)
-
-
-func _on_LayerTree_layer_visibility_changed(layer) -> void:
-	if layer is TextureLayer:
-		layer.parent.update_result(Globals.result_size)
-	Globals.editing_layer_material.update()
-
-
 func _on_LayerPropertyPanel_property_changed(property : String, value) -> void:
-	undo_redo.create_action("Set Layer Property")
-	undo_redo.add_do_property(layer_property_panel.editing_layer, property, value)
 	var affected_layer : LayerTexture = layer_property_panel.editing_layer.get_layer_texture_in()
 	if not affected_layer:
 		return
 	var use_cashed_shader = not property in ["opacity", "blend_mode"]
+	undo_redo.create_action("Set Layer Property")
+	undo_redo.add_do_property(layer_property_panel.editing_layer, property, value)
 	undo_redo.add_do_method(layer_property_panel, "set_property_value", property, value)
-	undo_redo.add_do_method(affected_layer, "update_result", Globals.result_size, true, use_cashed_shader)
-	undo_redo.add_do_method(Globals.editing_layer_material, "update", true, use_cashed_shader)
+	undo_redo.add_do_method(Globals.editing_layer_material, "update", use_cashed_shader)
 	undo_redo.add_undo_property(layer_property_panel.editing_layer, property, layer_property_panel.editing_layer.get(property))
-	undo_redo.add_undo_method(affected_layer, "update_result", Globals.result_size, true, use_cashed_shader)
 	undo_redo.add_undo_method(layer_property_panel, "set_property_value", property, layer_property_panel.editing_layer.get(property))
-	undo_redo.add_undo_method(Globals.editing_layer_material, "update", true, use_cashed_shader)
+	undo_redo.add_undo_method(Globals.editing_layer_material, "update", use_cashed_shader)
 	undo_redo.commit_action()
 
 
@@ -216,7 +204,7 @@ func _on_MaterialLayerPopupMenu_layer_saved() -> void:
 
 func _on_Viewport_painted(layer : TextureLayer) -> void:
 	layer.parent.update_result(Globals.result_size, true, true)
-	Globals.editing_layer_material.update(false, true)
+	Globals.editing_layer_material.update()
 
 
 func _on_MaterialLayerPopupMenu_mask_added(mask : LayerTexture) -> void:
@@ -274,7 +262,7 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 
 func _on_EditMenuButton_size_selected(size) -> void:
 	Globals.result_size = size
-	Globals.editing_layer_material.update(false, true)
+	Globals.editing_layer_material.update()
 
 
 func _on_LayoutNameEdit_text_entered(new_text : String) -> void:

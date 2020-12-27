@@ -71,7 +71,7 @@ func set_current_file(save_file : SaveFile) -> void:
 	current_file = save_file
 	load_model(current_file.model_path)
 	for layer_material in current_file.layer_materials:
-		var result = layer_material.update_all_layer_textures(result_size)
+		var result = layer_material.update()
 		if result is GDScriptFunctionState:
 			yield(result, "completed")
 	emit_signal("current_file_changed")

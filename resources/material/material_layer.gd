@@ -37,10 +37,9 @@ func get_layer_material_in() -> LayerMaterial:
 		return parent.get_layer_texture_in()
 
 
-func update_all_layer_textures(result_size : Vector2) -> void:
-	for layer_texture in maps.values() + [mask]:
-		if layer_texture:
-			yield(layer_texture.update_result(result_size), "completed")
+func update() -> void:
+	for layer_texture in get_layer_textures():
+		yield(layer_texture.update(), "completed")
 
 
 func get_layer_textures() -> Array:
