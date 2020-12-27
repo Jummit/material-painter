@@ -43,7 +43,7 @@ func add_layer(layer, onto, position := -1) -> void:
 	if position == -1:
 		onto.layers.append(layer)
 	else:
-		onto.layers.insert(layer, position)
+		onto.layers.insert(position, layer)
 	layer.mark_dirty(true)
 	update()
 
