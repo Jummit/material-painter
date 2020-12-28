@@ -317,17 +317,20 @@ func _on_item_edited() -> void:
 
 func _draw_material_layer_item(material_layer_item : TreeItem, item_rect : Rect2) -> void:
 	var material_layer = material_layer_item.get_meta("layer")
-	if not material_layer is MaterialLayer or not material_layer in _selected_layer_textures:
+	if not material_layer is MaterialLayer or\
+			not material_layer in _selected_layer_textures:
 		return
-	var icon_rect := Rect2(Vector2(68, 3 + item_rect.position.y), Vector2(32, 32))
-	if _selected_layer_textures[material_layer] == material_layer.mask and material_layer.maps.size() > 0:
-		icon_rect.position.x = 25
+	var icon_rect := Rect2(Vector2(68, item_rect.position.y - 1), Vector2(32, 32))
+	if _selected_layer_textures[material_layer] == material_layer.mask and\
+			material_layer.maps.size() > 0:
+		icon_rect.position.x = 23
 	if material_layer.maps.size() > 1:
-		icon_rect.position.x -= 25
+		icon_rect.position.x -= 31
 	draw_rect(icon_rect, Color.dodgerblue, false, 2.0)
 
 
-func _setup_material_layer_item(material_layer, parent_item : TreeItem, selected_layer) -> void:
+func _setup_material_layer_item(material_layer, parent_item : TreeItem,
+		selected_layer) -> void:
 	var material_layer_item := create_item(parent_item)
 	if material_layer_item == selected_layer:
 		_select_item(material_layer_item)
