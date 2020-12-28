@@ -265,12 +265,17 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 				_selected_layer_textures[layer] = layer.mask
 			load_layer_material()
 		Buttons.VISIBILITY:
+			var parent
+			if layer is MaterialLayer:
+				parent = layer.get_layer_material_in()
+			elif layer is TextureLayer:
+				parent = layer.get_layer_texture_in()
 			undo_redo.create_action("Toggle Layer Visibility")
 			undo_redo.add_do_property(layer, "visible", not layer.visible)
-			undo_redo.add_do_method(layer.get_layer_texture_in(), "mark_dirty", true)
+			undo_redo.add_do_method(parent, "mark_dirty", true)
 			undo_redo.add_do_method(Globals.editing_layer_material, "update")
 			undo_redo.add_undo_property(layer, "visible", layer.visible)
-			undo_redo.add_undo_method(layer.get_layer_texture_in(), "mark_dirty", true)
+			undo_redo.add_undo_method(parent, "mark_dirty", true)
 			undo_redo.add_undo_method(Globals.editing_layer_material, "update")
 			undo_redo.commit_action()
 		Buttons.ICON:
