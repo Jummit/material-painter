@@ -201,10 +201,11 @@ func drop_data(position : Vector2, data) -> void:
 
 
 func load_layer_material() -> void:
+	var selected_layer = get_selected_layer()
 	clear()
 	_root = create_item()
 	for material_layer in Globals.editing_layer_material.layers:
-		_setup_material_layer_item(material_layer, _root)
+		_setup_material_layer_item(material_layer, _root, selected_layer)
 
 
 func select_map(layer : MaterialLayer, map : String, expand := false) -> void:
@@ -326,8 +327,10 @@ func _draw_material_layer_item(material_layer_item : TreeItem, item_rect : Rect2
 	draw_rect(icon_rect, Color.dodgerblue, false, 2.0)
 
 
-func _setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
+func _setup_material_layer_item(material_layer, parent_item : TreeItem, selected_layer) -> void:
 	var material_layer_item := create_item(parent_item)
+	if material_layer_item == selected_layer:
+		_select_item(material_layer_item)
 	material_layer_item.set_meta("layer", material_layer)
 	material_layer_item.custom_minimum_height = 32
 	
@@ -338,7 +341,7 @@ func _setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
 			else:
 				var selected_layer_texture : LayerTexture = _selected_layer_textures[material_layer]
 				for texture_layer in selected_layer_texture.layers:
-					_setup_texture_layer_item(texture_layer, material_layer_item, selected_layer_texture)
+					_setup_texture_layer_item(texture_layer, material_layer_item, selected_layer_texture, selected_layer)
 		
 		if not material_layer in _selected_maps and material_layer.maps.size() > 0:
 			_selected_maps[material_layer] = material_layer.maps.values().front()
@@ -361,11 +364,13 @@ func _setup_material_layer_item(material_layer, parent_item : TreeItem) -> void:
 	
 	if material_layer is MaterialFolder and material_layer in _expanded_folders:
 		for layer in material_layer.layers:
-			_setup_material_layer_item(layer, material_layer_item)
+			_setup_material_layer_item(layer, material_layer_item, selected_layer)
 
 
-func _setup_texture_layer_item(texture_layer, parent_item : TreeItem, layer_texture : LayerTexture) -> void:
+func _setup_texture_layer_item(texture_layer, parent_item : TreeItem, layer_texture : LayerTexture, selected_layer) -> void:
 	var texture_layer_item := create_item(parent_item)
+	if texture_layer == selected_layer:
+		_select_item(texture_layer_item)
 	texture_layer_item.set_meta("layer", texture_layer)
 	texture_layer_item.custom_minimum_height = 16
 	
@@ -378,7 +383,7 @@ func _setup_texture_layer_item(texture_layer, parent_item : TreeItem, layer_text
 	texture_layer_item.add_button(1, _get_visibility_icon(texture_layer.visible), Buttons.VISIBILITY)
 	if texture_layer is TextureFolder and texture_layer in _expanded_folders:
 		for layer in texture_layer.layers:
-			_setup_texture_layer_item(layer, texture_layer_item, layer_texture)
+			_setup_texture_layer_item(layer, texture_layer_item, layer_texture, selected_layer)
 
 
 func _get_layer_type(layer_item : TreeItem) -> int:
@@ -395,3 +400,12 @@ func _on_TextureMapButtons_changed(map : String, enabled : bool) -> void:
 
 func _get_visibility_icon(is_visible : bool) -> Texture:
 	return preload("res://icons/icon_visible.svg") if is_visible else preload("res://icons/icon_hidden.svg")
+
+
+func _select_item(item : TreeItem) -> void:
+	# hack to select a `TreeItem` in SelectMode.SELECT_MULTI
+	select_mode = Tree.SELECT_SINGLE
+	set_block_signals(true)
+	item.select(1)
+	select_mode = Tree.SELECT_MULTI
+	set_block_signals(false)
