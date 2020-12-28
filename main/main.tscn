@@ -206,7 +206,7 @@ drag_to_rearrange_enabled = true
 
 [node name="Window" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer" instance=ExtResource( 22 )]
 margin_left = 0.0
-margin_top = 29.0
+margin_top = 22.0
 margin_right = 0.0
 margin_bottom = 0.0
 rect_min_size = Vector2( 140, 200 )
@@ -225,7 +225,7 @@ __meta__ = {
 }
 
 [node name="Viewport" type="Viewport" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/Window/3DViewport"]
-size = Vector2( 772, 326 )
+size = Vector2( 772, 333 )
 handle_input_locally = false
 msaa = 1
 render_target_update_mode = 3
@@ -251,10 +251,10 @@ environment = ExtResource( 10 )
 
 [node name="Window2" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer" instance=ExtResource( 22 )]
 visible = false
-margin_left = 4.0
-margin_top = 32.0
-margin_right = -4.0
-margin_bottom = -4.0
+margin_left = 0.0
+margin_top = 29.0
+margin_right = 0.0
+margin_bottom = 0.0
 rect_min_size = Vector2( 40, 200 )
 title = "2D Viewport"
 
@@ -293,32 +293,32 @@ __meta__ = {
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser"]
-margin_right = 230.0
+margin_right = 240.0
 margin_bottom = 158.0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser/VBoxContainer"]
-margin_right = 230.0
+margin_right = 240.0
 margin_bottom = 29.0
 
 [node name="TagNameEdit" type="LineEdit" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser/VBoxContainer/HBoxContainer"]
-margin_right = 60.0
+margin_right = 70.0
 margin_bottom = 29.0
 
 [node name="AddTagButton" type="Button" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser/VBoxContainer/HBoxContainer"]
-margin_left = 64.0
-margin_right = 131.0
+margin_left = 74.0
+margin_right = 141.0
 margin_bottom = 29.0
 text = "Add Tag"
 
 [node name="RemoveTagButton" type="Button" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser/VBoxContainer/HBoxContainer"]
-margin_left = 135.0
-margin_right = 230.0
+margin_left = 145.0
+margin_right = 240.0
 margin_bottom = 29.0
 text = "Remove Tag"
 
 [node name="TagList" type="Tree" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser/VBoxContainer"]
 margin_top = 33.0
-margin_right = 230.0
+margin_right = 240.0
 margin_bottom = 158.0
 rect_min_size = Vector2( 200, 0 )
 size_flags_horizontal = 3
@@ -326,20 +326,20 @@ size_flags_vertical = 3
 hide_root = true
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser"]
-margin_left = 234.0
+margin_left = 244.0
 margin_right = 772.0
 margin_bottom = 158.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="SearchEdit" type="LineEdit" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser/VBoxContainer2"]
-margin_right = 538.0
-margin_bottom = 19.0
+margin_right = 528.0
+margin_bottom = 29.0
 placeholder_text = "search..."
 
 [node name="AssetList" type="ItemList" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser/VBoxContainer2"]
-margin_top = 23.0
-margin_right = 538.0
+margin_top = 33.0
+margin_right = 528.0
 margin_bottom = 158.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -479,6 +479,14 @@ __meta__ = {
 }
 
 [node name="ProgressDialog" parent="." instance=ExtResource( 4 )]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -134.0
+margin_top = -39.0
+margin_right = 134.0
+margin_bottom = 44.0
 
 [node name="SaveLayoutDialog" type="ConfirmationDialog" parent="."]
 anchor_left = 0.5
@@ -486,9 +494,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 margin_left = -100.0
-margin_top = -40.5
+margin_top = -40.0
 margin_right = 100.0
-margin_bottom = 40.5
+margin_bottom = 59.0
 rect_min_size = Vector2( 150, 52.5 )
 window_title = "Save Current Layout"
 dialog_text = "Name of the layout:"
@@ -500,9 +508,9 @@ __meta__ = {
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = 8.0
-margin_top = 22.0
+margin_top = 29.0
 margin_right = -8.0
-margin_bottom = -35.0
+margin_bottom = -41.0
 
 [node name="WindowDragReceiver" parent="." instance=ExtResource( 23 )]
 
@@ -542,8 +550,8 @@ margin_bottom = -35.0
 [connection signal="material_layer_selected" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window/LayerTree" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer/LayerPropertyPanel" method="_on_LayerTree_material_layer_selected"]
 [connection signal="material_layer_selected" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window/LayerTree" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer/TextureMapButtons" method="_on_LayerTree_material_layer_selected"]
 [connection signal="texture_layer_selected" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window/LayerTree" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/Window/3DViewport" method="_on_LayerTree_texture_layer_selected"]
-[connection signal="texture_layer_selected" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window/LayerTree" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/Window/ToolButtonContainer" method="_on_LayerTree_texture_layer_selected"]
 [connection signal="texture_layer_selected" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window/LayerTree" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/Window/ToolSettingsContainer/ToolSettingsPropertyPanel" method="_on_LayerTree_texture_layer_selected"]
+[connection signal="texture_layer_selected" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window/LayerTree" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/Window/ToolButtonContainer" method="_on_LayerTree_texture_layer_selected"]
 [connection signal="texture_layer_selected" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window/LayerTree" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer/LayerPropertyPanel" method="_on_LayerTree_texture_layer_selected"]
 [connection signal="texture_layer_selected" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window/LayerTree" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer/TextureMapButtons" method="_on_LayerTree_texture_layer_selected"]
 [connection signal="about_to_show" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window/LayerTree/LayerPopupMenu" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window/LayerTree/LayerPopupMenu" method="_on_about_to_show"]
