@@ -204,7 +204,6 @@ func _on_MaterialLayerPopupMenu_layer_saved() -> void:
 
 
 func _on_Viewport_painted(layer : TextureLayer) -> void:
-	layer.parent.update_result(Globals.result_size, true, true)
 	layer.mark_dirty()
 	Globals.editing_layer_material.update()
 

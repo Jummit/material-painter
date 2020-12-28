@@ -10,6 +10,8 @@ export var visible := true
 export var layers : Array
 
 var parent
+var dirty := false
+var shader_dirty := false
 var icon : Texture
 
 func _init():
@@ -27,3 +29,9 @@ func get_layer_texture_in() -> Resource:
 		return parent.get_layer_texture_in()
 	else:
 		return parent
+
+
+func mark_dirty(shader_too := false) -> void:
+	dirty = true
+	shader_dirty = shader_too
+	parent.mark_dirty(shader_dirty)

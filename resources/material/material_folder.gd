@@ -10,6 +10,8 @@ export var visible := true
 export var layers : Array
 
 var parent
+var dirty := false
+var shader_dirty := false
 
 func _init() -> void:
 	resource_local_to_scene = true
@@ -26,3 +28,9 @@ func get_layer_material_in() -> Resource:
 		return parent.get_layer_material_in()
 	else:
 		return parent
+
+
+func mark_dirty(shader_too := false) -> void:
+	dirty = true
+	shader_dirty = shader_too
+	parent.mark_dirty(shader_dirty)

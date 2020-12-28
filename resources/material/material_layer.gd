@@ -43,7 +43,7 @@ func update(force_all := false) -> void:
 
 func get_layer_material_in() -> Resource:
 	if parent is MaterialFolder:
-		return parent.get_layer_texture_in()
+		return parent.get_layer_material_in()
 	else:
 		return parent
 
