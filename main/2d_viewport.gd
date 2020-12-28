@@ -14,9 +14,12 @@ const MeshUtils = preload("res://utils/mesh_utils.gd")
 onready var model : MeshInstance = $"../../Window/3DViewport/Viewport/Model"
 onready var layer_tree : Tree = $"../../../../../../LayerPanelContainer/Window/LayerTree"
 
+func _ready():
+	Globals.connect("mesh_changed", self, "_on_Globals_mesh_changed")
+
+
 func _draw() -> void:
 	draw_faces_as_lines()
-	Globals.connect("mesh_changed", self, "_on_Globals_mesh_changed")
 
 
 func _on_Globals_mesh_changed(mesh : Mesh) -> void:
