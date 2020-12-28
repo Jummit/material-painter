@@ -1,0 +1,7 @@
+Background: 222222
+Background Selected: 292929
+Disabled:   181818
+Deselected: 2f2f2f
+Foreground: 353535
+Hovered:    555555
+Selected:   9c9c9c
