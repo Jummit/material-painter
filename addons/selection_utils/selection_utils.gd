@@ -4,7 +4,11 @@ var mesh : Mesh setget set_mesh
 
 var _prepared_meshes := {}
 var _selection_types := {
-	SelectionType.TRIANGLE : preload("selection_types/triangle_selection.gd")
+	SelectionType.TRIANGLE : preload("selection_types/triangle_selection.gd"),
+	SelectionType.QUAD : preload("selection_types/quad_selection.gd"),
+	SelectionType.MESH_ISLAND : preload("selection_types/mesh_island_selection.gd"),
+	SelectionType.UV_ISLAND : preload("selection_types/uv_island_selection.gd"),
+	SelectionType.FLAT_SURFACE : preload("selection_types/flat_surface_selection.gd"),
 }
 
 enum SelectionType {
@@ -12,6 +16,7 @@ enum SelectionType {
 	QUAD,
 	MESH_ISLAND,
 	UV_ISLAND,
+	FLAT_SURFACE,
 }
 
 onready var isolate_viewport : Viewport = $IsolateViewport

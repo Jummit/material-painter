@@ -17,9 +17,12 @@ signal current_file_changed
 signal editing_layer_material_changed
 
 enum Tools {
-	PAINT,
 	TRIANGLE,
+	QUADS,
+	MESH_ISLANDS,
 	UV_ISLANDS,
+	FLAT_SURFACE,
+	PAINT,
 }
 
 var TEXTURE_LAYER_TYPES := [

@@ -42,17 +42,20 @@ func _on_Globals_mesh_changed(mesh : Mesh) -> void:
 func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
 		if event.pressed:
-			if _can_paint_with_tool(Globals.Tools.TRIANGLE):
-				_select(layer_tree.get_selected_layer(),
-						SelectionUtils.SelectionType.TRIANGLE, event.position)
-			elif _can_paint_with_tool(Globals.Tools.PAINT):
-				_paint(layer_tree.get_selected_layer(), event.position,
-						event.position)
-				last_painted_position = event.position
+			if layer_tree.get_selected_layer() is BitmapTextureLayer:
+				if Globals.selected_tool == Globals.Tools.PAINT:
+					_paint(layer_tree.get_selected_layer(), event.position,
+							event.position)
+					last_painted_position = event.position
+				else:
+					_select(layer_tree.get_selected_layer(),
+							Globals.selected_tool,
+							event.position)
 	
 	if not get_viewport().gui_is_dragging() and event is InputEventMouseMotion\
 			and Input.is_mouse_button_pressed(BUTTON_LEFT) and\
-			_can_paint_with_tool(Globals.Tools.PAINT):
+			layer_tree.get_selected_layer() is BitmapTextureLayer\
+			and Globals.selected_tool == Globals.Tools.PAINT:
 		_paint(layer_tree.get_selected_layer(), last_painted_position,
 				event.position)
 		last_painted_position = event.position
@@ -92,11 +95,6 @@ func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
 func _on_ToolSettingsPropertyPanel_brush_changed(brush : Brush) -> void:
 	yield(self, "tree_entered")
 	painter.brush = brush
-
-
-func _can_paint_with_tool(tool_id : int) -> bool:
-	return layer_tree.get_selected_layer() is BitmapTextureLayer\
-			and Globals.selected_tool == tool_id
 
 
 func _select(on_texture_layer : BitmapTextureLayer, type : int, position : Vector2):

@@ -15,7 +15,7 @@
    version="1.1"
    id="SVGRoot"
    inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
-   sodipodi:docname="triangle.svg">
+   sodipodi:docname="quads.svg">
   <defs
      id="defs847" />
   <sodipodi:namedview
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="16"
-     inkscape:cx="17.124326"
-     inkscape:cy="18.61321"
+     inkscape:zoom="11.313708"
+     inkscape:cx="-11.235634"
+     inkscape:cy="17.948733"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -55,13 +55,17 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1">
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:2.11948252;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:5.66666698;stroke-dasharray:none;stroke-dashoffset:0.77253538;stroke-opacity:1;paint-order:stroke fill markers"
+       id="rect3031"
+       width="29.558958"
+       height="29.558958"
+       x="1.2205212"
+       y="1.2205212" />
     <path
-       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:2.222;stroke-linecap:square;stroke-miterlimit:4.4000001;stroke-dasharray:none;stroke-dashoffset:0.77253538;stroke-opacity:1;paint-order:fill markers stroke"
-       inkscape:transform-center-x="-4.0173973"
-       inkscape:transform-center-y="0.023137187"
-       d="M 1.1642847,2.4847322 29.6969,31.017348 H 1.1642847 Z"
-       id="path1403"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cccc" />
+       style="fill:none;stroke:#ffffff;stroke-width:2.035;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       d="M 31.163954,31.163954 0.83604601,0.83604601"
+       id="path3033"
+       inkscape:connector-curvature="0" />
   </g>
 </svg>

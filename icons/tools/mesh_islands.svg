@@ -15,7 +15,7 @@
    version="1.1"
    id="SVGRoot"
    inkscape:version="0.92.5 (2060ec1f9f, 2020-04-08)"
-   sodipodi:docname="triangle.svg">
+   sodipodi:docname="mesh_islands.svg">
   <defs
      id="defs847" />
   <sodipodi:namedview
@@ -25,9 +25,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="16"
-     inkscape:cx="17.124326"
-     inkscape:cy="18.61321"
+     inkscape:zoom="8"
+     inkscape:cx="-18.823905"
+     inkscape:cy="14.239912"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -37,8 +37,7 @@
      inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:grid-bbox="true"
-     inkscape:snap-page="true"
-     inkscape:snap-global="false" />
+     inkscape:snap-page="true" />
   <metadata
      id="metadata850">
     <rdf:RDF>
@@ -56,12 +55,20 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:2.222;stroke-linecap:square;stroke-miterlimit:4.4000001;stroke-dasharray:none;stroke-dashoffset:0.77253538;stroke-opacity:1;paint-order:fill markers stroke"
-       inkscape:transform-center-x="-4.0173973"
-       inkscape:transform-center-y="0.023137187"
-       d="M 1.1642847,2.4847322 29.6969,31.017348 H 1.1642847 Z"
+       style="fill:#ffffff;fill-opacity:1;stroke:#ffffff;stroke-width:1.91252077;stroke-linecap:square;stroke-miterlimit:4.4000001;stroke-dasharray:none;stroke-dashoffset:0.77253538;stroke-opacity:1;paint-order:fill markers stroke"
+       inkscape:transform-center-x="-3.8052992"
+       inkscape:transform-center-y="0.021847742"
+       d="M 1.0237104,4.0376772 28.049947,30.98049 H 1.0237104 Z"
        id="path1403"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc" />
+    <path
+       sodipodi:nodetypes="cccc"
+       inkscape:connector-curvature="0"
+       id="path1451"
+       d="M 31.121111,27.967637 4.1737994,1.0203255 H 31.121111 Z"
+       inkscape:transform-center-y="-0.021851681"
+       inkscape:transform-center-x="3.7941863"
+       style="fill:none;fill-opacity:1;stroke:#ffffff;stroke-width:1.90988564;stroke-linecap:square;stroke-miterlimit:4.4000001;stroke-dasharray:none;stroke-dashoffset:0.77253538;stroke-opacity:1;paint-order:fill markers stroke" />
   </g>
 </svg>
