@@ -50,6 +50,7 @@ const ResourceUtils = preload("res://utils/resource_utils.gd")
 const LayoutUtils = preload("res://addons/customizable_ui/layout_utils.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/FileMenuButton
+onready var about_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/AboutMenuButton
 onready var file_dialog : FileDialog = $FileDialog
 onready var layer_property_panel : Panel = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer/LayerPropertyPanel
 onready var texture_map_buttons : GridContainer = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer/TextureMapButtons
@@ -58,6 +59,8 @@ onready var painter : Node = $"VBoxContainer/Control/HBoxContainer/HSplitContain
 onready var asset_browser : HBoxContainer = $VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser
 onready var progress_dialog : PopupDialog = $ProgressDialog
 onready var save_layout_dialog : ConfirmationDialog = $SaveLayoutDialog
+onready var license_dialog : AcceptDialog = $LicenseDialog
+onready var about_dialog : AcceptDialog = $AboutDialog
 onready var layout_name_edit : LineEdit = $SaveLayoutDialog/LayoutNameEdit
 onready var root : Control = $VBoxContainer/Control
 
@@ -65,6 +68,7 @@ func _ready() -> void:
 	undo_redo.connect("version_changed", self, "_on_UndoRedo_version_changed")
 	var popup := file_menu_button.get_popup()
 	popup.connect("id_pressed", self, "_on_FileMenu_id_pressed")
+	about_menu_button.get_popup().connect("id_pressed", self, "_on_AboutMenuButton_id_pressed")
 	for id in file_menu_shortcuts.size():
 		popup.set_item_shortcut(id, file_menu_shortcuts[id])
 	
@@ -280,6 +284,20 @@ func _on_ViewMenuButton_layout_selected(layout : String) -> void:
 
 func _on_ViewMenuButton_save_layout_selected() -> void:
 	save_layout_dialog.popup_centered()
+
+
+func _on_AboutMenuButton_id_pressed(id : int) -> void:
+	match id:
+		0:
+			about_dialog.popup_centered()
+		1:
+			OS.shell_open("https://github.com/Jummit/material-painter")
+		2:
+			OS.shell_open("https://github.com/Jummit/material-painter/wiki")
+		3:
+			license_dialog.popup_centered()
+		4:
+			OS.shell_open("https://github.com/Jummit/material-painter/issues")
 
 
 func _on_FileMenu_id_pressed(id : int) -> void:
