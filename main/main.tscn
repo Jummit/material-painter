@@ -91,7 +91,7 @@ margin_left = 119.0
 margin_right = 168.0
 margin_bottom = 23.0
 text = "About"
-items = [ "About Material Painter", null, 0, false, false, 0, 0, null, "", false, "Github", null, 0, false, false, 1, 0, null, "", false, "Documentation", null, 0, false, false, 2, 0, null, "", false, "License", null, 0, false, false, 3, 0, null, "", false, "Report Issues", null, 0, false, false, 4, 0, null, "", false ]
+items = [ "About Material Painter", null, 0, false, false, 0, 0, null, "", false, "Github", null, 0, false, false, 1, 0, null, "", false, "Documentation", null, 0, false, false, 2, 0, null, "", false, "Licenses", null, 0, false, false, 3, 0, null, "", false, "Report Issues", null, 0, false, false, 4, 0, null, "", false ]
 
 [node name="Control" type="Control" parent="VBoxContainer"]
 margin_top = 27.0
@@ -475,6 +475,18 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 6 )
 
+[node name="WindowDragReceiver" parent="." instance=ExtResource( 23 )]
+
+[node name="ProgressDialog" parent="." instance=ExtResource( 4 )]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -134.0
+margin_top = -39.0
+margin_right = 134.0
+margin_bottom = 44.0
+
 [node name="FileDialog" type="FileDialog" parent="."]
 anchor_left = 0.5
 anchor_top = 0.5
@@ -488,16 +500,6 @@ rect_min_size = Vector2( 100, 35 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
-
-[node name="ProgressDialog" parent="." instance=ExtResource( 4 )]
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-margin_left = -134.0
-margin_top = -39.0
-margin_right = 134.0
-margin_bottom = 44.0
 
 [node name="SaveLayoutDialog" type="ConfirmationDialog" parent="."]
 anchor_left = 0.5
@@ -522,8 +524,6 @@ margin_left = 8.0
 margin_top = 29.0
 margin_right = -8.0
 margin_bottom = -41.0
-
-[node name="WindowDragReceiver" parent="." instance=ExtResource( 23 )]
 
 [node name="AboutDialog" type="AcceptDialog" parent="."]
 anchor_left = 0.5
@@ -632,6 +632,22 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 2.61
 selection_enabled = true
+
+[node name="ExportErrorDialog" type="AcceptDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -134.5
+margin_top = -48.0
+margin_right = 134.5
+margin_bottom = 48.0
+window_title = "Export Failed"
+dialog_text = "Can't export non-saved project.
+Save the project to export textures."
+__meta__ = {
+"_edit_use_anchors_": false
+}
 
 [connection signal="bake_mesh_maps_pressed" from="VBoxContainer/Panel/TopButtons/EditMenuButton" to="." method="_on_EditMenuButton_bake_mesh_maps_pressed"]
 [connection signal="size_selected" from="VBoxContainer/Panel/TopButtons/EditMenuButton" to="." method="_on_EditMenuButton_size_selected"]

@@ -61,6 +61,7 @@ onready var progress_dialog : PopupDialog = $ProgressDialog
 onready var save_layout_dialog : ConfirmationDialog = $SaveLayoutDialog
 onready var license_dialog : AcceptDialog = $LicenseDialog
 onready var about_dialog : AcceptDialog = $AboutDialog
+onready var export_error_dialog : AcceptDialog = $ExportErrorDialog
 onready var layout_name_edit : LineEdit = $SaveLayoutDialog/LayoutNameEdit
 onready var root : Control = $VBoxContainer/Control
 
@@ -331,6 +332,8 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 					result_data.save_png(export_folder.plus_file(type) + ".png")
 					yield(get_tree(), "idle_frame")
 				progress_dialog.complete_task()
+			else:
+				export_error_dialog.popup_centered()
 		FILE_MENU_ITEMS.LOAD_MESH:
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
 			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
