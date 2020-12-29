@@ -103,4 +103,4 @@ class FilePathProperty extends Property:
 		name = _name
 	
 	func _get_control() -> Control:
-		return load("res://addons/property_panel/path_picker_button/path_picker_button.tscn").instance() as Control
+		return preload("res://addons/property_panel/path_picker_button/path_picker_button.tscn").instance() as Control
