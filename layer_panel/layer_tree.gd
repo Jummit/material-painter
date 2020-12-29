@@ -188,7 +188,10 @@ func drop_data(position : Vector2, data) -> void:
 			undo_redo.create_action("Add Texture From Library")
 			var layer := FileTextureLayer.new()
 			layer.name = data.name
-			layer.path = data.data
+			if not data.data.begins_with("user://"):
+				layer.path = "local" + data.data.substr(Globals.current_file.resource_path.get_base_dir().length())
+			else:
+				layer.path = data.data
 			undo_redo.add_do_method(Globals.editing_layer_material, "add_layer", layer, _selected_layer_textures[get_layer_at_position(position)])
 			undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer", layer)
 			undo_redo.commit_action()
