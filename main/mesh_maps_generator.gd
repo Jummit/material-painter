@@ -10,27 +10,40 @@ class MeshMapGenerator:
 		return null
 
 class IDMeshMapGenerator extends MeshMapGenerator:
-	func _init().("IDMap") -> void:
+	func _init().("id_map") -> void:
 		pass
 	
 	func _generate_map(mesh : Mesh, result_size : Vector2) -> Texture:
 		return TextureUtils.viewport_to_image(
-				yield(IDMapGenerator.generate_id_map(mesh, result_size), "completed"))
+				yield(IDMapGenerator.generate_id_map(mesh, result_size),
+				"completed"))
 
-class CurvatureMapGenerator extends MeshMapGenerator:
-	func _init().("CurvatureMap") -> void:
+class WorldPositionMeshMapGenerator extends MeshMapGenerator:
+	func _init().("world_position_map") -> void:
 		pass
 	
 	func _generate_map(mesh : Mesh, result_size : Vector2) -> Texture:
-		return yield(CurvatureBaker.bake_curvature_map(mesh, result_size, 0.003), "completed")
+		return TextureUtils.viewport_to_image(
+				yield(WorldMapGenerator.generate_world_map(mesh, result_size),
+				"completed"))
+
+class CurvatureMapGenerator extends MeshMapGenerator:
+	func _init().("curvature_map") -> void:
+		pass
+	
+	func _generate_map(mesh : Mesh, result_size : Vector2) -> Texture:
+		return yield(CurvatureBaker.bake_curvature_map(mesh, result_size,
+				0.003), "completed")
 
 var MESH_MAP_GENERATORS := [
 	IDMeshMapGenerator.new(),
 	CurvatureMapGenerator.new(),
+	WorldPositionMeshMapGenerator.new(),
 ]
 
 func generate_mesh_maps(mesh : Mesh, result_size : Vector2) -> Dictionary:
 	var maps := {}
 	for generator in MESH_MAP_GENERATORS:
-		maps[generator.name] = yield(generator._generate_map(mesh, result_size), "completed")
+		maps[generator.name] = yield(generator._generate_map(mesh, result_size),
+				"completed")
 	return maps

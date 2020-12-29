@@ -11,10 +11,7 @@ onready var mesh_instance : MeshInstance = $PaintViewport/MeshInstance
 onready var paint_line : Line2D = $PaintLine
 
 func get_preview_for_material(material : LayerMaterial, result_size : Vector2) -> ImageTexture:
-	var result = material.update_all_layer_textures(result_size)
-	if result is GDScriptFunctionState:
-		yield(result, "completed")
-	result = material.update_results(result_size)
+	var result = material.update(true)
 	if result is GDScriptFunctionState:
 		yield(result, "completed")
 	size = result_size
