@@ -5,7 +5,7 @@ Global constants
 """
 
 # warning-ignore-all:unused_class_variable
-var mesh : Mesh
+var mesh : Mesh setget set_mesh
 var selected_tool : int = Tools.PAINT
 var current_file : SaveFile setget set_current_file
 var editing_layer_material : LayerMaterial setget set_editing_layer_material
@@ -60,9 +60,9 @@ const BLEND_MODES := ["normal", "add", "subtract", "multiply",
 		"overlay", "screen", "darken", "lighten", "soft-light",
 		"color-burn", "color-dodge"]
 
-func load_model(path : String) -> void:
-	mesh = ObjParser.parse_obj(path)
-	current_file.model_path = path
+func set_mesh(to) -> void:
+	mesh = to
+	current_file.model_path = to.resource_path
 	current_file.layer_materials.resize(mesh.get_surface_count())
 	for surface in mesh.get_surface_count():
 		if not current_file.layer_materials[surface]:
@@ -72,14 +72,14 @@ func load_model(path : String) -> void:
 	emit_signal("mesh_changed", mesh)
 
 
-func set_current_file(save_file : SaveFile) -> void:
+func set_current_file(save_file : SaveFile, announce := true) -> void:
 	current_file = save_file
-	load_model(current_file.model_path)
 	for layer_material in current_file.layer_materials:
 		var result = layer_material.update(true)
 		if result is GDScriptFunctionState:
 			yield(result, "completed")
-	emit_signal("current_file_changed")
+	if announce:
+		emit_signal("current_file_changed")
 
 
 func set_editing_layer_material(to) -> void:

@@ -35,8 +35,22 @@ func _ready() -> void:
 
 
 func _on_Globals_mesh_changed(mesh : Mesh) -> void:
-	painter.mesh_instance = model
-	selection_utils.mesh = mesh
+	var progress_dialog = ProgressDialogManager.create_task(
+			"Generate Painter Maps", 1)
+	progress_dialog.set_action("Generate Maps")
+	yield(painter.set_mesh_instance(model), "completed")
+	progress_dialog.complete_task()
+	yield(get_tree(), "idle_frame")
+	progress_dialog = ProgressDialogManager.create_task(
+			"Generate Selection Maps", selection_utils.SelectionType.size())
+	for selection_type in selection_utils._selection_types:
+		progress_dialog.set_action(selection_utils.SelectionType.keys()[selection_type])
+		var result = selection_utils._selection_types[selection_type].prepare_mesh(mesh)
+		if result is GDScriptFunctionState:
+			result = yield(result, "completed")
+		yield(get_tree(), "idle_frame")
+		selection_utils._prepared_meshes[selection_type] = result
+	progress_dialog.complete_task()
 
 
 func _gui_input(event : InputEvent) -> void:

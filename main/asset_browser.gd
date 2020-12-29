@@ -24,7 +24,7 @@ onready var tag_name_edit : LineEdit = $VBoxContainer/HBoxContainer/TagNameEdit
 onready var asset_list : ItemList = $VBoxContainer2/AssetList
 onready var search_edit : LineEdit = $VBoxContainer2/SearchEdit
 onready var tag_list : Tree = $VBoxContainer/TagList
-onready var progress_dialog : PopupDialog = $"../../../../../../../ProgressDialog"
+var progress_dialog
 
 class AssetType:
 	var name : String
@@ -114,14 +114,13 @@ func _ready():
 	Globals.connect("current_file_changed", self, "_on_Globals_current_file_changed")
 	get_tree().connect("files_dropped", self, "_on_SceneTree_files_dropped")
 	
-	yield(progress_dialog, "ready")
-	
 	if ProjectSettings.get_setting("application/config/load_assets"):
 		var total_files := 0
 		for asset_type in ASSET_TYPES.values():
 			total_files += _get_files_in_folder(asset_type.get_asset_directory()).size()
 		
-		progress_dialog.start_task("Load Assets", total_files)
+		progress_dialog = ProgressDialogManager.create_task("Load Assets",
+				total_files)
 		
 		for asset_type in ASSET_TYPES.values():
 			var result = load_assets(asset_type.get_asset_directory(), asset_type)
@@ -134,7 +133,8 @@ func _ready():
 
 
 func _on_Globals_current_file_changed():
-	load_local_assets(Globals.current_file.resource_path)
+	if Globals.current_file.resource_path:
+		load_local_assets(Globals.current_file.resource_path)
 
 
 func get_drag_data_fw(position : Vector2, _from : Control):
@@ -159,7 +159,7 @@ func load_assets(directory : String, asset_type : AssetType, common_tag := "") -
 	dir.make_dir_recursive(directory)
 	var files := _get_files_in_folder(directory)
 	for file in files:
-		progress_dialog.start_action(file)
+		progress_dialog.set_action(file)
 		load_asset(directory.plus_file(file), asset_type, common_tag)
 		yield(get_tree(), "idle_frame")
 

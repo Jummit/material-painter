@@ -5,6 +5,7 @@
 [node name="ProgressDialog" type="PopupDialog"]
 margin_right = 280.0
 margin_bottom = 76.0
+rect_min_size = Vector2( 280, 100 )
 popup_exclusive = true
 script = ExtResource( 1 )
 __meta__ = {

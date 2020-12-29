@@ -48,6 +48,7 @@ const TextureFolder = preload("res://resources/texture/texture_folder.gd")
 const Brush = preload("res://addons/painter/brush.gd")
 const ResourceUtils = preload("res://utils/resource_utils.gd")
 const LayoutUtils = preload("res://addons/customizable_ui/layout_utils.gd")
+const ObjParser = preload("res://addons/obj_parser/obj_parser.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/FileMenuButton
 onready var about_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/AboutMenuButton
@@ -57,7 +58,6 @@ onready var texture_map_buttons : GridContainer = $VBoxContainer/Control/HBoxCon
 onready var layer_tree : Tree = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window/LayerTree
 onready var painter : Node = $"VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/Window/3DViewport/Painter"
 onready var asset_browser : HBoxContainer = $VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser
-onready var progress_dialog : PopupDialog = $ProgressDialog
 onready var save_layout_dialog : ConfirmationDialog = $SaveLayoutDialog
 onready var license_dialog : AcceptDialog = $LicenseDialog
 onready var about_dialog : AcceptDialog = $AboutDialog
@@ -117,7 +117,20 @@ func _on_FileDialog_file_selected(path : String) -> void:
 				"tres":
 					Globals.current_file = ResourceLoader.load(path, "", true)
 				"obj":
-					Globals.load_model(path)
+					var interactive_loader := ObjParser.parse_obj_interactive(path)
+					var progress_dialog = ProgressDialogManager.create_task("Load OBJ Model",
+							int(interactive_loader.get_stage_count() / 10000.0))
+					while true:
+						progress_dialog.set_action("Stage %s / %s" % [
+								interactive_loader.get_stage(),
+								interactive_loader.get_stage_count()])
+						yield(get_tree(), "idle_frame")
+						for i in 10000:
+							var mesh = interactive_loader.poll()
+							if mesh:
+								progress_dialog.complete_task()
+								Globals.mesh = mesh
+								return
 
 
 func _on_AddButton_pressed() -> void:
@@ -254,11 +267,12 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 	var texture_dir : String = asset_browser.ASSET_TYPES.TEXTURE.get_local_asset_directory(Globals.current_file.resource_path)
 	var dir := Directory.new()
 	dir.make_dir_recursive(texture_dir)
-	progress_dialog.start_task("Bake Mesh Maps", mesh_maps.size())
+	var progress_dialog = ProgressDialogManager.create_task("Bake Mesh Maps",
+			mesh_maps.size())
 	yield(get_tree(), "idle_frame")
 	for map in mesh_maps:
 		var file := texture_dir.plus_file(map) + ".png"
-		progress_dialog.start_action(file)
+		progress_dialog.set_action(file)
 		mesh_maps[map].get_data().save_png(file)
 		asset_browser.load_asset(file, asset_browser.ASSET_TYPES.TEXTURE, "local")
 		yield(get_tree(), "idle_frame")
@@ -321,10 +335,12 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 			_open_save_project_dialog()
 		FILE_MENU_ITEMS.EXPORT:
 			if Globals.current_file.resource_path:
-				progress_dialog.start_task("Export Textures", Globals.editing_layer_material.results.size())
+				var progress_dialog = ProgressDialogManager.create_task(
+						"Export Textures",
+						Globals.editing_layer_material.results.size())
 				yield(get_tree(), "idle_frame")
 				for type in Globals.editing_layer_material.results:
-					progress_dialog.start_action(type)
+					progress_dialog.set_action(type)
 					var export_folder := Globals.current_file.resource_path.get_base_dir().plus_file("export")
 					var dir := Directory.new()
 					dir.make_dir_recursive(export_folder)
@@ -352,8 +368,9 @@ func _on_UndoRedo_version_changed() -> void:
 
 func _start_empty_project() -> void:
 	var new_file := SaveFile.new()
-	new_file.model_path = "res://3d_viewport/cube.obj"
-	Globals.current_file = new_file
+	Globals.set_current_file(new_file, false)
+	Globals.mesh = preload("res://3d_viewport/cube.obj")
+	Globals.emit_signal("current_file_changed")
 
 
 func _open_save_project_dialog() -> void:
