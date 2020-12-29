@@ -18,10 +18,8 @@ window_title = "Open a File"
 dialog_hide_on_ok = true
 mode = 0
 access = 2
-filters = PoolStringArray( "*.png ; Images" )
-current_dir = "/home/jummit/Games/MaterialPainter/Layers"
-current_path = "/home/jummit/Games/MaterialPainter/Layers/"
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
 [connection signal="file_selected" from="FileDialog" to="." method="_on_FileDialog_file_selected"]
