@@ -62,6 +62,7 @@ onready var save_layout_dialog : ConfirmationDialog = $SaveLayoutDialog
 onready var license_dialog : AcceptDialog = $LicenseDialog
 onready var about_dialog : AcceptDialog = $AboutDialog
 onready var export_error_dialog : AcceptDialog = $ExportErrorDialog
+onready var quit_confirmation_dialog : ConfirmationDialog = $QuitConfirmationDialog
 onready var layout_name_edit : LineEdit = $SaveLayoutDialog/LayoutNameEdit
 onready var root : Control = $VBoxContainer/Control
 
@@ -328,10 +329,7 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 			file_dialog.current_file = ""
 			file_dialog.popup_centered()
 		FILE_MENU_ITEMS.SAVE:
-			if not Globals.current_file.resource_path:
-				_open_save_project_dialog()
-			else:
-				ResourceSaver.save(Globals.current_file.resource_path, Globals.current_file)
+			save_file()
 		FILE_MENU_ITEMS.SAVE_AS:
 			_open_save_project_dialog()
 		FILE_MENU_ITEMS.EXPORT:
@@ -359,7 +357,16 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 			file_dialog.current_file = ""
 			file_dialog.popup_centered()
 		FILE_MENU_ITEMS.QUIT:
-			get_tree().quit()
+			quit_confirmation_dialog.popup()
+
+
+func save_file() -> bool:
+	if not Globals.current_file.resource_path:
+		_open_save_project_dialog()
+		return true
+	else:
+		ResourceSaver.save(Globals.current_file.resource_path, Globals.current_file)
+		return false
 
 
 func _on_UndoRedo_version_changed() -> void:
@@ -399,3 +406,13 @@ func _initialise_layouts() -> void:
 		# wait for all windows to be ready
 		yield(get_tree(), "idle_frame")
 		LayoutUtils.save_layout(root.get_child(0), LAYOUTS_FOLDER.plus_file("default.json"))
+
+
+func _on_QuitConfirmationDialog_custom_action(_action):
+	get_tree().quit()
+
+
+func _on_QuitConfirmationDialog_confirmed():
+	if save_file():
+		yield(file_dialog, "confirmed")
+	get_tree().quit()

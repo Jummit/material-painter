@@ -1,8 +1,9 @@
-[gd_scene load_steps=30 format=2]
+[gd_scene load_steps=31 format=2]
 
 [ext_resource path="res://main/2d_viewport.gd" type="Script" id=1]
 [ext_resource path="res://main/edit_menu_button.gd" type="Script" id=2]
 [ext_resource path="res://main/main.gd" type="Script" id=3]
+[ext_resource path="res://main/quit_confirmation_dialog.gd" type="Script" id=4]
 [ext_resource path="res://main/view_menu_button.gd" type="Script" id=5]
 [ext_resource path="res://layer_panel/layer_property_panel.gd" type="Script" id=6]
 [ext_resource path="res://3d_viewport/color_skybox.tres" type="Material" id=7]
@@ -717,6 +718,21 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="QuitConfirmationDialog" type="ConfirmationDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -117.0
+margin_top = -37.0
+margin_right = 117.0
+margin_bottom = 37.0
+dialog_text = "Save changes before closing?"
+script = ExtResource( 4 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [connection signal="bake_mesh_maps_pressed" from="VBoxContainer/Panel/TopButtons/EditMenuButton" to="." method="_on_EditMenuButton_bake_mesh_maps_pressed"]
 [connection signal="size_selected" from="VBoxContainer/Panel/TopButtons/EditMenuButton" to="." method="_on_EditMenuButton_size_selected"]
 [connection signal="hdri_selected" from="VBoxContainer/Panel/TopButtons/ViewMenuButton" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/Window/3DViewport" method="_on_ViewMenuButton_hdri_selected"]
@@ -784,3 +800,5 @@ __meta__ = {
 [connection signal="confirmed" from="DeleteAssetConfirmationDialog" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser" method="_on_DeleteAssetConfirmationDialog_confirmed"]
 [connection signal="confirmed" from="TagModificationDialog" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser" method="_on_TagModificationDialog_confirmed"]
 [connection signal="text_entered" from="TagModificationDialog/TagEdit" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser" method="_on_TagEdit_text_entered"]
+[connection signal="confirmed" from="QuitConfirmationDialog" to="." method="_on_QuitConfirmationDialog_confirmed"]
+[connection signal="custom_action" from="QuitConfirmationDialog" to="." method="_on_QuitConfirmationDialog_custom_action"]
