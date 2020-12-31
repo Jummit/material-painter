@@ -33,6 +33,8 @@ onready var asset_popup_menu : PopupMenu = $"VBoxContainer2/AssetList/AssetPopup
 onready var tag_modification_dialog : ConfirmationDialog = $"../../../../../../../TagModificationDialog"
 onready var tag_edit : LineEdit = $"../../../../../../../TagModificationDialog/TagEdit"
 
+const JsonTextureLayer = preload("res://resources/texture/json_texture_layer.gd")
+
 class AssetType:
 	var name : String
 	var tag : String
@@ -107,6 +109,14 @@ class BrushAssetType extends AssetType:
 	
 	func _generate_preview(asset : Asset) -> Texture:
 		return yield(PreviewRenderer.get_preview_for_brush(asset.data, Vector2(128, 128)), "completed")
+
+class EffectAssetType extends AssetType:
+	func _init().("Effects", "effect") -> void:
+		pass
+	
+	func _load(asset : Asset):
+		var layer := JsonTextureLayer.new(asset.file)
+		return layer
 
 class Asset:
 	var name : String

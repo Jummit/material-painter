@@ -1,17 +1,18 @@
 extends "res://resources/texture/texture_layer.gd"
 
 export var settings := {}
-export var type : String
+export var file : String
 
 var data : Dictionary
 
 const Properties = preload("res://addons/property_panel/properties.gd")
 
-func _init().("JSON") -> void:
-	var file := File.new()
-	file.open(type, File.READ)
-	data = parse_json(file.get_as_text())
-	file.close()
+func _init(_file : String).("JSON") -> void:
+	file = _file
+	var read_file := File.new()
+	read_file.open(file, File.READ)
+	data = parse_json(read_file.get_as_text())
+	read_file.close()
 	type_name = data.name
 
 
@@ -23,10 +24,10 @@ func get_properties() -> Array:
 		match property.type:
 			"float":
 				list.append(Properties.FloatProperty.new(property.name,
-						properties.range[0], properties.range[1]))
+						property.range[0], property.range[1]))
 			"int":
 				list.append(Properties.IntProperty.new(property.name,
-						properties.range[0], properties.range[1]))
+						property.range[0], property.range[1]))
 			"color":
 				list.append(Properties.ColorProperty.new(property.name))
 			"bool":
