@@ -10,9 +10,13 @@ and how to generate a thumbnail for it.
 
 signal asset_activated(asset)
 
+var assets := []
+var already_tagged_assets := []
 var tagged_assets := {}
-var tags := ["all", "texture", "material", "brush"]
+var tag_metadata := {}
+var sidebar_tags := ["all", "texture", "material", "brush"]
 var current_tag := "all"
+var progress_dialog
 
 var ASSET_TYPES := {
 	TEXTURE = TextureAssetType.new(),
@@ -24,7 +28,10 @@ onready var tag_name_edit : LineEdit = $VBoxContainer/HBoxContainer/TagNameEdit
 onready var asset_list : ItemList = $VBoxContainer2/AssetList
 onready var search_edit : LineEdit = $VBoxContainer2/SearchEdit
 onready var tag_list : Tree = $VBoxContainer/TagList
-var progress_dialog
+onready var delete_asset_confirmation_dialog : ConfirmationDialog = $"../../../../../../../DeleteAssetConfirmationDialog"
+onready var asset_popup_menu : PopupMenu = $"VBoxContainer2/AssetList/AssetPopupMenu"
+onready var tag_modification_dialog : ConfirmationDialog = $"../../../../../../../TagModificationDialog"
+onready var tag_edit : LineEdit = $"../../../../../../../TagModificationDialog/TagEdit"
 
 class AssetType:
 	var name : String
@@ -35,7 +42,7 @@ class AssetType:
 		tag = _tag
 	
 	func get_preview(asset : Asset) -> Texture:
-		var cached_thumbnail_path := get_cached_thumbnails_path().plus_file(asset.file.get_file().get_basename() + ".png")
+		var cached_thumbnail_path := asset.get_cached_thumbnail_path()
 		var dir := Directory.new()
 		dir.make_dir_recursive(get_cached_thumbnails_path())
 		var preview
@@ -107,27 +114,39 @@ class Asset:
 	var tags : Array
 	var file : String
 	var data
+	
+	func get_cached_thumbnail_path() -> String:
+		return type.get_cached_thumbnails_path().plus_file(
+				file.get_file().get_basename() + ".png")
 
 func _ready():
 	asset_list.set_drag_forwarding(self)
 	
-	Globals.connect("current_file_changed", self, "_on_Globals_current_file_changed")
+	Globals.connect("current_file_changed", self,
+			"_on_Globals_current_file_changed")
 	get_tree().connect("files_dropped", self, "_on_SceneTree_files_dropped")
 	
 	if ProjectSettings.get_setting("application/config/load_assets"):
+		load_tag_metadata()
+		
 		var total_files := 0
 		for asset_type in ASSET_TYPES.values():
-			total_files += _get_files_in_folder(asset_type.get_asset_directory()).size()
+			total_files += _get_files_in_folder(
+					asset_type.get_asset_directory()).size()
 		
 		progress_dialog = ProgressDialogManager.create_task("Load Assets",
 				total_files)
 		
 		for asset_type in ASSET_TYPES.values():
-			var result = load_assets(asset_type.get_asset_directory(), asset_type)
+			var result = load_assets(asset_type.get_asset_directory(),
+					asset_type)
 			if result is GDScriptFunctionState:
-				yield(result, "completed")
+				result = yield(result, "completed")
+			assets += result
+		save_tag_metadata()
 		
 		progress_dialog.complete_task()
+	
 	update_tag_list()
 	update_asset_list()
 
@@ -150,61 +169,99 @@ func get_drag_data_fw(position : Vector2, _from : Control):
 
 func load_local_assets(project_file : String) -> void:
 	if ProjectSettings.get_setting("application/config/load_assets"):
+		var total_files := 0
 		for asset_type in ASSET_TYPES.values():
-			load_assets(asset_type.get_local_asset_directory(project_file), asset_type, "local")
+			total_files += _get_files_in_folder(
+					asset_type.get_local_asset_directory(project_file)).size()
+		progress_dialog = ProgressDialogManager.create_task("Load Local Assets",
+			total_files)
+		for asset_type in ASSET_TYPES.values():
+			var result = load_assets(
+				asset_type.get_local_asset_directory(project_file), asset_type)
+			if result is GDScriptFunctionState:
+				result = yield(result, "completed")
+			assets += result
+			for asset in result:
+				add_asset_to_tag(asset, "local")
+		progress_dialog.complete_task()
+		save_tag_metadata()
 
 
-func load_assets(directory : String, asset_type : AssetType, common_tag := "") -> void:
+func load_assets(directory : String, asset_type : AssetType) -> Array:
+	var new_assets := []
 	var dir := Directory.new()
 	dir.make_dir_recursive(directory)
 	var files := _get_files_in_folder(directory)
 	for file in files:
 		progress_dialog.set_action(file)
-		load_asset(directory.plus_file(file), asset_type, common_tag)
+		var asset := load_asset(directory.plus_file(file), asset_type)
+		new_assets.append(asset)
 		yield(get_tree(), "idle_frame")
+	return new_assets
 
 
-func load_asset(path : String, asset_type : AssetType, tag := "") -> void:
+func load_asset(path : String, asset_type : AssetType) -> Asset:
 	var asset := Asset.new()
 	asset.name = path.get_file().get_basename()
 	asset.type = asset_type
-	asset.tags.append(asset_type.tag)
-	asset.tags += Array(_get_tags(asset.name))
-	if not tag in tags:
-		tags.append(tag)
-	if tag:
-		asset.tags.append(tag)
 	asset.file = path
 	asset.data = asset_type._load(asset)
-	add_asset(asset)
+	if not path in already_tagged_assets:
+		add_asset_to_tag(asset, asset_type.tag)
+		for tag in _get_tags(asset.name):
+			add_asset_to_tag(asset, tag)
+		add_asset_to_tag(asset, "all")
+		already_tagged_assets.append(path)
+	for tag in tag_metadata:
+		if asset.file in tag_metadata[tag]:
+			add_asset_to_tag(asset, tag)
+	return asset
 
 
-func add_asset(asset : Asset) -> void:
-	for tag in asset.tags + ["all"]:
-		if not tag in tagged_assets:
-			tagged_assets[tag] = []
-		tagged_assets[tag].append(asset)
+func add_asset_to_tag(asset : Asset, tag : String) -> void:
+	if not tag in asset.tags:
+		asset.tags.append(tag)
+	if not tag in tagged_assets:
+		tagged_assets[tag] = []
+	tagged_assets[tag].append(asset)
 
 
 func update_asset_list() -> void:
 	asset_list.clear()
+	var search_terms := search_edit.text.to_lower().replace(",", " ").split(" ", false)
+	var found_assets := []
 	if not current_tag in tagged_assets:
 		return
-	for asset in tagged_assets[current_tag]:
-		var searched_for := not search_edit.text
-		for tag in asset.tags:
-			if search_edit.text.to_lower() in tag:
-				searched_for = true
-				break
-		if searched_for:
-			asset_list.add_item(asset.name, asset.type.get_preview(asset))
-			asset_list.set_item_metadata(asset_list.get_item_count() - 1, asset)
+	if search_terms.size():
+		for _asset in tagged_assets[current_tag]:
+			var asset := _asset as Asset
+			var matches := true
+			var all_tags := (asset.tags as PoolStringArray).join(" ")
+			for term in search_terms:
+				if not term in all_tags:
+					matches = false
+					break
+			if matches:
+				found_assets.append(asset)
+	else:
+		found_assets = tagged_assets[current_tag]
+	var added_assets := []
+	for asset in found_assets:
+		if asset in added_assets:
+			continue
+		added_assets.append(asset)
+		var item := asset_list.get_item_count()
+		asset_list.add_item(asset.name, asset.type.get_preview(asset))
+		asset_list.set_item_tooltip(item, "%s\n\n%s\nTags: %s" % [
+				asset.name, asset.file,
+				(asset.tags as PoolStringArray).join(", ")])
+		asset_list.set_item_metadata(item, asset)
 
 
 func update_tag_list() -> void:
 	tag_list.clear()
 	var root := tag_list.create_item()
-	for tag in tags:
+	for tag in sidebar_tags:
 		var tag_item := tag_list.create_item(root)
 		tag_item.set_text(0, tag)
 
@@ -214,16 +271,29 @@ func _on_AssetList_item_activated(index : int) -> void:
 
 
 func _on_RemoveTagButton_pressed() -> void:
-	tags.erase(tag_list.get_selected().get_text(0))
+	if not tag_list.get_selected():
+		return
+	var tag := tag_list.get_selected().get_text(0)
+	current_tag = "all"
+	sidebar_tags.erase(tag)
+	save_tag_metadata()
 	update_tag_list()
+	update_asset_list()
 
 
 func _on_AddTagButton_pressed() -> void:
+	add_tag()
+
+
+func add_tag():
 	var new_tag := tag_name_edit.text.to_lower()
-	if new_tag and not new_tag in tags:
-		tags.append(new_tag)
+	if new_tag and not new_tag in sidebar_tags:
+		sidebar_tags.append(new_tag)
 		current_tag = new_tag
+		tag_name_edit.text = ""
 		update_tag_list()
+		update_asset_list()
+		save_tag_metadata()
 
 
 func _on_TagList_cell_selected() -> void:
@@ -236,15 +306,19 @@ func _on_SearchEdit_text_changed(_new_text: String) -> void:
 
 
 func _on_SceneTree_files_dropped(files : PoolStringArray, _screen : int) -> void:
+	progress_dialog = ProgressDialogManager.create_task("Import Assets", files.size())
 	var dir := Directory.new()
 	for file in files:
+		progress_dialog.set_action(file)
+		yield(get_tree(), "idle_frame")
 		var new_asset_path : String = ASSET_TYPES.TEXTURE.get_asset_directory().plus_file(file.get_file())
 		if dir.file_exists(new_asset_path):
-			return
+			continue
 		if file.get_extension() == "png":
 			dir.copy(file, new_asset_path)
 			load_asset(file, ASSET_TYPES.TEXTURE)
 			update_asset_list()
+	progress_dialog.complete_task()
 
 
 func _get_tags(asset_name : String) -> PoolStringArray:
@@ -266,3 +340,125 @@ func _get_files_in_folder(folder : String) -> PoolStringArray:
 		files.append(file_name)
 		file_name = dir.get_next()
 	return files
+
+
+func _on_DeleteAssetConfirmationDialog_confirmed():
+	for item in delete_asset_confirmation_dialog.get_meta("items"):
+		delete_asset(item)
+
+
+func _on_AssetList_gui_input(event : InputEvent) -> void:
+	if event.is_action_pressed("delete_asset") and\
+			asset_list.is_anything_selected():
+		show_delete_confirmation_popup()
+
+
+func show_delete_confirmation_popup() -> void:
+	var items := asset_list.get_selected_items()
+	var names : PoolStringArray = []
+	for item in items:
+		names.append(asset_list.get_item_metadata(item).name)
+	delete_asset_confirmation_dialog.dialog_text =\
+			"Delete %s?" % names.join(", ")
+	delete_asset_confirmation_dialog.popup()
+	delete_asset_confirmation_dialog.set_meta("items", items)
+
+
+func delete_asset(item : int) -> void:
+	var asset : Asset = asset_list.get_item_metadata(item)
+	
+	for tag in tagged_assets:
+		remove_asset_from_tag(asset, tag)
+	
+	var dir := Directory.new()
+	dir.remove(Globals.get_global_asset_path(asset.file))
+	dir.remove(asset.get_cached_thumbnail_path())
+	
+	asset_list.remove_item(item)
+
+
+func remove_asset_from_tag(asset : Asset, tag : String) -> void:
+	asset.tags.erase(tag)
+	if asset in tagged_assets[tag]:
+		tagged_assets[tag].erase(asset)
+	if not tagged_assets[tag].size() and not tag in sidebar_tags:
+		tagged_assets.erase(tag)
+
+
+func _on_AssetPopupMenu_id_pressed(id : int) -> void:
+	match id:
+		0:
+			tag_modification_dialog.window_title = "Add Tag"
+			tag_modification_dialog.set_meta("action", "add")
+		1:
+			tag_modification_dialog.window_title = "Remove Tag"
+			tag_modification_dialog.set_meta("action", "remove")
+		2:
+			show_delete_confirmation_popup()
+	if id < 2:
+#		tag_edit.text = ""
+		tag_modification_dialog.set_meta("items", asset_popup_menu.get_meta("items"))
+		tag_modification_dialog.popup()
+		tag_edit.grab_focus()
+		tag_edit.select_all()
+
+
+func _on_AssetList_item_rmb_selected(_index : int, at_position : Vector2) -> void:
+	asset_popup_menu.set_meta("items", asset_list.get_selected_items())
+	asset_popup_menu.popup()
+	asset_popup_menu.rect_position = asset_list.rect_global_position + at_position
+
+
+func _on_TagEdit_text_entered(_new_text : String) -> void:
+	tag_modification_dialog.hide()
+	modify_tags()
+
+
+func _on_TagModificationDialog_confirmed():
+	modify_tags()
+
+
+func modify_tags() -> void:
+	var tag := tag_edit.text
+	var items : PoolIntArray = tag_modification_dialog.get_meta("items")
+	for item in items:
+		var asset : Asset = asset_list.get_item_metadata(item)
+		match tag_modification_dialog.get_meta("action"):
+			"add":
+				if tag in asset.tags:
+					continue
+				asset.tags.append(tag)
+				add_asset_to_tag(asset, tag)
+			"remove":
+				remove_asset_from_tag(asset, tag)
+	update_asset_list()
+
+
+func save_tag_metadata() -> void:
+	var data := {
+		tagged = already_tagged_assets,
+		assets = {},
+		sidebar = sidebar_tags,
+	}
+	for tag in tagged_assets:
+		data.assets[tag] = []
+		for asset in tagged_assets[tag]:
+			data.assets[tag].append(asset.file)
+	var file := File.new()
+	file.open("user://tags.json", File.WRITE)
+	file.store_string(to_json(data))
+	file.close()
+
+
+func load_tag_metadata() -> void:
+	var file := File.new()
+	if file.open("user://tags.json", File.READ) == OK:
+		var data : Dictionary = parse_json(file.get_as_text())
+		sidebar_tags = data.sidebar
+		tag_metadata = data.assets
+		already_tagged_assets = data.tagged
+	file.close()
+
+
+func _on_TagNameEdit_text_entered(_new_text : String) -> void:
+	add_tag()
