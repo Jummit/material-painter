@@ -65,7 +65,7 @@ func update(force_all := false) -> void:
 	
 	busy = true
 	
-	var flat_layers := _get_flat_layers(layers, false)
+	var flat_layers := get_flat_layers(layers, false)
 	
 	for layer in flat_layers:
 		var result = layer.update(force_all)
@@ -133,13 +133,13 @@ func get_material(existing : SpatialMaterial = null) -> SpatialMaterial:
 	return material
 
 
-func _get_flat_layers(layer_array : Array = layers, add_hidden := true) -> Array:
+func get_flat_layers(layer_array : Array = layers, add_hidden := true) -> Array:
 	var flat_layers := []
 	for layer in layer_array:
 		if (not add_hidden) and not layer.visible:
 			continue
 		if layer is MaterialFolder:
-			flat_layers += _get_flat_layers(layer.layers, add_hidden)
+			flat_layers += get_flat_layers(layer.layers, add_hidden)
 		else:
 			flat_layers.append(layer)
 	return flat_layers
