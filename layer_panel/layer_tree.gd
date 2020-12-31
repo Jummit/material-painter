@@ -361,6 +361,9 @@ func _setup_material_layer_item(material_layer, parent_item : TreeItem,
 	elif material_layer is MaterialFolder:
 		var icon : Texture = preload("res://icons/open_folder.svg") if material_layer in _expanded_folders else preload("res://icons/large_folder.svg")
 		material_layer_item.add_button(0, icon, Buttons.ICON)
+		material_layer_item.set_tooltip(1,
+				"%s (contains %s layers)" % [material_layer.name,
+				material_layer.layers.size()])
 	
 	material_layer_item.set_text(1, material_layer.name)
 	material_layer_item.add_button(1, _get_visibility_icon(material_layer.visible), Buttons.VISIBILITY)
@@ -382,6 +385,8 @@ func _setup_texture_layer_item(texture_layer, parent_item : TreeItem, layer_text
 	
 	if texture_layer is TextureLayer:
 		texture_layer_item.add_button(0, texture_layer.icon, Buttons.RESULT)
+		texture_layer_item.set_tooltip(1,
+				"%s (%s Layer)" % [texture_layer.name, texture_layer.type_name])
 	else:
 		var icon : Texture = preload("res://icons/open_folder.svg") if texture_layer in _expanded_folders else preload("res://icons/large_folder.svg")
 		texture_layer_item.add_button(0, icon, Buttons.ICON)
