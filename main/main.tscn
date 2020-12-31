@@ -91,6 +91,7 @@ margin_right = 168.0
 margin_bottom = 23.0
 text = "About"
 items = [ "About Material Painter", null, 0, false, false, 0, 0, null, "", false, "Github", null, 0, false, false, 1, 0, null, "", false, "Documentation", null, 0, false, false, 2, 0, null, "", false, "Licenses", null, 0, false, false, 3, 0, null, "", false, "Report Issues", null, 0, false, false, 4, 0, null, "", false ]
+switch_on_hover = true
 
 [node name="Control" type="Control" parent="VBoxContainer"]
 margin_top = 27.0
