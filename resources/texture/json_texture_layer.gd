@@ -1,32 +1,51 @@
 extends "res://resources/texture/texture_layer.gd"
 
 export var settings := {}
+export var type : String
+
+var data : Dictionary
 
 const Properties = preload("res://addons/property_panel/properties.gd")
 
-func _init().("Blur") -> void:
-	pass
+func _init().("JSON") -> void:
+	var file := File.new()
+	file.open(type, File.READ)
+	data = parse_json(file.get_as_text())
+	file.close()
+	type_name = data.name
 
 
 func get_properties() -> Array:
-	return [
-		Properties.FloatProperty.new("strength", 0.1, .5),
-	]
+	if not "properties" in data:
+		return []
+	var list := []
+	for property in data.properties:
+		match property.type:
+			"float":
+				list.append(Properties.FloatProperty.new(property.name,
+						properties.range[0], properties.range[1]))
+			"int":
+				list.append(Properties.IntProperty.new(property.name,
+						properties.range[0], properties.range[1]))
+			"color":
+				list.append(Properties.ColorProperty.new(property.name))
+			"bool":
+				list.append(Properties.BoolProperty.new(property.name))
+			"enum":
+				list.append(Properties.EnumProperty.new(property.options,
+						property.name))
+	return list
 
 
 func _get_as_shader_layer() -> Layer:
 	var layer := Layer.new()
-	layer.uniform_types.append("float")
-	layer.uniform_names.append("strength")
-	layer.uniform_values.append(strength)
-	layer.code = """
-vec2 radius = 0.002 / vec2({strength});
-vec4 previous = {previous}(uv);
-for(float d = 0.0; d < 6.28318530718; d += 6.28318530718 / float(16)) {
-	for(float i = 1.0 / 8.0; i <= 1.0; i += 1.0 / 8.0) {
-		previous += {previous}(uv + vec2(cos(d), sin(d)) * radius * i);
-	}
-}
-return previous /= 8.0 * float(16) + 1.0;
-"""
+	layer.code = data.shader
+	if "properties" in data:
+		for property in data.properties:
+			if "shader_param" in property and not property.shader_param:
+				layer.code.format({property.name: settings[property.name]})
+			else:
+				layer.uniform_types.append(property.type)
+				layer.uniform_names.append(property.name)
+				layer.uniform_values.append(settings[property.name])
 	return layer

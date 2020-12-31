@@ -10,11 +10,15 @@ const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 const MaterialLayer = preload("res://resources/material/material_layer.gd")
 const Properties = preload("res://addons/property_panel/properties.gd")
+const JSONTextureLayer = preload("res://resources/texture/json_texture_layer.gd")
 
 func load_texture_layer(texture_layer : TextureLayer) -> void:
 	editing_layer = texture_layer
 	set_properties(texture_layer.get_properties())
-	load_values(texture_layer)
+	if texture_layer is JSONTextureLayer:
+		load_values(texture_layer.settings)
+	else:
+		load_values(texture_layer)
 
 
 func load_material_layer(material_layer : MaterialLayer) -> void:

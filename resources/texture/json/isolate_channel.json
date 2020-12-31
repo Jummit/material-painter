@@ -4,7 +4,7 @@
 		{
 			"name": "channel",
 			"type": "enum",
-			"values": ["r", "g", "b", "a"],
+			"options": ["r", "g", "b", "a"],
 			"default": "r",
 			"shader_param": false
 		}
