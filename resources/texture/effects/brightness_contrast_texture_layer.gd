@@ -5,7 +5,7 @@ export var contrast := 1.0
 
 const Properties = preload("res://addons/property_panel/properties.gd")
 
-func _init().("brightness_contrast", "Brightness Contrast") -> void:
+func _init().("Brightness Contrast") -> void:
 	pass
 
 

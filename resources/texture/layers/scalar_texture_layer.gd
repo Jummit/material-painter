@@ -6,7 +6,7 @@ A texture layer that uses a float value from 0 to 1 to generate a grayscale resu
 
 export var value = .5
 
-func _init().("scalar", "Scalar", "vec4({value}, {value}, {value}, 1.0)") -> void:
+func _init().("Scalar", "vec4({value}, {value}, {value}, 1.0)") -> void:
 	pass
 
 

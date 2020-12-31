@@ -1,6 +1,6 @@
 extends "res://resources/texture/texture_layer.gd"
 
-func _init().("invert", "Invert") -> void:
+func _init().("Invert") -> void:
 	pass
 
 

@@ -11,7 +11,7 @@ export var image_data : Image
 
 var temp_texture : Texture
 
-func _init().("bitmap", "Bitmap", "texture({texture}, uv)") -> void:
+func _init().("Bitmap", "texture({texture}, uv)") -> void:
 	image_data = Image.new()
 	image_data.create(1024, 1024, false, Image.FORMAT_RGB8)
 	image_data.lock()

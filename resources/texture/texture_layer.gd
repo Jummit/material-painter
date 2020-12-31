@@ -22,9 +22,9 @@ var dirty := true
 const Layer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").Layer
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 
-func _init(_type_name : String, _name):
+func _init(_name : String):
 	resource_local_to_scene = true
-	type_name = _type_name
+	type_name = _name
 	name = _name
 
 

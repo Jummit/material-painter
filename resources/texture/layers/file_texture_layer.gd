@@ -17,7 +17,7 @@ export var uv_scale := 1.0
 
 const TextureUtils = preload("res://utils/texture_utils.gd")
 
-func _init().("file", "File", "texture({texture}, uv)") -> void:
+func _init().("File", "texture({texture}, uv)") -> void:
 	pass
 
 

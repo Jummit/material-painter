@@ -47,7 +47,7 @@ func _on_about_to_show() -> void:
 			add_item("Paste Mask", Items.PASTE_MASK)
 	if layer_texture:
 		for layer_type in Globals.TEXTURE_LAYER_TYPES:
-			add_item("Add %s Layer" % layer_type.new().name, Items.ADD_LAYER)
+			add_item("Add %s Layer" % layer_type.new().type_name, Items.ADD_LAYER)
 			set_item_metadata(get_item_count() - 1, layer_type)
 	add_item("Save To Library", Items.SAVE_TO_LIBRARY)
 

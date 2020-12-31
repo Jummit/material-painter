@@ -8,7 +8,7 @@ var code : String
 const Properties = preload("res://addons/property_panel/properties.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 
-func _init(_type_name, _name, _code).(_type_name, _name):
+func _init(_name, _code).(_name):
 	code = _code
 
 

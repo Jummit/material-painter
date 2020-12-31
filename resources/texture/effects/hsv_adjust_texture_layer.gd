@@ -6,7 +6,7 @@ export var value := 1.0
 
 const Properties = preload("res://addons/property_panel/properties.gd")
 
-func _init().("hsv_adjust", "HSV Adjust") -> void:
+func _init().("HSV Adjust") -> void:
 	pass
 
 

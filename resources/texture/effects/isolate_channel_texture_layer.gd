@@ -4,7 +4,7 @@ export var channel : String
 
 const Properties = preload("res://addons/property_panel/properties.gd")
 
-func _init().("isolate_channel", "Isolate Channel") -> void:
+func _init().("Isolate Channel") -> void:
 	pass
 
 

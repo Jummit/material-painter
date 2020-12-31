@@ -6,7 +6,7 @@ A texture layer that uses a color to generate the result
 
 export var color := Color.white
 
-func _init().("color", "Color", "{color}") -> void:
+func _init().("Color", "{color}") -> void:
 	pass
 
 

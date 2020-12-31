@@ -4,7 +4,7 @@ export var strength := 1.0
 
 const Properties = preload("res://addons/property_panel/properties.gd")
 
-func _init().("blur", "Blur") -> void:
+func _init().("Blur") -> void:
 	pass
 
 

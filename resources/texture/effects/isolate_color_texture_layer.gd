@@ -5,7 +5,7 @@ export var fuzziness : float
 
 const Properties = preload("res://addons/property_panel/properties.gd")
 
-func _init().("isolate_color", "Isolate Color") -> void:
+func _init().("Isolate Color") -> void:
 	pass
 
 
