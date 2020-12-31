@@ -328,6 +328,7 @@ text = "Add Tag"
 margin_left = 145.0
 margin_right = 240.0
 margin_bottom = 29.0
+hint_tooltip = "Remove the selected tag."
 text = "Remove Tag"
 
 [node name="TagList" type="Tree" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser/VBoxContainer"]
