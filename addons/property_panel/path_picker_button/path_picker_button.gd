@@ -22,6 +22,7 @@ func _on_FileDialog_file_selected(selected_path : String):
 func set_path(to : String):
 	path = to
 	text = path.get_file()
+	hint_tooltip = path
 
 
 func _gui_input(event : InputEvent) -> void:
