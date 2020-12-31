@@ -22,6 +22,8 @@ var undo_redo := Globals.undo_redo
 
 signal material_layer_selected(material_layer)
 signal texture_layer_selected(texture_layer)
+# warning-ignore:unused_signal
+signal layer_deselected
 signal folder_layer_selected
 
 enum Buttons {
@@ -94,7 +96,9 @@ func _gui_input(event : InputEvent) -> void:
 		var layer = get_selected_layer()
 		undo_redo.create_action("Delete Layer")
 		undo_redo.add_do_method(Globals.editing_layer_material, "delete_layer", layer)
+		undo_redo.add_do_method(self, "emit_signal", "layer_deselected")
 		undo_redo.add_undo_method(Globals.editing_layer_material, "add_layer", layer, layer.parent)
+		undo_redo.add_undo_method(self, "emit_select_signal", layer)
 		undo_redo.commit_action()
 
 
@@ -239,7 +243,10 @@ func is_folder(layer) -> bool:
 
 
 func _on_cell_selected() -> void:
-	var layer = get_selected().get_meta("layer")
+	emit_select_signal(get_selected().get_meta("layer"))
+
+
+func emit_select_signal(layer) -> void:
 	if layer is MaterialLayer:
 		emit_signal("material_layer_selected", layer)
 	elif layer is TextureLayer:

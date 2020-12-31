@@ -38,3 +38,8 @@ func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
 
 func _on_LayerTree_material_layer_selected(material_layer) -> void:
 	load_material_layer(material_layer)
+
+
+func _on_LayerTree_layer_deselected():
+	clear()
+	editing_layer = null
