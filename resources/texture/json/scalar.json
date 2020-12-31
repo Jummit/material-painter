@@ -1,0 +1,13 @@
+{
+	"name": "Scalar",
+	"properties" : [
+		{
+			"name": "value",
+			"type": "float",
+			"range": [0, 1],
+			"default": 0.5
+		}
+	],
+	"blends": true,
+	"shader": "vec4({value}, {value}, {value}, 1.0)"
+}

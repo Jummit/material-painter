@@ -1,6 +1,6 @@
 extends "res://resources/texture/texture_layer.gd"
 
-export var strength := 1.0
+export var settings := {}
 
 const Properties = preload("res://addons/property_panel/properties.gd")
 

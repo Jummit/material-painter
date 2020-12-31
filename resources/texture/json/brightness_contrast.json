@@ -1,0 +1,18 @@
+{
+	"name": "Brightness Contrast",
+	"properties" : [
+		{
+			"name": "brightness",
+			"type": "float",
+			"range": [-3.0, 2.5],
+			"default": 1.0
+		},
+		{
+			"name": "contrast",
+			"type": "float",
+			"range": [0.0, 6.0],
+			"default": 1.0
+		}
+	],
+	"shader": "return {previous}(uv) * {contrast} + vec4(vec3({brightness}), 0.0);"
+}

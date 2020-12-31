@@ -1,0 +1,11 @@
+{
+	"name": "Color",
+	"properties" : [
+		{
+			"name": "color",
+			"type": "color"
+		}
+	],
+	"blends": true,
+	"shader": "{color}"
+}

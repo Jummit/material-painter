@@ -1,0 +1,16 @@
+{
+	"name": "Isolate Color",
+	"properties" : [
+		{
+			"name": "color",
+			"type": "color"
+		},
+		{
+			"name": "fuzziness",
+			"type": "float",
+			"range": [],
+			"default": 1.0
+		}
+	],
+	"shader": "return distance({previous}(uv), {color}) < {fuzziness} ? vec4(1.0) : vec4(0.0, 0.0, 0.0, 1.0);"
+}

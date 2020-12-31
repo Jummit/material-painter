@@ -1,0 +1,13 @@
+{
+	"name": "Isolate Channel",
+	"properties" : [
+		{
+			"name": "channel",
+			"type": "enum",
+			"values": ["r", "g", "b", "a"],
+			"default": "r",
+			"shader_param": false
+		}
+	],
+	"shader": "return {previous}(uv).{channel}{channel}{channel};"
+}
