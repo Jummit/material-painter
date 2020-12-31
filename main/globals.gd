@@ -85,3 +85,9 @@ func set_current_file(save_file : SaveFile, announce := true) -> void:
 func set_editing_layer_material(to) -> void:
 	editing_layer_material = to
 	emit_signal("editing_layer_material_changed")
+
+
+func get_global_asset_path(path : String) -> String:
+	var local_path := current_file.resource_path.get_base_dir() +\
+			path.substr("local".length())
+	return local_path if path.begins_with("local") else path
