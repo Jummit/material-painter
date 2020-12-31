@@ -134,3 +134,7 @@ func _paint(on_texture_layer : BitmapTextureLayer, from : Vector2,
 func _on_AssetBrowser_asset_activated(asset):
 	if asset.type is BrushAssetType:
 		painter.brush = asset.data
+
+
+func _on_HalfResolutionButton_toggled(button_pressed):
+	stretch_shrink = 2 if button_pressed else 1
