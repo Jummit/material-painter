@@ -286,6 +286,7 @@ func _on_EditMenuButton_size_selected(size) -> void:
 
 
 func _on_LayoutNameEdit_text_entered(new_text : String) -> void:
+	save_layout_dialog.hide()
 	LayoutUtils.save_layout(root.get_child(0), LAYOUTS_FOLDER.plus_file(new_text + ".json"))
 
 
