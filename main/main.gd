@@ -191,13 +191,13 @@ func _on_LayerPropertyPanel_property_changed(property : String, value) -> void:
 	var layer = layer_property_panel.editing_layer
 	var update_shader = property in ["opacity", "blend_mode"]
 	undo_redo.create_action("Set Layer Property")
-	undo_redo.add_do_method("self", "set_value_on_layer", layer, property,
+	undo_redo.add_do_method(self, "set_value_on_layer", layer, property,
 			value)
 	undo_redo.add_do_method(layer_property_panel, "set_property_value",
 			property, value)
 	undo_redo.add_do_method(layer, "mark_dirty", update_shader)
 	undo_redo.add_do_method(Globals.editing_layer_material, "update")
-	undo_redo.add_undo_method("self", "set_value_on_layer", layer, property,
+	undo_redo.add_undo_method(self, "set_value_on_layer", layer, property,
 			layer.get(property))
 	undo_redo.add_undo_method(layer_property_panel, "set_property_value",
 			property, layer.get(property))

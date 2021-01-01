@@ -49,6 +49,7 @@ const MaterialFolder = preload("res://resources/material/material_folder.gd")
 const Asset = preload("res://main/asset_browser.gd").Asset
 const TextureAssetType = preload("res://main/asset_browser.gd").TextureAssetType
 const MaterialAssetType = preload("res://main/asset_browser.gd").MaterialAssetType
+const EffectAssetType = preload("res://main/asset_browser.gd").EffectAssetType
 
 onready var layer_popup_menu : PopupMenu = $LayerPopupMenu
 onready var map_type_popup_menu : PopupMenu = $MapTypePopupMenu
@@ -132,10 +133,17 @@ func can_drop_data(position : Vector2, data) -> bool:
 		return true
 	if data is Asset and data.type is MaterialAssetType:
 		return true
+	var layers : Array
+	var layer_type : int
+	if data is Asset and data.type is EffectAssetType:
+		layers = [data.data.duplicate()]
+		layer_type = LayerType.TEXTURE_LAYER
 	if data is Dictionary and "type" in data and data.type == "layers":
-		var layer_type : int = data.layer_type
+		layer_type = data.layer_type
+		layers = data.layers
+	if layers:
 		if get_item_at_position(position):
-			for layer in data.layers:
+			for layer in layers:
 				if layer == get_item_at_position(position).get_meta("layer"):
 					return false
 			var is_folder := is_folder(get_layer_at_position(position))

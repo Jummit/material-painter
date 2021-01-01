@@ -22,6 +22,7 @@ var ASSET_TYPES := {
 	TEXTURE = TextureAssetType.new(),
 	MATERIAL = MaterialAssetType.new(),
 	BRUSH = BrushAssetType.new(),
+	EFFECT = EffectAssetType.new(),
 }
 
 onready var tag_name_edit : LineEdit = $VBoxContainer/HBoxContainer/TagNameEdit
@@ -57,7 +58,8 @@ class AssetType:
 			preview = _generate_preview(asset)
 			if preview is GDScriptFunctionState:
 				preview = yield(preview, "completed")
-			preview.get_data().save_png(cached_thumbnail_path)
+			if preview and preview.get_data():
+				preview.get_data().save_png(cached_thumbnail_path)
 		return preview
 	
 	func _generate_preview(_asset : Asset) -> Texture:
@@ -324,9 +326,14 @@ func _on_SceneTree_files_dropped(files : PoolStringArray, _screen : int) -> void
 		var new_asset_path : String = ASSET_TYPES.TEXTURE.get_asset_directory().plus_file(file.get_file())
 		if dir.file_exists(new_asset_path):
 			continue
+		var type : AssetType
 		if file.get_extension() == "png":
+			type = ASSET_TYPES.TEXTURE
+		elif file.get_extension() == "json":
+			type = ASSET_TYPES.EFFECT
+		if type:
 			dir.copy(file, new_asset_path)
-			load_asset(file, ASSET_TYPES.TEXTURE)
+			load_asset(file, type)
 			update_asset_list()
 	progress_dialog.complete_task()
 
