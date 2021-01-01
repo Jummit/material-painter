@@ -310,7 +310,7 @@ func _on_AboutMenuButton_id_pressed(id : int) -> void:
 		1:
 			OS.shell_open("https://github.com/Jummit/material-painter")
 		2:
-			OS.shell_open("https://github.com/Jummit/material-painter/wiki")
+			OS.shell_open("https://jummit.github.io/material-painter-docs")
 		3:
 			license_dialog.popup_centered()
 		4:
