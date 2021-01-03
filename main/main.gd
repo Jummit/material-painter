@@ -71,7 +71,8 @@ func _ready() -> void:
 	undo_redo.connect("version_changed", self, "_on_UndoRedo_version_changed")
 	var popup := file_menu_button.get_popup()
 	popup.connect("id_pressed", self, "_on_FileMenu_id_pressed")
-	about_menu_button.get_popup().connect("id_pressed", self, "_on_AboutMenuButton_id_pressed")
+	about_menu_button.get_popup().connect("id_pressed", self,
+			"_on_AboutMenuButton_id_pressed")
 	for id in file_menu_shortcuts.size():
 		popup.set_item_shortcut(id, file_menu_shortcuts[id])
 	

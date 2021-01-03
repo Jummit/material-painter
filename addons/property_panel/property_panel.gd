@@ -75,13 +75,13 @@ func get_property_values() -> Dictionary:
 	return values
 
 
-func store_values(instance : Object) -> void:
+func store_values(instance) -> void:
 	var property_values := get_property_values()
 	for value in property_values:
 		instance.set(value, property_values[value])
 
 
-func load_values(instance : Object) -> void:
+func load_values(instance) -> void:
 	set_block_signals(true)
 	for property_container in properties_container.get_children():
 		property_container.set_value(instance.get(property_container.property.name))

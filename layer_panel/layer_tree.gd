@@ -133,15 +133,10 @@ func can_drop_data(position : Vector2, data) -> bool:
 		return true
 	if data is Asset and data.type is MaterialAssetType:
 		return true
-	var layers : Array
-	var layer_type : int
-	if data is Asset and data.type is EffectAssetType:
-		layers = [data.data.duplicate()]
-		layer_type = LayerType.TEXTURE_LAYER
-	if data is Dictionary and "type" in data and data.type == "layers":
-		layer_type = data.layer_type
-		layers = data.layers
-	if layers:
+	var layer_data := get_layers_of_drop_data(data)
+	if not layer_data.empty():
+		var layers : Array = layer_data.layers
+		var layer_type : int = layer_data.type
 		if get_item_at_position(position):
 			for layer in layers:
 				if layer == get_item_at_position(position).get_meta("layer"):
@@ -159,8 +154,27 @@ func can_drop_data(position : Vector2, data) -> bool:
 	return false
 
 
+func get_layers_of_drop_data(data) -> Dictionary:
+	var layers : Array
+	var layer_type : int
+	if data is Asset and data.type is EffectAssetType:
+		layers = [data.data.duplicate()]
+		layer_type = LayerType.TEXTURE_LAYER
+	elif data is Dictionary and "type" in data and data.type == "layers":
+		layers = data.layers
+		layer_type = data.layer_type
+	else:
+		return {}
+	return {
+		layers = layers,
+		type = layer_type
+	}
+
+
 func drop_data(position : Vector2, data) -> void:
-	if data is Dictionary and "type" in data and data.type == "layers":
+	var layer_data := get_layers_of_drop_data(data)
+	if not layer_data.empty():
+		var layers : Array = layer_data.layers
 		undo_redo.create_action("Rearrange Layers")
 		var onto_layer = get_layer_at_position(position)
 		var onto
@@ -181,16 +195,21 @@ func drop_data(position : Vector2, data) -> void:
 				if section == 1:
 					onto_position += 1
 				onto_position = int(clamp(onto_position, 0, onto.layers.size()))
-				data.layers.invert()
+				layers.invert()
 		
-		for layer in data.layers:
-			var layer_position = layer.parent.layers.find(layer)
-			var new_layer = layer.duplicate()
+		for layer in layers:
+			if layer.parent:
+				var layer_position = layer.parent.layers.find(layer)
+				var new_layer = layer.duplicate()
+				
+				undo_redo.add_do_method(Globals.editing_layer_material, "add_layer", new_layer, onto, onto_position)
+				undo_redo.add_do_method(Globals.editing_layer_material, "delete_layer", layer)
+				undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer", new_layer)
+				undo_redo.add_undo_method(Globals.editing_layer_material, "add_layer", layer, layer.parent, layer_position)
+			else:
+				undo_redo.add_do_method(Globals.editing_layer_material, "add_layer", layer, onto)
+				undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer", layer)
 			
-			undo_redo.add_do_method(Globals.editing_layer_material, "add_layer", new_layer, onto, onto_position)
-			undo_redo.add_do_method(Globals.editing_layer_material, "delete_layer", layer)
-			undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer", new_layer)
-			undo_redo.add_undo_method(Globals.editing_layer_material, "add_layer", layer, layer.parent, layer_position)
 		
 		undo_redo.add_do_method(self, "load_layer_material")
 		undo_redo.add_undo_method(self, "load_layer_material")

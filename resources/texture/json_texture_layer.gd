@@ -1,19 +1,43 @@
 extends "res://resources/texture/texture_layer.gd"
 
-export var settings := {}
+export var settings : Dictionary
 export var file : String
 
 var data : Dictionary
 
+const DEFAULTS := {
+	int = 0,
+	string = "",
+	float = 0.0,
+	color = Color(),
+	bool = true,
+}
+
 const Properties = preload("res://addons/property_panel/properties.gd")
 
-func _init(_file : String).("JSON") -> void:
+func _init(_file := "").("JSON") -> void:
+	# default arguments so `duplicate` works
+	if not _file:
+		return
 	file = _file
 	var read_file := File.new()
 	read_file.open(file, File.READ)
 	data = parse_json(read_file.get_as_text())
 	read_file.close()
 	type_name = data.name
+	if "properties" in data:
+		for property in data.properties:
+			settings[property.name] = DEFAULTS[property.type] if not "default" in\
+					property else property.default
+
+
+func duplicate(_deep := false) -> Resource:
+	var dup : Resource = get_script().new()
+	dup.settings = settings
+	dup.file = file
+	dup.data = data
+	dup.type_name = data.name
+	return dup
 
 
 func get_properties() -> Array:
