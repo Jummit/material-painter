@@ -1,5 +1,9 @@
 extends OptionButton
 
+"""
+`OptionButton` used to switch between surfaces of the loaded model
+"""
+
 func _ready():
 	Globals.connect("current_file_changed", self, "_on_Globals_current_file_changed")
 

@@ -1,12 +1,12 @@
 extends ViewportContainer
 
 """
-The 3D view that contains a model with the generated material applied
+The 3D view that contains the loaded model with the generated material applied
 
-Handles face selection and painting using the `Painter` addon.
+Handles face selection and painting using the `SelectionUtils` and `Painter` addon.
+The sun can be rotated by right clicking and dragging.
+Responsible for selecting HDRIs and toggling HDRI visibility.
 """
-
-signal painted(layer)
 
 var sensitity := 0.01
 var last_painted_position : Vector2
@@ -14,7 +14,6 @@ var cached_camera_transform : Transform
 
 const Brush = preload("res://addons/painter/brush.gd")
 const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
-const MeshUtils = preload("res://utils/mesh_utils.gd")
 const Asset = preload("res://main/asset_browser.gd").Asset
 const BrushAssetType = preload("res://main/asset_browser.gd").BrushAssetType
 const SelectionUtils = preload("res://addons/selection_utils/selection_utils.gd")
@@ -111,24 +110,29 @@ func _on_Globals_mesh_changed(mesh : Mesh) -> void:
 	progress_dialog = ProgressDialogManager.create_task(
 			"Generate Selection Maps", selection_utils.SelectionType.size())
 	for selection_type in selection_utils._selection_types:
-		progress_dialog.set_action(selection_utils.SelectionType.keys()[selection_type])
-		var result = selection_utils._selection_types[selection_type].prepare_mesh(mesh)
-		if result is GDScriptFunctionState:
-			result = yield(result, "completed")
+		progress_dialog.set_action(selection_utils.SelectionType.keys()[
+				selection_type])
+		var prepared_mesh = selection_utils._selection_types[selection_type].\
+				prepare_mesh(mesh)
+		if prepared_mesh is GDScriptFunctionState:
+			prepared_mesh = yield(prepared_mesh, "completed")
 		yield(get_tree(), "idle_frame")
-		selection_utils._prepared_meshes[selection_type] = result
+		selection_utils._prepared_meshes[selection_type] = prepared_mesh
 	progress_dialog.complete_task()
 
 
+# perform a selection with the given `type` using `selection_utils`
 func select(on_texture_layer : BitmapTextureLayer, type : int,
 		position : Vector2) -> void:
 	selection_utils.update_view(viewport)
 	on_texture_layer.temp_texture = yield(selection_utils.add_selection(
 			type, position, Globals.result_size,
 			on_texture_layer.temp_texture), "completed")
-	emit_signal("painted", layer_tree.get_selected_layer())
+	layer_tree.get_selected_layer().mark_dirty()
+	Globals.editing_layer_material.update()
 
 
+# perform a paintstroke from `from` to `to` using the `painter`
 func paint(on_texture_layer : BitmapTextureLayer, from : Vector2,
 		to : Vector2) -> void:
 	var camera : Camera = viewport.get_camera()
@@ -138,4 +142,5 @@ func paint(on_texture_layer : BitmapTextureLayer, from : Vector2,
 	cached_camera_transform = camera_transform
 	painter.paint(from / rect_size, to / rect_size)
 	on_texture_layer.temp_texture = painter.result
-	emit_signal("painted", on_texture_layer)
+	on_texture_layer.mark_dirty()
+	Globals.editing_layer_material.update()

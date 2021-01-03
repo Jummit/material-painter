@@ -1,5 +1,9 @@
 extends Viewport
 
+"""
+A `Viewport` that renders each part of the mesh with a different color
+"""
+
 func generate_id_map(mesh : Mesh, result_size : Vector2) -> ViewportTexture:
 	var original_data_tool := MeshDataTool.new()
 	original_data_tool.create_from_surface(mesh, 0)

@@ -1,5 +1,11 @@
 extends MenuButton
 
+"""
+A menu containing editing related options
+
+Allows changing result texture size and baking mesh maps.
+"""
+
 signal bake_mesh_maps_pressed
 signal size_selected(size)
 

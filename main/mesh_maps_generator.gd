@@ -1,3 +1,7 @@
+"""
+Utility for managing generation of different mesh maps
+"""
+
 const TextureUtils = preload("res://utils/texture_utils.gd")
 
 class MeshMapGenerator:

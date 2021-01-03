@@ -1,5 +1,11 @@
 extends "res://resources/texture/texture_layer.gd"
 
+"""
+A `TextureLayer` that uses a json file to configure the parameters and the shader
+
+It is used in the `EffectAssetType` in the `AssetBrowser`.
+"""
+
 export var settings : Dictionary
 export var file : String
 

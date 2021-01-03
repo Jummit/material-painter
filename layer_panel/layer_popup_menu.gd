@@ -1,7 +1,7 @@
 extends PopupMenu
 
 """
-The context menu that is shown when right-clicking a `MaterialLayer`
+The context menu that is shown when right-clicking a layer in the `LayerTree`
 """
 
 var layer

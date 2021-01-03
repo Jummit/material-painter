@@ -1,5 +1,11 @@
 extends AcceptDialog
 
+"""
+A dialog inspired by the Godot Engine `About` popup
+
+Shows the used components and their licenses.
+"""
+
 onready var tab_container : TabContainer = $TabContainer
 onready var info_text_label : RichTextLabel = $TabContainer/ThirdPartyLicenses/HBoxContainer/InfoTextLabel
 onready var component_tree : Tree = $TabContainer/ThirdPartyLicenses/HBoxContainer/ComponentTree

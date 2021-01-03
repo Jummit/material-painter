@@ -1,5 +1,14 @@
 extends Viewport
 
+"""
+`Viewport` for rendering previews of `Asset`s used in the `AssetBrowser`
+
+Renders previews of `MaterialAssetTypes`s and `BrushAssetTypes`s
+
+Replaces all local textures of the material with res://preview_renderer to make
+mesh maps used in the material work.
+"""
+
 const TextureUtils = preload("res://utils/texture_utils.gd")
 const Brush = preload("res://addons/painter/brush.gd")
 const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")

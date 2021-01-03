@@ -1,7 +1,7 @@
 extends Node
 
 """
-Global constants
+Global constants and application state
 """
 
 # warning-ignore-all:unused_class_variable

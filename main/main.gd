@@ -3,8 +3,9 @@ extends Control
 """
 The main script of the Material Painter application
 
-It handles most callbacks and updates the results of the layer stacks when something changes.
-Manages the menu bar, saving and loading.
+It handles most callbacks related to the application. Manages the menu bar,
+saving and loading, switching layouts, undo and redo and some `LayerTree`
+modification.
 """
 
 var _mesh_maps_generator = preload("res://main/mesh_maps_generator.gd").new()
@@ -214,11 +215,6 @@ func _on_MaterialLayerPopupMenu_layer_saved() -> void:
 	ResourceSaver.save(save_path, material_layer)
 	asset_browser.load_asset(save_path, asset_browser.ASSET_TYPES.MATERIAL)
 	asset_browser.update_asset_list()
-
-
-func _on_Viewport_painted(layer : TextureLayer) -> void:
-	layer.mark_dirty()
-	Globals.editing_layer_material.update()
 
 
 func _on_MaterialLayerPopupMenu_mask_added(mask : LayerTexture) -> void:

@@ -1,7 +1,7 @@
 extends VBoxContainer
 
 """
-A list of buttons used to select the painting tool
+A list of buttons used to select the painting/selection tool
 
 Procedurally adds buttons and loads icons from `res://icons/tools/`.
 Only shows when a `BitmapTextureLayer` is selected.

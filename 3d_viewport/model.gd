@@ -2,20 +2,25 @@ extends MeshInstance
 
 """
 The mesh that is used to preview the generated material
+
+Also used for material thumbnails in the asset browser.
+If `isolated_map` is specified it will be used as albedo.
 """
 
 # the name of the currently viewing map, for example "albedo"
 var isolated_map : String
 
 func _ready() -> void:
-	Globals.connect("editing_layer_material_changed", self, "_on_Globals_editing_layer_material_changed")
+	Globals.connect("editing_layer_material_changed", self,
+			"_on_Globals_editing_layer_material_changed")
 	Globals.connect("mesh_changed", self, "_on_Globals_mesh_changed")
 
 
 func load_materials(layer_materials : Array) -> void:
 	if not isolated_map:
 		for surface in layer_materials.size():
-			set_surface_material(surface, layer_materials[surface].get_material(get_surface_material(surface)))
+			set_surface_material(surface, layer_materials[surface].get_material(
+					get_surface_material(surface)))
 
 
 func _on_ResultsItemList_map_selected(map : String) -> void:
@@ -25,7 +30,8 @@ func _on_ResultsItemList_map_selected(map : String) -> void:
 	else:
 		isolated_map = map
 		for material_num in Globals.current_file.layer_materials.size():
-			var results : Dictionary = Globals.current_file.layer_materials[material_num].results
+			var results : Dictionary = Globals.current_file.layer_materials[\
+					material_num].results
 			if map in results:
 				var material := SpatialMaterial.new()
 				material.albedo_texture = results[map]
@@ -38,7 +44,8 @@ func _on_Globals_mesh_changed(to : Mesh) -> void:
 
 
 func _on_Globals_editing_layer_material_changed() -> void:
-	Globals.editing_layer_material.connect("results_changed", self, "_on_LayerMaterial_results_changed")
+	Globals.editing_layer_material.connect("results_changed", self,
+			"_on_LayerMaterial_results_changed")
 
 
 func _on_LayerMaterial_results_changed() -> void:

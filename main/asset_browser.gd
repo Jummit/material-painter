@@ -1,11 +1,23 @@
 extends HBoxContainer
 
 """
-A list of assets that can be drag and dropped onto different UI elements
+A list of assets that can be drag-and dropped onto different UI elements
 
-The tabs for each `AssetType` are generated procedurally.
-Each `AssetType` defines how to load the asset file
-and how to generate a thumbnail for it.
+Each `AssetType` defines how to load the asset file and how to generate a
+thumbnail for it.
+
+Stored assets are sorted in folders by their type. They can be loaded from the
+global asset library located in the user directory or from the asset library
+local to the project.
+
+Built-in effect assets are loaded from res://resources/texture/json.
+
+A list of tags can be modified by the user.
+Assets are automatically tagged using their name and type. The user can
+add and remove tags of assets. Tag metadata is stored in a json file in the
+user directory.
+
+Assets can be searched using the search bar.
 """
 
 signal asset_activated(asset)

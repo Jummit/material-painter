@@ -1,7 +1,8 @@
 extends Resource
 
 """
-A folder layer used in a `LayerMaterial` for organization and optimization
+A folder layer containing `MaterialLayer`s used in a `LayerMaterial` for
+organization and optimization
 """
 
 # warning-ignore-all:unused_class_variable

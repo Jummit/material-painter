@@ -1,7 +1,7 @@
 extends ItemList
 
 """
-A list of map results of the editing `LayerMaterial`
+A list of map results of the edited `LayerMaterial`
 """
 
 signal map_selected(map)

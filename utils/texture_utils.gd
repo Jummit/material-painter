@@ -1,6 +1,6 @@
 """
-A utility to convert a `ViewportTexture` to an `ImageTexture`
-to make it independent of the `Viewport`
+A utility to convert a `ViewportTexture` to an `ImageTexture` to make it
+independent of the `Viewport`
 """
 
 static func viewport_to_image(viewport_texture : ViewportTexture) -> ImageTexture:

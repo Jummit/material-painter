@@ -4,6 +4,14 @@ extends Resource
 A texture made up of blending `TextureLayer`s stored in the `layers` array
 
 Stores a `result` which is updated when settings of the layers change.
+
+`MaterialLayer`s can be hidden, which excludes them from the result of the
+`LayerMaterial`.
+
+It will mark the parent `LayerTexture` dirty when marked dirty.
+
+If `shader_dirty` is true, the shader needs to be recompiled. This is not
+necessary if only parameters changed.
 """
 
 export var layers : Array

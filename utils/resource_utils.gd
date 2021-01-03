@@ -1,3 +1,7 @@
+"""
+Utilities for working with `Resource`s
+"""
+
 # workaround for https://github.com/godotengine/godot/issues/33079
 static func deep_copy_of_resource(resource : Resource) -> Resource:
 	ResourceSaver.save("user://.tmp_duplicate_resource.tres", resource)

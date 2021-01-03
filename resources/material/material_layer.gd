@@ -1,10 +1,17 @@
 extends Resource
 
 """
-A single layer of a `LayerMaterial`
+A layer of a `LayerMaterial`
 
-The `properties` `Dictionary` holds a `mask` that is used when blending the layers
-and can hold a `LayerTexture` for each map (for example albedo, height, etc...).
+`mask` is used when blending the layers.
+`maps` is a dictionary which can hold a `LayerTexture` for each map, for example
+albedo, metallic or height.
+
+`MaterialLayer`s can be hidden, which excludes them from the result of the
+`LayerMaterial`.
+
+It is marked dirty when the child `LayerTexture`s change, which will mark the
+parent `LayerMaterial` dirty.
 """
 
 # warning-ignore-all:unused_class_variable

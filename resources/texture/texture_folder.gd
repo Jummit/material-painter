@@ -1,7 +1,7 @@
 extends Resource
 
 """
-A folder layer used in a `LayerTexture` for organization and optimization
+A folder layer containing `TextureLayer`s used in a `LayerTexture` for organization
 """
 
 # warning-ignore-all:unused_class_variable

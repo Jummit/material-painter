@@ -1,5 +1,9 @@
 extends Viewport
 
+"""
+A `Viewport` to render a triplanar texture in UV-space
+"""
+
 onready var mesh_instance : MeshInstance = $MeshInstance
 onready var material : ShaderMaterial = $MeshInstance.material_override
 

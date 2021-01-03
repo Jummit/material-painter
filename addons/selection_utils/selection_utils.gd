@@ -1,5 +1,15 @@
 extends Node
 
+"""
+A utility for performing different mesh selections on the GPU
+
+Selections will be added in white ontop of the given texture.
+There are multiple `SelectionType`s, each preparing the mesh by setting the vertex
+colors of selectable areas the same.
+The vertex color at the given screen position is then sampled
+and isolated to get the selected area on the texture.
+"""
+
 var mesh : Mesh setget set_mesh
 
 var _prepared_meshes := {}
@@ -55,7 +65,7 @@ func add_selection(selection_type : int, mouse_position : Vector2,
 	return isolate_viewport.get_texture()
 
 
-func set_mesh(to) -> void:
+func set_mesh(to : Mesh) -> void:
 	mesh = to
 	for selection_type in _selection_types:
 		var result = _selection_types[selection_type].prepare_mesh(mesh)

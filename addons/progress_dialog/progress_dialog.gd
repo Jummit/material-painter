@@ -1,5 +1,9 @@
 extends PopupDialog
 
+"""
+A popup which shows the progress of a task
+"""
+
 onready var current_action_label : Label = $MarginContainer/VBoxContainer/CurrentActionLabel
 onready var progress_bar : ProgressBar = $MarginContainer/VBoxContainer/ProgressBar
 onready var task_label : Label = $MarginContainer/VBoxContainer/TaskLabel
