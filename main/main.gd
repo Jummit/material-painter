@@ -430,10 +430,14 @@ func _do_change_mask_action(action_name : String, layer : MaterialLayer,
 func _initialise_layouts() -> void:
 	var dir := Directory.new()
 	dir.make_dir_recursive("user://layouts")
-	if not dir.file_exists("default.json"):
+	var default := LAYOUTS_FOLDER.plus_file("default.json")
+	if not dir.file_exists(default):
 		# wait for all windows to be ready
 		yield(get_tree(), "idle_frame")
-		LayoutUtils.save_layout(root.get_child(0), LAYOUTS_FOLDER.plus_file("default.json"))
+		LayoutUtils.save_layout(root.get_child(0), default)
+	else:
+		yield(get_tree(), "idle_frame")
+		LayoutUtils.load_layout(root, default)
 	view_menu_button.update_layout_options()
 
 
