@@ -53,6 +53,7 @@ const JSONTextureLayer = preload("res://resources/texture/json_texture_layer.gd"
 
 onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/FileMenuButton
 onready var about_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/AboutMenuButton
+onready var view_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/ViewMenuButton
 onready var file_dialog : FileDialog = $FileDialog
 onready var layer_property_panel : Panel = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer/LayerPropertyPanel
 onready var texture_map_buttons : GridContainer = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer/TextureMapButtons
@@ -305,10 +306,12 @@ func _on_EditMenuButton_size_selected(size) -> void:
 func _on_LayoutNameEdit_text_entered(new_text : String) -> void:
 	save_layout_dialog.hide()
 	LayoutUtils.save_layout(root.get_child(0), LAYOUTS_FOLDER.plus_file(new_text + ".json"))
+	view_menu_button.update_layout_options()
 
 
 func _on_SaveLayoutDialog_confirmed() -> void:
 	LayoutUtils.save_layout(root.get_child(0), LAYOUTS_FOLDER.plus_file(layout_name_edit.text + ".json"))
+	view_menu_button.update_layout_options()
 
 
 func _on_ViewMenuButton_layout_selected(layout : String) -> void:
@@ -422,6 +425,7 @@ func _initialise_layouts() -> void:
 		# wait for all windows to be ready
 		yield(get_tree(), "idle_frame")
 		LayoutUtils.save_layout(root.get_child(0), LAYOUTS_FOLDER.plus_file("default.json"))
+	view_menu_button.update_layout_options()
 
 
 func _on_QuitConfirmationDialog_custom_action(_action):
