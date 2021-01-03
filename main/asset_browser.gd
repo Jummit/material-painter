@@ -57,7 +57,7 @@ class AssetType:
 			preview_image.load(custom_thumbnail_path)
 			preview = ImageTexture.new()
 			preview.create_from_image(preview_image)
-		if dir.file_exists(cached_thumbnail_path):
+		elif dir.file_exists(cached_thumbnail_path):
 			var preview_image := Image.new()
 			preview_image.load(cached_thumbnail_path)
 			preview = ImageTexture.new()
@@ -136,6 +136,7 @@ class Asset:
 	var type : AssetType
 	var tags : Array
 	var file : String
+	var preview : Texture
 	var data
 	
 	func get_cached_thumbnail_path() -> String:
@@ -143,7 +144,7 @@ class Asset:
 				file.get_file().get_basename() + ".png")
 	
 	func get_custom_thumbnail_path() -> String:
-		return file.rstrip("tres") + "png"
+		return file.replace("." + file.get_extension(), ".png")
 
 func _ready():
 	asset_list.set_drag_forwarding(self)
@@ -226,9 +227,11 @@ func load_assets(directory : String, asset_type : AssetType) -> Array:
 		if file.get_extension() != asset_type.extension:
 			continue
 		progress_dialog.set_action(file)
-		var asset := load_asset(directory.plus_file(file), asset_type)
+		var asset = load_asset(directory.plus_file(file), asset_type)
+		if asset is GDScriptFunctionState:
+			asset = yield(asset, "completed")
 		new_assets.append(asset)
-	yield(get_tree(), "idle_frame")
+		yield(get_tree(), "idle_frame")
 	return new_assets
 
 
@@ -247,6 +250,10 @@ func load_asset(path : String, asset_type : AssetType) -> Asset:
 	for tag in tag_metadata:
 		if asset.file in tag_metadata[tag]:
 			add_asset_to_tag(asset, tag)
+	var result  = asset_type.get_preview(asset)
+	if result is GDScriptFunctionState:
+		result = yield(result, "completed")
+	asset.preview = result
 	return asset
 
 
@@ -277,13 +284,13 @@ func update_asset_list() -> void:
 				found_assets.append(asset)
 	else:
 		found_assets = tagged_assets[current_tag]
-	var added_assets := []
+	var added_assets := {}
 	for asset in found_assets:
 		if asset in added_assets:
 			continue
-		added_assets.append(asset)
+		added_assets[asset] = true  
 		var item := asset_list.get_item_count()
-		asset_list.add_item(asset.name, asset.type.get_preview(asset))
+		asset_list.add_item(asset.name, asset.preview)
 		asset_list.set_item_tooltip(item, "%s\n\n%s\nTags: %s" % [
 				asset.name, asset.file,
 				(asset.tags as PoolStringArray).join(", ")])

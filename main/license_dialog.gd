@@ -514,6 +514,7 @@ var components := {
 	"Godot Engine Icons": "Copyright (c) 2007-2020 Juan Linietsky, Ariel Manzur.\nCopyright (c) 2014-2020 Godot Engine contributors.",
 	"Godot Material Spray": "MIT License\n\nCopyright (c) 2018 Rodz Labs",
 	"HDRI Haven HDRIs": "CC0 License",
+	"HSV Color Wheel": "From Wikimedia Commons, the free media repository.\nBy Alexandre Van de Sande.\nLicensed under the Creative Commons Attribution-Share Alike 3.0 Unported license.",
 	"OBJ Parser": "MIT License\n\nCopyright (c) 2018-2019 Ezcha",
 }
 
