@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://addons/property_panel/float_slider/float_slider.gd" type="Script" id=1]
+
+[node name="FloatSlider" type="LineEdit"]
+margin_right = 58.0
+margin_bottom = 24.0
+mouse_filter = 2
+placeholder_alpha = 0.196
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+value = 0.051
+
+[connection signal="focus_exited" from="." to="." method="_on_focus_exited"]
+[connection signal="text_changed" from="." to="." method="_on_text_changed"]
+[connection signal="text_entered" from="." to="." method="_on_text_entered"]

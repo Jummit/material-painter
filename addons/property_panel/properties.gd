@@ -68,15 +68,14 @@ class RangeProperty extends Property:
 	var from : float
 	var to : float
 	var step : float
-	func _init(_step : float).("value_changed", "value"):
+	func _init(_step : float).("changed", "value"):
 		_step = step
 	
 	func _get_control() -> Control:
-		var slider := HSlider.new()
+		var slider : Control = preload("float_slider/float_slider.tscn").instance()
 		slider.min_value = from
 		slider.max_value = to
 		slider.step = step
-#		slider.tick_count = 100
 		return slider
 
 class IntProperty extends RangeProperty:
