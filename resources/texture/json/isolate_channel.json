@@ -9,5 +9,5 @@
 			"shader_param": false
 		}
 	],
-	"shader": "return {previous}(uv).{channel}{channel}{channel};"
+	"shader": "return vec4({previous}(uv).{channel}{channel}{channel}, 1.0);"
 }
