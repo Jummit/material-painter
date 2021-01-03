@@ -13,19 +13,17 @@ const DEFAULTS := {
 	bool = true,
 }
 
+const SHADER_TYPES := {
+	color = "vec4"
+}
+
 const Properties = preload("res://addons/property_panel/properties.gd")
 
 func _init(_file := "").("JSON") -> void:
+	if not _file:
+		return
 	file = _file
-	var read_file := File.new()
-	read_file.open(file, File.READ)
-	data = parse_json(read_file.get_as_text())
-	read_file.close()
-	type_name = data.name
-	if "properties" in data:
-		for property in data.properties:
-			settings[property.name] = DEFAULTS[property.type] if not "default" in\
-					property else property.default
+	load_data()
 
 
 func duplicate(_deep := false) -> Resource:
@@ -38,6 +36,7 @@ func duplicate(_deep := false) -> Resource:
 
 
 func get_properties() -> Array:
+	load_data()
 	if not "properties" in data:
 		return []
 	var list := []
@@ -54,20 +53,38 @@ func get_properties() -> Array:
 			"bool":
 				list.append(Properties.BoolProperty.new(property.name))
 			"enum":
-				list.append(Properties.EnumProperty.new(property.options,
-						property.name))
+				list.append(Properties.EnumProperty.new(property.name,
+						property.options))
 	return list
 
 
 func _get_as_shader_layer() -> Layer:
+	load_data()
 	var layer := Layer.new()
 	layer.code = data.shader
 	if "properties" in data:
 		for property in data.properties:
 			if "shader_param" in property and not property.shader_param:
-				layer.code.format({property.name: settings[property.name]})
+				layer.code = layer.code.format({property.name: settings[property.name]})
 			else:
-				layer.uniform_types.append(property.type)
+				layer.uniform_types.append(property.type if not property.type\
+						in SHADER_TYPES else SHADER_TYPES[property.type])
 				layer.uniform_names.append(property.name)
 				layer.uniform_values.append(settings[property.name])
 	return layer
+
+
+func load_data() -> void:
+	if data:
+		return
+	var read_file := File.new()
+	read_file.open(file, File.READ)
+	data = parse_json(read_file.get_as_text())
+	read_file.close()
+	type_name = data.name
+	if "properties" in data:
+		for property in data.properties:
+			if property.name in settings:
+				continue
+			settings[property.name] = DEFAULTS[property.type] if not "default" in\
+					property else property.default
