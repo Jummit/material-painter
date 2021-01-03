@@ -7,21 +7,9 @@ The mesh that is used to preview the generated material
 # the name of the currently viewing map, for example "albedo"
 var isolated_map : String
 
-func _ready():
+func _ready() -> void:
 	Globals.connect("editing_layer_material_changed", self, "_on_Globals_editing_layer_material_changed")
 	Globals.connect("mesh_changed", self, "_on_Globals_mesh_changed")
-
-
-func _on_Globals_mesh_changed(to : Mesh) -> void:
-	mesh = to
-
-
-func _on_Globals_editing_layer_material_changed() -> void:
-	Globals.editing_layer_material.connect("results_changed", self, "_on_LayerMaterial_results_changed")
-
-
-func _on_LayerMaterial_results_changed() -> void:
-	load_materials(Globals.current_file.layer_materials)
 
 
 func load_materials(layer_materials : Array) -> void:
@@ -43,3 +31,15 @@ func _on_ResultsItemList_map_selected(map : String) -> void:
 				material.albedo_texture = results[map]
 				material.flags_albedo_tex_force_srgb = true
 				set_surface_material(material_num, material)
+
+
+func _on_Globals_mesh_changed(to : Mesh) -> void:
+	mesh = to
+
+
+func _on_Globals_editing_layer_material_changed() -> void:
+	Globals.editing_layer_material.connect("results_changed", self, "_on_LayerMaterial_results_changed")
+
+
+func _on_LayerMaterial_results_changed() -> void:
+	load_materials(Globals.current_file.layer_materials)

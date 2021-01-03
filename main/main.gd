@@ -77,8 +77,8 @@ func _ready() -> void:
 	for id in file_menu_shortcuts.size():
 		popup.set_item_shortcut(id, file_menu_shortcuts[id])
 	
-	_initialise_layouts()
-	_start_empty_project()
+	initialise_layouts()
+	start_empty_project()
 
 
 func _input(event : InputEvent) -> void:
@@ -93,17 +93,6 @@ func _input(event : InputEvent) -> void:
 			print("Nothing to redo.")
 		else:
 			print("Redo: " + undo_redo.get_current_action_name())
-
-
-func set_mask(layer : MaterialLayer, mask : LayerTexture) -> void:
-	if mask == NO_MASK:
-		layer.mask = null
-	else:
-		layer.mask = mask
-		mask.parent = layer
-		mask.mark_dirty()
-	layer.mark_dirty()
-	Globals.editing_layer_material.update()
 
 
 func _on_FileDialog_file_selected(path : String) -> void:
@@ -125,23 +114,6 @@ func _on_FileDialog_file_selected(path : String) -> void:
 					load_mesh(path)
 
 
-func load_mesh(path : String) -> void:
-	var interactive_loader := ObjParser.parse_obj_interactive(path)
-	var progress_dialog = ProgressDialogManager.create_task("Load OBJ Model",
-			int(interactive_loader.get_stage_count() / 10000.0))
-	while true:
-		progress_dialog.set_action("Stage %s / %s" % [
-				interactive_loader.get_stage(),
-				interactive_loader.get_stage_count()])
-		yield(get_tree(), "idle_frame")
-		for i in 10000:
-			var mesh = interactive_loader.poll()
-			if mesh:
-				progress_dialog.complete_task()
-				Globals.mesh = mesh
-				return
-
-
 func _on_AddButton_pressed() -> void:
 	var onto
 	if layer_tree.is_folder(layer_tree.get_selected_layer()):
@@ -151,8 +123,10 @@ func _on_AddButton_pressed() -> void:
 	undo_redo.create_action("Add Material Layer")
 	var new_layer := MaterialLayer.new()
 	new_layer.parent = onto
-	undo_redo.add_do_method(Globals.editing_layer_material, "add_layer", new_layer, onto)
-	undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer", new_layer)
+	undo_redo.add_do_method(Globals.editing_layer_material, "add_layer",
+			new_layer, onto)
+	undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer",
+			new_layer)
 	undo_redo.commit_action()
 
 
@@ -162,7 +136,8 @@ func _on_AddFolderButton_pressed() -> void:
 	var selected_layer = layer_tree.get_selected_layer()
 	if layer_tree.is_folder(layer_tree.get_selected_layer()):
 		onto = selected_layer
-	elif selected_layer is MaterialLayer and layer_tree.get_selected_layer_texture(selected_layer):
+	elif selected_layer is MaterialLayer and\
+			layer_tree.get_selected_layer_texture(selected_layer):
 		onto = layer_tree.get_selected_layer_texture(selected_layer)
 	else:
 		onto = Globals.editing_layer_material
@@ -173,8 +148,10 @@ func _on_AddFolderButton_pressed() -> void:
 	else:
 		new_layer = TextureFolder.new()
 	
-	undo_redo.add_do_method(Globals.editing_layer_material, "add_layer", new_layer, onto)
-	undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer", new_layer)
+	undo_redo.add_do_method(Globals.editing_layer_material, "add_layer",
+			new_layer, onto)
+	undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer",
+			new_layer)
 	undo_redo.commit_action()
 
 
@@ -213,13 +190,6 @@ func _on_LayerPropertyPanel_property_changed(property : String, value) -> void:
 	undo_redo.commit_action()
 
 
-func set_value_on_layer(layer, property : String, value) -> void:
-	if layer is JSONTextureLayer:
-		layer.settings[property] = value
-	else:
-		layer[property] = value
-
-
 func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
 	undo_redo.create_action("Add Texture Layer")
 	var new_layer = layer.new()
@@ -231,8 +201,10 @@ func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
 		onto = selected_layer
 	else:
 		onto = selected_layer.parent
-	undo_redo.add_do_method(Globals.editing_layer_material, "add_layer", new_layer, onto)
-	undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer", new_layer)
+	undo_redo.add_do_method(Globals.editing_layer_material, "add_layer",
+			new_layer, onto)
+	undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer",
+			new_layer)
 	undo_redo.commit_action()
 
 
@@ -250,22 +222,26 @@ func _on_Viewport_painted(layer : TextureLayer) -> void:
 
 
 func _on_MaterialLayerPopupMenu_mask_added(mask : LayerTexture) -> void:
-	_do_change_mask_action("Add Mask", layer_tree.get_selected_layer(), mask)
+	do_change_mask_action("Add Mask", layer_tree.get_selected_layer(), mask)
 
 
 func _on_MaterialLayerPopupMenu_mask_removed() -> void:
-	_do_change_mask_action("Remove Mask", layer_tree.get_selected_layer(), NO_MASK)
+	do_change_mask_action("Remove Mask", layer_tree.get_selected_layer(),
+			NO_MASK)
 
 
 func _on_MaterialLayerPopupMenu_mask_pasted(mask : LayerTexture) -> void:
-	_do_change_mask_action("Paste Mask", layer_tree.get_selected_layer(), mask)
+	do_change_mask_action("Paste Mask", layer_tree.get_selected_layer(), mask)
 
 
 func _on_MaterialLayerPopupMenu_duplicated() -> void:
 	undo_redo.create_action("Duplicate Layer")
-	var new_layer = ResourceUtils.deep_copy_of_resource(layer_tree.get_selected_layer())
-	undo_redo.add_do_method(Globals.editing_layer_material, "add_layer", new_layer, Globals.editing_layer_material)
-	undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer", new_layer)
+	var new_layer = ResourceUtils.deep_copy_of_resource(
+			layer_tree.get_selected_layer())
+	undo_redo.add_do_method(Globals.editing_layer_material, "add_layer",
+			new_layer, Globals.editing_layer_material)
+	undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer",
+			new_layer)
 	undo_redo.commit_action()
 
 
@@ -286,8 +262,10 @@ func _on_MaterialOptionButton_item_selected(index : int) -> void:
 
 
 func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
-	var mesh_maps : Dictionary = yield(_mesh_maps_generator.generate_mesh_maps(Globals.mesh, Vector2(1024, 1024)), "completed")
-	var texture_dir : String = asset_browser.ASSET_TYPES.TEXTURE.get_local_asset_directory(Globals.current_file.resource_path)
+	var mesh_maps : Dictionary = yield(_mesh_maps_generator.generate_mesh_maps(
+			Globals.mesh, Vector2(1024, 1024)), "completed")
+	var texture_dir : String = asset_browser.ASSET_TYPES.TEXTURE.\
+			get_local_asset_directory(Globals.current_file.resource_path)
 	var dir := Directory.new()
 	dir.make_dir_recursive(texture_dir)
 	var progress_dialog = ProgressDialogManager.create_task("Bake Mesh Maps",
@@ -297,7 +275,8 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 		var file := texture_dir.plus_file(map) + ".png"
 		progress_dialog.set_action(file)
 		mesh_maps[map].get_data().save_png(file)
-		var asset = asset_browser.load_asset(file, asset_browser.ASSET_TYPES.TEXTURE)
+		var asset = asset_browser.load_asset(file,
+				asset_browser.ASSET_TYPES.TEXTURE)
 		asset_browser.add_asset_to_tag(asset, "local")
 		if asset is GDScriptFunctionState:
 			asset = yield(asset, "completed")
@@ -314,12 +293,14 @@ func _on_EditMenuButton_size_selected(size) -> void:
 
 func _on_LayoutNameEdit_text_entered(new_text : String) -> void:
 	save_layout_dialog.hide()
-	LayoutUtils.save_layout(root.get_child(0), LAYOUTS_FOLDER.plus_file(new_text + ".json"))
+	LayoutUtils.save_layout(root.get_child(0), LAYOUTS_FOLDER.plus_file(
+			new_text + ".json"))
 	view_menu_button.update_layout_options()
 
 
 func _on_SaveLayoutDialog_confirmed() -> void:
-	LayoutUtils.save_layout(root.get_child(0), LAYOUTS_FOLDER.plus_file(layout_name_edit.text + ".json"))
+	LayoutUtils.save_layout(root.get_child(0), LAYOUTS_FOLDER.plus_file(
+			layout_name_edit.text + ".json"))
 	view_menu_button.update_layout_options()
 
 
@@ -329,6 +310,16 @@ func _on_ViewMenuButton_layout_selected(layout : String) -> void:
 
 func _on_ViewMenuButton_save_layout_selected() -> void:
 	save_layout_dialog.popup_centered()
+
+
+func _on_QuitConfirmationDialog_custom_action(_action : int) -> void:
+	get_tree().quit()
+
+
+func _on_QuitConfirmationDialog_confirmed() -> void:
+	if save_file():
+		yield(file_dialog, "confirmed")
+	get_tree().quit()
 
 
 func _on_AboutMenuButton_id_pressed(id : int) -> void:
@@ -348,7 +339,7 @@ func _on_AboutMenuButton_id_pressed(id : int) -> void:
 func _on_FileMenu_id_pressed(id : int) -> void:
 	match id:
 		FILE_MENU_ITEMS.NEW:
-			_start_empty_project()
+			start_empty_project()
 		FILE_MENU_ITEMS.OPEN:
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
 			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
@@ -359,7 +350,7 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 		FILE_MENU_ITEMS.SAVE:
 			save_file()
 		FILE_MENU_ITEMS.SAVE_AS:
-			_open_save_project_dialog()
+			open_save_project_dialog()
 		FILE_MENU_ITEMS.EXPORT:
 			if Globals.current_file.resource_path:
 				var progress_dialog = ProgressDialogManager.create_task(
@@ -368,10 +359,12 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 				yield(get_tree(), "idle_frame")
 				for type in Globals.editing_layer_material.results:
 					progress_dialog.set_action(type)
-					var export_folder := Globals.current_file.resource_path.get_base_dir().plus_file("export")
+					var export_folder := Globals.current_file.resource_path.\
+							get_base_dir().plus_file("export")
 					var dir := Directory.new()
 					dir.make_dir_recursive(export_folder)
-					var result_data : Image = Globals.editing_layer_material.results[type].get_data()
+					var result_data : Image = Globals.editing_layer_material.\
+							results[type].get_data()
 					result_data.save_png(export_folder.plus_file(type) + ".png")
 					yield(get_tree(), "idle_frame")
 				progress_dialog.complete_task()
@@ -388,28 +381,64 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 			quit_confirmation_dialog.popup()
 
 
-func save_file() -> bool:
-	if not Globals.current_file.resource_path:
-		_open_save_project_dialog()
-		return true
-	else:
-		ResourceSaver.save(Globals.current_file.resource_path, Globals.current_file)
-		return false
-
-
 func _on_UndoRedo_version_changed() -> void:
 	if undo_redo.get_current_action_name():
 		print(undo_redo.get_current_action_name())
 
 
-func _start_empty_project() -> void:
+func set_mask(layer : MaterialLayer, mask : LayerTexture) -> void:
+	if mask == NO_MASK:
+		layer.mask = null
+	else:
+		layer.mask = mask
+		mask.parent = layer
+		mask.mark_dirty()
+	layer.mark_dirty()
+	Globals.editing_layer_material.update()
+
+
+func set_value_on_layer(layer, property : String, value) -> void:
+	if layer is JSONTextureLayer:
+		layer.settings[property] = value
+	else:
+		layer[property] = value
+
+
+func load_mesh(path : String) -> void:
+	var interactive_loader := ObjParser.parse_obj_interactive(path)
+	var progress_dialog = ProgressDialogManager.create_task("Load OBJ Model",
+			int(interactive_loader.get_stage_count() / 10000.0))
+	while true:
+		progress_dialog.set_action("Stage %s / %s" % [
+				interactive_loader.get_stage(),
+				interactive_loader.get_stage_count()])
+		yield(get_tree(), "idle_frame")
+		for i in 10000:
+			var mesh = interactive_loader.poll()
+			if mesh:
+				progress_dialog.complete_task()
+				Globals.mesh = mesh
+				return
+
+
+func save_file() -> bool:
+	if not Globals.current_file.resource_path:
+		open_save_project_dialog()
+		return true
+	else:
+		ResourceSaver.save(Globals.current_file.resource_path,
+				Globals.current_file)
+		return false
+
+
+func start_empty_project() -> void:
 	var new_file := SaveFile.new()
 	Globals.set_current_file(new_file, false)
 	Globals.mesh = preload("res://3d_viewport/cube.obj")
 	Globals.emit_signal("current_file_changed")
 
 
-func _open_save_project_dialog() -> void:
+func open_save_project_dialog() -> void:
 	file_dialog.mode = FileDialog.MODE_SAVE_FILE
 	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 	file_dialog.filters = ["*.tres;Material Painter File"]
@@ -419,7 +448,7 @@ func _open_save_project_dialog() -> void:
 	file_dialog.popup_centered()
 
 
-func _do_change_mask_action(action_name : String, layer : MaterialLayer,
+func do_change_mask_action(action_name : String, layer : MaterialLayer,
 		mask : LayerTexture) -> void:
 	undo_redo.create_action(action_name)
 	undo_redo.add_do_method(self, "set_mask", layer, mask)
@@ -427,7 +456,7 @@ func _do_change_mask_action(action_name : String, layer : MaterialLayer,
 	undo_redo.commit_action()
 
 
-func _initialise_layouts() -> void:
+func initialise_layouts() -> void:
 	var dir := Directory.new()
 	dir.make_dir_recursive("user://layouts")
 	var default := LAYOUTS_FOLDER.plus_file("default.json")
@@ -439,13 +468,3 @@ func _initialise_layouts() -> void:
 		yield(get_tree(), "idle_frame")
 		LayoutUtils.load_layout(root, default)
 	view_menu_button.update_layout_options()
-
-
-func _on_QuitConfirmationDialog_custom_action(_action):
-	get_tree().quit()
-
-
-func _on_QuitConfirmationDialog_confirmed():
-	if save_file():
-		yield(file_dialog, "confirmed")
-	get_tree().quit()

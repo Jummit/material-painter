@@ -21,7 +21,8 @@ class Layer:
 	var uniform_values : Array
 
 class BlendingLayer extends Layer:
-	func _init(generation_code : String, blend_mode := "normal", opacity := 1.0, mask : Texture = null) -> void:
+	func _init(generation_code : String, blend_mode := "normal",
+			opacity := 1.0, mask : Texture = null) -> void:
 		if mask:
 			code = "return blend{mode}({previous}(uv), {code}, texture({mask}, uv).r);".format({
 				mode = blend_mode,
@@ -37,8 +38,8 @@ class BlendingLayer extends Layer:
 				opacity = opacity,
 			})
 
-
-func blend(layers : Array, result_size : Vector2, update_shader := false) -> ViewportTexture:
+func blend(layers : Array, result_size : Vector2,
+		update_shader := false) -> ViewportTexture:
 	if layers.size() == 0:
 		var color_rect := ColorRect.new()
 		color_rect.rect_size = result_size

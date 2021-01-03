@@ -15,6 +15,10 @@ func _ready():
 	Globals.connect("editing_layer_material_changed", self, "_on_Globals_editing_layer_material_changed")
 
 
+func _on_item_activated(index : int) -> void:
+	emit_signal("map_selected", get_item_metadata(index))
+
+
 func _on_Globals_editing_layer_material_changed() -> void:
 	Globals.editing_layer_material.connect("results_changed", self, "_on_LayerMaterial_results_changed")
 
@@ -24,7 +28,3 @@ func _on_LayerMaterial_results_changed() -> void:
 	for map in Globals.editing_layer_material.results:
 		add_item(map, Globals.editing_layer_material.results[map])
 		set_item_metadata(get_item_count() - 1, map)
-
-
-func _on_item_activated(index : int) -> void:
-	emit_signal("map_selected", get_item_metadata(index))

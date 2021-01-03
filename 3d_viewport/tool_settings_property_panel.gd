@@ -61,13 +61,13 @@ func _on_LayerTree_folder_layer_selected() -> void:
 	get_parent().hide()
 
 
-func _on_property_changed(_property : String, _value):
+func _on_property_changed(_property : String, _value) -> void:
 	var new_brush := Brush.new()
 	store_values(new_brush)
 	new_brush.size = Vector2.ONE * get_property_value("size")
 	emit_signal("brush_changed", new_brush)
 
 
-func _on_AssetBrowser_asset_activated(asset):
+func _on_AssetBrowser_asset_activated(asset : Asset) -> void:
 	if asset.type is BrushAssetType:
 		load_values(asset.data)

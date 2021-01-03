@@ -34,35 +34,16 @@ func _ready() -> void:
 	Globals.connect("mesh_changed", self, "_on_Globals_mesh_changed")
 
 
-func _on_Globals_mesh_changed(mesh : Mesh) -> void:
-	var progress_dialog = ProgressDialogManager.create_task(
-			"Generate Painter Maps", 1)
-	progress_dialog.set_action("Generate Maps")
-	yield(painter.set_mesh_instance(model), "completed")
-	progress_dialog.complete_task()
-	yield(get_tree(), "idle_frame")
-	progress_dialog = ProgressDialogManager.create_task(
-			"Generate Selection Maps", selection_utils.SelectionType.size())
-	for selection_type in selection_utils._selection_types:
-		progress_dialog.set_action(selection_utils.SelectionType.keys()[selection_type])
-		var result = selection_utils._selection_types[selection_type].prepare_mesh(mesh)
-		if result is GDScriptFunctionState:
-			result = yield(result, "completed")
-		yield(get_tree(), "idle_frame")
-		selection_utils._prepared_meshes[selection_type] = result
-	progress_dialog.complete_task()
-
-
 func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
 		if event.pressed:
 			if layer_tree.get_selected_layer() is BitmapTextureLayer:
 				if Globals.selected_tool == Globals.Tools.PAINT:
-					_paint(layer_tree.get_selected_layer(), event.position,
+					paint(layer_tree.get_selected_layer(), event.position,
 							event.position)
 					last_painted_position = event.position
 				else:
-					_select(layer_tree.get_selected_layer(),
+					select(layer_tree.get_selected_layer(),
 							Globals.selected_tool,
 							event.position)
 	
@@ -70,7 +51,7 @@ func _gui_input(event : InputEvent) -> void:
 			and Input.is_mouse_button_pressed(BUTTON_LEFT) and\
 			layer_tree.get_selected_layer() is BitmapTextureLayer\
 			and Globals.selected_tool == Globals.Tools.PAINT:
-		_paint(layer_tree.get_selected_layer(), last_painted_position,
+		paint(layer_tree.get_selected_layer(), last_painted_position,
 				event.position)
 		last_painted_position = event.position
 	
@@ -93,7 +74,7 @@ func _on_ViewMenuButton_hdri_selected(hdri : Texture) -> void:
 	world_environment.environment.background_sky.panorama = hdri
 
 
-func _on_ToolButtonContainer_tool_selected(tool_id : int):
+func _on_ToolButtonContainer_tool_selected(tool_id : int) -> void:
 	var bitmap_texture_layer : BitmapTextureLayer = layer_tree.get_selected_layer()
 	if tool_id == Globals.Tools.PAINT:
 		painter.set_initial_texture(bitmap_texture_layer.temp_texture)
@@ -111,7 +92,36 @@ func _on_ToolSettingsPropertyPanel_brush_changed(brush : Brush) -> void:
 	painter.brush = brush
 
 
-func _select(on_texture_layer : BitmapTextureLayer, type : int, position : Vector2):
+func _on_AssetBrowser_asset_activated(asset : Asset) -> void:
+	if asset.type is BrushAssetType:
+		painter.brush = asset.data
+
+
+func _on_HalfResolutionButton_toggled(button_pressed : bool) -> void:
+	stretch_shrink = 2 if button_pressed else 1
+
+
+func _on_Globals_mesh_changed(mesh : Mesh) -> void:
+	var progress_dialog = ProgressDialogManager.create_task(
+			"Generate Painter Maps", 1)
+	progress_dialog.set_action("Generate Maps")
+	yield(painter.set_mesh_instance(model), "completed")
+	progress_dialog.complete_task()
+	yield(get_tree(), "idle_frame")
+	progress_dialog = ProgressDialogManager.create_task(
+			"Generate Selection Maps", selection_utils.SelectionType.size())
+	for selection_type in selection_utils._selection_types:
+		progress_dialog.set_action(selection_utils.SelectionType.keys()[selection_type])
+		var result = selection_utils._selection_types[selection_type].prepare_mesh(mesh)
+		if result is GDScriptFunctionState:
+			result = yield(result, "completed")
+		yield(get_tree(), "idle_frame")
+		selection_utils._prepared_meshes[selection_type] = result
+	progress_dialog.complete_task()
+
+
+func select(on_texture_layer : BitmapTextureLayer, type : int,
+		position : Vector2) -> void:
 	selection_utils.update_view(viewport)
 	on_texture_layer.temp_texture = yield(selection_utils.add_selection(
 			type, position, Globals.result_size,
@@ -119,7 +129,7 @@ func _select(on_texture_layer : BitmapTextureLayer, type : int, position : Vecto
 	emit_signal("painted", layer_tree.get_selected_layer())
 
 
-func _paint(on_texture_layer : BitmapTextureLayer, from : Vector2,
+func paint(on_texture_layer : BitmapTextureLayer, from : Vector2,
 		to : Vector2) -> void:
 	var camera : Camera = viewport.get_camera()
 	var camera_transform = camera.global_transform
@@ -129,12 +139,3 @@ func _paint(on_texture_layer : BitmapTextureLayer, from : Vector2,
 	painter.paint(from / rect_size, to / rect_size)
 	on_texture_layer.temp_texture = painter.result
 	emit_signal("painted", on_texture_layer)
-
-
-func _on_AssetBrowser_asset_activated(asset):
-	if asset.type is BrushAssetType:
-		painter.brush = asset.data
-
-
-func _on_HalfResolutionButton_toggled(button_pressed):
-	stretch_shrink = 2 if button_pressed else 1

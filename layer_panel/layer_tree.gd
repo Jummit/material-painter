@@ -61,22 +61,9 @@ func _ready() -> void:
 	Globals.connect("editing_layer_material_changed", self, "_on_Globals_editing_layer_material_changed")
 
 
-func _on_Globals_editing_layer_material_changed() -> void:
-	Globals.editing_layer_material.connect("results_changed", self, "_on_LayerMaterial_results_changed")
-	load_layer_material()
-
-
-func _on_Globals_current_file_changed() -> void:
-	load_layer_material()
-
-
-func _on_LayerMaterial_results_changed() -> void:
-	load_layer_material()
-
-
 func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == BUTTON_RIGHT and event.pressed:
-		var layer = get_layer_at_position(event.position)
+		var layer = _get_layer_at_position(event.position)
 		layer_popup_menu.rect_global_position = event.global_position
 		layer_popup_menu.layer = layer
 		if layer is MaterialLayer and layer in _selected_layer_textures:
@@ -99,8 +86,130 @@ func _gui_input(event : InputEvent) -> void:
 		undo_redo.add_do_method(Globals.editing_layer_material, "delete_layer", layer)
 		undo_redo.add_do_method(self, "emit_signal", "layer_deselected")
 		undo_redo.add_undo_method(Globals.editing_layer_material, "add_layer", layer, layer.parent)
-		undo_redo.add_undo_method(self, "emit_select_signal", layer)
+		undo_redo.add_undo_method(self, "_emit_select_signal", layer)
 		undo_redo.commit_action()
+
+
+func get_selected_layer_texture(material_layer : MaterialLayer) -> LayerTexture:
+	if material_layer in _selected_layer_textures:
+		return _selected_layer_textures[material_layer]
+	return null
+
+
+func get_selected_layer():
+	if not get_selected():
+		return null
+	return get_selected().get_meta("layer")
+
+
+func is_folder(layer) -> bool:
+	return layer is TextureFolder or layer is MaterialFolder
+
+
+func _on_cell_selected() -> void:
+	_emit_select_signal(get_selected().get_meta("layer"))
+
+
+func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
+	var layer = item.get_meta("layer")
+	match id:
+		Buttons.MAP_DROPDOWN:
+			map_type_popup_menu.set_meta("layer", layer)
+			map_type_popup_menu.rect_global_position = get_global_transform().xform(get_item_area_rect(item).position)
+			map_type_popup_menu.popup()
+		Buttons.RESULT:
+			if layer is MaterialLayer:
+				if layer in _selected_layer_textures and _selected_layer_textures[layer] != layer.mask:
+					_selected_layer_textures.erase(layer)
+				else:
+					_selected_layer_textures[layer] = _selected_maps[layer]
+				_load_layer_material()
+		Buttons.MASK:
+			if layer in _selected_layer_textures and _selected_layer_textures[layer] == layer.mask:
+				_selected_layer_textures.erase(layer)
+			else:
+				_selected_layer_textures[layer] = layer.mask
+			_load_layer_material()
+		Buttons.VISIBILITY:
+			var parent
+			if layer is MaterialLayer or layer is MaterialFolder:
+				parent = layer.get_layer_material_in()
+			elif layer is TextureLayer or layer is TextureFolder:
+				parent = layer.get_layer_texture_in()
+			undo_redo.create_action("Toggle Layer Visibility")
+			undo_redo.add_do_property(layer, "visible", not layer.visible)
+			undo_redo.add_do_method(parent, "mark_dirty", true)
+			undo_redo.add_do_method(Globals.editing_layer_material, "update")
+			undo_redo.add_undo_property(layer, "visible", layer.visible)
+			undo_redo.add_undo_method(parent, "mark_dirty", true)
+			undo_redo.add_undo_method(Globals.editing_layer_material, "update")
+			undo_redo.commit_action()
+		Buttons.ICON:
+			if layer in _expanded_folders:
+				_expanded_folders.erase(layer)
+			else:
+				_expanded_folders.append(layer)
+			_load_layer_material()
+
+
+func _on_MapTypePopupMenu_about_to_show() -> void:
+	map_type_popup_menu.clear()
+	var layer : MaterialLayer = map_type_popup_menu.get_meta("layer")
+	for map in layer.maps:
+		map_type_popup_menu.add_item(map)
+		map_type_popup_menu.set_item_icon(map_type_popup_menu.get_item_count() - 1, layer.maps[map].icon)
+
+
+func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
+	var layer : MaterialLayer = map_type_popup_menu.get_meta("layer")
+	var selected_map : LayerTexture = layer.maps.values()[id]
+	_selected_maps[layer] = selected_map
+	_selected_layer_textures[layer] = selected_map
+	_load_layer_material()
+
+
+func _on_item_edited() -> void:
+	undo_redo.create_action("Rename Layer")
+	var edited_layer = get_edited().get_meta("layer")
+	undo_redo.add_do_property(edited_layer, "name", get_edited().get_text(1))
+	undo_redo.add_do_method(self, "_load_layer_material")
+	undo_redo.add_undo_method(self, "_load_layer_material")
+	undo_redo.add_undo_property(edited_layer, "name", edited_layer.name)
+	undo_redo.add_undo_method(self, "_load_layer_material")
+	undo_redo.commit_action()
+	_lastly_edited_layer = null
+
+
+func _on_TextureMapButtons_changed(map : String, enabled : bool) -> void:
+	if enabled and get_selected_layer():
+		_select_map(get_selected_layer(), map, true)
+
+
+func _on_Globals_editing_layer_material_changed() -> void:
+	Globals.editing_layer_material.connect("results_changed", self, "_on_LayerMaterial_results_changed")
+	_load_layer_material()
+
+
+func _on_Globals_current_file_changed() -> void:
+	_load_layer_material()
+
+
+func _on_LayerMaterial_results_changed() -> void:
+	_load_layer_material()
+
+
+func _draw_material_layer_item(material_layer_item : TreeItem, item_rect : Rect2) -> void:
+	var material_layer = material_layer_item.get_meta("layer")
+	if not material_layer is MaterialLayer or\
+			not material_layer in _selected_layer_textures:
+		return
+	var icon_rect := Rect2(Vector2(68, item_rect.position.y - 1), Vector2(32, 32))
+	if _selected_layer_textures[material_layer] == material_layer.mask and\
+			material_layer.maps.size() > 0:
+		icon_rect.position.x = 23
+	if material_layer.maps.size() > 1:
+		icon_rect.position.x -= 31
+	draw_rect(icon_rect, Color.dodgerblue, false, 2.0)
 
 
 func get_drag_data(_position : Vector2):
@@ -128,12 +237,12 @@ func get_drag_data(_position : Vector2):
 
 func can_drop_data(position : Vector2, data) -> bool:
 	if data is Asset and data.type is TextureAssetType and\
-			get_layer_at_position(position) is MaterialLayer and\
-			get_selected_layer_texture(get_layer_at_position(position)):
+			_get_layer_at_position(position) is MaterialLayer and\
+			get_selected_layer_texture(_get_layer_at_position(position)):
 		return true
 	if data is Asset and data.type is MaterialAssetType:
 		return true
-	var layer_data := get_layers_of_drop_data(data)
+	var layer_data := _get_layers_of_drop_data(data)
 	if not layer_data.empty():
 		var layers : Array = layer_data.layers
 		var layer_type : int = layer_data.type
@@ -141,7 +250,7 @@ func can_drop_data(position : Vector2, data) -> bool:
 			for layer in layers:
 				if layer == get_item_at_position(position).get_meta("layer"):
 					return false
-			var is_folder := is_folder(get_layer_at_position(position))
+			var is_folder := is_folder(_get_layer_at_position(position))
 			var onto_type : int = _get_layer_type(get_item_at_position(position))
 			if get_drop_section_at_position(position) == 0:
 				return (layer_type == LayerType.TEXTURE_LAYER and\
@@ -154,29 +263,12 @@ func can_drop_data(position : Vector2, data) -> bool:
 	return false
 
 
-func get_layers_of_drop_data(data) -> Dictionary:
-	var layers : Array
-	var layer_type : int
-	if data is Asset and data.type is EffectAssetType:
-		layers = [data.data.duplicate()]
-		layer_type = LayerType.TEXTURE_LAYER
-	elif data is Dictionary and "type" in data and data.type == "layers":
-		layers = data.layers
-		layer_type = data.layer_type
-	else:
-		return {}
-	return {
-		layers = layers,
-		type = layer_type
-	}
-
-
 func drop_data(position : Vector2, data) -> void:
-	var layer_data := get_layers_of_drop_data(data)
+	var layer_data := _get_layers_of_drop_data(data)
 	if not layer_data.empty():
 		var layers : Array = layer_data.layers
 		undo_redo.create_action("Rearrange Layers")
-		var onto_layer = get_layer_at_position(position)
+		var onto_layer = _get_layer_at_position(position)
 		var onto
 		var onto_position : int
 		match get_drop_section_at_position(position):
@@ -211,8 +303,8 @@ func drop_data(position : Vector2, data) -> void:
 				undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer", layer)
 			
 		
-		undo_redo.add_do_method(self, "load_layer_material")
-		undo_redo.add_undo_method(self, "load_layer_material")
+		undo_redo.add_do_method(self, "_load_layer_material")
+		undo_redo.add_undo_method(self, "_load_layer_material")
 		undo_redo.commit_action()
 	elif data is Asset:
 		if data.type is TextureAssetType:
@@ -223,7 +315,7 @@ func drop_data(position : Vector2, data) -> void:
 				layer.path = "local" + data.data.substr(Globals.current_file.resource_path.get_base_dir().length())
 			else:
 				layer.path = data.data
-			undo_redo.add_do_method(Globals.editing_layer_material, "add_layer", layer, _selected_layer_textures[get_layer_at_position(position)])
+			undo_redo.add_do_method(Globals.editing_layer_material, "add_layer", layer, _selected_layer_textures[_get_layer_at_position(position)])
 			undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer", layer)
 			undo_redo.commit_action()
 		elif data.type is MaterialAssetType:
@@ -234,46 +326,12 @@ func drop_data(position : Vector2, data) -> void:
 			undo_redo.commit_action()
 
 
-func load_layer_material() -> void:
-	var selected_layer = get_selected_layer()
-	clear()
-	_root = create_item()
-	for material_layer in Globals.editing_layer_material.layers:
-		_setup_material_layer_item(material_layer, _root, selected_layer)
-
-
-func select_map(layer : MaterialLayer, map : String, expand := false) -> void:
-	_selected_maps[layer] = layer.maps[map]
-	if expand:
-		_selected_layer_textures[layer] = layer.maps[map]
-
-
-func get_layer_at_position(position : Vector2):
+func _get_layer_at_position(position : Vector2):
 	if get_item_at_position(position):
 		return get_item_at_position(position).get_meta("layer")
 
 
-func get_selected_layer_texture(material_layer : MaterialLayer) -> LayerTexture:
-	if material_layer in _selected_layer_textures:
-		return _selected_layer_textures[material_layer]
-	return null
-
-
-func get_selected_layer():
-	if not get_selected():
-		return null
-	return get_selected().get_meta("layer")
-
-
-func is_folder(layer) -> bool:
-	return layer is TextureFolder or layer is MaterialFolder
-
-
-func _on_cell_selected() -> void:
-	emit_select_signal(get_selected().get_meta("layer"))
-
-
-func emit_select_signal(layer) -> void:
+func _emit_select_signal(layer) -> void:
 	if layer is MaterialLayer:
 		emit_signal("material_layer_selected", layer)
 	elif layer is TextureLayer:
@@ -282,88 +340,35 @@ func emit_select_signal(layer) -> void:
 		emit_signal("folder_layer_selected")
 
 
-func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
-	var layer = item.get_meta("layer")
-	match id:
-		Buttons.MAP_DROPDOWN:
-			map_type_popup_menu.set_meta("layer", layer)
-			map_type_popup_menu.rect_global_position = get_global_transform().xform(get_item_area_rect(item).position)
-			map_type_popup_menu.popup()
-		Buttons.RESULT:
-			if layer is MaterialLayer:
-				if layer in _selected_layer_textures and _selected_layer_textures[layer] != layer.mask:
-					_selected_layer_textures.erase(layer)
-				else:
-					_selected_layer_textures[layer] = _selected_maps[layer]
-				load_layer_material()
-		Buttons.MASK:
-			if layer in _selected_layer_textures and _selected_layer_textures[layer] == layer.mask:
-				_selected_layer_textures.erase(layer)
-			else:
-				_selected_layer_textures[layer] = layer.mask
-			load_layer_material()
-		Buttons.VISIBILITY:
-			var parent
-			if layer is MaterialLayer or layer is MaterialFolder:
-				parent = layer.get_layer_material_in()
-			elif layer is TextureLayer or layer is TextureFolder:
-				parent = layer.get_layer_texture_in()
-			undo_redo.create_action("Toggle Layer Visibility")
-			undo_redo.add_do_property(layer, "visible", not layer.visible)
-			undo_redo.add_do_method(parent, "mark_dirty", true)
-			undo_redo.add_do_method(Globals.editing_layer_material, "update")
-			undo_redo.add_undo_property(layer, "visible", layer.visible)
-			undo_redo.add_undo_method(parent, "mark_dirty", true)
-			undo_redo.add_undo_method(Globals.editing_layer_material, "update")
-			undo_redo.commit_action()
-		Buttons.ICON:
-			if layer in _expanded_folders:
-				_expanded_folders.erase(layer)
-			else:
-				_expanded_folders.append(layer)
-			load_layer_material()
+func _get_layers_of_drop_data(data) -> Dictionary:
+	var layers : Array
+	var layer_type : int
+	if data is Asset and data.type is EffectAssetType:
+		layers = [data.data.duplicate()]
+		layer_type = LayerType.TEXTURE_LAYER
+	elif data is Dictionary and "type" in data and data.type == "layers":
+		layers = data.layers
+		layer_type = data.layer_type
+	else:
+		return {}
+	return {
+		layers = layers,
+		type = layer_type
+	}
 
 
-func _on_MapTypePopupMenu_about_to_show() -> void:
-	map_type_popup_menu.clear()
-	var layer : MaterialLayer = map_type_popup_menu.get_meta("layer")
-	for map in layer.maps:
-		map_type_popup_menu.add_item(map)
-		map_type_popup_menu.set_item_icon(map_type_popup_menu.get_item_count() - 1, layer.maps[map].icon)
+func _load_layer_material() -> void:
+	var selected_layer = get_selected_layer()
+	clear()
+	_root = create_item()
+	for material_layer in Globals.editing_layer_material.layers:
+		_setup_material_layer_item(material_layer, _root, selected_layer)
 
 
-func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
-	var layer : MaterialLayer = map_type_popup_menu.get_meta("layer")
-	var selected_map : LayerTexture = layer.maps.values()[id]
-	_selected_maps[layer] = selected_map
-	_selected_layer_textures[layer] = selected_map
-	load_layer_material()
-
-
-func _on_item_edited() -> void:
-	undo_redo.create_action("Rename Layer")
-	var edited_layer = get_edited().get_meta("layer")
-	undo_redo.add_do_property(edited_layer, "name", get_edited().get_text(1))
-	undo_redo.add_do_method(self, "load_layer_material")
-	undo_redo.add_undo_method(self, "load_layer_material")
-	undo_redo.add_undo_property(edited_layer, "name", edited_layer.name)
-	undo_redo.add_undo_method(self, "load_layer_material")
-	undo_redo.commit_action()
-	_lastly_edited_layer = null
-
-
-func _draw_material_layer_item(material_layer_item : TreeItem, item_rect : Rect2) -> void:
-	var material_layer = material_layer_item.get_meta("layer")
-	if not material_layer is MaterialLayer or\
-			not material_layer in _selected_layer_textures:
-		return
-	var icon_rect := Rect2(Vector2(68, item_rect.position.y - 1), Vector2(32, 32))
-	if _selected_layer_textures[material_layer] == material_layer.mask and\
-			material_layer.maps.size() > 0:
-		icon_rect.position.x = 23
-	if material_layer.maps.size() > 1:
-		icon_rect.position.x -= 31
-	draw_rect(icon_rect, Color.dodgerblue, false, 2.0)
+func _select_map(layer : MaterialLayer, map : String, expand := false) -> void:
+	_selected_maps[layer] = layer.maps[map]
+	if expand:
+		_selected_layer_textures[layer] = layer.maps[map]
 
 
 func _setup_material_layer_item(material_layer, parent_item : TreeItem,
@@ -436,11 +441,6 @@ func _get_layer_type(layer_item : TreeItem) -> int:
 		return LayerType.TEXTURE_LAYER
 	else:
 		return LayerType.MATERIAL_LAYER
-
-
-func _on_TextureMapButtons_changed(map : String, enabled : bool) -> void:
-	if enabled and get_selected_layer():
-		select_map(get_selected_layer(), map, true)
 
 
 func _get_visibility_icon(is_visible : bool) -> Texture:

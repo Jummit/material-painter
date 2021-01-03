@@ -22,20 +22,22 @@ func _draw() -> void:
 	draw_faces_as_lines()
 
 
-func _on_Globals_mesh_changed(mesh : Mesh) -> void:
-	_mesh_tool.create_from_surface(mesh, 0)
-	update()
-
-
 func _gui_input(event : InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_LEFT:
+	if event is InputEventMouseButton and event.pressed and\
+			event.button_index == BUTTON_LEFT:
 		var layer_texture := layer_tree.get_selected_layer() as BitmapTextureLayer
 		if layer_texture:
 			var selected_face := _get_selected_face(get_local_mouse_position())
 			if selected_face != -1:
-				MeshUtils.paint_face(layer_texture.image_data, selected_face, Color.white, model.mesh)
+				MeshUtils.paint_face(layer_texture.image_data, selected_face,
+						Color.white, model.mesh)
 				texture.create_from_image(layer_texture.image_data)
 				emit_signal("painted", layer_texture)
+
+
+func _on_Globals_mesh_changed(mesh : Mesh) -> void:
+	_mesh_tool.create_from_surface(mesh, 0)
+	update()
 
 
 func draw_faces_as_lines(color := Color.white, line_width := 2.0) -> void:
