@@ -7,5 +7,5 @@
 		}
 	],
 	"blends": true,
-	"shader": "{color}"
+	"shader": "return {color};"
 }

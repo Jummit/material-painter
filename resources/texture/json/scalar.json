@@ -9,5 +9,5 @@
 		}
 	],
 	"blends": true,
-	"shader": "vec4({value}, {value}, {value}, 1.0)"
+	"shader": "return vec4({value}, {value}, {value}, 1.0);"
 }

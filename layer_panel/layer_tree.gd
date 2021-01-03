@@ -439,7 +439,7 @@ func _get_layer_type(layer_item : TreeItem) -> int:
 
 
 func _on_TextureMapButtons_changed(map : String, enabled : bool) -> void:
-	if enabled:
+	if enabled and get_selected_layer():
 		select_map(get_selected_layer(), map, true)
 
 
