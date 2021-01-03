@@ -1,0 +1,12 @@
+{
+	"name": "Blur",
+	"properties" : [
+		{
+			"name": "strength",
+			"type": "float",
+			"range": [0.1, 0.5],
+			"default": 0.2
+		}
+	],
+	"shader": "vec2 radius = 0.002 / vec2({strength});\nvec4 previous = {previous}(uv);\nfor(float d = 0.0; d < 6.28318530718; d += 6.28318530718 / float(16)) {\nfor(float i = 1.0 / 8.0; i <= 1.0; i += 1.0 / 8.0) {\nprevious += {previous}(uv + vec2(cos(d), sin(d)) * radius * i);\n}\n}\nreturn previous /= 8.0 * float(16) + 1.0;"
+}

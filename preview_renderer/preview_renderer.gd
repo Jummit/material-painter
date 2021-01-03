@@ -1,7 +1,6 @@
 extends Viewport
 
 const TextureUtils = preload("res://utils/texture_utils.gd")
-const LayerMaterial = preload("res://resources/material/layer_material.gd")
 const Brush = preload("res://addons/painter/brush.gd")
 const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
 
@@ -11,7 +10,7 @@ onready var paint_viewport : Viewport = $PaintViewport
 onready var mesh_instance : MeshInstance = $PaintViewport/MeshInstance
 onready var paint_line : Line2D = $PaintLine
 
-func get_preview_for_material(material : LayerMaterial, result_size : Vector2) -> ImageTexture:
+func get_preview_for_material(material : Resource, result_size : Vector2) -> ImageTexture:
 	material = material.duplicate(true)
 	for material_layer in material.get_flat_layers():
 		for layer_texture in material_layer.get_layer_textures():

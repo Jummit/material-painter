@@ -1,0 +1,4 @@
+{
+	"name": "Invert",
+	"shader": "vec4 previous = {previous}(uv);\nreturn vec4(1.0 - previous.r, 1.0 - previous.g, 1.0 - previous.b, 1.0);"
+}

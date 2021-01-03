@@ -49,6 +49,7 @@ const Brush = preload("res://addons/painter/brush.gd")
 const ResourceUtils = preload("res://utils/resource_utils.gd")
 const LayoutUtils = preload("res://addons/customizable_ui/layout_utils.gd")
 const ObjParser = preload("res://addons/obj_parser/obj_parser.gd")
+const JSONTextureLayer = preload("res://resources/texture/json_texture_layer.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/FileMenuButton
 onready var about_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/AboutMenuButton
@@ -70,7 +71,8 @@ func _ready() -> void:
 	undo_redo.connect("version_changed", self, "_on_UndoRedo_version_changed")
 	var popup := file_menu_button.get_popup()
 	popup.connect("id_pressed", self, "_on_FileMenu_id_pressed")
-	about_menu_button.get_popup().connect("id_pressed", self, "_on_AboutMenuButton_id_pressed")
+	about_menu_button.get_popup().connect("id_pressed", self,
+			"_on_AboutMenuButton_id_pressed")
 	for id in file_menu_shortcuts.size():
 		popup.set_item_shortcut(id, file_menu_shortcuts[id])
 	
@@ -174,11 +176,14 @@ func _on_DeleteButton_pressed() -> void:
 	if layer_tree.get_selected():
 		undo_redo.create_action("Delete Layer")
 		var selected_layer = layer_tree.get_selected().get_meta("layer")
-		undo_redo.add_do_method(Globals.editing_layer_material, "delete_layer", selected_layer)
+		undo_redo.add_do_method(Globals.editing_layer_material, "delete_layer",
+				selected_layer)
 		undo_redo.add_do_method(layer_property_panel, "clear")
 		undo_redo.add_do_method(texture_map_buttons, "hide")
-		undo_redo.add_undo_method(Globals.editing_layer_material, "add_layer", selected_layer, selected_layer.parent)
-		undo_redo.add_undo_method(layer_property_panel, "load_material_layer", selected_layer)
+		undo_redo.add_undo_method(Globals.editing_layer_material, "add_layer",
+				selected_layer, selected_layer.parent)
+		undo_redo.add_undo_method(layer_property_panel, "load_material_layer",
+				selected_layer)
 		undo_redo.add_undo_method(texture_map_buttons, "show")
 		undo_redo.commit_action()
 
@@ -187,15 +192,26 @@ func _on_LayerPropertyPanel_property_changed(property : String, value) -> void:
 	var layer = layer_property_panel.editing_layer
 	var update_shader = property in ["opacity", "blend_mode"]
 	undo_redo.create_action("Set Layer Property")
-	undo_redo.add_do_property(layer, property, value)
-	undo_redo.add_do_method(layer_property_panel, "set_property_value", property, value)
+	undo_redo.add_do_method(self, "set_value_on_layer", layer, property,
+			value)
+	undo_redo.add_do_method(layer_property_panel, "set_property_value",
+			property, value)
 	undo_redo.add_do_method(layer, "mark_dirty", update_shader)
 	undo_redo.add_do_method(Globals.editing_layer_material, "update")
-	undo_redo.add_undo_property(layer, property, layer.get(property))
-	undo_redo.add_undo_method(layer_property_panel, "set_property_value", property, layer.get(property))
+	undo_redo.add_undo_method(self, "set_value_on_layer", layer, property,
+			layer.get(property))
+	undo_redo.add_undo_method(layer_property_panel, "set_property_value",
+			property, layer.get(property))
 	undo_redo.add_undo_method(layer, "mark_dirty", update_shader)
 	undo_redo.add_undo_method(Globals.editing_layer_material, "update")
 	undo_redo.commit_action()
+
+
+func set_value_on_layer(layer, property : String, value) -> void:
+	if layer is JSONTextureLayer:
+		layer.settings[property] = value
+	else:
+		layer[property] = value
 
 
 func _on_AddLayerPopupMenu_layer_selected(layer) -> void:

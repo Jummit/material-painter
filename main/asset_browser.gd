@@ -22,6 +22,7 @@ var ASSET_TYPES := {
 	TEXTURE = TextureAssetType.new(),
 	MATERIAL = MaterialAssetType.new(),
 	BRUSH = BrushAssetType.new(),
+	EFFECT = EffectAssetType.new(),
 }
 
 onready var tag_name_edit : LineEdit = $VBoxContainer/HBoxContainer/TagNameEdit
@@ -33,20 +34,30 @@ onready var asset_popup_menu : PopupMenu = $"VBoxContainer2/AssetList/AssetPopup
 onready var tag_modification_dialog : ConfirmationDialog = $"../../../../../../../TagModificationDialog"
 onready var tag_edit : LineEdit = $"../../../../../../../TagModificationDialog/TagEdit"
 
+const JsonTextureLayer = preload("res://resources/texture/json_texture_layer.gd")
+
 class AssetType:
 	var name : String
 	var tag : String
+	var extension : String
 	
-	func _init(_name : String, _tag : String) -> void:
+	func _init(_name : String, _tag : String, _extension : String) -> void:
 		name = _name
 		tag = _tag
+		extension = _extension
 	
 	func get_preview(asset : Asset) -> Texture:
 		var cached_thumbnail_path := asset.get_cached_thumbnail_path()
+		var custom_thumbnail_path := asset.get_custom_thumbnail_path()
 		var dir := Directory.new()
 		dir.make_dir_recursive(get_cached_thumbnails_path())
 		var preview
-		if dir.file_exists(cached_thumbnail_path):
+		if dir.file_exists(custom_thumbnail_path) and asset.type.extension != "png":
+			var preview_image := Image.new()
+			preview_image.load(custom_thumbnail_path)
+			preview = ImageTexture.new()
+			preview.create_from_image(preview_image)
+		elif dir.file_exists(cached_thumbnail_path):
 			var preview_image := Image.new()
 			preview_image.load(cached_thumbnail_path)
 			preview = ImageTexture.new()
@@ -55,7 +66,8 @@ class AssetType:
 			preview = _generate_preview(asset)
 			if preview is GDScriptFunctionState:
 				preview = yield(preview, "completed")
-			preview.get_data().save_png(cached_thumbnail_path)
+			if preview and preview.get_data():
+				preview.get_data().save_png(cached_thumbnail_path)
 		return preview
 	
 	func _generate_preview(_asset : Asset) -> Texture:
@@ -74,7 +86,7 @@ class AssetType:
 		return "user://cached_thumbnails/" + name.to_lower()
 
 class TextureAssetType extends AssetType:
-	func _init().("Textures", "texture") -> void:
+	func _init().("Textures", "texture", "png") -> void:
 		pass
 	
 	func _generate_preview(asset) -> Texture:
@@ -93,7 +105,7 @@ class MaterialAssetType extends AssetType:
 	const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 	const LayerMaterial = preload("res://resources/material/layer_material.gd")
 	
-	func _init().("Materials", "material") -> void:
+	func _init().("Materials", "material", "tres") -> void:
 		pass
 	
 	func _generate_preview(asset : Asset) -> Texture:
@@ -102,22 +114,37 @@ class MaterialAssetType extends AssetType:
 		return yield(PreviewRenderer.get_preview_for_material(material_to_render, Vector2(128, 128)), "completed")
 
 class BrushAssetType extends AssetType:
-	func _init().("Brushes", "brush") -> void:
+	func _init().("Brushes", "brush", "tres") -> void:
 		pass
 	
 	func _generate_preview(asset : Asset) -> Texture:
 		return yield(PreviewRenderer.get_preview_for_brush(asset.data, Vector2(128, 128)), "completed")
+
+class EffectAssetType extends AssetType:
+	func _init().("Effects", "effect", "json") -> void:
+		pass
+	
+	func _load(asset : Asset):
+		var layer := JsonTextureLayer.new(asset.file)
+		return layer
+	
+	func _generate_preview(_asset : Asset) -> Texture:
+		return preload("res://icon.svg")
 
 class Asset:
 	var name : String
 	var type : AssetType
 	var tags : Array
 	var file : String
+	var preview : Texture
 	var data
 	
 	func get_cached_thumbnail_path() -> String:
 		return type.get_cached_thumbnails_path().plus_file(
 				file.get_file().get_basename() + ".png")
+	
+	func get_custom_thumbnail_path() -> String:
+		return file.replace("." + file.get_extension(), ".png")
 
 func _ready():
 	asset_list.set_drag_forwarding(self)
@@ -143,6 +170,10 @@ func _ready():
 			if result is GDScriptFunctionState:
 				result = yield(result, "completed")
 			assets += result
+		
+		assets += yield(load_assets("res://resources/texture/json/",
+				ASSET_TYPES.EFFECT), "completed")
+		
 		save_tag_metadata()
 		
 		progress_dialog.complete_task()
@@ -192,11 +223,18 @@ func load_assets(directory : String, asset_type : AssetType) -> Array:
 	var dir := Directory.new()
 	dir.make_dir_recursive(directory)
 	var files := _get_files_in_folder(directory)
-	for file in files:
+	for file_num in files.size():
+		var file := files[file_num]
+		if file.get_extension() != asset_type.extension:
+			continue
 		progress_dialog.set_action(file)
-		var asset := load_asset(directory.plus_file(file), asset_type)
+		var asset = load_asset(directory.plus_file(file), asset_type)
+		if asset is GDScriptFunctionState:
+			asset = yield(asset, "completed")
 		new_assets.append(asset)
-		yield(get_tree(), "idle_frame")
+		if file_num % 20 == 0:
+			yield(get_tree(), "idle_frame")
+	yield(get_tree(), "idle_frame")
 	return new_assets
 
 
@@ -215,6 +253,10 @@ func load_asset(path : String, asset_type : AssetType) -> Asset:
 	for tag in tag_metadata:
 		if asset.file in tag_metadata[tag]:
 			add_asset_to_tag(asset, tag)
+	var result  = asset_type.get_preview(asset)
+	if result is GDScriptFunctionState:
+		result = yield(result, "completed")
+	asset.preview = result
 	return asset
 
 
@@ -245,13 +287,13 @@ func update_asset_list() -> void:
 				found_assets.append(asset)
 	else:
 		found_assets = tagged_assets[current_tag]
-	var added_assets := []
+	var added_assets := {}
 	for asset in found_assets:
 		if asset in added_assets:
 			continue
-		added_assets.append(asset)
+		added_assets[asset] = true  
 		var item := asset_list.get_item_count()
-		asset_list.add_item(asset.name, asset.type.get_preview(asset))
+		asset_list.add_item(asset.name, asset.preview)
 		asset_list.set_item_tooltip(item, "%s\n\n%s\nTags: %s" % [
 				asset.name, asset.file,
 				(asset.tags as PoolStringArray).join(", ")])
@@ -314,9 +356,14 @@ func _on_SceneTree_files_dropped(files : PoolStringArray, _screen : int) -> void
 		var new_asset_path : String = ASSET_TYPES.TEXTURE.get_asset_directory().plus_file(file.get_file())
 		if dir.file_exists(new_asset_path):
 			continue
+		var type : AssetType
 		if file.get_extension() == "png":
+			type = ASSET_TYPES.TEXTURE
+		elif file.get_extension() == "json":
+			type = ASSET_TYPES.EFFECT
+		if type:
 			dir.copy(file, new_asset_path)
-			load_asset(file, ASSET_TYPES.TEXTURE)
+			load_asset(file, type)
 			update_asset_list()
 	progress_dialog.complete_task()
 

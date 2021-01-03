@@ -1,0 +1,24 @@
+{
+	"name": "HSV Adjust",
+	"properties" : [
+		{
+			"name": "hue",
+			"type": "float",
+			"range": [0, 1],
+			"default": 1.0
+		},
+		{
+			"name": "saturation",
+			"type": "float",
+			"range": [-1, 1],
+			"default": 0.0
+		},
+		{
+			"name": "value",
+			"type": "float",
+			"range": [-1, 1],
+			"default": 1.0
+		}
+	],
+	"shader": "vec4 previous = {previous}(uv);\nvec3 hsv = rgb2hsv(previous.rgb);\nhsv.x += {hue};\nhsv.y += {saturation};\nhsv.z += {value};\nreturn vec4(hsv2rgb(hsv), previous.a);"
+}
