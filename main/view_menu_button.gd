@@ -52,15 +52,19 @@ func _ready() -> void:
 	popup.add_check_item("View results", Item.VIEW_RESULTS)
 	popup.set_item_shortcut(Item.VIEW_RESULTS, ShortcutUtils.shortcut(KEY_R))
 	popup.add_submenu_item("Layouts", "Layouts")
+	
 	layouts_submenu_popup.name = "Layouts"
+	get_popup().add_child(layouts_submenu_popup)
+	layouts_submenu_popup.connect("id_pressed", self, "_on_Layouts_id_pressed")
+
+
+func update_layout_options():
+	layouts_submenu_popup.clear()
 	layouts_submenu_popup.add_item("Save current")
 	layouts_submenu_popup.add_separator()
-	
 	for layout_file in get_files("user://layouts"):
 		layouts_submenu_popup.add_item(layout_file.get_basename())
 		layouts_submenu_popup.set_item_metadata(layouts_submenu_popup.get_item_count() - 1, layout_file)
-	layouts_submenu_popup.connect("id_pressed", self, "_on_Layouts_id_pressed")
-	popup.add_child(layouts_submenu_popup)
 
 
 func _on_Popup_id_pressed(id : int) -> void:
