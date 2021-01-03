@@ -16,9 +16,6 @@ const DEFAULTS := {
 const Properties = preload("res://addons/property_panel/properties.gd")
 
 func _init(_file := "").("JSON") -> void:
-	# default arguments so `duplicate` works
-	if not _file:
-		return
 	file = _file
 	var read_file := File.new()
 	read_file.open(file, File.READ)

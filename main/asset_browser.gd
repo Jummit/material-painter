@@ -52,7 +52,7 @@ class AssetType:
 		var dir := Directory.new()
 		dir.make_dir_recursive(get_cached_thumbnails_path())
 		var preview
-		if dir.file_exists(custom_thumbnail_path):
+		if dir.file_exists(custom_thumbnail_path) and asset.type.extension != "png":
 			var preview_image := Image.new()
 			preview_image.load(custom_thumbnail_path)
 			preview = ImageTexture.new()
@@ -223,7 +223,8 @@ func load_assets(directory : String, asset_type : AssetType) -> Array:
 	var dir := Directory.new()
 	dir.make_dir_recursive(directory)
 	var files := _get_files_in_folder(directory)
-	for file in files:
+	for file_num in files.size():
+		var file := files[file_num]
 		if file.get_extension() != asset_type.extension:
 			continue
 		progress_dialog.set_action(file)
@@ -231,7 +232,9 @@ func load_assets(directory : String, asset_type : AssetType) -> Array:
 		if asset is GDScriptFunctionState:
 			asset = yield(asset, "completed")
 		new_assets.append(asset)
-		yield(get_tree(), "idle_frame")
+		if file_num % 20 == 0:
+			yield(get_tree(), "idle_frame")
+	yield(get_tree(), "idle_frame")
 	return new_assets
 
 
