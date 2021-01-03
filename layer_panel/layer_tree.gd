@@ -304,9 +304,9 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 			load_layer_material()
 		Buttons.VISIBILITY:
 			var parent
-			if layer is MaterialLayer:
+			if layer is MaterialLayer or layer is MaterialFolder:
 				parent = layer.get_layer_material_in()
-			elif layer is TextureLayer:
+			elif layer is TextureLayer or layer is TextureFolder:
 				parent = layer.get_layer_texture_in()
 			undo_redo.create_action("Toggle Layer Visibility")
 			undo_redo.add_do_property(layer, "visible", not layer.visible)
