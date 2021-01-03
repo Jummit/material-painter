@@ -120,21 +120,26 @@ func _on_FileDialog_file_selected(path : String) -> void:
 			match path.get_extension():
 				"tres":
 					Globals.current_file = ResourceLoader.load(path, "", true)
+					load_mesh(Globals.current_file.model_path)
 				"obj":
-					var interactive_loader := ObjParser.parse_obj_interactive(path)
-					var progress_dialog = ProgressDialogManager.create_task("Load OBJ Model",
-							int(interactive_loader.get_stage_count() / 10000.0))
-					while true:
-						progress_dialog.set_action("Stage %s / %s" % [
-								interactive_loader.get_stage(),
-								interactive_loader.get_stage_count()])
-						yield(get_tree(), "idle_frame")
-						for i in 10000:
-							var mesh = interactive_loader.poll()
-							if mesh:
-								progress_dialog.complete_task()
-								Globals.mesh = mesh
-								return
+					load_mesh(path)
+
+
+func load_mesh(path : String) -> void:
+	var interactive_loader := ObjParser.parse_obj_interactive(path)
+	var progress_dialog = ProgressDialogManager.create_task("Load OBJ Model",
+			int(interactive_loader.get_stage_count() / 10000.0))
+	while true:
+		progress_dialog.set_action("Stage %s / %s" % [
+				interactive_loader.get_stage(),
+				interactive_loader.get_stage_count()])
+		yield(get_tree(), "idle_frame")
+		for i in 10000:
+			var mesh = interactive_loader.poll()
+			if mesh:
+				progress_dialog.complete_task()
+				Globals.mesh = mesh
+				return
 
 
 func _on_AddButton_pressed() -> void:
@@ -292,7 +297,11 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 		var file := texture_dir.plus_file(map) + ".png"
 		progress_dialog.set_action(file)
 		mesh_maps[map].get_data().save_png(file)
-		asset_browser.load_asset(file, asset_browser.ASSET_TYPES.TEXTURE, "local")
+		var asset = asset_browser.load_asset(file, asset_browser.ASSET_TYPES.TEXTURE)
+		asset_browser.add_asset_to_tag(asset, "local")
+		if asset is GDScriptFunctionState:
+			asset = yield(asset, "completed")
+		asset_browser.assets.append(asset)
 		yield(get_tree(), "idle_frame")
 	asset_browser.update_asset_list()
 	progress_dialog.complete_task()
