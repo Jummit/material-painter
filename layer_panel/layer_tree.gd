@@ -428,11 +428,11 @@ func _setup_material_layer_item(layer, parent_item : TreeItem,
 			item.add_button(0, _selected_maps[layer].icon, Buttons.RESULT)
 		
 		if layer.maps.size() > 1:
-			item.add_button(0, preload("res://icons/down.svg"), Buttons.MAP_DROPDOWN)
+			item.add_button(0, preload("res://icons/down_arrow.svg"), Buttons.MAP_DROPDOWN)
 	elif layer is MaterialFolder:
 		var icon := preload("res://icons/large_folder.svg")
 		if state == LayerState.FOLDER_EXPANDED:
-			icon = preload("res://icons/open_folder.svg")
+			icon = preload("res://icons/large_open_folder.svg")
 			for sub_layer in layer.layers:
 				_setup_material_layer_item(sub_layer, item, selected_layer)
 		item.add_button(0, icon, Buttons.ICON)
@@ -455,7 +455,7 @@ func _setup_texture_layer_item(layer, parent_item : TreeItem, selected_layer) ->
 			"%s (%s Layer)" % [layer.name, layer.type_name])
 	else:
 		var expanded : bool = layer in _layer_states and _layer_states[layer] == LayerState.FOLDER_EXPANDED
-		var icon := preload("res://icons/large_folder.svg")
+		var icon := preload("res://icons/folder.svg")
 		if expanded:
 			icon = preload("res://icons/open_folder.svg")
 			for sub_layer in layer.layers:
@@ -471,8 +471,8 @@ func _get_layer_type(item : TreeItem) -> int:
 
 
 func _get_visibility_icon(is_visible : bool) -> Texture:
-	return preload("res://icons/icon_visible.svg") if is_visible else\
-		preload("res://icons/icon_hidden.svg")
+	return preload("res://icons/visible.svg") if is_visible else\
+		preload("res://icons/hidden.svg")
 
 
 func _select_item(item : TreeItem) -> void:
