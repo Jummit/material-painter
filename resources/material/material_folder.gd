@@ -58,9 +58,9 @@ func update(force_all := false) -> void:
 	for map in Globals.TEXTURE_MAP_TYPES:
 		var blending_layers := []
 		for layer in layers:
-			if not (map in layer.maps and layer.maps[map]):
+			var map_result : Texture = layer.get_map_result(map)
+			if not map_result:
 				continue
-			var map_layer_texture = layer.maps[map]
 			
 			var blending_layer : BlendingLayer
 			if layer.mask:
@@ -71,7 +71,7 @@ func update(force_all := false) -> void:
 				blending_layer = BlendingLayer.new("texture({layer_result}, uv)")
 			blending_layer.uniform_types.append("sampler2D")
 			blending_layer.uniform_names.append("layer_result")
-			blending_layer.uniform_values.append(map_layer_texture.result)
+			blending_layer.uniform_values.append(map_result)
 			blending_layers.append(blending_layer)
 		
 		if blending_layers.empty():
