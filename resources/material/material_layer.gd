@@ -65,3 +65,11 @@ func get_layer_textures() -> Array:
 func mark_dirty(shader_dirty := false) -> void:
 	dirty = true
 	get_layer_material_in().mark_dirty(shader_dirty)
+
+
+func get_map_result(map : String) -> Texture:
+	if not map in maps:
+		return null
+	return maps[map].result
+
+

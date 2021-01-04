@@ -37,7 +37,7 @@ func _init() -> void:
 func update(force_all := false) -> void:
 	if not dirty and not force_all:
 		return
-	for layer in get_flat_layers(layers, false):
+	for layer in layers:
 		var update_result = layer.update(force_all)
 		if update_result is GDScriptFunctionState:
 			yield(update_result, "completed")
@@ -50,7 +50,7 @@ func update(force_all := false) -> void:
 
 func generate_result(result_size : Vector2, update_shader := false, custom_id := 0) -> Texture:
 	var blending_layers := []
-	for layer in get_flat_layers(layers, false):
+	for layer in layers:
 		var shader_layer = layer._get_as_shader_layer()
 		if shader_layer is GDScriptFunctionState:
 			shader_layer = yield(shader_layer, "completed")

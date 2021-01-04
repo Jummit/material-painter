@@ -7,16 +7,15 @@ The tree consists of a list of `MaterialLayer`s with the `TextureLayer`s
 of the selected `LayerTexture` below. The selected `TextureLayer`,
 which could be a map or a mask, is stored in `_selected_layer_textures`.
 Shows previews of maps and masks as buttons, which can be clicked to select the
-`LayerTexture`. 
+`LayerTexture`.
 When a `MaterialLayer` has multiple maps enabled, the current map can be selected
 with a dropdown. The selected maps are stored in `_selected_maps`.
 """
 
 var _root : TreeItem
 var _lastly_edited_layer : TreeItem
-var _selected_layer_textures : Dictionary
 var _selected_maps : Dictionary
-var _expanded_folders : Array
+var _layer_states : Dictionary
 
 var undo_redo := Globals.undo_redo
 
@@ -39,6 +38,12 @@ enum LayerType {
 	TEXTURE_LAYER,
 }
 
+enum LayerState {
+	FOLDER_EXPANDED,
+	MASK_EXPANDED,
+	MAP_EXPANDED
+}
+
 const LayerMaterial = preload("res://resources/material/layer_material.gd")
 const MaterialLayer = preload("res://resources/material/material_layer.gd")
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
@@ -58,24 +63,24 @@ func _ready() -> void:
 	set_column_expand(0, false)
 	set_column_min_width(0, 100)
 	Globals.connect("current_file_changed", self,
-			"_on_Globals_current_file_changed")
+		"_on_Globals_current_file_changed")
 	Globals.connect("editing_layer_material_changed", self,
-			"_on_Globals_editing_layer_material_changed")
+		"_on_Globals_editing_layer_material_changed")
 
 
 func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == BUTTON_RIGHT\
-			and event.pressed:
+		and event.pressed:
 		var layer = _get_layer_at_position(event.position)
 		layer_popup_menu.rect_global_position = event.global_position
 		layer_popup_menu.layer = layer
-		if layer is MaterialLayer and layer in _selected_layer_textures:
-			layer_popup_menu.layer_texture = _selected_layer_textures[layer]
+		if get_selected_layer_texture(layer):
+			layer_popup_menu.layer_texture = get_selected_layer_texture(layer)
 		elif layer is TextureFolder:
 			layer_popup_menu.layer_texture = layer.get_layer_texture_in()
 		layer_popup_menu.popup()
 	elif event is InputEventMouseButton and event.button_index == BUTTON_LEFT\
-			and event.pressed:
+		and event.pressed:
 		# `get_selected` returns null the first time a layer is clicked
 		# if it doesn't, in thin case it means the layer was "double clicked"
 		if get_selected():
@@ -88,17 +93,22 @@ func _gui_input(event : InputEvent) -> void:
 		var layer = get_selected_layer()
 		undo_redo.create_action("Delete Layer")
 		undo_redo.add_do_method(Globals.editing_layer_material, "delete_layer",
-				layer)
+			layer)
 		undo_redo.add_do_method(self, "emit_signal", "layer_deselected")
 		undo_redo.add_undo_method(Globals.editing_layer_material, "add_layer",
-				layer, layer.parent)
+			layer, layer.parent)
 		undo_redo.add_undo_method(self, "_emit_select_signal", layer)
 		undo_redo.commit_action()
 
 
-func get_selected_layer_texture(material_layer : MaterialLayer) -> LayerTexture:
-	if material_layer in _selected_layer_textures:
-		return _selected_layer_textures[material_layer]
+func get_selected_layer_texture(layer) -> LayerTexture:
+	if not layer in _layer_states:
+		return null
+	match _layer_states[layer]:
+		LayerState.MAP_EXPANDED:
+			return _selected_maps[layer]
+		LayerState.MASK_EXPANDED:
+			return layer.mask
 	return null
 
 
@@ -122,22 +132,20 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 		Buttons.MAP_DROPDOWN:
 			map_type_popup_menu.set_meta("layer", layer)
 			map_type_popup_menu.rect_global_position =\
-					get_global_transform().xform(get_item_area_rect(item).position)
+				get_global_transform().xform(get_item_area_rect(item).position)
 			map_type_popup_menu.popup()
 		Buttons.RESULT:
 			if layer is MaterialLayer:
-				if layer in _selected_layer_textures and\
-						_selected_layer_textures[layer] != layer.mask:
-					_selected_layer_textures.erase(layer)
+				if layer in _layer_states and _layer_states[layer] == LayerState.MAP_EXPANDED:
+					_layer_states.erase(layer)
 				else:
-					_selected_layer_textures[layer] = _selected_maps[layer]
+					_layer_states[layer] = LayerState.MAP_EXPANDED
 				_load_layer_material()
 		Buttons.MASK:
-			if layer in _selected_layer_textures and\
-					_selected_layer_textures[layer] == layer.mask:
-				_selected_layer_textures.erase(layer)
+			if layer in _layer_states and _layer_states[layer] == LayerState.MASK_EXPANDED:
+				_layer_states.erase(layer)
 			else:
-				_selected_layer_textures[layer] = layer.mask
+				_layer_states[layer] = LayerState.MASK_EXPANDED
 			_load_layer_material()
 		Buttons.VISIBILITY:
 			var parent
@@ -154,10 +162,10 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 			undo_redo.add_undo_method(Globals.editing_layer_material, "update")
 			undo_redo.commit_action()
 		Buttons.ICON:
-			if layer in _expanded_folders:
-				_expanded_folders.erase(layer)
+			if layer in _layer_states and _layer_states[layer] == LayerState.FOLDER_EXPANDED:
+				_layer_states.erase(layer)
 			else:
-				_expanded_folders.append(layer)
+				_layer_states[layer] = LayerState.FOLDER_EXPANDED
 			_load_layer_material()
 
 
@@ -167,14 +175,12 @@ func _on_MapTypePopupMenu_about_to_show() -> void:
 	for map in layer.maps:
 		map_type_popup_menu.add_item(map)
 		map_type_popup_menu.set_item_icon(
-				map_type_popup_menu.get_item_count() - 1, layer.maps[map].icon)
+			map_type_popup_menu.get_item_count() - 1, layer.maps[map].icon)
 
 
 func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
 	var layer : MaterialLayer = map_type_popup_menu.get_meta("layer")
-	var selected_map : LayerTexture = layer.maps.values()[id]
-	_selected_maps[layer] = selected_map
-	_selected_layer_textures[layer] = selected_map
+	_selected_maps[layer] = layer.maps.values()[id]
 	_load_layer_material()
 
 
@@ -197,7 +203,7 @@ func _on_TextureMapButtons_changed(map : String, enabled : bool) -> void:
 
 func _on_Globals_editing_layer_material_changed() -> void:
 	Globals.editing_layer_material.connect("results_changed", self,
-			"_on_LayerMaterial_results_changed")
+		"_on_LayerMaterial_results_changed")
 	_load_layer_material()
 
 
@@ -209,18 +215,17 @@ func _on_LayerMaterial_results_changed() -> void:
 	_load_layer_material()
 
 
-func _draw_material_layer_item(material_layer_item : TreeItem, item_rect : Rect2) -> void:
-	var material_layer = material_layer_item.get_meta("layer")
-	if not material_layer is MaterialLayer or\
-			not material_layer in _selected_layer_textures:
-		return
-	var icon_rect := Rect2(Vector2(68, item_rect.position.y - 1), Vector2(32, 32))
-	if _selected_layer_textures[material_layer] == material_layer.mask and\
-			material_layer.maps.size() > 0:
-		icon_rect.position.x = 23
-	if material_layer.maps.size() > 1:
-		icon_rect.position.x -= 31
-	draw_rect(icon_rect, Color.dodgerblue, false, 2.0)
+#func _draw_material_layer_item(item : TreeItem, item_rect : Rect2) -> void:
+#	var layer = item.get_meta("layer")
+#	if not _layer_states:
+#		return
+#	var icon_rect := Rect2(Vector2(68, item_rect.position.y - 1), Vector2(32, 32))
+#	if _selected_layer_textures[layer] == layer.mask and\
+#		layer.maps.size() > 0:
+#		icon_rect.position.x = 23
+#	if layer.maps.size() > 1:
+#		icon_rect.position.x -= 31
+#	draw_rect(icon_rect, Color.dodgerblue, false, 2.0)
 
 
 func get_drag_data(_position : Vector2):
@@ -248,8 +253,7 @@ func get_drag_data(_position : Vector2):
 
 func can_drop_data(position : Vector2, data) -> bool:
 	if data is Asset and data.type is TextureAssetType and\
-			_get_layer_at_position(position) is MaterialLayer and\
-			get_selected_layer_texture(_get_layer_at_position(position)):
+		get_selected_layer_texture(_get_layer_at_position(position)):
 		return true
 	if data is Asset and data.type is MaterialAssetType:
 		return true
@@ -265,8 +269,8 @@ func can_drop_data(position : Vector2, data) -> bool:
 			var onto_type : int = _get_layer_type(get_item_at_position(position))
 			if get_drop_section_at_position(position) == 0:
 				return (layer_type == LayerType.TEXTURE_LAYER and\
-						onto_type == LayerType.MATERIAL_LAYER and not is_folder) or\
-						(layer_type == onto_type and is_folder)
+					onto_type == LayerType.MATERIAL_LAYER and not is_folder) or\
+					(layer_type == onto_type and is_folder)
 			else:
 				return layer_type == onto_type or layer_type == LayerType.MATERIAL_LAYER
 		else:
@@ -284,8 +288,8 @@ func drop_data(position : Vector2, data) -> void:
 		var onto_position : int
 		match get_drop_section_at_position(position):
 			0:
-				if onto_layer is MaterialLayer:
-					onto = _selected_layer_textures[onto_layer]
+				if get_selected_layer_texture(onto_layer):
+					onto = get_selected_layer_texture(onto_layer)
 				else:
 					onto = onto_layer
 				onto_position = onto.layers.size()
@@ -306,18 +310,18 @@ func drop_data(position : Vector2, data) -> void:
 				var new_layer = layer.duplicate()
 				
 				undo_redo.add_do_method(Globals.editing_layer_material,
-						"add_layer", new_layer, onto, onto_position)
+					"add_layer", new_layer, onto, onto_position)
 				undo_redo.add_do_method(Globals.editing_layer_material,
-						"delete_layer", layer)
+					"delete_layer", layer)
 				undo_redo.add_undo_method(Globals.editing_layer_material,
-						"delete_layer", new_layer)
+					"delete_layer", new_layer)
 				undo_redo.add_undo_method(Globals.editing_layer_material,
-						"add_layer", layer, layer.parent, layer_position)
+					"add_layer", layer, layer.parent, layer_position)
 			else:
 				undo_redo.add_do_method(Globals.editing_layer_material,
-						"add_layer", layer, onto)
+					"add_layer", layer, onto)
 				undo_redo.add_undo_method(Globals.editing_layer_material,
-						"delete_layer", layer)
+					"delete_layer", layer)
 			
 		
 		undo_redo.add_do_method(self, "_load_layer_material")
@@ -330,21 +334,21 @@ func drop_data(position : Vector2, data) -> void:
 			layer.name = data.name
 			if not data.data.begins_with("user://"):
 				layer.path = "local" + data.data.substr(
-						Globals.current_file.resource_path.get_base_dir().length())
+					Globals.current_file.resource_path.get_base_dir().length())
 			else:
 				layer.path = data.data
 			undo_redo.add_do_method(Globals.editing_layer_material, "add_layer",
-					layer, _selected_layer_textures[_get_layer_at_position(position)])
+				layer, get_selected_layer_texture(_get_layer_at_position(position)))
 			undo_redo.add_undo_method(Globals.editing_layer_material,
-					"delete_layer", layer)
+				"delete_layer", layer)
 			undo_redo.commit_action()
 		elif data.type is MaterialAssetType:
 			var new_layer : Resource = data.data.duplicate()
 			undo_redo.create_action("Add Material From Library")
 			undo_redo.add_do_method(Globals.editing_layer_material, "add_layer",
-					new_layer, Globals.editing_layer_material)
+				new_layer, Globals.editing_layer_material)
 			undo_redo.add_undo_method(Globals.editing_layer_material,
-					"delete_layer", new_layer)
+				"delete_layer", new_layer)
 			undo_redo.commit_action()
 
 
@@ -390,89 +394,77 @@ func _load_layer_material() -> void:
 func _select_map(layer : MaterialLayer, map : String, expand := false) -> void:
 	_selected_maps[layer] = layer.maps[map]
 	if expand:
-		_selected_layer_textures[layer] = layer.maps[map]
+		_layer_states[layer] = LayerState.MAP_EXPANDED
 
 
-func _setup_material_layer_item(material_layer, parent_item : TreeItem,
-		selected_layer) -> void:
-	var material_layer_item := create_item(parent_item)
-	if material_layer_item == selected_layer:
-		_select_item(material_layer_item)
-	material_layer_item.set_meta("layer", material_layer)
-	material_layer_item.custom_minimum_height = 32
+func _setup_material_layer_item(layer, parent_item : TreeItem,
+	selected_layer) -> void:
+	var item := create_item(parent_item)
+	if item == selected_layer:
+		_select_item(item)
+	item.custom_minimum_height = 32
+	item.set_meta("layer", layer)
+	item.set_text(1, layer.name)
+	item.add_button(1, _get_visibility_icon(layer.visible),
+		Buttons.VISIBILITY)
 	
-	if material_layer is MaterialLayer:
-		if material_layer in _selected_layer_textures:
-			if _selected_layer_textures[material_layer].parent != material_layer:
-				_selected_layer_textures.erase(material_layer)
-			else:
-				var selected_layer_texture : LayerTexture =\
-						_selected_layer_textures[material_layer]
-				for texture_layer in selected_layer_texture.layers:
-					_setup_texture_layer_item(texture_layer, material_layer_item,
-							selected_layer_texture, selected_layer)
+	item.set_custom_draw(0, self, "_draw_layer_item")
+	item.set_cell_mode(0, TreeItem.CELL_MODE_CUSTOM)
+	
+	var state := -1 if not layer in _layer_states else _layer_states[layer]
+	
+	if layer.mask:
+		item.add_button(0, layer.mask.icon,
+			Buttons.MASK)
+	
+	if get_selected_layer_texture(layer):
+		for texture_layer in get_selected_layer_texture(layer).layers:
+			_setup_texture_layer_item(texture_layer, item, selected_layer)
+	if layer is MaterialLayer:
+		if not layer in _selected_maps and layer.maps.size() > 0:
+			_selected_maps[layer] = layer.maps.values().front()
 		
-		if not material_layer in _selected_maps and material_layer.maps.size() > 0:
-			_selected_maps[material_layer] = material_layer.maps.values().front()
+		if layer.maps.size() > 0:
+			item.add_button(0, _selected_maps[layer].icon, Buttons.RESULT)
 		
-		if material_layer.mask:
-			material_layer_item.add_button(0, material_layer.mask.icon,
-					Buttons.MASK)
-		if material_layer.maps.size() > 0:
-			material_layer_item.add_button(0, _selected_maps[material_layer].icon,
-					Buttons.RESULT)
-		if material_layer.maps.size() > 1:
-			material_layer_item.add_button(0, preload("res://icons/down.svg"),
-					Buttons.MAP_DROPDOWN)
-	elif material_layer is MaterialFolder:
-		var icon : Texture = preload("res://icons/open_folder.svg") if\
-				material_layer in _expanded_folders else\
-				preload("res://icons/large_folder.svg")
-		material_layer_item.add_button(0, icon, Buttons.ICON)
-		material_layer_item.set_tooltip(1,
-				"%s (contains %s layers)" % [material_layer.name,
-				material_layer.layers.size()])
-	
-	material_layer_item.set_text(1, material_layer.name)
-	material_layer_item.add_button(1, _get_visibility_icon(material_layer.visible),
-			Buttons.VISIBILITY)
-	
-	material_layer_item.set_custom_draw(0, self, "_draw_material_layer_item")
-	material_layer_item.set_cell_mode(0, TreeItem.CELL_MODE_CUSTOM)
-	
-	if material_layer is MaterialFolder and material_layer in _expanded_folders:
-		for layer in material_layer.layers:
-			_setup_material_layer_item(layer, material_layer_item, selected_layer)
+		if layer.maps.size() > 1:
+			item.add_button(0, preload("res://icons/down.svg"), Buttons.MAP_DROPDOWN)
+	elif layer is MaterialFolder:
+		var icon := preload("res://icons/large_folder.svg")
+		if state == LayerState.FOLDER_EXPANDED:
+			icon = preload("res://icons/open_folder.svg")
+			for sub_layer in layer.layers:
+				_setup_material_layer_item(sub_layer, item, selected_layer)
+		item.add_button(0, icon, Buttons.ICON)
+		item.set_tooltip(1, "%s (contains %s layers)" % [layer.name, layer.layers.size()])
 
 
-func _setup_texture_layer_item(texture_layer, parent_item : TreeItem,
-		layer_texture : LayerTexture, selected_layer) -> void:
-	var texture_layer_item := create_item(parent_item)
-	if texture_layer == selected_layer:
-		_select_item(texture_layer_item)
-	texture_layer_item.set_meta("layer", texture_layer)
-	texture_layer_item.custom_minimum_height = 16
+func _setup_texture_layer_item(layer, parent_item : TreeItem, selected_layer) -> void:
+	var item := create_item(parent_item)
+	if layer == selected_layer:
+		_select_item(item)
+	item.set_meta("layer", layer)
+	item.custom_minimum_height = 16
 	
-	if texture_layer is TextureLayer:
-		texture_layer_item.add_button(0, texture_layer.icon, Buttons.RESULT)
-		texture_layer_item.set_tooltip(1,
-				"%s (%s Layer)" % [texture_layer.name, texture_layer.type_name])
+	item.set_text(1, layer.name)
+	item.add_button(1, _get_visibility_icon(layer.visible), Buttons.VISIBILITY)
+	
+	if layer is TextureLayer:
+		item.add_button(0, layer.icon, Buttons.RESULT)
+		item.set_tooltip(1,
+			"%s (%s Layer)" % [layer.name, layer.type_name])
 	else:
-		var icon : Texture = preload("res://icons/open_folder.svg") if\
-				texture_layer in _expanded_folders else\
-				preload("res://icons/large_folder.svg")
-		texture_layer_item.add_button(0, icon, Buttons.ICON)
-	texture_layer_item.set_text(1, texture_layer.name)
-	texture_layer_item.add_button(1, _get_visibility_icon(texture_layer.visible),
-			Buttons.VISIBILITY)
-	if texture_layer is TextureFolder and texture_layer in _expanded_folders:
-		for layer in texture_layer.layers:
-			_setup_texture_layer_item(layer, texture_layer_item, layer_texture,
-					selected_layer)
+		var expanded : bool = layer in _layer_states and _layer_states[layer] == LayerState.FOLDER_EXPANDED
+		var icon := preload("res://icons/large_folder.svg")
+		if expanded:
+			icon = preload("res://icons/open_folder.svg")
+			for sub_layer in layer.layers:
+				_setup_texture_layer_item(sub_layer, item, selected_layer)
+		item.add_button(0, icon, Buttons.ICON)
 
 
-func _get_layer_type(layer_item : TreeItem) -> int:
-	if layer_item.get_meta("layer").has_method("get_layer_texture_in"):
+func _get_layer_type(item : TreeItem) -> int:
+	if item.get_meta("layer").has_method("get_layer_texture_in"):
 		return LayerType.TEXTURE_LAYER
 	else:
 		return LayerType.MATERIAL_LAYER
@@ -480,7 +472,7 @@ func _get_layer_type(layer_item : TreeItem) -> int:
 
 func _get_visibility_icon(is_visible : bool) -> Texture:
 	return preload("res://icons/icon_visible.svg") if is_visible else\
-			preload("res://icons/icon_hidden.svg")
+		preload("res://icons/icon_hidden.svg")
 
 
 func _select_item(item : TreeItem) -> void:

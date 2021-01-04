@@ -388,7 +388,7 @@ func _on_UndoRedo_version_changed() -> void:
 		print(undo_redo.get_current_action_name())
 
 
-func set_mask(layer : MaterialLayer, mask : LayerTexture) -> void:
+func set_mask(layer, mask : LayerTexture) -> void:
 	if mask == NO_MASK:
 		layer.mask = null
 	else:
@@ -450,8 +450,7 @@ func open_save_project_dialog() -> void:
 	file_dialog.popup_centered()
 
 
-func do_change_mask_action(action_name : String, layer : MaterialLayer,
-		mask : LayerTexture) -> void:
+func do_change_mask_action(action_name : String, layer, mask : LayerTexture) -> void:
 	undo_redo.create_action(action_name)
 	undo_redo.add_do_method(self, "set_mask", layer, mask)
 	undo_redo.add_undo_method(self, "set_mask", layer, layer.mask)

@@ -8,11 +8,16 @@ A folder layer containing `TextureLayer`s used in a `LayerTexture` for organizat
 export var name := "Untitled Folder"
 export var visible := true
 export var layers : Array
+export var opacity := 1.0
+export var blend_mode := "normal"
 
 var parent
+var result : Texture
 var dirty := false
 var shader_dirty := false
 var icon : Texture
+
+const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 
 func _init():
 	resource_local_to_scene = true
@@ -35,3 +40,24 @@ func mark_dirty(shader_too := false) -> void:
 	dirty = true
 	shader_dirty = shader_too
 	parent.mark_dirty(shader_dirty)
+
+
+func update(force_all := false) -> void:
+	if not dirty and not force_all:
+		return
+	var blending_layers := []
+	for layer in layers:
+		var shader_layer = layer._get_as_shader_layer()
+		if shader_layer is GDScriptFunctionState:
+			shader_layer = yield(shader_layer, "completed")
+		blending_layers.append(shader_layer)
+	result = yield(LayerBlendViewportManager.blend(blending_layers,
+			Globals.result_size, get_instance_id(), shader_dirty), "completed")
+
+
+func _get_as_shader_layer() -> BlendingLayer:
+	var layer := BlendingLayer.new("texture({texture}, uv)", blend_mode, opacity)
+	layer.uniform_types.append("sampler2D")
+	layer.uniform_names.append("texture")
+	layer.uniform_values.append(result)
+	return layer
