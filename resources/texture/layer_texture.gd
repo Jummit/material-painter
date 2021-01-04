@@ -51,6 +51,8 @@ func update(force_all := false) -> void:
 func generate_result(result_size : Vector2, update_shader := false, custom_id := 0) -> Texture:
 	var blending_layers := []
 	for layer in layers:
+		if not layer.visible:
+			continue
 		var shader_layer = layer._get_as_shader_layer()
 		if shader_layer is GDScriptFunctionState:
 			shader_layer = yield(shader_layer, "completed")

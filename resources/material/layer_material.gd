@@ -79,7 +79,7 @@ func update(force_all := false) -> void:
 		var blending_layers := []
 		for layer in layers:
 			var map_result : Texture = layer.get_map_result(map)
-			if not map_result:
+			if not map_result or not layer.visible:
 				continue
 			
 			var blending_layer : BlendingLayer
