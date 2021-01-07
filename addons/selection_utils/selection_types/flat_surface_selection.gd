@@ -20,9 +20,9 @@ static func prepare_mesh(mesh : Mesh) -> Mesh:
 	var surface_tool := SurfaceTool.new()
 	surface_tool.begin(Mesh.PRIMITIVE_TRIANGLES)
 	
-	for id_num in ids.size():
+	for faces in ids:
 		var color := get_color()
-		for face in ids[id_num]:
+		for face in faces:
 			for vertex_num in 3:
 				var vertex := original_data_tool.get_face_vertex(face, vertex_num)
 				surface_tool.add_uv(original_data_tool.get_vertex_uv(vertex))

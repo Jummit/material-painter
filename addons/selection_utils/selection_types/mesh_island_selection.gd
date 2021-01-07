@@ -13,8 +13,8 @@ static func prepare_mesh(mesh : Mesh) -> Mesh:
 	var ids := MeshUtils.get_connected_geometry(data_tool)
 	
 	for id_num in ids.size():
+		var color := get_color()
 		for face in ids[id_num]:
-			var color := get_color()
 			for vertex in 3:
 				original_data_tool.set_vertex_color(
 						original_data_tool.get_face_vertex(face, vertex), color)

@@ -408,14 +408,15 @@ func set_value_on_layer(layer, property : String, value) -> void:
 
 func load_mesh(path : String) -> void:
 	var interactive_loader := ObjParser.parse_obj_interactive(path)
+	var stage_count := interactive_loader.get_stage_count()
 	var progress_dialog = ProgressDialogManager.create_task("Load OBJ Model",
-			int(interactive_loader.get_stage_count() / 10000.0))
+			stage_count)
 	while true:
 		progress_dialog.set_action("Stage %s / %s" % [
-				interactive_loader.get_stage(),
-				interactive_loader.get_stage_count()])
+				interactive_loader.get_stage(), stage_count],
+				interactive_loader.get_stage())
 		yield(get_tree(), "idle_frame")
-		for i in 10000:
+		for i in 20000:
 			var mesh = interactive_loader.poll()
 			if mesh:
 				progress_dialog.complete_task()

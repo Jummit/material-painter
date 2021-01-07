@@ -15,8 +15,10 @@ func setup(task_name : String, action_count : int) -> void:
 	call_deferred("popup_centered")
 
 
-func set_action(action_name : String) -> void:
+func set_action(action_name : String, value := -1) -> void:
 	progress_bar.value += 1
+	if value != -1:
+		progress_bar.value = value
 	current_action_label.text = action_name
 
 

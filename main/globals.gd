@@ -35,7 +35,6 @@ const FileTextureLayer = preload("res://resources/texture/layers/file_texture_la
 
 const SaveFile = preload("res://resources/save_file.gd")
 const LayerMaterial = preload("res://resources/material/layer_material.gd")
-const ObjParser = preload("res://addons/obj_parser/obj_parser.gd")
 
 const TEXTURE_MAP_TYPES := ["albedo", "emission", "height",
 		"ao", "metallic", "roughness"]
