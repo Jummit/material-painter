@@ -314,7 +314,7 @@ func _on_ViewMenuButton_save_layout_selected() -> void:
 	save_layout_dialog.popup_centered()
 
 
-func _on_QuitConfirmationDialog_custom_action(_action : int) -> void:
+func _on_QuitConfirmationDialog_custom_action(_action : String) -> void:
 	get_tree().quit()
 
 
