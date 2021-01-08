@@ -43,6 +43,7 @@ func duplicate(_deep := false) -> Resource:
 
 
 func get_properties() -> Array:
+	load_data()
 	if not "properties" in data:
 		return []
 	var list := []
@@ -65,6 +66,7 @@ func get_properties() -> Array:
 
 
 func _get_as_shader_layer() -> Layer:
+	load_data()
 	var layer := Layer.new()
 	layer.code = data.shader
 	if "properties" in data:
