@@ -105,7 +105,7 @@ static func _setup_shader_vars(material : Material, layers : Array) -> void:
 	var uniform_count := 0
 	for layer_num in layers.size():
 		var layer := layers[layer_num] as Layer
-		for uniform in layer.uniform_types.size():
+		for uniform in layer.uniform_values.size():
 			material.set_shader_param(
 					_uniform_var(uniform_count),
 					layer.uniform_values[uniform])
