@@ -20,7 +20,10 @@ func _on_item_activated(index : int) -> void:
 
 
 func _on_Globals_editing_layer_material_changed() -> void:
-	Globals.editing_layer_material.connect("results_changed", self, "_on_LayerMaterial_results_changed")
+	if not Globals.editing_layer_material.is_connected("results_changed", self,
+			"_on_LayerMaterial_results_changed"):
+		Globals.editing_layer_material.connect("results_changed", self,
+				"_on_LayerMaterial_results_changed")
 
 
 func _on_LayerMaterial_results_changed() -> void:
