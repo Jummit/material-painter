@@ -37,6 +37,9 @@ var ASSET_TYPES := {
 	EFFECT = EffectAssetType.new(),
 }
 
+const EFFECTS := "res://resources/texture/json/"
+const TAG_METADATA := "user://tags.json"
+
 onready var tag_name_edit : LineEdit = $VBoxContainer/HBoxContainer/TagNameEdit
 onready var asset_list : ItemList = $VBoxContainer2/AssetList
 onready var search_edit : LineEdit = $VBoxContainer2/SearchEdit
@@ -88,10 +91,10 @@ class AssetType:
 	func _load(asset : Asset):
 		return load(asset.file)
 	
-	func get_asset_directory() -> String:
+	func get_directory() -> String:
 		return "user://".plus_file(name.to_lower())
 	
-	func get_local_asset_directory(project_file : String) -> String:
+	func get_local_directory(project_file : String) -> String:
 		return project_file.get_base_dir().plus_file("assets").plus_file(
 				name.to_lower())
 	
@@ -171,28 +174,23 @@ func _ready():
 	if ProjectSettings.get_setting("application/config/load_assets"):
 		_load_tag_metadata()
 		
-		var total_files := 0
+		var files := 0
 		for asset_type in ASSET_TYPES.values():
-			total_files += _get_files_in_folder(
-					asset_type.get_asset_directory()).size()
+			files += _get_files_in_folder(asset_type.get_directory()).size()
 		
-		progress_dialog = ProgressDialogManager.create_task("Load Assets",
-				total_files)
+		progress_dialog = ProgressDialogManager.create_task("Load Assets", files)
 		
 		for asset_type in ASSET_TYPES.values():
-			var result = _load_assets(asset_type.get_asset_directory(),
-					asset_type)
+			var result = _load_assets(asset_type.get_directory(), asset_type)
 			if result is GDScriptFunctionState:
 				result = yield(result, "completed")
 			assets += result
+		assets += yield(_load_assets(EFFECTS, ASSET_TYPES.EFFECT), "completed")
 		
-		assets += yield(_load_assets("res://resources/texture/json/",
-				ASSET_TYPES.EFFECT), "completed")
+		progress_dialog.complete_task()
 		
 		_save_tag_metadata()
 		
-		progress_dialog.complete_task()
-	
 	_update_tag_list()
 	update_asset_list()
 
@@ -204,14 +202,14 @@ func load_asset(path : String, asset_type : AssetType) -> Asset:
 	asset.file = path
 	asset.data = asset_type._load(asset)
 	if not path in already_tagged_assets:
-		add_asset_to_tag(asset, asset_type.tag)
+		_add_asset_to_tag(asset, asset_type.tag)
 		for tag in _get_tags(asset.name):
-			add_asset_to_tag(asset, tag)
-		add_asset_to_tag(asset, "all")
+			_add_asset_to_tag(asset, tag)
+		_add_asset_to_tag(asset, "all")
 		already_tagged_assets.append(path)
 	for tag in tag_metadata:
 		if asset.file in tag_metadata[tag]:
-			add_asset_to_tag(asset, tag)
+			_add_asset_to_tag(asset, tag)
 	var result  = asset_type.get_preview(asset)
 	if result is GDScriptFunctionState:
 		result = yield(result, "completed")
@@ -219,12 +217,13 @@ func load_asset(path : String, asset_type : AssetType) -> Asset:
 	return asset
 
 
-func add_asset_to_tag(asset : Asset, tag : String) -> void:
+func _add_asset_to_tag(asset : Asset, tag : String) -> void:
 	if not tag in asset.tags:
 		asset.tags.append(tag)
 	if not tag in tagged_assets:
 		tagged_assets[tag] = []
-	tagged_assets[tag].append(asset)
+	if not asset in tagged_assets[tag]:
+		tagged_assets[tag].append(asset)
 
 
 func update_asset_list() -> void:
@@ -238,7 +237,7 @@ func update_asset_list() -> void:
 		for _asset in tagged_assets[current_tag]:
 			var asset := _asset as Asset
 			var matches := true
-			var all_tags := (asset.tags as PoolStringArray).join(" ")
+			var all_tags := asset.tags
 			for term in search_terms:
 				if not term in all_tags:
 					matches = false
@@ -310,7 +309,6 @@ func _on_AssetPopupMenu_id_pressed(id : int) -> void:
 		2:
 			_show_delete_confirmation_popup()
 	if id < 2:
-#		tag_edit.text = ""
 		tag_modification_dialog.set_meta("items",
 				asset_popup_menu.get_meta("items"))
 		tag_modification_dialog.popup()
@@ -349,7 +347,7 @@ func _on_SceneTree_files_dropped(files : PoolStringArray, _screen : int) -> void
 	for file in files:
 		progress_dialog.set_action(file)
 		yield(get_tree(), "idle_frame")
-		var new_asset_path : String = ASSET_TYPES.TEXTURE.get_asset_directory().\
+		var new_asset_path : String = ASSET_TYPES.TEXTURE.get_directory().\
 				plus_file(file.get_file())
 		if dir.file_exists(new_asset_path):
 			continue
@@ -384,7 +382,7 @@ func _update_tag_list() -> void:
 		tag_item.set_text(0, tag)
 
 
-func _add_tag():
+func _add_tag() -> void:
 	var new_tag := tag_name_edit.text.to_lower()
 	if new_tag and not new_tag in sidebar_tags:
 		sidebar_tags.append(new_tag)
@@ -400,17 +398,17 @@ func _load_local_assets(project_file : String) -> void:
 		var total_files := 0
 		for asset_type in ASSET_TYPES.values():
 			total_files += _get_files_in_folder(
-					asset_type.get_local_asset_directory(project_file)).size()
+					asset_type.get_local_directory(project_file)).size()
 		progress_dialog = ProgressDialogManager.create_task("Load Local Assets",
 			total_files)
 		for asset_type in ASSET_TYPES.values():
-			var result = _load_assets(
-				asset_type.get_local_asset_directory(project_file), asset_type)
+			var result = _load_assets(asset_type.get_local_directory(
+					project_file), asset_type)
 			if result is GDScriptFunctionState:
 				result = yield(result, "completed")
 			assets += result
 			for asset in result:
-				add_asset_to_tag(asset, "local")
+				_add_asset_to_tag(asset, "local")
 		progress_dialog.complete_task()
 		_save_tag_metadata()
 
@@ -493,36 +491,32 @@ func _modify_tags() -> void:
 	var items : PoolIntArray = tag_modification_dialog.get_meta("items")
 	for item in items:
 		var asset : Asset = asset_list.get_item_metadata(item)
-		match tag_modification_dialog.get_meta("action"):
-			"add":
-				if tag in asset.tags:
-					continue
-				asset.tags.append(tag)
-				add_asset_to_tag(asset, tag)
-			"remove":
-				_remove_asset_from_tag(asset, tag)
+		if tag_modification_dialog.get_meta("action") == "add":
+			_add_asset_to_tag(asset, tag)
+		else:
+			_remove_asset_from_tag(asset, tag)
 	update_asset_list()
 
 
 func _save_tag_metadata() -> void:
 	var data := {
-		tagged = already_tagged_assets,
-		assets = {},
 		sidebar = sidebar_tags,
+		assets = {},
+		tagged = already_tagged_assets,
 	}
 	for tag in tagged_assets:
 		data.assets[tag] = []
 		for asset in tagged_assets[tag]:
 			data.assets[tag].append(asset.file)
 	var file := File.new()
-	file.open("user://tags.json", File.WRITE)
+	file.open(TAG_METADATA, File.WRITE)
 	file.store_string(to_json(data))
 	file.close()
 
 
 func _load_tag_metadata() -> void:
 	var file := File.new()
-	if file.open("user://tags.json", File.READ) == OK:
+	if file.open(TAG_METADATA, File.READ) == OK:
 		var data : Dictionary = parse_json(file.get_as_text())
 		sidebar_tags = data.sidebar
 		tag_metadata = data.assets

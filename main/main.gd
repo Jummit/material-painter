@@ -267,7 +267,7 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 	var mesh_maps : Dictionary = yield(_mesh_maps_generator.generate_mesh_maps(
 			Globals.mesh, Vector2(1024, 1024)), "completed")
 	var texture_dir : String = asset_browser.ASSET_TYPES.TEXTURE.\
-			get_local_asset_directory(Globals.current_file.resource_path)
+			get_locals_directory(Globals.current_file.resource_path)
 	var dir := Directory.new()
 	dir.make_dir_recursive(texture_dir)
 	var progress_dialog = ProgressDialogManager.create_task("Bake Mesh Maps",
@@ -279,7 +279,7 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 		mesh_maps[map].get_data().save_png(file)
 		var asset = asset_browser.load_asset(file,
 				asset_browser.ASSET_TYPES.TEXTURE)
-		asset_browser.add_asset_to_tag(asset, "local")
+		asset_browser._add_asset_to_tag(asset, "local")
 		if asset is GDScriptFunctionState:
 			asset = yield(asset, "completed")
 		asset_browser.assets.append(asset)
