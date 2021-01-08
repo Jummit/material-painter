@@ -422,6 +422,10 @@ func _setup_material_layer_item(layer, parent_item : TreeItem,
 		for texture_layer in get_selected_layer_texture(layer).layers:
 			_setup_texture_layer_item(texture_layer, item, selected_layer)
 	if layer is MaterialLayer:
+		if layer in _selected_maps and _selected_maps[layer] and not (
+				_selected_maps[layer] in layer.maps.values()):
+			_layer_states.erase(layer)
+			_selected_maps[layer] = null
 		if not layer in _selected_maps and layer.maps.size() > 0:
 			_selected_maps[layer] = layer.maps.values().front()
 		
