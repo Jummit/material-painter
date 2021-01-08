@@ -34,10 +34,10 @@ func _ready() -> void:
 
 
 func _gui_input(event : InputEvent) -> void:
-	if layer_tree.get_selected_layer() is BitmapTextureLayer and (event is\
+	if layer_tree.get_selected_layer() is BitmapTextureLayer and ((event is\
 			InputEventMouseButton and event.button_index == BUTTON_LEFT\
 			and event.pressed) or (event is InputEventMouseMotion and\
-			event.button_mask == BUTTON_LEFT):
+			event.button_mask == BUTTON_LEFT)):
 		if Globals.selected_tool == Globals.Tools.PAINT:
 			paint(layer_tree.get_selected_layer(), event.position,
 					event.position)
