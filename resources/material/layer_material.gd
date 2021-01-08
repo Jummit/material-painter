@@ -122,7 +122,7 @@ func get_material(existing : SpatialMaterial = null) -> SpatialMaterial:
 	
 	var material : SpatialMaterial = existing
 	if not existing:
-		material = preload("res://3d_viewport/material.tres").duplicate()
+		material = preload("res://misc/material.tres").duplicate()
 	
 	for map in material_maps:
 		if map in results.keys():

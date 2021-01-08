@@ -2,7 +2,7 @@
 
 [ext_resource path="res://addons/triplanar_texture_generator/triplanar_texture_generator.gd" type="Script" id=1]
 [ext_resource path="res://addons/triplanar_texture_generator/triplanar_mapping.shader" type="Shader" id=2]
-[ext_resource path="res://viewport/cube.obj" type="ArrayMesh" id=3]
+[ext_resource path="res://misc/cube.obj" type="ArrayMesh" id=3]
 
 [sub_resource type="ShaderMaterial" id=1]
 shader = ExtResource( 2 )
