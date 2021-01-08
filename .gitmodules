@@ -7,3 +7,6 @@
 [submodule "addon_repos/customizable_ui"]
 	path = addon_repos/customizable_ui
 	url = git@github.com:Jummit/customizable-ui.git
+[submodule "addon_repos/navigation-camera"]
+	path = addon_repos/navigation-camera
+	url = git@github.com:Jummit/navigation-camera.git

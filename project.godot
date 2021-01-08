@@ -41,7 +41,7 @@ gdscript/warnings/return_value_discarded=false
 
 [editor_plugins]
 
-enabled=PoolStringArray( "node_referencer" )
+enabled=PoolStringArray( "navigation_camera", "node_referencer" )
 
 [input]
 
