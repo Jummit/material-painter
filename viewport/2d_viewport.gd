@@ -1,2 +1,2 @@
-extends "res://viewport/2d_viewport.gd"
+extends "res://viewport/viewport.gd"
 

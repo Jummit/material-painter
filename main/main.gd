@@ -435,7 +435,7 @@ func save_file() -> bool:
 func start_empty_project() -> void:
 	var new_file := SaveFile.new()
 	Globals.set_current_file(new_file, false)
-	Globals.mesh = preload("res://3d_viewport/cube.obj")
+	Globals.mesh = preload("res://viewport/cube.obj")
 	Globals.emit_signal("current_file_changed")
 
 
