@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=7 format=2]
 
 [ext_resource path="res://viewport/viewport.gd" type="Script" id=1]
 [ext_resource path="res://addons/painter/painter.tscn" type="PackedScene" id=2]
@@ -6,10 +6,6 @@
 [ext_resource path="res://viewport/environment.tres" type="Environment" id=4]
 [ext_resource path="res://addons/selection_utils/selection_utils.tscn" type="PackedScene" id=5]
 [ext_resource path="res://viewport/model.gd" type="Script" id=7]
-[ext_resource path="res://viewport/color_skybox.tres" type="Material" id=8]
-
-[sub_resource type="QuadMesh" id=1]
-size = Vector2( 10000, 10000 )
 
 [node name="Viewport" type="ViewportContainer"]
 anchor_right = 1.0
@@ -38,12 +34,6 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2 )
 current = true
 far = 4305.1
 script = ExtResource( 3 )
-
-[node name="ColorSkybox" type="MeshInstance" parent="Viewport/NavigationCamera"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1000 )
-material_override = ExtResource( 8 )
-mesh = SubResource( 1 )
-material/0 = null
 
 [node name="DirectionalLight" type="DirectionalLight" parent="Viewport"]
 transform = Transform( 0.822333, 0.397311, -0.407324, 0, 0.715851, 0.698253, 0.569007, -0.574196, 0.588668, 0, 10, 0 )

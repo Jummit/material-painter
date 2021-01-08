@@ -21,7 +21,6 @@ const SelectionUtils = preload("res://addons/selection_utils/selection_utils.gd"
 onready var model : MeshInstance = $Viewport/Model
 onready var layer_tree : Tree = $"../../../../../../LayerPanelContainer/Window/LayerTree"
 onready var world_environment : WorldEnvironment = $Viewport/WorldEnvironment
-onready var color_skybox : MeshInstance = $Viewport/NavigationCamera/ColorSkybox
 onready var directional_light : DirectionalLight = $Viewport/DirectionalLight
 onready var viewport : Viewport = $Viewport
 onready var painter : Node = $Painter
@@ -33,6 +32,7 @@ func _ready() -> void:
 		painter.mesh_instance = model
 	Globals.connect("mesh_changed", self, "_on_Globals_mesh_changed")
 	navigation_camera.set_process_input(false)
+	world_environment.environment = world_environment.environment.duplicate()
 
 
 func _gui_input(event : InputEvent) -> void:
@@ -65,12 +65,18 @@ func _gui_input(event : InputEvent) -> void:
 			Input.is_mouse_button_pressed(BUTTON_RIGHT) and\
 			event.button_mask == BUTTON_MASK_RIGHT:
 		directional_light.rotate_y(event.relative.x * sensitity)
+		if world_environment.environment.background_mode == Environment.BG_COLOR_SKY:
+			world_environment.environment.background_sky_rotation_degrees.y =\
+					directional_light.rotation_degrees.y
 	if event is InputEventMouseButton and not event.pressed:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 
 func _on_ViewMenuButton_show_background_toggled() -> void:
-	color_skybox.visible = not color_skybox.visible
+	if world_environment.environment.background_mode == Environment.BG_SKY:
+		world_environment.environment.background_mode = Environment.BG_COLOR_SKY
+	else:
+		world_environment.environment.background_mode = Environment.BG_SKY
 
 
 func _on_ViewMenuButton_hdri_selected(hdri : Texture) -> void:

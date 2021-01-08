@@ -10,10 +10,10 @@ HDRIs used are from `https://hdrihaven.com/`.
 var show_background := false
 
 var hdris := {
-	"Rocky Sea": "res://3d_viewport/hdrs/cannon_2k.hdr",
-	"Modern House": "res://3d_viewport/hdrs/cayley_interior_2k.hdr",
-	"Autuum Forest": "res://3d_viewport/hdrs/forest_cave_2k.hdr",
-	"Forest River": "res://3d_viewport/hdrs/lauter_waterfall_2k.hdr",
+	"Rocky Sea": "res://viewport/hdrs/cannon_2k.hdr",
+	"Modern House": "res://viewport/hdrs/cayley_interior_2k.hdr",
+	"Autuum Forest": "res://viewport/hdrs/forest_cave_2k.hdr",
+	"Forest River": "res://viewport/hdrs/lauter_waterfall_2k.hdr",
 }
 
 var background_submenu_popup := PopupMenu.new()
