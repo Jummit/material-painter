@@ -19,7 +19,7 @@ onready var name_label : Label = $Name
 
 func setup(_property : Property) -> void:
 	property = _property
-	name_label.text = property.name
+	name_label.text = property.name.capitalize()
 	property_control = property._get_control()
 	property_control.size_flags_horizontal = SIZE_EXPAND_FILL
 	property_control.size_flags_vertical = SIZE_EXPAND_FILL
