@@ -215,17 +215,18 @@ func _on_LayerMaterial_results_changed() -> void:
 	_load_layer_material()
 
 
-#func _draw_material_layer_item(item : TreeItem, item_rect : Rect2) -> void:
-#	var layer = item.get_meta("layer")
-#	if not _layer_states:
-#		return
-#	var icon_rect := Rect2(Vector2(68, item_rect.position.y - 1), Vector2(32, 32))
-#	if _selected_layer_textures[layer] == layer.mask and\
-#		layer.maps.size() > 0:
-#		icon_rect.position.x = 23
-#	if layer.maps.size() > 1:
-#		icon_rect.position.x -= 31
-#	draw_rect(icon_rect, Color.dodgerblue, false, 2.0)
+func _draw_layer_item(item : TreeItem, item_rect : Rect2) -> void:
+	var layer = item.get_meta("layer")
+	if not layer in _layer_states:
+		return
+	var state : int = _layer_states[layer]
+	if not state in [LayerState.MAP_EXPANDED, LayerState.MASK_EXPANDED]:
+		return
+	var icon_rect := Rect2(Vector2(64, item_rect.position.y), Vector2(32, 32))
+	if layer.mask and (layer is MaterialFolder or layer.maps.size()) and\
+			state == LayerState.MASK_EXPANDED:
+		icon_rect.position.x -= 46
+	draw_rect(icon_rect, Color.dodgerblue, false, 2.0)
 
 
 func get_drag_data(_position : Vector2):
