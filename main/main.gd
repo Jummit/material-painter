@@ -166,8 +166,6 @@ func _on_DeleteButton_pressed() -> void:
 		undo_redo.add_do_method(texture_map_buttons, "hide")
 		undo_redo.add_undo_method(Globals.editing_layer_material, "add_layer",
 				selected_layer, selected_layer.parent)
-		undo_redo.add_undo_method(layer_property_panel, "load_material_layer",
-				selected_layer)
 		undo_redo.add_undo_method(texture_map_buttons, "show")
 		undo_redo.commit_action()
 
@@ -264,19 +262,19 @@ func _on_MaterialOptionButton_item_selected(index : int) -> void:
 
 
 func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
-	var mesh_maps : Dictionary = yield(_mesh_maps_generator.generate_mesh_maps(
-			Globals.mesh, Vector2(1024, 1024)), "completed")
 	var texture_dir : String = asset_browser.ASSET_TYPES.TEXTURE.\
-			get_locals_directory(Globals.current_file.resource_path)
+			get_local_directory(Globals.current_file.resource_path)
 	var dir := Directory.new()
 	dir.make_dir_recursive(texture_dir)
 	var progress_dialog = ProgressDialogManager.create_task("Bake Mesh Maps",
-			mesh_maps.size())
-	yield(get_tree(), "idle_frame")
-	for map in mesh_maps:
-		var file := texture_dir.plus_file(map) + ".png"
+			_mesh_maps_generator.MESH_MAP_GENERATORS.size())
+	
+	for generator in _mesh_maps_generator.MESH_MAP_GENERATORS:
+		var result : Texture = yield(generator._generate_map(Globals.mesh, Vector2(1024, 1024)),
+				"completed")
+		var file := texture_dir.plus_file(generator.name) + ".png"
 		progress_dialog.set_action(file)
-		mesh_maps[map].get_data().save_png(file)
+		result.get_data().save_png(file)
 		var asset = asset_browser.load_asset(file,
 				asset_browser.ASSET_TYPES.TEXTURE)
 		asset_browser._add_asset_to_tag(asset, "local")
