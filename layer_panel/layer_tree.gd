@@ -400,7 +400,7 @@ func _select_map(layer : MaterialLayer, map : String, expand := false) -> void:
 func _setup_material_layer_item(layer, parent_item : TreeItem,
 	selected_layer) -> void:
 	var item := create_item(parent_item)
-	if item == selected_layer:
+	if layer == selected_layer:
 		_select_item(item)
 	item.custom_minimum_height = 32
 	item.set_meta("layer", layer)
