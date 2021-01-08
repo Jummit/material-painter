@@ -202,8 +202,10 @@ func _on_TextureMapButtons_changed(map : String, enabled : bool) -> void:
 
 
 func _on_Globals_editing_layer_material_changed() -> void:
-	Globals.editing_layer_material.connect("results_changed", self,
-		"_on_LayerMaterial_results_changed")
+	if not Globals.editing_layer_material.is_connected("results_changed", self,
+			"_on_LayerMaterial_results_changed"):
+		Globals.editing_layer_material.connect("results_changed", self,
+				"_on_LayerMaterial_results_changed")
 	_load_layer_material()
 
 

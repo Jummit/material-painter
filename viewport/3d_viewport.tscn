@@ -8,6 +8,9 @@
 [node name="3DViewport" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
 
+[node name="NavigationCamera" parent="Viewport" index="1"]
+moving_sensitity = 0.3
+
 [node name="HalfResolutionButton" type="CheckButton" parent="." index="3"]
 anchor_left = 1.0
 anchor_top = 1.0

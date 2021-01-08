@@ -14,7 +14,6 @@ size = Vector2( 10000, 10000 )
 [node name="Viewport" type="ViewportContainer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_top = 26.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 stretch = true
@@ -24,7 +23,7 @@ __meta__ = {
 }
 
 [node name="Viewport" type="Viewport" parent="."]
-size = Vector2( 1024, 574 )
+size = Vector2( 1024, 600 )
 own_world = true
 handle_input_locally = false
 msaa = 1
@@ -35,6 +34,7 @@ shadow_atlas_size = 4096
 script = ExtResource( 7 )
 
 [node name="NavigationCamera" type="Camera" parent="Viewport"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2 )
 current = true
 far = 4305.1
 script = ExtResource( 3 )
@@ -54,3 +54,5 @@ environment = ExtResource( 4 )
 [node name="Painter" parent="." instance=ExtResource( 2 )]
 
 [node name="SelectionUtils" parent="." instance=ExtResource( 5 )]
+
+[connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]

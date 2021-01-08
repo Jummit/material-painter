@@ -26,6 +26,7 @@ onready var directional_light : DirectionalLight = $Viewport/DirectionalLight
 onready var viewport : Viewport = $Viewport
 onready var painter : Node = $Painter
 onready var selection_utils : Node = $SelectionUtils
+onready var navigation_camera : Camera = $Viewport/NavigationCamera
 
 func _ready() -> void:
 	if ProjectSettings.get_setting("application/config/initialize_painter"):
@@ -155,3 +156,7 @@ func paint(on_texture_layer : BitmapTextureLayer, from : Vector2,
 
 func _prepare_mesh(mesh : Mesh) -> Mesh:
 	return mesh
+
+
+func _on_visibility_changed():
+	navigation_camera.set_process_input(is_visible_in_tree())

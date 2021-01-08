@@ -5,3 +5,7 @@
 
 [node name="2DViewport" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
+
+[node name="NavigationCamera" parent="Viewport" index="1"]
+zoom_sensitity = 0.023
+pan_only = true
