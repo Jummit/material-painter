@@ -1,7 +1,7 @@
-extends PopupDialog
+extends Panel
 
 """
-A popup which shows the progress of a task
+A panel which shows the progress of a task
 """
 
 onready var current_action_label : Label = $MarginContainer/VBoxContainer/CurrentActionLabel
@@ -12,7 +12,6 @@ func setup(task_name : String, action_count : int) -> void:
 	task_label.text = task_name
 	progress_bar.max_value = action_count
 	progress_bar.value = 0
-	call_deferred("popup_centered")
 
 
 func set_action(action_name : String, value := -1) -> void:
