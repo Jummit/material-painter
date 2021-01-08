@@ -94,6 +94,9 @@ func update(force_all := false) -> void:
 			blending_layer.uniform_values.append(map_result)
 			blending_layers.append(blending_layer)
 		
+		if map == "height":
+			map = "normal"
+		
 		if blending_layers.empty():
 			results.erase(map)
 			continue
@@ -102,8 +105,7 @@ func update(force_all := false) -> void:
 				blending_layers, Globals.result_size,
 				get_instance_id() + map.hash(), shader_dirty), "completed")
 		
-		if map == "height":
-			map = "normal"
+		if map == "normal":
 			result = yield(NormalMapGenerationViewport.get_normal_map(result),
 					"completed")
 		results[map] = result
