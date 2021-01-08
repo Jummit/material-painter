@@ -37,12 +37,12 @@ func duplicate(_deep := false) -> Resource:
 	dup.settings = settings
 	dup.file = file
 	dup.data = data
-	dup.type_name = data.name
+	dup.type_name = type_name
+	dup.name = type_name
 	return dup
 
 
 func get_properties() -> Array:
-	load_data()
 	if not "properties" in data:
 		return []
 	var list := []
@@ -65,7 +65,6 @@ func get_properties() -> Array:
 
 
 func _get_as_shader_layer() -> Layer:
-	load_data()
 	var layer := Layer.new()
 	layer.code = data.shader
 	if "properties" in data:
@@ -88,6 +87,7 @@ func load_data() -> void:
 	data = parse_json(read_file.get_as_text())
 	read_file.close()
 	type_name = data.name
+	name = type_name
 	if "properties" in data:
 		for property in data.properties:
 			if property.name in settings:
