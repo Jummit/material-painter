@@ -54,5 +54,3 @@ environment = ExtResource( 4 )
 [node name="Painter" parent="." instance=ExtResource( 2 )]
 
 [node name="SelectionUtils" parent="." instance=ExtResource( 5 )]
-
-[connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]

@@ -32,9 +32,11 @@ func _ready() -> void:
 	if ProjectSettings.get_setting("application/config/initialize_painter"):
 		painter.mesh_instance = model
 	Globals.connect("mesh_changed", self, "_on_Globals_mesh_changed")
+	navigation_camera.set_process_input(false)
 
 
 func _gui_input(event : InputEvent) -> void:
+	navigation_camera._input(event)
 	if layer_tree.get_selected_layer() is BitmapTextureLayer and ((event is\
 			InputEventMouseButton and event.button_index == BUTTON_LEFT\
 			and event.pressed) or (event is InputEventMouseMotion and\
@@ -156,7 +158,3 @@ func paint(on_texture_layer : BitmapTextureLayer, from : Vector2,
 
 func _prepare_mesh(mesh : Mesh) -> Mesh:
 	return mesh
-
-
-func _on_visibility_changed():
-	navigation_camera.set_process_input(is_visible_in_tree())
