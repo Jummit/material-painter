@@ -450,7 +450,8 @@ func _setup_texture_layer_item(layer, parent_item : TreeItem, selected_layer) ->
 	item.add_button(1, _get_visibility_icon(layer.visible), Buttons.VISIBILITY)
 	
 	if layer is TextureLayer:
-		item.add_button(0, layer.icon, Buttons.RESULT)
+		if layer.icon:
+			item.add_button(0, layer.icon, Buttons.RESULT)
 		item.set_tooltip(1,
 			"%s (%s Layer)" % [layer.name, layer.type_name])
 	else:
