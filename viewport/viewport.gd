@@ -104,6 +104,8 @@ func _on_HalfResolutionButton_toggled(button_pressed : bool) -> void:
 func _on_Globals_mesh_changed(mesh : Mesh) -> void:
 	var progress_dialog = ProgressDialogManager.create_task(
 			"Generate Painter Maps", 1)
+	mesh = _prepare_mesh(mesh)
+	model.mesh = mesh
 	progress_dialog.set_action("Generate Maps")
 	yield(painter.set_mesh_instance(model), "completed")
 	progress_dialog.complete_task()
@@ -120,6 +122,10 @@ func _on_Globals_mesh_changed(mesh : Mesh) -> void:
 		yield(get_tree(), "idle_frame")
 		selection_utils._prepared_meshes[selection_type] = prepared_mesh
 	progress_dialog.complete_task()
+
+
+func _on_ResultsItemList_map_selected(map : String) -> void:
+	model.isolated_map = "" if map == model.isolated_map else map
 
 
 # perform a selection with the given `type` using `selection_utils`
@@ -145,3 +151,7 @@ func paint(on_texture_layer : BitmapTextureLayer, from : Vector2,
 	on_texture_layer.temp_texture = painter.result
 	on_texture_layer.mark_dirty()
 	Globals.editing_layer_material.update()
+
+
+func _prepare_mesh(mesh : Mesh) -> Mesh:
+	return mesh
