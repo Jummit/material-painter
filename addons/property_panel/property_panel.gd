@@ -51,13 +51,18 @@ func setup_property_containers() -> void:
 		property_container.free()
 	
 	for property in properties:
-		property = property
-		var property_container = load("res://addons/property_panel/property_container/property_container.tscn").instance()
-		property_container.name = property.name
-		property_container.connect("property_changed", self, "_on_Property_changed", [property_container])
+		if property is String:
+			var label := Label.new()
+			label.align = Label.ALIGN_CENTER
+			label.text = property
+			properties_container.add_child(label)
+		else:
+			var property_container = load("res://addons/property_panel/property_container/property_container.tscn").instance()
+			property_container.name = property.name
+			property_container.connect("property_changed", self, "_on_Property_changed", [property_container])
 
-		properties_container.add_child(property_container)
-		property_container.setup(property)
+			properties_container.add_child(property_container)
+			property_container.setup(property)
 
 
 func get_property_value(property_name : String):
@@ -71,7 +76,8 @@ func set_property_value(property_name : String, value):
 func get_property_values() -> Dictionary:
 	var values := {}
 	for property_container in properties_container.get_children():
-		values[property_container.name] = get_property_value(property_container.name)
+		if not property_container is Label:
+			values[property_container.name] = get_property_value(property_container.name)
 	return values
 
 
@@ -84,7 +90,8 @@ func store_values(instance) -> void:
 func load_values(instance) -> void:
 	set_block_signals(true)
 	for property_container in properties_container.get_children():
-		property_container.set_value(instance.get(property_container.property.name))
+		if not property_container is Label:
+			property_container.set_value(instance.get(property_container.property.name))
 	set_block_signals(false)
 
 
