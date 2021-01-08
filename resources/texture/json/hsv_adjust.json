@@ -20,5 +20,6 @@
 			"default": 1.0
 		}
 	],
+	"in_context_menu": true,
 	"shader": "vec4 previous = {previous}(uv);\nvec3 hsv = rgb2hsv(previous.rgb);\nhsv.x += {hue};\nhsv.y += {saturation};\nhsv.z += {value};\nreturn vec4(hsv2rgb(hsv), previous.a);"
 }

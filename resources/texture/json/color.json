@@ -7,5 +7,6 @@
 		}
 	],
 	"blends": true,
+	"in_context_menu": true,
 	"shader": "return {color};"
 }

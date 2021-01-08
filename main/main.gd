@@ -197,9 +197,9 @@ func _on_LayerPropertyPanel_property_changed(property : String, value) -> void:
 	undo_redo.commit_action()
 
 
-func _on_AddLayerPopupMenu_layer_selected(layer) -> void:
+func _on_AddLayerPopupMenu_layer_selected(layer : Resource) -> void:
 	undo_redo.create_action("Add Texture Layer")
-	var new_layer = layer.new()
+	var new_layer = layer.duplicate()
 	var onto
 	var selected_layer = layer_tree.layer_popup_menu.layer
 	if selected_layer is MaterialLayer:

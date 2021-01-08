@@ -25,14 +25,6 @@ enum Tools {
 	PAINT,
 }
 
-var TEXTURE_LAYER_TYPES := [
-	FileTextureLayer,
-	BitmapTextureLayer,
-]
-
-const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
-const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
-
 const SaveFile = preload("res://resources/save_file.gd")
 const LayerMaterial = preload("res://resources/material/layer_material.gd")
 

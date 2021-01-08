@@ -9,6 +9,11 @@ var layer_texture : LayerTexture
 
 var _copied_mask : LayerTexture
 
+var texture_layers := [
+	FileTextureLayer.new(),
+	BitmapTextureLayer.new(),
+]
+
 signal layer_selected(layer)
 signal layer_saved
 signal mask_added(mask)
@@ -32,6 +37,7 @@ const MaterialLayer = preload("res://resources/material/material_layer.gd")
 const MaterialFolder = preload("res://resources/material/material_folder.gd")
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
+const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
 
 func _on_about_to_show() -> void:
 	clear()
@@ -47,8 +53,8 @@ func _on_about_to_show() -> void:
 		if _copied_mask:
 			add_item("Paste Mask", Items.PASTE_MASK)
 	if layer_texture:
-		for layer_type in Globals.TEXTURE_LAYER_TYPES:
-			add_item("Add %s Layer" % layer_type.new().type_name, Items.ADD_LAYER)
+		for layer_type in texture_layers:
+			add_item("Add %s Layer" % layer_type.type_name, Items.ADD_LAYER)
 			set_item_metadata(get_item_count() - 1, layer_type)
 	add_item("Save To Library", Items.SAVE_TO_LIBRARY)
 
@@ -83,3 +89,7 @@ func _on_id_pressed(id : int) -> void:
 func _on_index_pressed(index : int) -> void:
 	if get_item_id(index) == Items.ADD_LAYER:
 		emit_signal("layer_selected", get_item_metadata(index))
+
+
+func _on_AssetBrowser_right_click_effect_loaded(effect : Resource) -> void:
+	texture_layers.append(effect)

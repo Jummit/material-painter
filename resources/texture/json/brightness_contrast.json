@@ -14,5 +14,6 @@
 			"default": 1.0
 		}
 	],
+	"in_context_menu": true,
 	"shader": "return {previous}(uv) * {contrast} + vec4(vec3({brightness}), 0.0);"
 }

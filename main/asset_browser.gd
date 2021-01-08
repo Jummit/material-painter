@@ -21,6 +21,7 @@ Assets can be searched using the search bar.
 """
 
 signal asset_activated(asset)
+signal right_click_effect_loaded(effect)
 
 var assets := []
 var already_tagged_assets := []
@@ -201,6 +202,10 @@ func load_asset(path : String, asset_type : AssetType) -> Asset:
 	asset.type = asset_type
 	asset.file = path
 	asset.data = asset_type._load(asset)
+	if asset_type == ASSET_TYPES.EFFECT and "in_context_menu" in asset.data.data\
+			and asset.data.data.in_context_menu:
+		emit_signal("right_click_effect_loaded", asset.data)
+		return null
 	if not path in already_tagged_assets:
 		_add_asset_to_tag(asset, asset_type.tag)
 		for tag in _get_tags(asset.name):
@@ -426,7 +431,8 @@ func _load_assets(directory : String, asset_type : AssetType) -> Array:
 		var asset = load_asset(directory.plus_file(file), asset_type)
 		if asset is GDScriptFunctionState:
 			asset = yield(asset, "completed")
-		new_assets.append(asset)
+		if asset:
+			new_assets.append(asset)
 		if file_num % 20 == 0:
 			yield(get_tree(), "idle_frame")
 	yield(get_tree(), "idle_frame")
