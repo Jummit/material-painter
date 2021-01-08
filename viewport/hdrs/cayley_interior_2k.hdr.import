@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/cannon_2k.hdr-bbf35382dad8797c209c76e616ea0a28.stex"
+path="res://.import/cayley_interior_2k.hdr-53468b4a984e6d2423ea7c4146b2b930.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://3d_viewport/hdrs/cannon_2k.hdr"
-dest_files=[ "res://.import/cannon_2k.hdr-bbf35382dad8797c209c76e616ea0a28.stex" ]
+source_file="res://viewport/hdrs/cayley_interior_2k.hdr"
+dest_files=[ "res://.import/cayley_interior_2k.hdr-53468b4a984e6d2423ea7c4146b2b930.stex" ]
 
 [params]
 

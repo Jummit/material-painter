@@ -1,6 +1,6 @@
 [gd_resource type="Environment" load_steps=3 format=2]
 
-[ext_resource path="res://3d_viewport/hdrs/cannon_2k.hdr" type="Texture" id=1]
+[ext_resource path="res://viewport/hdrs/cannon_2k.hdr" type="Texture" id=1]
 
 [sub_resource type="PanoramaSky" id=1]
 radiance_size = 3

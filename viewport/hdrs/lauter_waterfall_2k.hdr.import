@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/lauter_waterfall_2k.hdr-215e4209d055cd86eeb7c45759c52cee.stex"
+path="res://.import/lauter_waterfall_2k.hdr-fe0ddc782a419109f9b09cee631936dc.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://3d_viewport/hdrs/lauter_waterfall_2k.hdr"
-dest_files=[ "res://.import/lauter_waterfall_2k.hdr-215e4209d055cd86eeb7c45759c52cee.stex" ]
+source_file="res://viewport/hdrs/lauter_waterfall_2k.hdr"
+dest_files=[ "res://.import/lauter_waterfall_2k.hdr-fe0ddc782a419109f9b09cee631936dc.stex" ]
 
 [params]
 

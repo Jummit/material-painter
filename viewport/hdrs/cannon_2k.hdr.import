@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/forest_cave_2k.hdr-03925313c36f1d384805f08e76b6f5e0.stex"
+path="res://.import/cannon_2k.hdr-597b6b6a8bddd950627b0cf5b42d2342.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://3d_viewport/hdrs/forest_cave_2k.hdr"
-dest_files=[ "res://.import/forest_cave_2k.hdr-03925313c36f1d384805f08e76b6f5e0.stex" ]
+source_file="res://viewport/hdrs/cannon_2k.hdr"
+dest_files=[ "res://.import/cannon_2k.hdr-597b6b6a8bddd950627b0cf5b42d2342.stex" ]
 
 [params]
 

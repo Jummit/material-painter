@@ -1,0 +1,52 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://viewport/viewport.gd" type="Script" id=1]
+[ext_resource path="res://addons/painter/painter.tscn" type="PackedScene" id=2]
+[ext_resource path="res://viewport/environment.tres" type="Environment" id=4]
+[ext_resource path="res://addons/selection_utils/selection_utils.tscn" type="PackedScene" id=5]
+[ext_resource path="res://addons/rotating_camera/rotating_camera.tscn" type="PackedScene" id=6]
+[ext_resource path="res://viewport/model.gd" type="Script" id=7]
+[ext_resource path="res://viewport/color_skybox.tres" type="Material" id=8]
+
+[sub_resource type="CubeMesh" id=1]
+flip_faces = true
+size = Vector3( 100, 100, 100 )
+
+[node name="Viewport" type="ViewportContainer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 26.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+stretch = true
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Viewport" type="Viewport" parent="."]
+size = Vector2( 1024, 574 )
+handle_input_locally = false
+msaa = 1
+render_target_update_mode = 3
+shadow_atlas_size = 4096
+
+[node name="Model" type="MeshInstance" parent="Viewport"]
+script = ExtResource( 7 )
+
+[node name="RotatingCamera" parent="Viewport" instance=ExtResource( 6 )]
+
+[node name="ColorSkybox" type="MeshInstance" parent="Viewport/RotatingCamera"]
+material_override = ExtResource( 8 )
+mesh = SubResource( 1 )
+material/0 = null
+
+[node name="DirectionalLight" type="DirectionalLight" parent="Viewport"]
+transform = Transform( 0.822333, 0.397311, -0.407324, 0, 0.715851, 0.698253, 0.569007, -0.574196, 0.588668, 0, 10, 0 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Viewport"]
+environment = ExtResource( 4 )
+
+[node name="Painter" parent="." instance=ExtResource( 2 )]
+
+[node name="SelectionUtils" parent="." instance=ExtResource( 5 )]
