@@ -36,8 +36,12 @@ func _get_as_shader_layer():
 	
 	if cached_path != path or cached_triplanar_mapping != triplanar_mapping or\
 			cached_scale != uv_scale:
+		var global_path := Globals.get_global_asset_path(path)
+		var dir := Directory.new()
+		if not dir.file_exists(global_path):
+			return layer
 		var image := Image.new()
-		image.load(Globals.get_global_asset_path(path))
+		image.load(global_path)
 		cached_image = ImageTexture.new()
 		cached_image.create_from_image(image)
 		if triplanar_mapping:
