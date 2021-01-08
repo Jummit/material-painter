@@ -226,6 +226,8 @@ func _draw_layer_item(item : TreeItem, item_rect : Rect2) -> void:
 	if layer.mask and (layer is MaterialFolder or layer.maps.size()) and\
 			state == LayerState.MASK_EXPANDED:
 		icon_rect.position.x -= 46
+	if layer is MaterialLayer and layer.maps.size() > 1:
+		icon_rect.position.x -= 28
 	draw_rect(icon_rect, Color.dodgerblue, false, 2.0)
 
 
