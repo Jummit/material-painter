@@ -34,17 +34,18 @@ func _ready() -> void:
 
 
 func _gui_input(event : InputEvent) -> void:
-	if event is InputEventMouseButton and event.button_index == BUTTON_LEFT:
-		if event.pressed:
-			if layer_tree.get_selected_layer() is BitmapTextureLayer:
-				if Globals.selected_tool == Globals.Tools.PAINT:
-					paint(layer_tree.get_selected_layer(), event.position,
-							event.position)
-					last_painted_position = event.position
-				else:
-					select(layer_tree.get_selected_layer(),
-							Globals.selected_tool,
-							event.position)
+	if layer_tree.get_selected_layer() is BitmapTextureLayer and (event is\
+			InputEventMouseButton and event.button_index == BUTTON_LEFT\
+			and event.pressed) or (event is InputEventMouseMotion and\
+			event.button_mask == BUTTON_LEFT):
+		if Globals.selected_tool == Globals.Tools.PAINT:
+			paint(layer_tree.get_selected_layer(), event.position,
+					event.position)
+			last_painted_position = event.position
+		else:
+			select(layer_tree.get_selected_layer(),
+					Globals.selected_tool,
+					event.position)
 	
 	if not get_viewport().gui_is_dragging() and event is InputEventMouseMotion\
 			and Input.is_mouse_button_pressed(BUTTON_LEFT) and\
