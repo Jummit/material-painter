@@ -248,15 +248,11 @@ func _on_SceneTree_files_dropped(files : PoolStringArray, _screen : int) -> void
 				plus_file(file.get_file())
 		if dir.file_exists(new_asset_path):
 			continue
-		var type : AssetType
-		if file.get_extension() == "png":
-			type = ASSET_TYPES.TEXTURE
-		elif file.get_extension() == "json":
-			type = ASSET_TYPES.EFFECT
-		if type:
-			dir.copy(file, new_asset_path)
-			load_asset(file, type)
-			update_asset_list()
+		for asset_type in ASSET_TYPES.values():
+			if file.get_extension() == asset_type.extension:
+				dir.copy(file, new_asset_path)
+				load_asset(file, asset_type)
+				update_asset_list()
 	progress_dialog.complete_task()
 
 
