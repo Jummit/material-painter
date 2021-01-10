@@ -23,5 +23,7 @@ func blend(layers : Array, result_size : Vector2, id := -1,
 	var result : Texture = yield(layer_blend_viewport.blend(layers, result_size,
 			update_shader), "completed")
 	if id == -1:
-		return TextureUtils.viewport_to_image(result)
+		var texture := TextureUtils.viewport_to_image(result)
+		layer_blend_viewport.free()
+		return texture
 	return result
