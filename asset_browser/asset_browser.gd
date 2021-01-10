@@ -114,15 +114,6 @@ func load_asset(path : String, asset_type : AssetType) -> Asset:
 	return asset
 
 
-func _add_asset_to_tag(asset : Asset, tag : String) -> void:
-	if not tag in asset.tags:
-		asset.tags.append(tag)
-	if not tag in tagged_assets:
-		tagged_assets[tag] = []
-	if not asset in tagged_assets[tag]:
-		tagged_assets[tag].append(asset)
-
-
 func update_asset_list() -> void:
 	asset_list.clear()
 	var search_terms := search_edit.text.to_lower().replace(",", " ").split(
@@ -284,6 +275,15 @@ func _add_tag() -> void:
 		_update_tag_list()
 		update_asset_list()
 		_save_tag_metadata()
+
+
+func _add_asset_to_tag(asset : Asset, tag : String) -> void:
+	if not tag in asset.tags:
+		asset.tags.append(tag)
+	if not tag in tagged_assets:
+		tagged_assets[tag] = []
+	if not asset in tagged_assets[tag]:
+		tagged_assets[tag].append(asset)
 
 
 func _load_local_assets(project_file : String) -> void:
