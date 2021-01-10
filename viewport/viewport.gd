@@ -14,8 +14,9 @@ var cached_camera_transform : Transform
 
 const Brush = preload("res://addons/painter/brush.gd")
 const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
-const Asset = preload("res://main/asset_browser.gd").Asset
-const BrushAssetType = preload("res://main/asset_browser.gd").BrushAssetType
+const Asset = preload("res://asset_browser/asset_classes.gd").Asset
+const AssetType = preload("res://asset_browser/asset_classes.gd").AssetType
+const BrushAssetType = preload("res://asset_browser/asset_classes.gd").BrushAssetType
 const SelectionUtils = preload("res://addons/selection_utils/selection_utils.gd")
 
 onready var model : MeshInstance = $Viewport/Model

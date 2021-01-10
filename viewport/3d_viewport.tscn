@@ -3,13 +3,17 @@
 [ext_resource path="res://viewport/viewport.tscn" type="PackedScene" id=1]
 [ext_resource path="res://viewport/3d_viewport.gd" type="Script" id=2]
 
-[sub_resource type="StyleBoxEmpty" id=2]
+[sub_resource type="StyleBoxEmpty" id=1]
 
 [node name="3DViewport" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
 
 [node name="NavigationCamera" parent="Viewport" index="1"]
+rotation_sensitity = 0.01
 moving_sensitity = 0.3
+zoom_sensitity = 0.3
+pan_only = false
+focus_point = Vector3( 0, 0, 0 )
 
 [node name="HalfResolutionButton" type="CheckButton" parent="." index="3"]
 anchor_left = 1.0
@@ -19,12 +23,12 @@ anchor_bottom = 1.0
 margin_left = -180.0
 margin_top = -42.0
 hint_tooltip = "Enable this if performance drops when the viewport is large."
-custom_styles/hover = SubResource( 2 )
-custom_styles/pressed = SubResource( 2 )
-custom_styles/focus = SubResource( 2 )
-custom_styles/disabled = SubResource( 2 )
-custom_styles/hover_pressed = SubResource( 2 )
-custom_styles/normal = SubResource( 2 )
+custom_styles/hover = SubResource( 1 )
+custom_styles/pressed = SubResource( 1 )
+custom_styles/focus = SubResource( 1 )
+custom_styles/disabled = SubResource( 1 )
+custom_styles/hover_pressed = SubResource( 1 )
+custom_styles/normal = SubResource( 1 )
 text = "Half Resolution"
 align = 2
 __meta__ = {

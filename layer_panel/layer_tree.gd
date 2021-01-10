@@ -51,10 +51,10 @@ const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
 const TextureFolder = preload("res://resources/texture/texture_folder.gd")
 const MaterialFolder = preload("res://resources/material/material_folder.gd")
-const Asset = preload("res://main/asset_browser.gd").Asset
-const TextureAssetType = preload("res://main/asset_browser.gd").TextureAssetType
-const MaterialAssetType = preload("res://main/asset_browser.gd").MaterialAssetType
-const EffectAssetType = preload("res://main/asset_browser.gd").EffectAssetType
+const Asset = preload("res://asset_browser/asset_classes.gd").Asset
+const TextureAssetType = preload("res://asset_browser/asset_classes.gd").TextureAssetType
+const MaterialAssetType = preload("res://asset_browser/asset_classes.gd").MaterialAssetType
+const EffectAssetType = preload("res://asset_browser/asset_classes.gd").EffectAssetType
 
 onready var layer_popup_menu : PopupMenu = $LayerPopupMenu
 onready var map_type_popup_menu : PopupMenu = $MapTypePopupMenu

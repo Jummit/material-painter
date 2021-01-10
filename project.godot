@@ -29,7 +29,7 @@ TriplanarTextureGenerator="*res://addons/triplanar_texture_generator/triplanar_t
 IDMapGenerator="*res://addons/id_map_generator/id_map_generator.tscn"
 WorldMapGenerator="*res://addons/world_map_generator/world_map_generator.tscn"
 CurvatureBaker="*res://addons/curvature_baker/curvature_baker.tscn"
-PreviewRenderer="*res://preview_renderer/preview_renderer.tscn"
+PreviewRenderer="*res://asset_browser/preview_renderer/preview_renderer.tscn"
 ProgressDialogManager="*res://addons/progress_dialog/progress_dialog_manager.tscn"
 
 [debug]

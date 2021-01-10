@@ -13,6 +13,8 @@ const LayerBlendingViewportScene = preload("res://addons/layer_blending_viewport
 
 func blend(layers : Array, result_size : Vector2, id := -1,
 		update_shader := false) -> Texture:
+	if get_child_count() > 10:
+		get_child(0).free()
 	var layer_blend_viewport : LayerBlendingViewport
 	if id != -1 and has_node(str(id)):
 		layer_blend_viewport = get_node(str(id))

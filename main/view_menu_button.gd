@@ -9,25 +9,15 @@ HDRIs used are from `https://hdrihaven.com/`.
 
 var show_background := false
 
-var hdris := {
-	"Rocky Sea": "res://viewport/hdrs/cannon_2k.hdr",
-	"Modern House": "res://viewport/hdrs/cayley_interior_2k.hdr",
-	"Autuum Forest": "res://viewport/hdrs/forest_cave_2k.hdr",
-	"Forest River": "res://viewport/hdrs/lauter_waterfall_2k.hdr",
-}
-
-var background_submenu_popup := PopupMenu.new()
 var layouts_submenu_popup := PopupMenu.new()
 
 enum Item {
 	SHOW_BACKGROUND,
 	ENABLE_SHADOWS,
-	CHANGE_BACKGROUND,
 	VIEW_RESULTS,
 	LAYOUTS,
 }
 
-signal hdri_selected(hdri)
 signal show_background_toggled
 signal layout_selected(layout)
 signal save_layout_selected
@@ -42,15 +32,7 @@ func _ready() -> void:
 	popup.add_check_item("Show Background", Item.SHOW_BACKGROUND)
 	popup.set_item_shortcut(Item.SHOW_BACKGROUND, ShortcutUtils.shortcut(KEY_B))
 	popup.add_check_item("Enable Shadows", Item.ENABLE_SHADOWS)
-	background_submenu_popup.name = "Background"
-	popup.add_child(background_submenu_popup)
-	popup.add_submenu_item("Change Background", "Background",
-			Item.CHANGE_BACKGROUND)
 	popup.connect("id_pressed", self, "_on_Popup_id_pressed")
-	background_submenu_popup.connect("index_pressed", self,
-			"_on_Background_index_pressed")
-	for hdri in hdris:
-		background_submenu_popup.add_item(hdri)
 	popup.add_check_item("View results", Item.VIEW_RESULTS)
 	popup.set_item_shortcut(Item.VIEW_RESULTS, ShortcutUtils.shortcut(KEY_R))
 	popup.add_submenu_item("Layouts", "Layouts")
@@ -85,11 +67,6 @@ func _on_Popup_id_pressed(id : int) -> void:
 			results_item_list_window.visible = not results_item_list_window.visible
 			get_popup().set_item_checked(get_popup().get_item_index(
 					Item.VIEW_RESULTS), results_item_list_window.visible)
-
-
-func _on_Background_index_pressed(index : int) -> void:
-	emit_signal("hdri_selected", load(hdris[
-			background_submenu_popup.get_item_text(index)]))
 
 
 func _on_Layouts_id_pressed(id : int) -> void:

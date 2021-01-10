@@ -12,9 +12,10 @@ signal brush_changed(brush)
 
 const Properties = preload("res://addons/property_panel/properties.gd")
 const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
-const Asset = preload("res://main/asset_browser.gd").Asset
-const TextureAssetType = preload("res://main/asset_browser.gd").TextureAssetType
-const BrushAssetType = preload("res://main/asset_browser.gd").BrushAssetType
+const Asset = preload("res://asset_browser/asset_classes.gd").Asset
+const AssetType = preload("res://asset_browser/asset_classes.gd").AssetType
+const TextureAssetType = preload("res://asset_browser/asset_classes.gd").TextureAssetType
+const BrushAssetType = preload("res://asset_browser/asset_classes.gd").BrushAssetType
 const Brush = preload("res://addons/painter/brush.gd")
 
 class TextureAssetProperty extends Properties.FilePathProperty:

@@ -1,0 +1,83 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://asset_browser/preview_renderer/preview_sphere.obj" type="ArrayMesh" id=1]
+[ext_resource path="res://addons/painter/painter.tscn" type="PackedScene" id=2]
+[ext_resource path="res://asset_browser/preview_renderer/preview_renderer.gd" type="Script" id=3]
+
+[sub_resource type="SpatialMaterial" id=1]
+flags_albedo_tex_force_srgb = true
+
+[sub_resource type="Environment" id=2]
+background_color = Color( 0.807843, 0.0588235, 0.0588235, 1 )
+ambient_light_color = Color( 0.835294, 0.835294, 0.835294, 1 )
+tonemap_mode = 2
+
+[sub_resource type="QuadMesh" id=3]
+
+[sub_resource type="SpatialMaterial" id=4]
+flags_unshaded = true
+
+[sub_resource type="SphereMesh" id=5]
+flip_faces = true
+
+[node name="PreviewRenderer" type="Node"]
+script = ExtResource( 3 )
+
+[node name="MaterialViewport" type="Viewport" parent="."]
+own_world = true
+transparent_bg = true
+msaa = 1
+usage = 3
+render_target_v_flip = true
+render_target_clear_mode = 1
+render_target_update_mode = 0
+gui_disable_input = true
+
+[node name="Model" type="MeshInstance" parent="MaterialViewport"]
+transform = Transform( 0.796298, 0.453543, 0.40026, 0, 0.661691, -0.749776, -0.604905, 0.597045, 0.526903, 0, 0, 0 )
+material_override = SubResource( 1 )
+mesh = ExtResource( 1 )
+material/0 = null
+
+[node name="Camera" type="Camera" parent="MaterialViewport"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.037, 1.743 )
+current = true
+
+[node name="DirectionalLight" type="DirectionalLight" parent="MaterialViewport"]
+transform = Transform( -0.247929, -0.717653, 0.650773, 0, 0.671746, 0.740782, -0.968778, 0.183661, -0.166545, 0, 5, 0 )
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="MaterialViewport"]
+environment = SubResource( 2 )
+
+[node name="BrushViewport" type="Viewport" parent="."]
+own_world = true
+
+[node name="Camera" type="Camera" parent="BrushViewport"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.724 )
+
+[node name="MeshInstance" type="MeshInstance" parent="BrushViewport"]
+mesh = SubResource( 3 )
+material/0 = null
+
+[node name="PaintLine" type="Line2D" parent="BrushViewport"]
+points = PoolVector2Array( 0.179688, 0.164062, 0.851562, 0.414062, 0.15625, 0.617188, 0.609375, 0.804688 )
+
+[node name="Painter" parent="BrushViewport" instance=ExtResource( 2 )]
+
+[node name="HDRViewport" type="Viewport" parent="."]
+own_world = true
+transparent_bg = true
+msaa = 1
+render_target_v_flip = true
+render_target_clear_mode = 1
+render_target_update_mode = 0
+gui_disable_input = true
+
+[node name="SkyDome" type="MeshInstance" parent="HDRViewport"]
+material_override = SubResource( 4 )
+mesh = SubResource( 5 )
+material/0 = null
+
+[node name="Camera" type="Camera" parent="HDRViewport"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.81285 )
+current = true

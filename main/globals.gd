@@ -29,7 +29,7 @@ const SaveFile = preload("res://resources/save_file.gd")
 const LayerMaterial = preload("res://resources/material/layer_material.gd")
 
 const TEXTURE_MAP_TYPES := ["albedo", "emission", "height",
-		"ao", "metallic", "roughness"]
+		"ao", "metallic", "roughness", "normal"]
 const BLEND_MODES := ["normal", "add", "subtract", "multiply",
 		"overlay", "screen", "darken", "lighten", "soft-light",
 		"color-burn", "color-dodge"]

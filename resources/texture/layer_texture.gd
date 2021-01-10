@@ -41,14 +41,14 @@ func update(force_all := false) -> void:
 		var update_result = layer.update(force_all)
 		if update_result is GDScriptFunctionState:
 			yield(update_result, "completed")
-	result = yield(generate_result(
-			Globals.result_size, shader_dirty or force_all), "completed")
-	icon = yield(generate_result(Vector2(32, 32), false, 1), "completed")
+	result = yield(generate_result(Globals.result_size,
+			shader_dirty or force_all, get_instance_id()), "completed")
+	icon = yield(generate_result(Vector2(32, 32)), "completed")
 	shader_dirty = false
 	dirty = false
 
 
-func generate_result(result_size : Vector2, update_shader := false, custom_id := 0) -> Texture:
+func generate_result(result_size : Vector2, update_shader := false, id := -1) -> Texture:
 	var blending_layers := []
 	for layer in layers:
 		if not layer.visible:
@@ -58,7 +58,7 @@ func generate_result(result_size : Vector2, update_shader := false, custom_id :=
 			shader_layer = yield(shader_layer, "completed")
 		blending_layers.append(shader_layer)
 	return yield(LayerBlendViewportManager.blend(blending_layers, result_size,
-			get_instance_id() + custom_id, update_shader), "completed")
+			id, update_shader), "completed")
 
 
 func get_flat_layers(layer_array : Array = layers, add_hidden := true, add_folders := false) -> Array:

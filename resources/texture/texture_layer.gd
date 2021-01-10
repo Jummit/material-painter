@@ -40,7 +40,7 @@ func update(force_all := false) -> void:
 	if shader_layer is GDScriptFunctionState:
 		shader_layer = yield(shader_layer, "completed")
 	icon = yield(LayerBlendViewportManager.blend(
-			[shader_layer], Vector2(16, 16), get_instance_id()), "completed")
+			[shader_layer], Vector2(16, 16)), "completed")
 	dirty = false
 
 
