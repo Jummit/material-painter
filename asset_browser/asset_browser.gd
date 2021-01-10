@@ -244,13 +244,10 @@ func _on_SceneTree_files_dropped(files : PoolStringArray, _screen : int) -> void
 	for file in files:
 		progress_dialog.set_action(file)
 		yield(get_tree(), "idle_frame")
-		var new_asset_path : String = ASSET_TYPES.TEXTURE.get_directory().\
-				plus_file(file.get_file())
-		if dir.file_exists(new_asset_path):
-			continue
 		for asset_type in ASSET_TYPES.values():
 			if file.get_extension() == asset_type.extension:
-				dir.copy(file, new_asset_path)
+				dir.copy(file, asset_type.get_directory().plus_file(
+						file.get_file()))
 				load_asset(file, asset_type)
 				update_asset_list()
 	progress_dialog.complete_task()
