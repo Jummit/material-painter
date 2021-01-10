@@ -377,6 +377,15 @@ func _get_layers_of_drop_data(data) -> Dictionary:
 	if data is Asset and data.type is EffectAssetType:
 		layers = [data.data.duplicate()]
 		layer_type = LayerType.TEXTURE_LAYER
+	elif data is Asset and data.type is TextureAssetType:
+		var material_layer := MaterialLayer.new()
+		var layer_texture := LayerTexture.new()
+		material_layer.maps.albedo = layer_texture
+		var layer := FileTextureLayer.new()
+		layer.path = data.file
+		layer_texture.layers.append(layer)
+		layers = [material_layer]
+		layer_type = LayerType.MATERIAL_LAYER
 	elif data is Dictionary and "type" in data and data.type == "layers":
 		layers = data.layers
 		layer_type = data.layer_type
