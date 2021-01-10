@@ -262,7 +262,7 @@ func can_drop_data(position : Vector2, data) -> bool:
 		return true
 	if data is Asset and data.type is MaterialAssetType:
 		return true
-	var layer_data := _get_layers_of_drop_data(data)
+	var layer_data := _get_layers_of_drop_data(data, position)
 	if not layer_data.empty():
 		var layers : Array = layer_data.layers
 		var layer_type : int = layer_data.type
@@ -284,7 +284,7 @@ func can_drop_data(position : Vector2, data) -> bool:
 
 
 func drop_data(position : Vector2, data) -> void:
-	var layer_data := _get_layers_of_drop_data(data)
+	var layer_data := _get_layers_of_drop_data(data, position)
 	if not layer_data.empty():
 		var layers : Array = layer_data.layers
 		undo_redo.create_action("Rearrange Layers")
@@ -347,14 +347,6 @@ func drop_data(position : Vector2, data) -> void:
 			undo_redo.add_undo_method(Globals.editing_layer_material,
 				"delete_layer", layer)
 			undo_redo.commit_action()
-		elif data.type is MaterialAssetType:
-			var new_layer : Resource = data.data.duplicate()
-			undo_redo.create_action("Add Material From Library")
-			undo_redo.add_do_method(Globals.editing_layer_material, "add_layer",
-				new_layer, Globals.editing_layer_material)
-			undo_redo.add_undo_method(Globals.editing_layer_material,
-				"delete_layer", new_layer)
-			undo_redo.commit_action()
 
 
 func _get_layer_at_position(position : Vector2):
@@ -371,21 +363,26 @@ func _emit_select_signal(layer) -> void:
 		emit_signal("folder_layer_selected")
 
 
-func _get_layers_of_drop_data(data) -> Dictionary:
+func _get_layers_of_drop_data(data, position : Vector2) -> Dictionary:
 	var layers : Array
 	var layer_type : int
 	if data is Asset and data.type is EffectAssetType:
 		layers = [data.data.duplicate()]
 		layer_type = LayerType.TEXTURE_LAYER
-	elif data is Asset and data.type is TextureAssetType:
+	elif data is Asset and data.type is TextureAssetType and\
+			not _get_layer_at_position(position) is MaterialLayer:
 		var material_layer := MaterialLayer.new()
 		var layer_texture := LayerTexture.new()
-		material_layer.maps.albedo = layer_texture
+		var map := "normal" if "normal" in data.tags else"albedo"
+		material_layer.maps[map] = layer_texture
 		var layer := FileTextureLayer.new()
 		layer.path = data.file
 		layer_texture.layers.append(layer)
 		layers = [material_layer]
 		layer_type = LayerType.MATERIAL_LAYER
+	elif data is Asset and data.type is MaterialAssetType:
+		layer_type = LayerType.MATERIAL_LAYER
+		layers = [data.data.duplicate()]
 	elif data is Dictionary and "type" in data and data.type == "layers":
 		layers = data.layers
 		layer_type = data.layer_type
