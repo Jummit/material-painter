@@ -2,7 +2,7 @@ extends "res://viewport/viewport.gd"
 
 var blur_amount := 0
 var background_visible := false
-var hdri : Image
+var hdri := preload("res://viewport/cannon.hdr").get_data()
 
 var cached_skys := {}
 
