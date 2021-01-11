@@ -1,8 +1,25 @@
 extends "res://viewport/viewport.gd"
 
+var blur_amount := 0
+var background_visible := false
+var hdri : Image
+
 var cached_skys := {}
 
+onready var texture_rect : TextureRect = $Viewport/SkyViewport/TextureRect
+onready var sky_viewport : Viewport = $Viewport/SkyViewport
+onready var sky_viewport_texture := sky_viewport.get_texture()
+
 const HDRAssetType = preload("res://asset_browser/asset_classes.gd").HDRAssetType
+
+func _ready():
+	sky_viewport_texture.flags = Texture.FLAG_FILTER
+
+
+func _on_ViewMenuButton_show_background_toggled() -> void:
+	background_visible = not background_visible
+	update_sky()
+
 
 func _on_HalfResolutionButton_toggled(button_pressed : bool) -> void:
 	stretch_shrink = 2 if button_pressed else 1
@@ -13,7 +30,8 @@ func can_drop_data(_position : Vector2, data) -> bool:
 
 
 func drop_data(_position : Vector2, data) -> void:
-	world_environment.environment.background_sky = get_sky(data.data)
+	hdri = data.data
+	update_sky()
 
 
 func get_sky(hdr : Image) -> PanoramaSky:
@@ -26,3 +44,24 @@ func get_sky(hdr : Image) -> PanoramaSky:
 	new_sky.panorama = hdr_texture
 	cached_skys[hdr] = new_sky
 	return new_sky
+
+
+func _on_ViewMenuButton_background_blur_selected(amount : int) -> void:
+	blur_amount = amount
+	update_sky()
+
+
+func update_sky() -> void:
+	if background_visible:
+		world_environment.environment.background_mode = Environment.BG_SKY
+	else:
+		world_environment.environment.background_mode = Environment.BG_COLOR_SKY
+	if blur_amount and background_visible:
+		var texture := ImageTexture.new()
+		texture.create_from_image(hdri)
+		texture_rect.texture = texture
+		sky_viewport.size = hdri.get_size() / (blur_amount * 4)
+		sky_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
+		world_environment.environment.background_sky.panorama = sky_viewport_texture
+	else:
+		world_environment.environment.background_sky = get_sky(hdri)

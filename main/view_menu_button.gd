@@ -10,15 +10,18 @@ HDRIs used are from `https://hdrihaven.com/`.
 var show_background := false
 
 var layouts_submenu_popup := PopupMenu.new()
+var blur_submenu_popup := PopupMenu.new()
 
 enum Item {
 	SHOW_BACKGROUND,
+	BACKGROUND_BLUR,
 	ENABLE_SHADOWS,
 	VIEW_RESULTS,
 	LAYOUTS,
 }
 
 signal show_background_toggled
+signal background_blur_selected(amount)
 signal layout_selected(layout)
 signal save_layout_selected
 
@@ -31,12 +34,21 @@ func _ready() -> void:
 	var popup := get_popup()
 	popup.add_check_item("Show Background", Item.SHOW_BACKGROUND)
 	popup.set_item_shortcut(Item.SHOW_BACKGROUND, ShortcutUtils.shortcut(KEY_B))
+	
+	blur_submenu_popup.name = "BackgroundBlur"
+	for blur_amount in 6:
+		blur_submenu_popup.add_item("Amount " + str(blur_amount))
+	
+	popup.add_submenu_item("Background Blur", "BackgroundBlur")
+	get_popup().add_child(blur_submenu_popup)
+	blur_submenu_popup.connect("index_pressed", self, "_on_Blur_index_pressed")
+	
 	popup.add_check_item("Enable Shadows", Item.ENABLE_SHADOWS)
 	popup.connect("id_pressed", self, "_on_Popup_id_pressed")
 	popup.add_check_item("View results", Item.VIEW_RESULTS)
 	popup.set_item_shortcut(Item.VIEW_RESULTS, ShortcutUtils.shortcut(KEY_R))
-	popup.add_submenu_item("Layouts", "Layouts")
 	
+	popup.add_submenu_item("Layouts", "Layouts")
 	layouts_submenu_popup.name = "Layouts"
 	get_popup().add_child(layouts_submenu_popup)
 	layouts_submenu_popup.connect("id_pressed", self, "_on_Layouts_id_pressed")
@@ -75,6 +87,10 @@ func _on_Layouts_id_pressed(id : int) -> void:
 	else:
 		emit_signal("layout_selected",
 			layouts_submenu_popup.get_item_metadata(id))
+
+
+func _on_Blur_index_pressed(index : int) -> void:
+	emit_signal("background_blur_selected", index)
 
 
 func _get_files(path : String) -> PoolStringArray:

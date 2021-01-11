@@ -73,13 +73,6 @@ func _gui_input(event : InputEvent) -> void:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 
-func _on_ViewMenuButton_show_background_toggled() -> void:
-	if world_environment.environment.background_mode == Environment.BG_SKY:
-		world_environment.environment.background_mode = Environment.BG_COLOR_SKY
-	else:
-		world_environment.environment.background_mode = Environment.BG_SKY
-
-
 func _on_ViewMenuButton_hdri_selected(hdri : Texture) -> void:
 	world_environment.environment.background_sky.panorama = hdri
 

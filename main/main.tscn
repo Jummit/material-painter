@@ -656,6 +656,7 @@ __meta__ = {
 
 [connection signal="bake_mesh_maps_pressed" from="VBoxContainer/Panel/TopButtons/EditMenuButton" to="." method="_on_EditMenuButton_bake_mesh_maps_pressed"]
 [connection signal="size_selected" from="VBoxContainer/Panel/TopButtons/EditMenuButton" to="." method="_on_EditMenuButton_size_selected"]
+[connection signal="background_blur_selected" from="VBoxContainer/Panel/TopButtons/ViewMenuButton" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/Window/3DViewport" method="_on_ViewMenuButton_background_blur_selected"]
 [connection signal="layout_selected" from="VBoxContainer/Panel/TopButtons/ViewMenuButton" to="." method="_on_ViewMenuButton_layout_selected"]
 [connection signal="save_layout_selected" from="VBoxContainer/Panel/TopButtons/ViewMenuButton" to="." method="_on_ViewMenuButton_save_layout_selected"]
 [connection signal="show_background_toggled" from="VBoxContainer/Panel/TopButtons/ViewMenuButton" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/Window/3DViewport" method="_on_ViewMenuButton_show_background_toggled"]
