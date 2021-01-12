@@ -258,7 +258,6 @@ func _on_SaveButton_pressed() -> void:
 
 func _on_MaterialOptionButton_item_selected(index : int) -> void:
 	Globals.editing_layer_material = Globals.current_file.layer_materials[index]
-	layer_tree.editing_layer_material = Globals.editing_layer_material
 
 
 func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
@@ -353,21 +352,7 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 			open_save_project_dialog()
 		FILE_MENU_ITEMS.EXPORT:
 			if Globals.current_file.resource_path:
-				var progress_dialog = ProgressDialogManager.create_task(
-						"Export Textures",
-						Globals.editing_layer_material.results.size())
-				yield(get_tree(), "idle_frame")
-				for type in Globals.editing_layer_material.results:
-					progress_dialog.set_action(type)
-					var export_folder := Globals.current_file.resource_path.\
-							get_base_dir().plus_file("export")
-					var dir := Directory.new()
-					dir.make_dir_recursive(export_folder)
-					var result_data : Image = Globals.editing_layer_material.\
-							results[type].get_data()
-					result_data.save_png(export_folder.plus_file(type) + ".png")
-					yield(get_tree(), "idle_frame")
-				progress_dialog.complete_task()
+				export_materials()
 			else:
 				export_error_dialog.popup_centered()
 		FILE_MENU_ITEMS.LOAD_MESH:
@@ -384,6 +369,26 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 func _on_UndoRedo_version_changed() -> void:
 	if undo_redo.get_current_action_name():
 		print(undo_redo.get_current_action_name())
+
+
+func export_materials() -> void:
+	var progress_dialog = ProgressDialogManager.create_task("Export Textures",
+			Globals.editing_layer_material.results.size())
+	yield(get_tree(), "idle_frame")
+	for surface in Globals.current_file.layer_materials.size():
+		var material_name := Globals.mesh.surface_get_material(
+				surface).resource_name
+		var export_folder := Globals.current_file.resource_path.get_base_dir()\
+				.plus_file("export").plus_file(material_name)
+		var dir := Directory.new()
+		dir.make_dir_recursive(export_folder)
+		var results : Dictionary = Globals.current_file.layer_materials[surface].results
+		for type in results:
+			progress_dialog.set_action("%s of %s" % [type, material_name])
+			var result_data : Image = results[type].get_data()
+			result_data.save_png(export_folder.plus_file(type) + ".png")
+			yield(get_tree(), "idle_frame")
+	progress_dialog.complete_task()
 
 
 func set_mask(layer, mask : LayerTexture) -> void:
