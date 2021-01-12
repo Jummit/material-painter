@@ -94,5 +94,11 @@ func load_data() -> void:
 		for property in data.properties:
 			if property.name in settings:
 				continue
-			settings[property.name] = DEFAULTS[property.type] if not "default" in\
-					property else property.default
+			var default
+			if "default" in property:
+				default = property.default
+			elif property.type in DEFAULTS:
+				default = DEFAULTS[property.type]
+			elif property.type == "enum":
+				default = property.options.front()
+			settings[property.name] = default
