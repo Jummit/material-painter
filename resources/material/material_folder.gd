@@ -25,6 +25,8 @@ func _init() -> void:
 	yield(VisualServer, "frame_post_draw")
 	for layer in layers:
 		layer.parent = self
+	if mask:
+		mask.parent = self
 
 
 func get_layer_material_in() -> Resource:
