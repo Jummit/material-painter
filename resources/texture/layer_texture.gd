@@ -21,6 +21,7 @@ var parent
 var result : Texture
 var icon : Texture
 var dirty := true
+var icon_dirty := true
 var shader_dirty := false
 
 const TextureFolder = preload("res://resources/texture/texture_folder.gd")
@@ -43,7 +44,6 @@ func update(force_all := false) -> void:
 			yield(update_result, "completed")
 	result = yield(generate_result(Globals.result_size,
 			shader_dirty or force_all, get_instance_id()), "completed")
-	icon = yield(generate_result(Vector2(32, 32)), "completed")
 	shader_dirty = false
 	dirty = false
 
@@ -61,6 +61,12 @@ func generate_result(result_size : Vector2, update_shader := false, id := -1) ->
 			id, update_shader), "completed")
 
 
+func update_icon() -> void:
+	if icon_dirty:
+		icon = yield(generate_result(Vector2(32, 32)), "completed")
+		icon_dirty = false
+
+
 func get_flat_layers(layer_array : Array = layers, add_hidden := true, add_folders := false) -> Array:
 	var flat_layers := []
 	for layer in layer_array:
@@ -75,5 +81,6 @@ func get_flat_layers(layer_array : Array = layers, add_hidden := true, add_folde
 
 func mark_dirty(shader_too := false) -> void:
 	dirty = true
+	icon_dirty = true
 	shader_dirty = shader_too
 	parent.mark_dirty(shader_too)

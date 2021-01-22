@@ -17,6 +17,7 @@ enum Item {
 	BACKGROUND_BLUR,
 	ENABLE_SHADOWS,
 	VIEW_RESULTS,
+	UPDATE_ICONS,
 	LAYOUTS,
 }
 
@@ -24,6 +25,7 @@ signal show_background_toggled
 signal background_blur_selected(amount)
 signal layout_selected(layout)
 signal save_layout_selected
+signal update_icons_toggled
 
 const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
 
@@ -44,9 +46,15 @@ func _ready() -> void:
 	blur_submenu_popup.connect("index_pressed", self, "_on_Blur_index_pressed")
 	
 	popup.add_check_item("Enable Shadows", Item.ENABLE_SHADOWS)
+	popup.set_item_tooltip(Item.ENABLE_SHADOWS, "Enable real-time shadows")
 	popup.connect("id_pressed", self, "_on_Popup_id_pressed")
 	popup.add_check_item("View results", Item.VIEW_RESULTS)
 	popup.set_item_shortcut(Item.VIEW_RESULTS, ShortcutUtils.shortcut(KEY_R))
+	
+	popup.add_check_item("Update Layer Icons", Item.UPDATE_ICONS)
+	popup.set_item_tooltip(Item.UPDATE_ICONS, "Disable this if generating the material is slow.")
+	popup.set_item_checked(Item.UPDATE_ICONS, true)
+	popup.set_item_shortcut(Item.UPDATE_ICONS, ShortcutUtils.shortcut(KEY_I))
 	
 	popup.add_submenu_item("Layouts", "Layouts")
 	layouts_submenu_popup.name = "Layouts"
@@ -79,6 +87,10 @@ func _on_Popup_id_pressed(id : int) -> void:
 			results_item_list_window.visible = not results_item_list_window.visible
 			get_popup().set_item_checked(get_popup().get_item_index(
 					Item.VIEW_RESULTS), results_item_list_window.visible)
+		Item.UPDATE_ICONS:
+			get_popup().set_item_checked(Item.UPDATE_ICONS,
+					not get_popup().is_item_checked(Item.UPDATE_ICONS))
+			emit_signal("update_icons_toggled")
 
 
 func _on_Layouts_id_pressed(id : int) -> void:

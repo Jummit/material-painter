@@ -12,6 +12,8 @@ When a `MaterialLayer` has multiple maps enabled, the current map can be selecte
 with a dropdown. The selected maps are stored in `_selected_maps`.
 """
 
+var update_icons := true
+
 var _root : TreeItem
 var _lastly_edited_layer : TreeItem
 var _selected_maps : Dictionary
@@ -89,7 +91,8 @@ func _gui_input(event : InputEvent) -> void:
 			if is_instance_valid(_lastly_edited_layer):
 				_lastly_edited_layer.set_editable(1, false)
 			_lastly_edited_layer = get_selected()
-	elif event is InputEventKey and event.pressed and event.scancode == KEY_DELETE:
+	elif event is InputEventKey and event.pressed and\
+			event.scancode == KEY_DELETE:
 		var layer = get_selected_layer()
 		undo_redo.create_action("Delete Layer")
 		undo_redo.add_do_method(Globals.editing_layer_material, "delete_layer",
@@ -136,13 +139,15 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 			map_type_popup_menu.popup()
 		Buttons.RESULT:
 			if layer is MaterialLayer:
-				if layer in _layer_states and _layer_states[layer] == LayerState.MAP_EXPANDED:
+				if layer in _layer_states and\
+						_layer_states[layer] == LayerState.MAP_EXPANDED:
 					_layer_states.erase(layer)
 				else:
 					_layer_states[layer] = LayerState.MAP_EXPANDED
 				_load_layer_material()
 		Buttons.MASK:
-			if layer in _layer_states and _layer_states[layer] == LayerState.MASK_EXPANDED:
+			if layer in _layer_states and\
+					_layer_states[layer] == LayerState.MASK_EXPANDED:
 				_layer_states.erase(layer)
 			else:
 				_layer_states[layer] = LayerState.MASK_EXPANDED
@@ -162,7 +167,8 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 			undo_redo.add_undo_method(Globals.editing_layer_material, "update")
 			undo_redo.commit_action()
 		Buttons.ICON:
-			if layer in _layer_states and _layer_states[layer] == LayerState.FOLDER_EXPANDED:
+			if layer in _layer_states and\
+					_layer_states[layer] == LayerState.FOLDER_EXPANDED:
 				_layer_states.erase(layer)
 			else:
 				_layer_states[layer] = LayerState.FOLDER_EXPANDED
@@ -175,7 +181,8 @@ func _on_MapTypePopupMenu_about_to_show() -> void:
 	for map in layer.maps:
 		map_type_popup_menu.add_item(map)
 		map_type_popup_menu.set_item_icon(
-			map_type_popup_menu.get_item_count() - 1, layer.maps[map].icon)
+			map_type_popup_menu.get_item_count() - 1,
+					_get_icon(layer.maps[map]))
 
 
 func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
@@ -277,7 +284,8 @@ func can_drop_data(position : Vector2, data) -> bool:
 					onto_type == LayerType.MATERIAL_LAYER and not is_folder) or\
 					(layer_type == onto_type and is_folder)
 			else:
-				return layer_type == onto_type or layer_type == LayerType.MATERIAL_LAYER
+				return layer_type == onto_type or\
+						layer_type == LayerType.MATERIAL_LAYER
 		else:
 			return layer_type == LayerType.MATERIAL_LAYER
 	return false
@@ -343,7 +351,8 @@ func drop_data(position : Vector2, data) -> void:
 			else:
 				layer.path = data.data
 			undo_redo.add_do_method(Globals.editing_layer_material, "add_layer",
-				layer, get_selected_layer_texture(_get_layer_at_position(position)))
+				layer, get_selected_layer_texture(_get_layer_at_position(
+				position)))
 			undo_redo.add_undo_method(Globals.editing_layer_material,
 				"delete_layer", layer)
 			undo_redo.commit_action()
@@ -425,8 +434,9 @@ func _setup_material_layer_item(layer, parent_item : TreeItem,
 	var state := -1 if not layer in _layer_states else _layer_states[layer]
 	
 	if layer.mask:
-		item.add_button(0, layer.mask.icon,
-			Buttons.MASK)
+		var icon = _get_icon(layer.mask)
+		if icon is Texture:
+			item.add_button(0, icon, Buttons.MASK)
 	
 	if get_selected_layer_texture(layer):
 		for texture_layer in get_selected_layer_texture(layer).layers:
@@ -440,10 +450,13 @@ func _setup_material_layer_item(layer, parent_item : TreeItem,
 			_selected_maps[layer] = layer.maps.values().front()
 		
 		if layer.maps.size() > 0:
-			item.add_button(0, _selected_maps[layer].icon, Buttons.RESULT)
+			var icon = _get_icon(_selected_maps[layer])
+			if icon is Texture:
+				item.add_button(0, icon, Buttons.RESULT)
 		
 		if layer.maps.size() > 1:
-			item.add_button(0, preload("res://icons/down_arrow.svg"), Buttons.MAP_DROPDOWN)
+			item.add_button(0, preload("res://icons/down_arrow.svg"),
+					Buttons.MAP_DROPDOWN)
 	elif layer is MaterialFolder:
 		var icon := preload("res://icons/large_folder.svg")
 		if state == LayerState.FOLDER_EXPANDED:
@@ -451,10 +464,12 @@ func _setup_material_layer_item(layer, parent_item : TreeItem,
 			for sub_layer in layer.layers:
 				_setup_material_layer_item(sub_layer, item, selected_layer)
 		item.add_button(0, icon, Buttons.ICON)
-		item.set_tooltip(1, "%s (contains %s layers)" % [layer.name, layer.layers.size()])
+		item.set_tooltip(1, "%s (contains %s layers)" % [layer.name,
+				layer.layers.size()])
 
 
-func _setup_texture_layer_item(layer, parent_item : TreeItem, selected_layer) -> void:
+func _setup_texture_layer_item(layer, parent_item : TreeItem,
+		selected_layer) -> void:
 	var item := create_item(parent_item)
 	if layer == selected_layer:
 		_select_item(item)
@@ -465,12 +480,14 @@ func _setup_texture_layer_item(layer, parent_item : TreeItem, selected_layer) ->
 	item.add_button(1, _get_visibility_icon(layer.visible), Buttons.VISIBILITY)
 	
 	if layer is TextureLayer:
-		if layer.icon:
-			item.add_button(0, layer.icon, Buttons.RESULT)
+		var icon = _get_icon(layer)
+		if icon is Texture:
+			item.add_button(0, icon, Buttons.RESULT)
 		item.set_tooltip(1,
 			"%s (%s Layer)" % [layer.name, layer.type_name])
 	else:
-		var expanded : bool = layer in _layer_states and _layer_states[layer] == LayerState.FOLDER_EXPANDED
+		var expanded : bool = layer in _layer_states and\
+				_layer_states[layer] == LayerState.FOLDER_EXPANDED
 		var icon := preload("res://icons/folder.svg")
 		if expanded:
 			icon = preload("res://icons/open_folder.svg")
@@ -498,3 +515,13 @@ func _select_item(item : TreeItem) -> void:
 	item.select(1)
 	select_mode = Tree.SELECT_MULTI
 	set_block_signals(false)
+
+
+func _get_icon(layer):
+	if update_icons:
+		layer.update_icon()
+	return layer.icon
+
+
+func _on_ViewMenuButton_update_icons_toggled() -> void:
+	update_icons = not update_icons

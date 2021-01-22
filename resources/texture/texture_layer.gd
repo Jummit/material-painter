@@ -18,6 +18,7 @@ var parent
 var type_name : String
 var icon : Texture
 var dirty := true
+var icon_dirty := true
 
 const Layer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").Layer
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
@@ -30,6 +31,7 @@ func _init(_name : String):
 
 func mark_dirty(shader_dirty := false) -> void:
 	dirty = true
+	icon_dirty = true
 	get_layer_texture_in().mark_dirty(shader_dirty)
 
 
@@ -39,9 +41,18 @@ func update(force_all := false) -> void:
 	var shader_layer = _get_as_shader_layer()
 	if shader_layer is GDScriptFunctionState:
 		shader_layer = yield(shader_layer, "completed")
+	dirty = false
+
+
+func update_icon() -> void:
+	if not icon_dirty:
+		return
+	var shader_layer = _get_as_shader_layer()
+	if shader_layer is GDScriptFunctionState:
+		shader_layer = yield(shader_layer, "completed")
 	icon = yield(LayerBlendViewportManager.blend(
 			[shader_layer], Vector2(16, 16)), "completed")
-	dirty = false
+	icon_dirty = false
 
 
 func get_layer_texture_in() -> LayerTexture:
