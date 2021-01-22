@@ -1,12 +1,3 @@
-[submodule "addons/gd-obj"]
-	path = addons/obj_parser
-	url = git@github.com:Jummit/gd-obj.git
-[submodule "addon_repos/curvature-baker"]
-	path = addon_repos/curvature-baker
-	url = git@github.com:Jummit/curvature-baker.git
-[submodule "addon_repos/customizable_ui"]
-	path = addon_repos/customizable_ui
-	url = git@github.com:Jummit/customizable-ui.git
-[submodule "addon_repos/navigation-camera"]
-	path = addon_repos/navigation-camera
-	url = git@github.com:Jummit/navigation-camera.git
+[submodule "package_manager"]
+	path = package_manager
+	url = git@github.com:Jummit/godot-package-manager.git
