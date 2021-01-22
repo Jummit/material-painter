@@ -8,7 +8,7 @@ The sun can be rotated by right clicking and dragging.
 Responsible for selecting HDRIs and toggling HDRI visibility.
 """
 
-var sensitity := 0.01
+var light_sensitivity := 0.01
 var last_painted_position : Vector2
 var cached_camera_transform : Transform
 
@@ -65,7 +65,7 @@ func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseMotion and\
 			Input.is_mouse_button_pressed(BUTTON_RIGHT) and\
 			event.button_mask == BUTTON_MASK_RIGHT:
-		directional_light.rotate_y(event.relative.x * sensitity)
+		directional_light.rotate_y(event.relative.x * light_sensitivity)
 		if world_environment.environment.background_mode == Environment.BG_COLOR_SKY:
 			world_environment.environment.background_sky_rotation_degrees.y =\
 					directional_light.rotation_degrees.y
