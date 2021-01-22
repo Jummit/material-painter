@@ -7,6 +7,7 @@ Allows changing result texture size and baking mesh maps.
 """
 
 signal bake_mesh_maps_pressed
+signal settings_pressed
 signal size_selected(size)
 
 func _ready() -> void:
@@ -23,8 +24,11 @@ func _ready() -> void:
 
 
 func _on_PopupMenu_id_pressed(id : int) -> void:
-	if id == 0:
-		emit_signal("bake_mesh_maps_pressed")
+	match id:
+		0:
+			emit_signal("bake_mesh_maps_pressed")
+		1:
+			emit_signal("settings_pressed")
 
 
 func _on_TextureSizePopupMenu_index_pressed(index : int) -> void:
