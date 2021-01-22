@@ -27,6 +27,7 @@ onready var viewport : Viewport = $Viewport
 onready var painter : Node = $Painter
 onready var selection_utils : Node = $SelectionUtils
 onready var navigation_camera : Camera = $Viewport/NavigationCamera
+onready var fps_label : Label = $FPSLabel
 
 func _ready() -> void:
 	if ProjectSettings.get_setting("application/config/initialize_painter"):
@@ -49,7 +50,7 @@ func _gui_input(event : InputEvent) -> void:
 		else:
 			select(layer_tree.get_selected_layer(),
 					Globals.selected_tool,
-					event.position)
+					event.position / stretch_shrink)
 	
 	if not get_viewport().gui_is_dragging() and event is InputEventMouseMotion\
 			and Input.is_mouse_button_pressed(BUTTON_LEFT) and\
@@ -73,8 +74,16 @@ func _gui_input(event : InputEvent) -> void:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 
 
+func _process(_delta : float) -> void:
+	fps_label.text = str(Engine.get_frames_per_second())#.pad_decimals(2)
+
+
 func _on_ViewMenuButton_hdri_selected(hdri : Texture) -> void:
 	world_environment.environment.background_sky.panorama = hdri
+
+
+func _on_HalfResolutionButton_toggled(button_pressed : bool) -> void:
+	stretch_shrink = 2 if button_pressed else 1
 
 
 func _on_ToolButtonContainer_tool_selected(tool_id : int) -> void:
@@ -91,17 +100,14 @@ func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
 
 
 func _on_ToolSettingsPropertyPanel_brush_changed(brush : Brush) -> void:
-	yield(self, "tree_entered")
+	if not is_inside_tree():
+		yield(self, "tree_entered")
 	painter.brush = brush
 
 
 func _on_AssetBrowser_asset_activated(asset : Asset) -> void:
 	if asset.type is BrushAssetType:
 		painter.brush = asset.data
-
-
-func _on_HalfResolutionButton_toggled(button_pressed : bool) -> void:
-	stretch_shrink = 2 if button_pressed else 1
 
 
 func _on_Globals_mesh_changed(mesh : Mesh) -> void:

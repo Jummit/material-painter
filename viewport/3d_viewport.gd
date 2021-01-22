@@ -21,10 +21,6 @@ func _on_ViewMenuButton_show_background_toggled() -> void:
 	update_sky()
 
 
-func _on_HalfResolutionButton_toggled(button_pressed : bool) -> void:
-	stretch_shrink = 2 if button_pressed else 1
-
-
 func can_drop_data(_position : Vector2, data) -> bool:
 	return data is Asset and data.type is HDRAssetType
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://viewport/viewport.gd" type="Script" id=1]
 [ext_resource path="res://addons/painter/painter.tscn" type="PackedScene" id=2]
@@ -6,6 +6,8 @@
 [ext_resource path="res://viewport/environment.tres" type="Environment" id=4]
 [ext_resource path="res://addons/selection_utils/selection_utils.tscn" type="PackedScene" id=5]
 [ext_resource path="res://viewport/model.gd" type="Script" id=7]
+
+[sub_resource type="StyleBoxEmpty" id=1]
 
 [node name="Viewport" type="ViewportContainer"]
 anchor_right = 1.0
@@ -49,3 +51,29 @@ environment = ExtResource( 4 )
 [node name="Painter" parent="." instance=ExtResource( 2 )]
 
 [node name="SelectionUtils" parent="." instance=ExtResource( 5 )]
+
+[node name="FPSLabel" type="Label" parent="."]
+margin_right = 40.0
+margin_bottom = 14.0
+
+[node name="HalfResolutionButton" type="CheckButton" parent="."]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -180.0
+margin_top = -42.0
+hint_tooltip = "Enable this if performance drops when the viewport is large."
+custom_styles/hover = SubResource( 1 )
+custom_styles/pressed = SubResource( 1 )
+custom_styles/focus = SubResource( 1 )
+custom_styles/disabled = SubResource( 1 )
+custom_styles/hover_pressed = SubResource( 1 )
+custom_styles/normal = SubResource( 1 )
+text = "Half Resolution"
+align = 2
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="toggled" from="HalfResolutionButton" to="." method="_on_HalfResolutionButton_toggled"]
