@@ -13,7 +13,7 @@ func _on_about_to_show() -> void:
 		return
 	for setting in Settings.config.get_section_keys("main"):
 		var value = Settings.config.get_value("main", setting)
-		if value:
+		if value and $SettingsProperties.has_property(setting):
 			$SettingsProperties.set_property_value(setting, value)
 
 

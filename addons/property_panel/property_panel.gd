@@ -73,6 +73,10 @@ func set_property_value(property_name : String, value):
 	return properties_container.get_node(property_name).set_value(value)
 
 
+func has_property(property_name : String) -> bool:
+	return properties_container.has_node(property_name)
+
+
 func get_property_values() -> Dictionary:
 	var values := {}
 	for property_container in properties_container.get_children():
