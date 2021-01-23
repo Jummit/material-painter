@@ -51,19 +51,10 @@ func _gui_input(event : InputEvent) -> void:
 			select(painting_layer, Globals.selected_tool,
 					event.position / stretch_shrink)
 	
-	if not get_viewport().gui_is_dragging() and event is InputEventMouseMotion\
-			and Input.is_mouse_button_pressed(BUTTON_LEFT) and\
-			painting_layer is BitmapTextureLayer\
-			and Globals.selected_tool == Globals.Tools.PAINT:
-		paint(painting_layer, last_painted_position, event.position)
-		last_painted_position = event.position
-	
 	if event is InputEventMouseButton and event.pressed and\
 			event.button_mask == BUTTON_MASK_RIGHT:
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	if event is InputEventMouseMotion and\
-			Input.is_mouse_button_pressed(BUTTON_RIGHT) and\
-			event.button_mask == BUTTON_MASK_RIGHT:
+	if event is InputEventMouseMotion and event.button_mask == BUTTON_MASK_RIGHT:
 		directional_light.rotate_y(event.relative.x * light_sensitivity)
 		if world_environment.environment.background_mode == Environment.BG_COLOR_SKY:
 			world_environment.environment.background_sky_rotation_degrees.y =\
