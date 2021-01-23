@@ -18,6 +18,7 @@ var _root : TreeItem
 var _lastly_edited_layer : TreeItem
 var _selected_maps : Dictionary
 var _layer_states : Dictionary
+var _painting := false
 
 var undo_redo := Globals.undo_redo
 
@@ -51,6 +52,7 @@ const MaterialLayer = preload("res://resources/material/material_layer.gd")
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
+const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
 const TextureFolder = preload("res://resources/texture/texture_folder.gd")
 const MaterialFolder = preload("res://resources/material/material_folder.gd")
 const Asset = preload("res://asset_browser/asset_classes.gd").Asset
@@ -364,6 +366,7 @@ func _get_layer_at_position(position : Vector2):
 
 
 func _emit_select_signal(layer) -> void:
+	_painting = layer is BitmapTextureLayer
 	if layer is MaterialLayer:
 		emit_signal("material_layer_selected", layer)
 	elif layer is TextureLayer:
@@ -518,7 +521,7 @@ func _select_item(item : TreeItem) -> void:
 
 
 func _get_icon(layer):
-	if update_icons:
+	if update_icons and not _painting:
 		layer.update_icon()
 	return layer.icon
 
