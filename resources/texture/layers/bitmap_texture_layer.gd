@@ -25,7 +25,6 @@ func _get_as_shader_layer():
 	if temp_texture:
 		texture = temp_texture
 	else:
-		print("using bitmap")
 		texture = ImageTexture.new()
 		if image_data.get_data().size() > 0:
 			texture.create_from_image(image_data)
