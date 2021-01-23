@@ -38,7 +38,8 @@ static func load_layout(root : Node, layout_file : String) -> void:
 		windows[String(window.original_path)] = window
 	
 	for popped_out in layout.popped_out:
-		var window_dialog : WindowDialog = windows[popped_out.window].put_in_window()
+		var window_dialog : WindowDialog =\
+				windows[popped_out.window].put_in_window()
 		window_dialog.rect_position = Vector2(popped_out.x, popped_out.y)
 		window_dialog.rect_size = Vector2(popped_out.width, popped_out.height)
 	

@@ -121,8 +121,22 @@ func place_window_with_same_parent(window : Panel,
 # ┗ new_container
 #   ┣ self
 #   ┗ window
+
+# container
+# ┣ self
+# ┗ container
+#   ┣ other_window
+#   ┗ window
+#      ↓
+# container
+# ┣ other_window
+# ┗ new_container
+#   ┣ self
+#   ┗ window
+
 func place_window_normal(window : Panel,
 	placement : PlacementUtils.WindowPlacement) -> void:
+	var previous_index := get_index()
 	remove_from_container(window)
 	
 	var parent := get_parent()
@@ -133,6 +147,7 @@ func place_window_normal(window : Panel,
 	new_container.add_child(window)
 	parent.add_child(new_container)
 	new_container.move_child(window, placement.index)
+	parent.move_child(new_container, previous_index)
 	update_size(parent)
 
 # tab_container
@@ -172,7 +187,9 @@ func place_window_into_tabs(window : Panel) -> void:
 func place_window_on_tabs(window : Panel,
 	placement : PlacementUtils.WindowPlacement) -> void:
 	if window.get_parent() == get_parent().get_parent():
-		window.get_parent().replace_by(placement.get_container(window))
+		var new_container := placement.get_container(window)
+		window.get_parent().replace_by(new_container)
+		new_container.move_child(window, placement.index)
 		return
 	
 	var parent_container := get_parent().get_parent()
@@ -256,7 +273,8 @@ func update_size(container : Control) -> void:
 
 
 func get_placement(window : Panel) -> PlacementUtils.WindowPlacement:
-	if (not window) or (not visible) or (window == self and not get_parent() is TabContainer):
+	if (not window) or (not visible) or (window == self and\
+			not get_parent() is TabContainer):
 		return null
 	var placement := PlacementUtils.get_drop_placement(self)
 	return placement
