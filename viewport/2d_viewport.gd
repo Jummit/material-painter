@@ -1,5 +1,9 @@
 extends "res://viewport/viewport.gd"
 
+func _ready() -> void:
+	painter.paint_through = true
+
+
 func _prepare_mesh(mesh : Mesh) -> Mesh:
 	return uv_to_vertex_positions(mesh)
 

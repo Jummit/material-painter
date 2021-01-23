@@ -19,6 +19,7 @@ shader_param/pattern_scale = 10.0
 shader_param/texture_angle = 0.0
 shader_param/stamp_mode = false
 shader_param/texture_mask = Plane( 1, 1, 1, 1 )
+shader_param/paint_through = false
 
 [sub_resource type="ShaderMaterial" id=2]
 shader = ExtResource( 5 )

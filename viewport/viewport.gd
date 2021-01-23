@@ -130,11 +130,11 @@ func _on_Globals_mesh_changed(mesh : Mesh) -> void:
 	for selection_type in selection_utils._selection_types:
 		progress_dialog.set_action(selection_utils.SelectionType.keys()[
 				selection_type])
+		yield(get_tree(), "idle_frame")
 		var prepared_mesh = selection_utils._selection_types[selection_type].\
 				prepare_mesh(mesh)
 		if prepared_mesh is GDScriptFunctionState:
 			prepared_mesh = yield(prepared_mesh, "completed")
-		yield(get_tree(), "idle_frame")
 		selection_utils._prepared_meshes[selection_type] = prepared_mesh
 	progress_dialog.complete_task()
 

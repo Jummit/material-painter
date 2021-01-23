@@ -14,6 +14,7 @@ uniform float pattern_scale = 10.0;
 uniform float texture_angle = 0.0;
 uniform bool stamp_mode = false;
 uniform vec4 texture_mask = vec4(1.0, 1.0, 1.0, 1.0);
+uniform bool paint_through = false;
 
 float brush(float v) {
 	return clamp(v / (1.0 - brush_strength), 0.0, 1.0);
@@ -51,7 +52,7 @@ void fragment() {
 		color = pattern_color(xy);
 	}
 	color = brush_color * color * texture_mask + brush_color * (vec4(1.0) - texture_mask);
-	a *= color.a * tex2view.z;
+	a *= color.a * (paint_through ? 1.0 : tex2view.z);
 	vec4 screen_color = texture(SCREEN_TEXTURE, UV);
 	float alpha_sum = min(1.0, a + screen_color.a);
  	COLOR = vec4((color.xyz * a + screen_color.xyz * (vec3(alpha_sum) - a)) / alpha_sum, alpha_sum);
