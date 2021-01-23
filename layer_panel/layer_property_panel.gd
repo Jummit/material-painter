@@ -5,6 +5,7 @@ The `PropertyPanel` that shows the properties of the selected layer
 """
 
 var editing_layer
+onready var undo_redo : UndoRedo = $"../../../../../../../..".undo_redo
 
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")
@@ -12,38 +13,48 @@ const MaterialLayer = preload("res://resources/material/material_layer.gd")
 const Properties = preload("res://addons/property_panel/properties.gd")
 const JSONTextureLayer = preload("res://resources/texture/json_texture_layer.gd")
 
-func load_texture_layer(texture_layer : TextureLayer) -> void:
-	editing_layer = texture_layer
-	set_properties(texture_layer.get_properties())
-	if texture_layer is JSONTextureLayer:
-		load_values(texture_layer.settings)
-	else:
-		load_values(texture_layer)
-
-
-func load_material_layer(material_layer : MaterialLayer) -> void:
-	editing_layer = material_layer
-	# todo: add blend mode
-	properties = []
-	
-	for type in material_layer.maps.keys():
-		properties += [
-			Properties.EnumProperty.new("blend_mode", Globals.BLEND_MODES),
-			Properties.FloatProperty.new("opacity", 0.0, 1.0),
+func _on_LayerTree_layer_selected(layer) -> void:
+	editing_layer = layer
+	if layer is MaterialLayer:
+		# todo: add blend mode
+		properties = []
+		
+		for type in layer.maps.keys():
+			properties += [
+				Properties.EnumProperty.new("blend_mode", Globals.BLEND_MODES),
+				Properties.FloatProperty.new("opacity", 0.0, 1.0),
 			]
-	
-	set_properties(properties)
-	load_values(material_layer)
+		
+		set_properties(properties)
+		load_values(layer)
+	elif layer is TextureLayer:
+		set_properties(layer.get_properties())
+		if layer is JSONTextureLayer:
+			load_values(layer.settings)
+		else:
+			load_values(layer)
+	else:
+		clear()
 
 
-func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
-	load_texture_layer(texture_layer)
-
-
-func _on_LayerTree_material_layer_selected(material_layer) -> void:
-	load_material_layer(material_layer)
-
-
-func _on_LayerTree_layer_deselected():
-	clear()
-	editing_layer = null
+func _on_property_changed(property, value) -> void:
+	var update_shader = property in ["opacity", "blend_mode"]
+	var layer = editing_layer
+	if layer is JSONTextureLayer:
+		for property_data in layer.data.properties:
+			if property_data.name == property:
+				if "shader_param" in property_data:
+					update_shader = not property_data.shader_param
+				break
+	undo_redo.create_action("Set Layer Property")
+	undo_redo.add_do_method(self, "set_value_on_layer", layer, property, value)
+	undo_redo.add_do_method(self, "set_property_value", property, value)
+	undo_redo.add_do_method(layer, "mark_dirty", update_shader)
+	undo_redo.add_do_method(Globals.editing_layer_material, "update")
+	undo_redo.add_undo_method(self, "set_value_on_layer", layer, property,
+			layer.get(property))
+	undo_redo.add_undo_method(self, "set_property_value", property,
+			layer.get(property))
+	undo_redo.add_undo_method(layer, "mark_dirty", update_shader)
+	undo_redo.add_undo_method(Globals.editing_layer_material, "update")
+	undo_redo.commit_action()

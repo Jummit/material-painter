@@ -6,7 +6,7 @@ The `PropertyPanel` that exposes the settings of the current brush
 Only visible when the paint tool is selected.
 """
 
-var correct_tool_selected := false
+var painting := false
 
 signal brush_changed(brush)
 
@@ -42,24 +42,11 @@ func _ready() -> void:
 	if ProjectSettings.get_setting("application/config/initialize_painter"):
 		load_values(Brush.new())
 		set_property_value("size", 10.0)
+	Globals.connect("tool_changed", self, "_on_Globals_tool_changed")
 
 
-func _on_ToolButtonContainer_tool_selected(to : int) -> void:
-	correct_tool_selected = to == Globals.Tools.PAINT
-	get_parent().get_parent().visible = correct_tool_selected
-
-
-func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
-	if texture_layer is BitmapTextureLayer:
-		get_parent().get_parent().visible = correct_tool_selected
-
-
-func _on_LayerTree_material_layer_selected(_material_layer) -> void:
-	get_parent().get_parent().hide()
-
-
-func _on_LayerTree_folder_layer_selected() -> void:
-	get_parent().hide()
+func _update_visibility() -> void:
+	get_parent().get_parent().visible = painting and Globals.selected_tool == Globals.Tools.PAINT
 
 
 func _on_property_changed(_property : String, _value) -> void:
@@ -72,3 +59,12 @@ func _on_property_changed(_property : String, _value) -> void:
 func _on_AssetBrowser_asset_activated(asset : Asset) -> void:
 	if asset.type is BrushAssetType:
 		load_values(asset.data)
+
+
+func _on_Globals_tool_changed() -> void:
+	_update_visibility()
+
+
+func _on_LayerTree_layer_selected(layer) -> void:
+	painting = layer is BitmapTextureLayer
+	_update_visibility()

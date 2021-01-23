@@ -26,22 +26,13 @@ func _ready() -> void:
 		add_child(new_button)
 
 
-func load_material_layer(material_layer : MaterialLayer) -> void:
-	for button in get_children():
-		_silently_set_button_pressed(button, button.name in material_layer.maps)
-	show()
-
-
-func _on_LayerTree_folder_layer_selected() -> void:
-	hide()
-
-
-func _on_LayerTree_texture_layer_selected(_texture_layer) -> void:
-	hide()
-
-
-func _on_LayerTree_material_layer_selected(material_layer) -> void:
-	load_material_layer(material_layer)
+func _on_LayerTree_layer_selected(layer) -> void:
+	if layer is MaterialLayer:
+		for button in get_children():
+			_silently_set_button_pressed(button, button.name in layer.maps)
+		show()
+	else:
+		hide()
 
 
 func _on_Button_toggled(button_pressed : bool, map : String) -> void:

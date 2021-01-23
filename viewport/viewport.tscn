@@ -76,4 +76,5 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
 [connection signal="toggled" from="HalfResolutionButton" to="." method="_on_HalfResolutionButton_toggled"]

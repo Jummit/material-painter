@@ -40,6 +40,7 @@ func _ready() -> void:
 
 
 func set_initial_texture(texture : Texture) -> void:
+	initial_texture_rect.rect_size = paint_viewport.size
 	initial_texture_rect.show()
 	initial_texture_rect.texture = texture
 	paint_rect.hide()

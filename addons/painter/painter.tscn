@@ -52,6 +52,8 @@ gui_disable_input = true
 visible = false
 margin_right = 40.0
 margin_bottom = 40.0
+expand = true
+stretch_mode = 1
 
 [node name="PaintRect" type="ColorRect" parent="PaintViewport"]
 material = SubResource( 1 )

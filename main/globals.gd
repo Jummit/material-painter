@@ -6,7 +6,7 @@ Global constants and application state
 
 # warning-ignore-all:unused_class_variable
 var mesh : Mesh setget set_mesh
-var selected_tool : int = Tools.PAINT
+var selected_tool : int = Tools.PAINT setget set_selected_tool
 var current_file : SaveFile setget set_current_file
 var editing_layer_material : LayerMaterial setget set_editing_layer_material
 var result_size := Vector2(2048, 2048)
@@ -15,6 +15,7 @@ var undo_redo := UndoRedo.new()
 signal mesh_changed(mesh)
 signal current_file_changed
 signal editing_layer_material_changed
+signal tool_changed
 
 enum Tools {
 	TRIANGLE,
@@ -59,6 +60,13 @@ func set_current_file(save_file : SaveFile, announce := true) -> void:
 func set_editing_layer_material(to) -> void:
 	editing_layer_material = to
 	emit_signal("editing_layer_material_changed")
+
+
+func set_selected_tool(to) -> void:
+	if to == selected_tool:
+		return
+	selected_tool = to
+	emit_signal("tool_changed")
 
 
 func get_global_asset_path(path : String) -> String:

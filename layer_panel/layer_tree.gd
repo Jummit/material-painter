@@ -22,11 +22,7 @@ var _painting := false
 
 var undo_redo := Globals.undo_redo
 
-signal material_layer_selected(material_layer)
-signal texture_layer_selected(texture_layer)
-# warning-ignore:unused_signal
-signal layer_deselected
-signal folder_layer_selected
+signal layer_selected(layer)
 
 enum Buttons {
 	MASK,
@@ -367,12 +363,7 @@ func _get_layer_at_position(position : Vector2):
 
 func _emit_select_signal(layer) -> void:
 	_painting = layer is BitmapTextureLayer
-	if layer is MaterialLayer:
-		emit_signal("material_layer_selected", layer)
-	elif layer is TextureLayer:
-		emit_signal("texture_layer_selected", layer)
-	else:
-		emit_signal("folder_layer_selected")
+	emit_signal("layer_selected", layer)
 
 
 func _get_layers_of_drop_data(data, position : Vector2) -> Dictionary:

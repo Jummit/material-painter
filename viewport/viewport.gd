@@ -11,6 +11,7 @@ Responsible for selecting HDRIs and toggling HDRI visibility.
 var light_sensitivity := 0.01
 var last_painted_position : Vector2
 var cached_camera_transform : Transform
+var painting_layer : BitmapTextureLayer
 
 const Brush = preload("res://addons/painter/brush.gd")
 const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
@@ -20,7 +21,6 @@ const BrushAssetType = preload("res://asset_browser/asset_classes.gd").BrushAsse
 const SelectionUtils = preload("res://addons/selection_utils/selection_utils.gd")
 
 onready var model : MeshInstance = $Viewport/Model
-onready var layer_tree : Tree = $"../../../../../../LayerPanelContainer/Window/LayerTree"
 onready var world_environment : WorldEnvironment = $Viewport/WorldEnvironment
 onready var directional_light : DirectionalLight = $Viewport/DirectionalLight
 onready var viewport : Viewport = $Viewport
@@ -33,31 +33,29 @@ func _ready() -> void:
 	if ProjectSettings.get_setting("application/config/initialize_painter"):
 		painter.mesh_instance = model
 	Globals.connect("mesh_changed", self, "_on_Globals_mesh_changed")
+	Globals.connect("tool_changed", self, "_on_Globals_tool_changed")
 	navigation_camera.set_process_input(false)
 	world_environment.environment = world_environment.environment.duplicate()
 
 
 func _gui_input(event : InputEvent) -> void:
 	navigation_camera._input(event)
-	if layer_tree.get_selected_layer() is BitmapTextureLayer and ((event is\
+	if painting_layer and ((event is\
 			InputEventMouseButton and event.button_index == BUTTON_LEFT\
 			and event.pressed) or (event is InputEventMouseMotion and\
 			event.button_mask == BUTTON_LEFT)):
 		if Globals.selected_tool == Globals.Tools.PAINT:
-			paint(layer_tree.get_selected_layer(), event.position,
-					event.position)
+			paint(painting_layer, event.position, event.position)
 			last_painted_position = event.position
 		else:
-			select(layer_tree.get_selected_layer(),
-					Globals.selected_tool,
+			select(painting_layer, Globals.selected_tool,
 					event.position / stretch_shrink)
 	
 	if not get_viewport().gui_is_dragging() and event is InputEventMouseMotion\
 			and Input.is_mouse_button_pressed(BUTTON_LEFT) and\
-			layer_tree.get_selected_layer() is BitmapTextureLayer\
+			painting_layer is BitmapTextureLayer\
 			and Globals.selected_tool == Globals.Tools.PAINT:
-		paint(layer_tree.get_selected_layer(), last_painted_position,
-				event.position)
+		paint(painting_layer, last_painted_position, event.position)
 		last_painted_position = event.position
 	
 	if event is InputEventMouseButton and event.pressed and\
@@ -86,17 +84,25 @@ func _on_HalfResolutionButton_toggled(button_pressed : bool) -> void:
 	stretch_shrink = 2 if button_pressed else 1
 
 
-func _on_ToolButtonContainer_tool_selected(tool_id : int) -> void:
-	var bitmap_texture_layer : BitmapTextureLayer = layer_tree.get_selected_layer()
-	if tool_id == Globals.Tools.PAINT:
-		painter.set_initial_texture(bitmap_texture_layer.temp_texture)
-		bitmap_texture_layer.temp_texture = painter.result
+func _on_LayerTree_layer_selected(layer) -> void:
+	if layer is BitmapTextureLayer:
+		painting_layer = layer
+		_load_bitmap_layer()
 
 
-func _on_LayerTree_texture_layer_selected(texture_layer) -> void:
-	if texture_layer is BitmapTextureLayer:
-		painter.clear()
-		painter.set_initial_texture(texture_layer.temp_texture)
+func _on_Globals_tool_changed() -> void:
+	_load_bitmap_layer()
+
+
+func _load_bitmap_layer() -> void:
+	if not painting_layer or Globals.selected_tool != Globals.Tools.PAINT:
+		return
+	# don't make this the initial texture if it's already the painter's texture
+	if painting_layer.temp_texture is ViewportTexture and\
+			painting_layer.temp_texture == painter.paint_viewport.get_texture():
+		return
+	painter.clear()
+	painter.set_initial_texture(painting_layer.temp_texture)
 
 
 func _on_ToolSettingsPropertyPanel_brush_changed(brush : Brush) -> void:
@@ -144,7 +150,7 @@ func select(on_texture_layer : BitmapTextureLayer, type : int,
 	on_texture_layer.temp_texture = yield(selection_utils.add_selection(
 			type, position, Globals.result_size,
 			on_texture_layer.temp_texture), "completed")
-	layer_tree.get_selected_layer().mark_dirty()
+	painting_layer.mark_dirty()
 	Globals.editing_layer_material.update()
 
 
@@ -164,3 +170,8 @@ func paint(on_texture_layer : BitmapTextureLayer, from : Vector2,
 
 func _prepare_mesh(mesh : Mesh) -> Mesh:
 	return mesh
+
+
+func _on_visibility_changed() -> void:
+	if get_parent().visible:
+		_load_bitmap_layer()
