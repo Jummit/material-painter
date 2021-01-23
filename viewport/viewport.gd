@@ -40,7 +40,7 @@ func _ready() -> void:
 
 func _gui_input(event : InputEvent) -> void:
 	navigation_camera._input(event)
-	if painting_layer and ((event is\
+	if not get_viewport().gui_is_dragging() and painting_layer and ((event is\
 			InputEventMouseButton and event.button_index == BUTTON_LEFT\
 			and event.pressed) or (event is InputEventMouseMotion and\
 			event.button_mask == BUTTON_LEFT)):
