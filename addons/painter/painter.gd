@@ -23,7 +23,6 @@ const Brush = preload("res://addons/painter/brush.gd")
 
 onready var paint_material : ShaderMaterial = $PaintViewport/PaintRect.material
 onready var paint_viewport : Viewport = $PaintViewport
-onready var paint_rect : ColorRect = $PaintViewport/PaintRect
 onready var initial_texture_rect : TextureRect = $PaintViewport/InitialTextureRect
 onready var view_to_texture_viewport : Viewport = $ViewToTextureViewport
 onready var texture_to_view_viewport : Viewport = $TextureToViewViewport
@@ -32,6 +31,7 @@ onready var view_to_texture_camera : Camera = $ViewToTextureViewport/Camera
 onready var texture_to_view_mesh_instance : MeshInstance = $TextureToViewViewport/MeshInstance
 onready var view_to_texture_mesh_instance : MeshInstance = $ViewToTextureViewport/MeshInstance
 onready var seams_rect_material : ShaderMaterial = $SeamsViewport/SeamsRect.material
+onready var black_background : ColorRect = $PaintViewport/BlackBackground
 
 func _ready() -> void:
 	seams_rect_material.set_shader_param("texture_to_view", texture_to_view_viewport.get_texture())
@@ -41,29 +41,13 @@ func _ready() -> void:
 
 
 func set_initial_texture(texture : Texture) -> void:
-	initial_texture_rect.rect_size = paint_viewport.size
-	initial_texture_rect.show()
+	black_background.show()
 	initial_texture_rect.texture = texture
-	paint_rect.hide()
 	paint_viewport.render_target_clear_mode = Viewport.CLEAR_MODE_ONLY_NEXT_FRAME
 	paint_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 	yield(VisualServer, "frame_post_draw")
-	initial_texture_rect.hide()
-	paint_rect.show()
-
-
-func paint(from : Vector2, to : Vector2) -> void:
-	if _painting:
-		_next_position = from
-	_painting = true
-	paint_material.set_shader_param("brush_pos", from)
-	paint_material.set_shader_param("brush_ppos", to)
-	paint_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
-	yield(VisualServer, "frame_post_draw")
-	_painting = false
-	if _next_position != Vector2.ZERO:
-		_next_position = Vector2.ZERO
-		yield(paint(to, _next_position), "completed")
+	black_background.hide()
+	initial_texture_rect.texture = null
 
 
 func set_mesh_instance(to : MeshInstance) -> void:
@@ -78,7 +62,6 @@ func set_mesh_instance(to : MeshInstance) -> void:
 
 func update_view(viewport : Viewport) -> void:
 	_viewport_size = viewport.size
-	paint_viewport.size = viewport.size
 	
 	var camera := viewport.get_camera()
 	
@@ -126,15 +109,28 @@ func set_brush(to : Brush) -> void:
 	paint_material.set_shader_param("texture_mask", texture_mask)
 
 
-func clear() -> void:
-	initial_texture_rect.texture = null
-	paint_viewport.render_target_clear_mode = Viewport.CLEAR_MODE_ONLY_NEXT_FRAME
-	yield(VisualServer, "frame_post_draw")
-
-
 func set_paint_through(to : bool) -> void:
 	paint_through = to
 	paint_material.set_shader_param("paint_through", paint_through)
+
+
+func paint(from : Vector2, to : Vector2) -> void:
+	if _painting:
+		_next_position = from
+	_painting = true
+	paint_material.set_shader_param("brush_pos", from)
+	paint_material.set_shader_param("brush_ppos", to)
+	paint_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
+	yield(VisualServer, "frame_post_draw")
+	_painting = false
+	if _next_position != Vector2.ZERO:
+		_next_position = Vector2.ZERO
+		yield(paint(to, _next_position), "completed")
+
+
+func clear() -> void:
+	paint_viewport.render_target_clear_mode = Viewport.CLEAR_MODE_ONLY_NEXT_FRAME
+	yield(VisualServer, "frame_post_draw")
 
 
 func _load_image_texture(path : String) -> ImageTexture:

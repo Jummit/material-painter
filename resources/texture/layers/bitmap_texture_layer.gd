@@ -19,7 +19,9 @@ func _init().("Bitmap", "texture({texture}, uv)") -> void:
 	if image:
 		texture.create_from_image(image)
 	else:
-		texture.create(1024, 1024, Image.FORMAT_RGB8, ImageTexture.FLAG_FILTER)
+		image = Image.new()
+		image.create(1024, 1024, false, Image.FORMAT_RGB8)
+	texture.create_from_image(image, ImageTexture.FLAG_FILTER)
 
 
 func _get_as_shader_layer():

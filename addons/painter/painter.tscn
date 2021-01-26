@@ -41,6 +41,7 @@ shader = ExtResource( 3 )
 script = ExtResource( 4 )
 
 [node name="PaintViewport" type="Viewport" parent="."]
+size = Vector2( 1024, 1024 )
 own_world = true
 transparent_bg = true
 usage = 0
@@ -49,17 +50,22 @@ render_target_clear_mode = 1
 render_target_update_mode = 0
 gui_disable_input = true
 
-[node name="InitialTextureRect" type="TextureRect" parent="PaintViewport"]
-visible = false
-margin_right = 40.0
-margin_bottom = 40.0
-expand = true
-stretch_mode = 1
-
 [node name="PaintRect" type="ColorRect" parent="PaintViewport"]
 material = SubResource( 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0
+
+[node name="BlackBackground" type="ColorRect" parent="PaintViewport"]
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0, 0, 0, 1 )
+
+[node name="InitialTextureRect" type="TextureRect" parent="PaintViewport"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+expand = true
+stretch_mode = 1
 
 [node name="ViewToTextureViewport" type="Viewport" parent="."]
 own_world = true
