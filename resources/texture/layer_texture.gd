@@ -48,7 +48,8 @@ func update(force_all := false) -> void:
 	dirty = false
 
 
-func generate_result(result_size : Vector2, update_shader := false, id := -1) -> Texture:
+func generate_result(result_size : Vector2, update_shader := false,
+		id := -1) -> Texture:
 	var blending_layers := []
 	for layer in layers:
 		if not layer.visible:

@@ -72,7 +72,8 @@ func _get_as_shader_layer() -> Layer:
 	if "properties" in data:
 		for property in data.properties:
 			if "shader_param" in property and not property.shader_param:
-				layer.code = layer.code.format({property.name: settings[property.name]})
+				layer.code = layer.code.format(
+						{property.name: settings[property.name]})
 			else:
 				layer.uniform_types.append(property.type if not property.type\
 						in SHADER_TYPES else SHADER_TYPES[property.type])
