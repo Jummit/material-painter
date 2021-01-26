@@ -68,3 +68,7 @@ func _on_Globals_tool_changed() -> void:
 func _on_LayerTree_layer_selected(layer) -> void:
 	painting = layer is BitmapTextureLayer
 	_update_visibility()
+
+
+func _on_layout_changed() -> void:
+	_update_visibility()

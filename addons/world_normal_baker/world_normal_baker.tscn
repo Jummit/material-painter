@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=2]
 
-[ext_resource path="res://addons/world_map_generator/world_map_generator.gd" type="Script" id=1]
+[ext_resource path="res://addons/world_normal_baker/world_normal_baker.gd" type="Script" id=1]
 
 [sub_resource type="Environment" id=1]
 background_mode = 1
@@ -12,16 +12,13 @@ environment = SubResource( 1 )
 code = "shader_type spatial;
 render_mode unshaded, cull_disabled;
 
-varying vec3 pos;
-
 void vertex() {
-	pos = VERTEX;
 	VERTEX.xy = vec2(UV.x, 1.0 - UV.y);
 	VERTEX.z = 0.0;
 }
 
 void fragment() {
-	ALBEDO = pos;
+	ALBEDO = NORMAL;
 }"
 
 [sub_resource type="ShaderMaterial" id=4]
@@ -29,10 +26,9 @@ shader = SubResource( 3 )
 
 [sub_resource type="CubeMesh" id=5]
 
-[node name="WorldMapGenerator" type="Viewport"]
+[node name="WorldNormalBaker" type="Viewport"]
 own_world = true
 world = SubResource( 2 )
-keep_3d_linear = true
 usage = 3
 render_target_v_flip = true
 render_target_clear_mode = 1
@@ -46,6 +42,6 @@ mesh = SubResource( 5 )
 material/0 = null
 
 [node name="Camera" type="Camera" parent="."]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 2 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.5, 2.15911 )
 projection = 1
 current = true

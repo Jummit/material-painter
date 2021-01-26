@@ -58,3 +58,10 @@ func _on_property_changed(property, value) -> void:
 	undo_redo.add_undo_method(layer, "mark_dirty", update_shader)
 	undo_redo.add_undo_method(Globals.editing_layer_material, "update")
 	undo_redo.commit_action()
+
+
+func set_value_on_layer(layer, property : String, value) -> void:
+	if layer is JSONTextureLayer:
+		layer.settings[property] = value
+	else:
+		layer[property] = value

@@ -70,6 +70,7 @@ func set_selected_tool(to) -> void:
 
 
 func get_global_asset_path(path : String) -> String:
-	var local_path := current_file.resource_path.get_base_dir() +\
-			path.substr("local".length())
-	return local_path if path.begins_with("local") else path
+	if path.begins_with("local"):
+		return current_file.resource_path.get_base_dir().plus_file(path.trim_prefix("local"))
+	else:
+		return path

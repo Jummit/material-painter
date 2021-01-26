@@ -29,8 +29,8 @@ signal update_icons_toggled
 
 const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
 
-onready var results_item_list_window : Panel = $"../../../Control/HBoxContainer/Window"
-onready var directional_light : DirectionalLight = $"../../../Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/Window/3DViewport/Viewport/DirectionalLight"
+onready var results_item_list_window : Panel = $"../../../Control/HBoxContainer/ResultsWindow"
+onready var directional_light : DirectionalLight = $"../../../Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewportWindow/3DViewport/Viewport/DirectionalLight"
 
 func _ready() -> void:
 	var popup := get_popup()

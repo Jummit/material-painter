@@ -36,12 +36,22 @@ class CurvatureMapGenerator extends MeshMapGenerator:
 		pass
 	
 	func _generate_map(mesh : Mesh, result_size : Vector2) -> Texture:
-		return yield(CurvatureBaker.bake_curvature_map(mesh, result_size), "completed")
+		return yield(CurvatureBaker.bake_curvature_map(mesh, result_size),
+				"completed")
+
+class WorldNormalMapGenerator extends MeshMapGenerator:
+	func _init().("world_normal") -> void:
+		pass
+	
+	func _generate_map(mesh : Mesh, result_size : Vector2) -> Texture:
+		return yield(WorldNormalBaker.bake_world_normal(mesh, result_size),
+				"completed")
 
 var MESH_MAP_GENERATORS := [
 	IDMeshMapGenerator.new(),
 	CurvatureMapGenerator.new(),
 	WorldPositionMeshMapGenerator.new(),
+	WorldNormalMapGenerator.new(),
 ]
 
 func generate_mesh_maps(mesh : Mesh, result_size : Vector2) -> Dictionary:

@@ -12,6 +12,7 @@ var light_sensitivity := 0.01
 var last_painted_position : Vector2
 var cached_camera_transform : Transform
 var painting_layer : BitmapTextureLayer
+var mesh_maps_generated := false
 
 const Brush = preload("res://addons/painter/brush.gd")
 const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
@@ -28,6 +29,7 @@ onready var painter : Node = $Painter
 onready var selection_utils : Node = $SelectionUtils
 onready var navigation_camera : Camera = $Viewport/NavigationCamera
 onready var fps_label : Label = $FPSLabel
+onready var half_resolution_button : CheckButton = $HalfResolutionButton
 
 func _ready() -> void:
 	if ProjectSettings.get_setting("application/config/initialize_painter"):
@@ -64,7 +66,7 @@ func _gui_input(event : InputEvent) -> void:
 
 
 func _process(_delta : float) -> void:
-	fps_label.text = str(Engine.get_frames_per_second())#.pad_decimals(2)
+	fps_label.text = str(Engine.get_frames_per_second())
 
 
 func _on_ViewMenuButton_hdri_selected(hdri : Texture) -> void:
@@ -73,12 +75,17 @@ func _on_ViewMenuButton_hdri_selected(hdri : Texture) -> void:
 
 func _on_HalfResolutionButton_toggled(button_pressed : bool) -> void:
 	stretch_shrink = 2 if button_pressed else 1
+	get_parent().set_meta("layout", button_pressed)
 
 
 func _on_LayerTree_layer_selected(layer) -> void:
 	if layer is BitmapTextureLayer:
+		if not mesh_maps_generated:
+			update_mesh_maps()
 		painting_layer = layer
 		_load_bitmap_layer()
+	else:
+		painting_layer = null
 
 
 func _on_Globals_tool_changed() -> void:
@@ -107,11 +114,16 @@ func _on_AssetBrowser_asset_activated(asset : Asset) -> void:
 		painter.brush = asset.data
 
 
-func _on_Globals_mesh_changed(mesh : Mesh) -> void:
+func _on_Globals_mesh_changed(_mesh : Mesh) -> void:
+	var mesh := _prepare_mesh(Globals.mesh)
+	model.mesh = mesh
+	if Settings.get_setting("generate_utility_maps") == "On Startup":
+		update_mesh_maps()
+
+
+func update_mesh_maps() -> void:
 	var progress_dialog = ProgressDialogManager.create_task(
 			"Generate Painter Maps", 1)
-	mesh = _prepare_mesh(mesh)
-	model.mesh = mesh
 	progress_dialog.set_action("Generate Maps")
 	yield(painter.set_mesh_instance(model), "completed")
 	progress_dialog.complete_task()
@@ -123,15 +135,22 @@ func _on_Globals_mesh_changed(mesh : Mesh) -> void:
 				selection_type])
 		yield(get_tree(), "idle_frame")
 		var prepared_mesh = selection_utils._selection_types[selection_type].\
-				prepare_mesh(mesh)
+				prepare_mesh(model.mesh)
 		if prepared_mesh is GDScriptFunctionState:
 			prepared_mesh = yield(prepared_mesh, "completed")
 		selection_utils._prepared_meshes[selection_type] = prepared_mesh
 	progress_dialog.complete_task()
+	mesh_maps_generated = true
 
 
 func _on_ResultsItemList_map_selected(map : String) -> void:
 	model.isolated_map = "" if map == model.isolated_map else map
+
+
+func _on_layout_changed() -> void:
+	if get_parent().has_meta("layout"):
+		var meta : bool = get_parent().get_meta("layout")
+		half_resolution_button.pressed = meta
 
 
 # perform a selection with the given `type` using `selection_utils`

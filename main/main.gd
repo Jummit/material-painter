@@ -56,11 +56,11 @@ onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/File
 onready var about_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/AboutMenuButton
 onready var view_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/ViewMenuButton
 onready var file_dialog : FileDialog = $FileDialog
-onready var layer_property_panel : Panel = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer/LayerPropertyPanel
-onready var texture_map_buttons : GridContainer = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window2/VBoxContainer/TextureMapButtons
-onready var layer_tree : Tree = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/Window/LayerTree
-onready var painter : Node = $"VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/Window/3DViewport/Painter"
-onready var asset_browser : HBoxContainer = $VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/Window/AssetBrowser
+onready var layer_property_panel : Panel = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/PropertiesWindow/VBoxContainer/LayerPropertyPanel
+onready var texture_map_buttons : GridContainer = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/PropertiesWindow/VBoxContainer/TextureMapButtons
+onready var layer_tree : Tree = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/LayersWindow/LayerTree
+onready var painter : Node = $"VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewportWindow/3DViewport/Painter"
+onready var asset_browser : HBoxContainer = $VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser
 onready var save_layout_dialog : ConfirmationDialog = $SaveLayoutDialog
 onready var license_dialog : AcceptDialog = $LicenseDialog
 onready var about_dialog : AcceptDialog = $AboutDialog
@@ -375,13 +375,6 @@ func set_mask(layer, mask : LayerTexture) -> void:
 		mask.mark_dirty()
 	layer.mark_dirty()
 	Globals.editing_layer_material.update()
-
-
-func set_value_on_layer(layer, property : String, value) -> void:
-	if layer is JSONTextureLayer:
-		layer.settings[property] = value
-	else:
-		layer[property] = value
 
 
 func load_mesh(path : String) -> void:

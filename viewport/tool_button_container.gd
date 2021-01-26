@@ -1,4 +1,4 @@
-extends VBoxContainer
+extends GridContainer
 
 """
 A list of buttons used to select the painting/selection tool
@@ -26,3 +26,7 @@ func _on_ToolButton_pressed(tool_id : int) -> void:
 
 func _on_LayerTree_layer_selected(layer) -> void:
 	get_parent().visible = layer is BitmapTextureLayer
+
+
+func _on_resized() -> void:
+	columns = int(get_parent().rect_size.x / 46.0)

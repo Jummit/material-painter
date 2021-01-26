@@ -1,0 +1,24 @@
+{
+	"name": "Dust",
+	"properties" : [
+		{
+			"name": "x",
+			"type": "float",
+			"range": [0, 5],
+			"default": 0.0
+		},
+		{
+			"name": "y",
+			"type": "float",
+			"range": [0, 5],
+			"default": 1.0
+		},
+		{
+			"name": "z",
+			"type": "float",
+			"range": [0, 5],
+			"default": 0.0
+		}
+	],
+	"shader": "return vec4(vec3(dot({previous}(uv).xyz, vec3({x}, {y}, {z}))), 1.0);"
+}

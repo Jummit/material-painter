@@ -107,7 +107,7 @@ func load_asset(path : String, asset_type : AssetType) -> Asset:
 	for tag in tag_metadata:
 		if asset.file in tag_metadata[tag]:
 			_add_asset_to_tag(asset, tag)
-	var result  = asset_type.get_preview(asset)
+	var result = asset_type.get_preview(asset)
 	if result is GDScriptFunctionState:
 		result = yield(result, "completed")
 	asset.preview = result
@@ -168,6 +168,7 @@ func _on_AddTagButton_pressed() -> void:
 
 func _on_TagList_cell_selected() -> void:
 	current_tag = tag_list.get_selected().get_text(0)
+	get_parent().set_meta("layout", current_tag)
 	update_asset_list()
 
 
@@ -321,8 +322,6 @@ func _load_assets(directory : String, asset_type : AssetType) -> Array:
 			asset = yield(asset, "completed")
 		if asset:
 			new_assets.append(asset)
-		if file_num % 20 == 0:
-			yield(get_tree(), "idle_frame")
 	yield(get_tree(), "idle_frame")
 	return new_assets
 
@@ -416,3 +415,9 @@ func _load_tag_metadata() -> void:
 		tag_metadata = data.assets
 		already_tagged_assets = data.tagged
 	file.close()
+
+
+func _on_layout_changed() -> void:
+	if get_parent().has_meta("layout"):
+		current_tag = get_parent().get_meta("layout")
+		update_asset_list()

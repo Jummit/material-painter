@@ -9,14 +9,18 @@ static func save_layout(root : Container, layout_file : String) -> void:
 	}
 	
 	for window in root.get_tree().get_nodes_in_group("Windows"):
-		if window.get_parent() is WindowDialog:
-			layout.popped_out.append({
-				x = window.get_parent().rect_position.x,
-				y = window.get_parent().rect_position.y,
-				width = window.get_parent().rect_size.x,
-				height = window.get_parent().rect_size.y,
-				window = window.original_path,
-			})
+		var parent : Control = window.get_parent()
+		if parent is WindowDialog:
+			var data := {
+				x = parent.rect_position.x,
+				y = parent.rect_position.y,
+				width = parent.rect_size.x,
+				height = parent.rect_size.y,
+				name = window.name,
+			}
+			if window.has_meta("layout"):
+				data.metadata = window.get_meta("layout")
+			layout.popped_out.append(data)
 	
 	var file := File.new()
 	file.open(layout_file, File.WRITE)
@@ -35,13 +39,15 @@ static func load_layout(root : Node, layout_file : String) -> void:
 		if window.get_parent() is WindowDialog:
 			window.get_parent().queue_free()
 		window.get_parent().remove_child(window)
-		windows[String(window.original_path)] = window
+		windows[window.name] = window
 	
 	for popped_out in layout.popped_out:
-		var window_dialog : WindowDialog =\
-				windows[popped_out.window].put_in_window()
+		var panel : Panel = windows[popped_out.name]
+		var window_dialog : WindowDialog = panel.put_in_window()
 		window_dialog.rect_position = Vector2(popped_out.x, popped_out.y)
 		window_dialog.rect_size = Vector2(popped_out.width, popped_out.height)
+		if "metadata" in popped_out:
+			panel.set_meta("layout", popped_out.metadata)
 	
 	_remove_containers(root)
 	_load_individual_layout(root, layout.windows, windows)
@@ -52,15 +58,19 @@ static func _store_layout(root : Container) -> Dictionary:
 		type = root.get_class(),
 		children = []
 	}
-	if root is SplitContainer:
+	if root is SplitContainer and root.split_offset:
 		layout.split = root.split_offset
 	
 	for node in root.get_children():
 		if node is Panel:
-			layout.children.append({
-					path = node.original_path,
-					visible = node.visible,
-				})
+			var data := {
+				name = node.name,
+			}
+			if not node.visible:
+				data.visible = false
+			if node.has_meta("layout"):
+				data.metadata = node.get_meta("layout")
+			layout.children.append(data)
 		else:
 			layout.children.append(_store_layout(node))
 	
@@ -80,11 +90,17 @@ static func _load_individual_layout(root : Node, layout : Dictionary,
 	container.anchor_right = 1
 	container.anchor_bottom = 1
 	for window in layout.children:
-		if "path" in window:
-			container.add_child(windows[window.path])
-			windows[window.path].visible = window.visible
+		if "name" in window:
+			var panel : Panel = windows[window.name]
+			container.add_child(panel)
+			panel.visible = true if not "visible" in window else window.visible
+			if "metadata" in window:
+				panel.set_meta("layout", window.metadata)
+			panel.emit_signal("layout_changed")
 		else:
 			_load_individual_layout(container, window, windows)
 	root.add_child(container)
-	if container is SplitContainer:
+	if container is SplitContainer and "split" in layout:
 		container.split_offset = layout.split
+	if container is TabContainer:
+		container.drag_to_rearrange_enabled = true

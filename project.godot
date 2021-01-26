@@ -32,6 +32,7 @@ CurvatureBaker="*res://addons/curvature_baker/curvature_baker.tscn"
 PreviewRenderer="*res://asset_browser/preview_renderer/preview_renderer.tscn"
 ProgressDialogManager="*res://addons/progress_dialog/progress_dialog_manager.tscn"
 Settings="*res://main/settings.gd"
+WorldNormalBaker="*res://addons/world_normal_baker/world_normal_baker.tscn"
 
 [debug]
 

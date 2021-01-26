@@ -6,7 +6,7 @@ var config := ConfigFile.new() setget set_config
 
 # warning-ignore:unused_class_variable
 var settings = [
-	Properties.EnumProperty.new("generate_utility_maps", ["On Startup", "On Use"]),
+	Properties.EnumProperty.new("generate_utility_maps", ["On Use", "On Startup"]),
 ]
 
 func _ready() -> void:

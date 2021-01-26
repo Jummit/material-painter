@@ -11,7 +11,8 @@ been repositioned.
 Windows can be popped out by pressing a button which makes them floating windows.
 """
 
-export var title := "" setget set_title
+# warning-ignore:unused_signal
+signal layout_changed
 
 onready var drag_receiver : Control = get_tree().root.find_node(
 	"WindowDragReceiver", true, false)
@@ -22,26 +23,37 @@ onready var original_path := get_path()
 
 const PlacementUtils := preload("placement_utils.gd")
 
+var title : String
+
 func _ready() -> void:
 	$Title.set_drag_forwarding(self)
 	drag_receiver.connect("draw", self, "on_WindowDragReceiver_draw")
+	update_title()
 
 
 func _notification(what : int) -> void:
-	if what == NOTIFICATION_PARENTED:
-		if get_parent() is TabContainer:
-			get_parent().set_tab_title(get_index(), title)
-		if get_parent() is TabContainer or get_parent() is WindowDialog:
-			$Title.hide()
-		else:
-			$Title.show()
+	match what:
+		NOTIFICATION_PARENTED:
+			if get_parent() is TabContainer:
+				get_parent().set_tab_title(get_index(), title)
+			if get_parent() is TabContainer or get_parent() is WindowDialog:
+				$Title.hide()
+			else:
+				$Title.show()
+		NOTIFICATION_VISIBILITY_CHANGED:
+			# apply visibilty to dialog
+			if get_parent() is WindowDialog:
+				get_parent().visible = visible
 
 
-func set_title(to) -> void:
-	title = to
-	$Title.text = to
-	if get_parent() is TabContainer:
-		get_parent().set_tab_title(get_index(), title)
+func update_title() -> void:
+	title = ""
+	for letter in name:
+		if letter.capitalize() == letter:
+			title += " "
+		title += letter
+	title = title.replace("Window", "").substr(1)
+	$Title.text = title
 
 
 func _on_PopInOutButton_pressed():
@@ -299,7 +311,7 @@ func put_in_window() -> WindowDialog:
 	window.rect_min_size = rect_min_size
 	window.add_child(self)
 	drag_receiver.get_parent().add_child(window)
-	window.show()
+	window.visible = visible
 	update_size(self)
 	$PopInOutButton.text = "v"
 	$PopInOutButton.hint_tooltip = "Pop window in"

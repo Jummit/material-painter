@@ -71,5 +71,3 @@ func get_map_result(map : String) -> Texture:
 	if not map in maps:
 		return null
 	return maps[map].result
-
-

@@ -95,7 +95,6 @@ func _gui_input(event : InputEvent) -> void:
 		undo_redo.create_action("Delete Layer")
 		undo_redo.add_do_method(Globals.editing_layer_material, "delete_layer",
 			layer)
-		undo_redo.add_do_method(self, "emit_signal", "layer_deselected")
 		undo_redo.add_undo_method(Globals.editing_layer_material, "add_layer",
 			layer, layer.parent)
 		undo_redo.add_undo_method(self, "_emit_select_signal", layer)
@@ -262,10 +261,8 @@ func get_drag_data(_position : Vector2):
 
 
 func can_drop_data(position : Vector2, data) -> bool:
-	if data is Asset and data.type is TextureAssetType and\
-		get_selected_layer_texture(_get_layer_at_position(position)):
-		return true
-	if data is Asset and data.type is MaterialAssetType:
+	if data is Asset and (data.type is TextureAssetType or\
+			data.type is MaterialAssetType):
 		return true
 	var layer_data := _get_layers_of_drop_data(data, position)
 	if not layer_data.empty():
@@ -333,27 +330,10 @@ func drop_data(position : Vector2, data) -> void:
 					"add_layer", layer, onto)
 				undo_redo.add_undo_method(Globals.editing_layer_material,
 					"delete_layer", layer)
-			
 		
 		undo_redo.add_do_method(self, "_load_layer_material")
 		undo_redo.add_undo_method(self, "_load_layer_material")
 		undo_redo.commit_action()
-	elif data is Asset:
-		if data.type is TextureAssetType:
-			undo_redo.create_action("Add Texture From Library")
-			var layer := FileTextureLayer.new()
-			layer.name = data.name
-			if not data.data.begins_with("user://"):
-				layer.path = "local" + data.data.substr(
-					Globals.current_file.resource_path.get_base_dir().length())
-			else:
-				layer.path = data.data
-			undo_redo.add_do_method(Globals.editing_layer_material, "add_layer",
-				layer, get_selected_layer_texture(_get_layer_at_position(
-				position)))
-			undo_redo.add_undo_method(Globals.editing_layer_material,
-				"delete_layer", layer)
-			undo_redo.commit_action()
 
 
 func _get_layer_at_position(position : Vector2):
@@ -372,17 +352,25 @@ func _get_layers_of_drop_data(data, position : Vector2) -> Dictionary:
 	if data is Asset and data.type is EffectAssetType:
 		layers = [data.data.duplicate()]
 		layer_type = LayerType.TEXTURE_LAYER
-	elif data is Asset and data.type is TextureAssetType and\
-			not _get_layer_at_position(position) is MaterialLayer:
+	elif data is Asset and data.type is TextureAssetType:
 		var material_layer := MaterialLayer.new()
 		var layer_texture := LayerTexture.new()
-		var map := "normal" if "normal" in data.tags else"albedo"
+		var map := "normal" if "normal" in data.tags else "albedo"
 		material_layer.maps[map] = layer_texture
+		material_layer.name = data.name.replace("normal", "").replace("albedo", "").capitalize()
 		var layer := FileTextureLayer.new()
-		layer.path = data.file
-		layer_texture.layers.append(layer)
-		layers = [material_layer]
-		layer_type = LayerType.MATERIAL_LAYER
+		var path : String = Globals.get_global_asset_path(data.file)
+		layer.path = path
+		layer.name = path.get_file().get_basename()
+		layer_texture.parent = material_layer
+		if get_item_at_position(position) and _get_layer_type(get_item_at_position(position)) == LayerType.MATERIAL_LAYER:
+			layers = [layer]
+			layer_type = LayerType.TEXTURE_LAYER
+		else:
+			layer_texture.layers.append(layer)
+			layer.parent = layer_texture
+			layers = [material_layer]
+			layer_type = LayerType.MATERIAL_LAYER
 	elif data is Asset and data.type is MaterialAssetType:
 		layer_type = LayerType.MATERIAL_LAYER
 		layers = [data.data.duplicate()]
@@ -491,7 +479,7 @@ func _setup_texture_layer_item(layer, parent_item : TreeItem,
 
 
 func _get_layer_type(item : TreeItem) -> int:
-	if item.get_meta("layer").has_method("get_layer_texture_in"):
+	if item.get_meta("layer") is TextureFolder or item.get_meta("layer") is TextureLayer:
 		return LayerType.TEXTURE_LAYER
 	else:
 		return LayerType.MATERIAL_LAYER
