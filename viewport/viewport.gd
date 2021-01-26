@@ -96,11 +96,11 @@ func _load_bitmap_layer() -> void:
 	if not painting_layer or Globals.selected_tool != Globals.Tools.PAINT:
 		return
 	# don't make this the initial texture if it's already the painter's texture
-	if painting_layer.temp_texture is ViewportTexture and\
-			painting_layer.temp_texture == painter.paint_viewport.get_texture():
+	if painting_layer.texture is ViewportTexture and\
+			painting_layer.texture == painter.paint_viewport.get_texture():
 		return
 	painter.clear()
-	painter.set_initial_texture(painting_layer.temp_texture)
+	painter.set_initial_texture(painting_layer.texture)
 
 
 func _on_ToolSettingsPropertyPanel_brush_changed(brush : Brush) -> void:
@@ -157,9 +157,9 @@ func _on_layout_changed() -> void:
 func select(on_texture_layer : BitmapTextureLayer, type : int,
 		position : Vector2) -> void:
 	selection_utils.update_view(viewport)
-	on_texture_layer.temp_texture = yield(selection_utils.add_selection(
+	on_texture_layer.texture = yield(selection_utils.add_selection(
 			type, position, Globals.result_size,
-			on_texture_layer.temp_texture), "completed")
+			on_texture_layer.texture), "completed")
 	painting_layer.mark_dirty()
 	Globals.editing_layer_material.update()
 
@@ -173,7 +173,7 @@ func paint(on_texture_layer : BitmapTextureLayer, from : Vector2,
 		yield(painter.update_view(viewport), "completed")
 	cached_camera_transform = camera_transform
 	painter.paint(from / rect_size, to / rect_size)
-	on_texture_layer.temp_texture = painter.result
+	on_texture_layer.texture = painter.result
 	on_texture_layer.mark_dirty()
 	Globals.editing_layer_material.update()
 

@@ -62,8 +62,6 @@ onready var map_type_popup_menu : PopupMenu = $MapTypePopupMenu
 func _ready() -> void:
 	set_column_expand(0, false)
 	set_column_min_width(0, 100)
-	Globals.connect("current_file_changed", self,
-		"_on_Globals_current_file_changed")
 	Globals.connect("editing_layer_material_changed", self,
 		"_on_Globals_editing_layer_material_changed")
 
@@ -212,10 +210,6 @@ func _on_Globals_editing_layer_material_changed() -> void:
 			"_on_LayerMaterial_results_changed"):
 		Globals.editing_layer_material.connect("results_changed", self,
 				"_on_LayerMaterial_results_changed")
-	_load_layer_material()
-
-
-func _on_Globals_current_file_changed() -> void:
 	_load_layer_material()
 
 

@@ -5,7 +5,7 @@ The `PropertyPanel` that shows the properties of the selected layer
 """
 
 var editing_layer
-onready var undo_redo : UndoRedo = $"../../../../../../../..".undo_redo
+onready var undo_redo := Globals.undo_redo
 
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")

@@ -71,7 +71,6 @@ func _on_id_pressed(id : int) -> void:
 			emit_signal("mask_added", mask)
 		Items.ADD_WHITE_MASK:
 			var bitmap := BitmapTextureLayer.new()
-			bitmap.image_data.fill(Color.white)
 			var mask := LayerTexture.new()
 			mask.layers.append(bitmap)
 			yield(get_tree(), "idle_frame")

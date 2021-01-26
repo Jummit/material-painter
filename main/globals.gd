@@ -47,14 +47,13 @@ func set_mesh(to) -> void:
 	emit_signal("mesh_changed", mesh)
 
 
-func set_current_file(save_file : SaveFile, announce := true) -> void:
+func set_current_file(save_file : SaveFile) -> void:
 	current_file = save_file
 	for layer_material in current_file.layer_materials:
 		var result = layer_material.update(true)
 		if result is GDScriptFunctionState:
 			yield(result, "completed")
-	if announce:
-		emit_signal("current_file_changed")
+	emit_signal("current_file_changed")
 
 
 func set_editing_layer_material(to) -> void:

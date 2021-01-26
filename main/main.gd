@@ -100,6 +100,8 @@ func _on_FileDialog_file_selected(path : String) -> void:
 	match file_dialog.mode:
 		FileDialog.MODE_SAVE_FILE:
 			var to_save = file_dialog.get_meta("to_save")
+			if to_save is SaveFile:
+				to_save.pre_save()
 			ResourceSaver.save(path, to_save)
 			# ResourceSaver.FLAG_CHANGE_PATH doesn't work for some reason
 			to_save.resource_path = path
@@ -108,7 +110,7 @@ func _on_FileDialog_file_selected(path : String) -> void:
 				asset_browser.update_asset_list()
 		FileDialog.MODE_OPEN_FILE:
 			match path.get_extension():
-				"tres":
+				"res", "tres":
 					Globals.current_file = ResourceLoader.load(path, "", true)
 					load_mesh(Globals.current_file.model_path)
 				"obj":
@@ -317,7 +319,7 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 		FILE_MENU_ITEMS.OPEN:
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
 			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
-			file_dialog.filters = ["*.tres;Material Painter File"]
+			file_dialog.filters = ["*.res,*.tres;Material Painter File"]
 			file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
 			file_dialog.current_file = ""
 			file_dialog.popup_centered()
@@ -400,6 +402,7 @@ func save_file() -> bool:
 		open_save_project_dialog()
 		return true
 	else:
+		Globals.current_file.pre_save()
 		ResourceSaver.save(Globals.current_file.resource_path,
 				Globals.current_file)
 		return false
@@ -407,15 +410,14 @@ func save_file() -> bool:
 
 func start_empty_project() -> void:
 	var new_file := SaveFile.new()
-	Globals.set_current_file(new_file, false)
+	Globals.set_current_file(new_file)
 	Globals.mesh = preload("res://misc/cube.obj")
-	Globals.emit_signal("current_file_changed")
 
 
 func open_save_project_dialog() -> void:
 	file_dialog.mode = FileDialog.MODE_SAVE_FILE
 	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
-	file_dialog.filters = ["*.tres;Material Painter File"]
+	file_dialog.filters = ["*.res,*.tres;Material Painter File"]
 	file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
 	file_dialog.current_file = ""
 	file_dialog.set_meta("to_save", Globals.current_file)
