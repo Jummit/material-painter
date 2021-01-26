@@ -261,9 +261,6 @@ func get_drag_data(_position : Vector2):
 
 
 func can_drop_data(position : Vector2, data) -> bool:
-	if data is Asset and (data.type is TextureAssetType or\
-			data.type is MaterialAssetType):
-		return true
 	var layer_data := _get_layers_of_drop_data(data, position)
 	if not layer_data.empty():
 		var layers : Array = layer_data.layers
@@ -288,52 +285,65 @@ func can_drop_data(position : Vector2, data) -> bool:
 
 func drop_data(position : Vector2, data) -> void:
 	var layer_data := _get_layers_of_drop_data(data, position)
-	if not layer_data.empty():
-		var layers : Array = layer_data.layers
-		undo_redo.create_action("Rearrange Layers")
-		var onto_layer = _get_layer_at_position(position)
-		var onto
-		var onto_position : int
-		match get_drop_section_at_position(position):
-			0:
-				if get_selected_layer_texture(onto_layer):
-					onto = get_selected_layer_texture(onto_layer)
-				else:
+	if layer_data.empty():
+		return
+	var layers : Array = layer_data.layers
+	var onto_layer = _get_layer_at_position(position)
+	var onto
+	var onto_position : int
+	match get_drop_section_at_position(position):
+		0:
+			# dropped onto layer
+			if layer_data.type == LayerType.TEXTURE_LAYER:
+				if onto_layer is TextureFolder:
 					onto = onto_layer
-				onto_position = onto.layers.size()
-			-100:
-				onto = Globals.editing_layer_material
-				onto_position = onto.layers.size()
-			var section:
-				onto = onto_layer.parent
-				onto_position = onto.layers.find(onto_layer)
-				if section == 1:
-					onto_position += 1
-				onto_position = int(clamp(onto_position, 0, onto.layers.size()))
-				layers.invert()
-		
-		for layer in layers:
-			if layer.parent:
-				var layer_position = layer.parent.layers.find(layer)
-				var new_layer = layer.duplicate()
-				
-				undo_redo.add_do_method(Globals.editing_layer_material,
-					"add_layer", new_layer, onto, onto_position)
-				undo_redo.add_do_method(Globals.editing_layer_material,
-					"delete_layer", layer)
-				undo_redo.add_undo_method(Globals.editing_layer_material,
-					"delete_layer", new_layer)
-				undo_redo.add_undo_method(Globals.editing_layer_material,
-					"add_layer", layer, layer.parent, layer_position)
+				else:
+					# it's a material layer or folder
+					onto = get_selected_layer_texture(onto_layer)
 			else:
-				undo_redo.add_do_method(Globals.editing_layer_material,
-					"add_layer", layer, onto)
-				undo_redo.add_undo_method(Globals.editing_layer_material,
-					"delete_layer", layer)
-		
-		undo_redo.add_do_method(self, "_load_layer_material")
-		undo_redo.add_undo_method(self, "_load_layer_material")
-		undo_redo.commit_action()
+				# it's a material folder
+				onto = onto_layer
+			onto_position = onto.layers.size()
+		-100:
+			# dropped onto nothing
+			onto = Globals.editing_layer_material
+			onto_position = onto.layers.size()
+		var section:
+			# dropped above/below layer
+			onto = onto_layer.parent
+			onto_position = onto.layers.find(onto_layer)
+			if section == 1:
+				onto_position += 1
+			onto_position = int(clamp(onto_position, 0, onto.layers.size()))
+			# add the layers in the reverse order to keep the order intact
+			layers.invert()
+	
+	var layer_mat := Globals.editing_layer_material
+	for layer in layers:
+		var new_layer = layer.duplicate()
+		if layer.parent:
+			var old_layer_position : int = layer.parent.layers.find(layer)
+			
+			undo_redo.create_action("Rearrange Layers")
+			# add the new layer
+			undo_redo.add_do_method(layer_mat, "add_layer", new_layer, onto,
+					onto_position)
+			# delete the old layer
+			undo_redo.add_do_method(layer_mat, "delete_layer", layer)
+			# delete the new layer
+			undo_redo.add_undo_method(layer_mat, "delete_layer", new_layer)
+			# restore the old layer
+			undo_redo.add_undo_method(layer_mat, "add_layer", layer,
+					layer.parent, old_layer_position)
+		else:
+			undo_redo.create_action("Drop Layers")
+			undo_redo.add_do_method(layer_mat, "add_layer", new_layer, onto,
+					onto_position)
+			undo_redo.add_undo_method(layer_mat, "delete_layer", new_layer)
+	
+	undo_redo.add_do_method(self, "_load_layer_material")
+	undo_redo.add_undo_method(self, "_load_layer_material")
+	undo_redo.commit_action()
 
 
 func _get_layer_at_position(position : Vector2):
@@ -363,7 +373,9 @@ func _get_layers_of_drop_data(data, position : Vector2) -> Dictionary:
 		layer.path = path
 		layer.name = path.get_file().get_basename()
 		layer_texture.parent = material_layer
-		if get_item_at_position(position) and _get_layer_type(get_item_at_position(position)) == LayerType.MATERIAL_LAYER:
+		if get_selected_layer_texture(_get_layer_at_position(position)) or\
+				_get_layer_at_position(position) is TextureFolder or\
+				_get_layer_at_position(position) is TextureLayer:
 			layers = [layer]
 			layer_type = LayerType.TEXTURE_LAYER
 		else:
