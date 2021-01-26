@@ -32,10 +32,12 @@ class BlendingLayer extends Layer:
 			uniform_names.append("mask")
 			uniform_values.append(mask)
 		else:
+			uniform_types.append("float")
+			uniform_names.append("opacity")
+			uniform_values.append(opacity)
 			code = "return blend{mode}({previous}(uv), {code}, {opacity});".format({
 				mode = blend_mode,
 				code = generation_code,
-				opacity = opacity,
 			})
 
 func blend(layers : Array, result_size : Vector2,

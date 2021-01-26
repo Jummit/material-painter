@@ -38,7 +38,7 @@ func _on_LayerTree_layer_selected(layer) -> void:
 
 
 func _on_property_changed(property, value) -> void:
-	var update_shader = property in ["opacity", "blend_mode"]
+	var update_shader = property == "blend_mode"
 	var layer = editing_layer
 	if layer is JSONTextureLayer:
 		for property_data in layer.data.properties:
