@@ -177,9 +177,11 @@ func _on_MapTypePopupMenu_about_to_show() -> void:
 	var layer : MaterialLayer = map_type_popup_menu.get_meta("layer")
 	for map in layer.maps:
 		map_type_popup_menu.add_item(map)
+		var icon = _get_icon(layer.maps[map])
+		if icon is GDScriptFunctionState:
+			icon = yield(icon, "completed")
 		map_type_popup_menu.set_item_icon(
-			map_type_popup_menu.get_item_count() - 1,
-					_get_icon(layer.maps[map]))
+				map_type_popup_menu.get_item_count() - 1, icon)
 
 
 func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
@@ -429,6 +431,8 @@ func _setup_material_layer_item(layer, parent_item : TreeItem,
 	
 	if layer.mask:
 		var icon = _get_icon(layer.mask)
+		if icon is GDScriptFunctionState:
+			icon = yield(icon, "completed")
 		if icon is Texture:
 			item.add_button(0, icon, Buttons.MASK)
 	
@@ -445,6 +449,8 @@ func _setup_material_layer_item(layer, parent_item : TreeItem,
 		
 		if layer.maps.size() > 0:
 			var icon = _get_icon(_selected_maps[layer])
+			if icon is GDScriptFunctionState:
+				icon = yield(icon, "completed")
 			if icon is Texture:
 				item.add_button(0, icon, Buttons.RESULT)
 		
@@ -475,6 +481,8 @@ func _setup_texture_layer_item(layer, parent_item : TreeItem,
 	
 	if layer is TextureLayer:
 		var icon = _get_icon(layer)
+		if icon is GDScriptFunctionState:
+			icon = yield(icon, "completed")
 		if icon is Texture:
 			item.add_button(0, icon, Buttons.RESULT)
 		item.set_tooltip(1,
@@ -513,7 +521,9 @@ func _select_item(item : TreeItem) -> void:
 
 func _get_icon(layer):
 	if update_icons and not _painting:
-		layer.update_icon()
+		var result = layer.update_icon()
+		if result is GDScriptFunctionState:
+			yield(result, "completed")
 	return layer.icon
 
 
