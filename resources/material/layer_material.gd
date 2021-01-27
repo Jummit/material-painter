@@ -75,6 +75,7 @@ func update(force_all := false) -> void:
 		if result is GDScriptFunctionState:
 			result = yield(result, "completed")
 	
+	var generated_height := false
 	for map in Globals.TEXTURE_MAP_TYPES:
 		var blending_layers := []
 		for layer in layers:
@@ -95,7 +96,8 @@ func update(force_all := false) -> void:
 			blending_layers.append(blending_layer)
 		
 		if blending_layers.empty():
-			results.erase(map)
+			if map != "normal" or not generated_height:
+				results.erase(map)
 			continue
 		
 		var result : Texture = yield(LayerBlendViewportManager.blend(
@@ -106,6 +108,7 @@ func update(force_all := false) -> void:
 			result = yield(NormalMapGenerationViewport.get_normal_map(result),
 					"completed")
 			map = "normal"
+			generated_height = true
 		results[map] = result
 	dirty = false
 	shader_dirty = false
