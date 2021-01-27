@@ -166,6 +166,7 @@ func select(on_texture_layer : BitmapTextureLayer, type : int,
 # perform a paintstroke from `from` to `to` using the `painter`
 func paint(on_texture_layer : BitmapTextureLayer, from : Vector2,
 		to : Vector2) -> void:
+	painter.result_size = Globals.result_size
 	var camera : Camera = viewport.get_camera()
 	var camera_transform = camera.global_transform
 	if camera_transform != cached_camera_transform:
