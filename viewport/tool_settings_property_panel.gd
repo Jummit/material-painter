@@ -39,9 +39,8 @@ func _ready() -> void:
 		Properties.BoolProperty.new("stamp_mode"),
 		TextureAssetProperty.new("texture_mask"),
 	])
-	if ProjectSettings.get_setting("application/config/initialize_painter"):
-		load_values(Brush.new())
-		set_property_value("size", 10.0)
+	load_values(Brush.new())
+	set_property_value("size", 10.0)
 	Globals.connect("tool_changed", self, "_on_Globals_tool_changed")
 
 

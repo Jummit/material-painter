@@ -63,27 +63,26 @@ func _ready():
 			"_on_Globals_current_file_changed")
 	get_tree().connect("files_dropped", self, "_on_SceneTree_files_dropped")
 	
-	if ProjectSettings.get_setting("application/config/load_assets"):
-		_load_tag_metadata()
-		
-		var files := 0
-		for asset_type in ASSET_TYPES.values():
-			files += _get_files_in_folder(asset_type.get_directory()).size()
-		
-		progress_dialog = ProgressDialogManager.create_task("Load Assets", files)
-		
-		for asset_type in ASSET_TYPES.values():
-			var result = _load_assets(asset_type.get_directory(), asset_type)
-			if result is GDScriptFunctionState:
-				result = yield(result, "completed")
-			assets += result
-		assets += yield(_load_assets(EFFECTS, ASSET_TYPES.EFFECT), "completed")
-		assets += yield(_load_assets(HDRS, ASSET_TYPES.HDR), "completed")
-		
-		progress_dialog.complete_task()
-		
-		_save_tag_metadata()
-		
+	_load_tag_metadata()
+	
+	var files := 0
+	for asset_type in ASSET_TYPES.values():
+		files += _get_files_in_folder(asset_type.get_directory()).size()
+	
+	progress_dialog = ProgressDialogManager.create_task("Load Assets", files)
+	
+	for asset_type in ASSET_TYPES.values():
+		var result = _load_assets(asset_type.get_directory(), asset_type)
+		if result is GDScriptFunctionState:
+			result = yield(result, "completed")
+		assets += result
+	assets += yield(_load_assets(EFFECTS, ASSET_TYPES.EFFECT), "completed")
+	assets += yield(_load_assets(HDRS, ASSET_TYPES.HDR), "completed")
+	
+	progress_dialog.complete_task()
+	
+	_save_tag_metadata()
+	
 	_update_tag_list()
 	update_asset_list()
 
@@ -288,23 +287,22 @@ func _add_asset_to_tag(asset : Asset, tag : String) -> void:
 
 
 func _load_local_assets(project_file : String) -> void:
-	if ProjectSettings.get_setting("application/config/load_assets"):
-		var total_files := 0
-		for asset_type in ASSET_TYPES.values():
-			total_files += _get_files_in_folder(
-					asset_type.get_local_directory(project_file)).size()
-		progress_dialog = ProgressDialogManager.create_task("Load Local Assets",
-			total_files)
-		for asset_type in ASSET_TYPES.values():
-			var result = _load_assets(asset_type.get_local_directory(
-					project_file), asset_type)
-			if result is GDScriptFunctionState:
-				result = yield(result, "completed")
-			assets += result
-			for asset in result:
-				_add_asset_to_tag(asset, "local")
-		progress_dialog.complete_task()
-		_save_tag_metadata()
+	var total_files := 0
+	for asset_type in ASSET_TYPES.values():
+		total_files += _get_files_in_folder(
+				asset_type.get_local_directory(project_file)).size()
+	progress_dialog = ProgressDialogManager.create_task("Load Local Assets",
+		total_files)
+	for asset_type in ASSET_TYPES.values():
+		var result = _load_assets(asset_type.get_local_directory(
+				project_file), asset_type)
+		if result is GDScriptFunctionState:
+			result = yield(result, "completed")
+		assets += result
+		for asset in result:
+			_add_asset_to_tag(asset, "local")
+	progress_dialog.complete_task()
+	_save_tag_metadata()
 
 
 func _load_assets(directory : String, asset_type : AssetType) -> Array:

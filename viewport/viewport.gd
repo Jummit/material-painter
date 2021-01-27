@@ -32,8 +32,7 @@ onready var fps_label : Label = $FPSLabel
 onready var half_resolution_button : CheckButton = $HalfResolutionButton
 
 func _ready() -> void:
-	if ProjectSettings.get_setting("application/config/initialize_painter"):
-		painter.mesh_instance = model
+	painter.mesh_instance = model
 	Globals.connect("mesh_changed", self, "_on_Globals_mesh_changed")
 	Globals.connect("tool_changed", self, "_on_Globals_tool_changed")
 	navigation_camera.set_process_input(false)
