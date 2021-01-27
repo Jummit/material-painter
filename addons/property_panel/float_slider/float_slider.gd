@@ -5,9 +5,14 @@ export(float, 0, 3) var min_value : float
 var max_value : float = 10
 var step : float
 
+# if the user is dragging the text field
 var _dragging := false
-var _sensitivity := 1000.0
+var _dragged_position : Vector2
+# if the user has grabbed the slider grabber
 var _grabbed := false
+var _sensitivity := 1000.0
+var _clicked := false
+var _text_editing := false
 
 signal changed
 
@@ -20,34 +25,35 @@ func _input(event) -> void:
 		update()
 	if event is InputEventMouseButton:
 		var in_rect := get_global_rect().has_point(event.position)
-		if event.pressed:
-			if mouse_near_grabber():
-				_grabbed = true
-			elif in_rect:
-				_dragging = true
-			release_focus()
-			mouse_filter = Control.MOUSE_FILTER_IGNORE
-		elif in_rect:
-			mouse_filter = Control.MOUSE_FILTER_STOP
-			grab_focus()
-		else:
-			_grabbed = false
-			if _dragging:
+		if not event.pressed:
+			if _grabbed:
+				_grabbed = false
+			elif _dragging:
 				_dragging = false
 				Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-				yield(get_tree(), "idle_frame")
-				warp_mouse(rect_size / 2)
+				warp_mouse(_dragged_position)
+			elif in_rect and _clicked:
+				mouse_filter = Control.MOUSE_FILTER_STOP
+				grab_focus()
+		_clicked = event.pressed and in_rect
 	if event is InputEventMouseMotion and event.button_mask == BUTTON_LEFT:
+		var in_rect := get_global_rect().has_point(event.position)
 		if _grabbed:
 			value = correct(range_lerp(event.position.x, rect_global_position.x, rect_global_position.x + rect_size.x, min_value, max_value))
 			text = str(value)
 			emit_signal("changed")
 		elif _dragging:
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+			release_focus()
 			value += event.relative.x * ((max_value - min_value) / _sensitivity) * get_change_modifier()
 			value = correct(value)
 			text = str(value)
 			emit_signal("changed")
+		elif mouse_near_grabber() and _clicked:
+			_grabbed = true
+		elif in_rect and _clicked:
+			_dragged_position = event.position - rect_global_position
+			_dragging = true
 	update()
 
 
@@ -61,8 +67,8 @@ func _gui_input(event):
 func _draw():
 	draw_rect(Rect2(Vector2(0, rect_size.y), Vector2(rect_size.x, 2)),
 			Color.dimgray)
-	if _dragging or _grabbed or Rect2(Vector2.ZERO, rect_size + Vector2.DOWN * 10).has_point(
-				get_local_mouse_position()):
+	if not _text_editing and (_dragging or _grabbed or Rect2(Vector2.ZERO, rect_size + Vector2.DOWN * 10).has_point(
+				get_local_mouse_position())):
 		var texture := preload("grabber.svg")
 		if mouse_near_grabber() or _grabbed:
 			texture = preload("selected_grabber.svg")
@@ -88,6 +94,7 @@ func _on_text_entered(new_text : String) -> void:
 func _on_focus_exited():
 	text = str(value)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_text_editing = false
 
 
 func get_change_modifier() -> float:
@@ -105,3 +112,8 @@ func get_grabber_pos() -> Vector2:
 
 func mouse_near_grabber() -> bool:
 	return get_local_mouse_position().distance_to(get_grabber_pos()) < 10
+
+
+func _on_focus_entered() -> void:
+	print("focus")
+	_text_editing = true
