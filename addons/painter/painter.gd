@@ -42,6 +42,7 @@ func _ready() -> void:
 
 
 func set_initial_texture(texture : Texture) -> void:
+	texture.get_data().save_png("user://init%s.png" % randf())
 	black_background.show()
 	initial_texture_rect.texture = texture
 	paint_viewport.render_target_clear_mode = Viewport.CLEAR_MODE_ONLY_NEXT_FRAME
@@ -50,7 +51,7 @@ func set_initial_texture(texture : Texture) -> void:
 	black_background.hide()
 	initial_texture_rect.texture = null
 
-
+	
 func set_mesh_instance(to : MeshInstance) -> void:
 	mesh_instance = to
 	texture_to_view_mesh_instance.mesh = mesh_instance.mesh
@@ -89,7 +90,7 @@ func update_view(viewport : Viewport) -> void:
 	texture_to_view_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 	
 	if brush:
-		paint_material.set_shader_param("brush_size", brush.size / viewport.size)
+		paint_material.set_shader_param("brush_size", Vector2.ONE * brush.size / viewport.size)
 	
 	yield(VisualServer, "frame_post_draw")
 
@@ -105,7 +106,7 @@ func set_brush(to : Brush) -> void:
 	if brush.texture_mask:
 		texture_mask = _load_image_texture(brush.texture_mask)
 	
-	paint_material.set_shader_param("brush_size", brush.size / _viewport_size)
+	paint_material.set_shader_param("brush_size", Vector2.ONE * brush.size / _viewport_size)
 	paint_material.set_shader_param("brush_strength", brush.strength)
 	paint_material.set_shader_param("brush_texture", brush_texture)
 	paint_material.set_shader_param("brush_color", brush.color)

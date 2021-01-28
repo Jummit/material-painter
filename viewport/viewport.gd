@@ -103,8 +103,8 @@ func _load_bitmap_layer() -> void:
 
 
 func _on_ToolSettingsPropertyPanel_brush_changed(brush : Brush) -> void:
-	if not is_inside_tree():
-		yield(self, "tree_entered")
+	if not painter:
+		yield(self, "ready")
 	painter.brush = brush
 
 

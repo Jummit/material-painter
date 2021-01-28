@@ -157,9 +157,11 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 			undo_redo.add_do_property(layer, "visible", not layer.visible)
 			undo_redo.add_do_method(parent, "mark_dirty", true)
 			undo_redo.add_do_method(Globals.editing_layer_material, "update")
+			undo_redo.add_do_method(self, "_load_layer_material")
 			undo_redo.add_undo_property(layer, "visible", layer.visible)
 			undo_redo.add_undo_method(parent, "mark_dirty", true)
 			undo_redo.add_undo_method(Globals.editing_layer_material, "update")
+			undo_redo.add_undo_method(self, "_load_layer_material")
 			undo_redo.commit_action()
 		Buttons.ICON:
 			if layer in _layer_states and\

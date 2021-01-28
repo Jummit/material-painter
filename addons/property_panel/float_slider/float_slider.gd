@@ -1,6 +1,6 @@
 extends LineEdit
 
-export(float, 0, 3) var value : float
+export(float, 0, 3) var value : float setget set_value
 export(float, 0, 3) var min_value : float
 var max_value : float = 10
 var step : float
@@ -15,10 +15,6 @@ var _clicked := false
 var _text_editing := false
 
 signal changed
-
-func _ready():
-	text = str(value)
-
 
 func _input(event) -> void:
 	if event is InputEventMouseMotion:
@@ -95,6 +91,11 @@ func _on_focus_exited():
 	text = str(value)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_text_editing = false
+
+
+func set_value(to):
+	value = to
+	text = str(value)
 
 
 func get_change_modifier() -> float:

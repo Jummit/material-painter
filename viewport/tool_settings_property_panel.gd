@@ -30,7 +30,7 @@ class TextureAssetProperty extends Properties.FilePathProperty:
 
 func _ready() -> void:
 	set_properties([
-		Properties.FloatProperty.new("size", 2, 200),
+		Properties.FloatProperty.new("size", 2, 100),
 		Properties.FloatProperty.new("strength", 0.0, 1.0),
 		Properties.ColorProperty.new("color"),
 		TextureAssetProperty.new("texture"),
@@ -40,8 +40,8 @@ func _ready() -> void:
 		TextureAssetProperty.new("texture_mask"),
 	])
 	load_values(Brush.new())
-	set_property_value("size", 10.0)
 	Globals.connect("tool_changed", self, "_on_Globals_tool_changed")
+	emit_signal("brush_changed", Brush.new())
 
 
 func _update_visibility() -> void:
@@ -51,7 +51,6 @@ func _update_visibility() -> void:
 func _on_property_changed(_property : String, _value) -> void:
 	var new_brush := Brush.new()
 	store_values(new_brush)
-	new_brush.size = Vector2.ONE * get_property_value("size")
 	emit_signal("brush_changed", new_brush)
 
 

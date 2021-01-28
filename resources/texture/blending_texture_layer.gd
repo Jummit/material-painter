@@ -14,7 +14,7 @@ func _init(_name, _code).(_name):
 
 func get_properties() -> Array:
 	return [
-			Properties.FloatProperty.new("opacity", 0.0, 1.0),
+			Properties.FloatProperty.new("opacity", 0.0, 1.0, 1.0),
 			Properties.EnumProperty.new("blend_mode", Globals.BLEND_MODES),
 			]
 
