@@ -148,18 +148,13 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 				_layer_states[layer] = LayerState.MASK_EXPANDED
 			_load_layer_material()
 		Buttons.VISIBILITY:
-			var parent
-			if layer is MaterialLayer or layer is MaterialFolder:
-				parent = layer.get_layer_material_in()
-			elif layer is TextureLayer or layer is TextureFolder:
-				parent = layer.get_layer_texture_in()
 			undo_redo.create_action("Toggle Layer Visibility")
 			undo_redo.add_do_property(layer, "visible", not layer.visible)
-			undo_redo.add_do_method(parent, "mark_dirty", true)
+			undo_redo.add_do_method(layer.parent, "mark_dirty", true)
 			undo_redo.add_do_method(Globals.editing_layer_material, "update")
 			undo_redo.add_do_method(self, "_load_layer_material")
 			undo_redo.add_undo_property(layer, "visible", layer.visible)
-			undo_redo.add_undo_method(parent, "mark_dirty", true)
+			undo_redo.add_undo_method(layer.parent, "mark_dirty", true)
 			undo_redo.add_undo_method(Globals.editing_layer_material, "update")
 			undo_redo.add_undo_method(self, "_load_layer_material")
 			undo_redo.commit_action()
@@ -317,12 +312,14 @@ func drop_data(position : Vector2, data) -> void:
 			layers.invert()
 	
 	var layer_mat := Globals.editing_layer_material
+	if layers[0].parent:
+		undo_redo.create_action("Rearrange Layers")
+	else:
+		undo_redo.create_action("Drop Layers")
 	for layer in layers:
 		var new_layer = layer.duplicate()
 		if layer.parent:
 			var old_layer_position : int = layer.parent.layers.find(layer)
-			
-			undo_redo.create_action("Rearrange Layers")
 			# add the new layer
 			undo_redo.add_do_method(layer_mat, "add_layer", new_layer, onto,
 					onto_position)
@@ -334,7 +331,6 @@ func drop_data(position : Vector2, data) -> void:
 			undo_redo.add_undo_method(layer_mat, "add_layer", layer,
 					layer.parent, old_layer_position)
 		else:
-			undo_redo.create_action("Drop Layers")
 			undo_redo.add_do_method(layer_mat, "add_layer", new_layer, onto,
 					onto_position)
 			undo_redo.add_undo_method(layer_mat, "delete_layer", new_layer)

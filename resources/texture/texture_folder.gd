@@ -47,6 +47,8 @@ func update(force_all := false) -> void:
 		return
 	var blending_layers := []
 	for layer in layers:
+		if not layer.visible:
+			continue
 		var shader_layer = layer._get_as_shader_layer()
 		if shader_layer is GDScriptFunctionState:
 			shader_layer = yield(shader_layer, "completed")
