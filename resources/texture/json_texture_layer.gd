@@ -24,6 +24,7 @@ const SHADER_TYPES := {
 }
 
 const Properties = preload("res://addons/property_panel/properties.gd")
+const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 
 func _init(_file := "").("JSON") -> void:
 	if not _file:
@@ -44,9 +45,13 @@ func duplicate(_deep := false) -> Resource:
 
 func get_properties() -> Array:
 	load_data()
-	if not "properties" in data:
-		return []
 	var list := []
+	if "blends" in data:
+		list.append(Properties.FloatProperty.new("opacity", 0.0, 1.0, 1.0))
+		list.append(Properties.EnumProperty.new("blend_mode",
+				Globals.BLEND_MODES))
+	if not "properties" in data:
+		return list
 	for property in data.properties:
 		match property.type:
 			"float":
@@ -67,8 +72,13 @@ func get_properties() -> Array:
 
 func _get_as_shader_layer() -> Layer:
 	load_data()
-	var layer := Layer.new()
-	layer.code = data.shader
+	var layer : Layer
+	if "blends" in data:
+		layer = BlendingLayer.new(data.shader, settings.blend_mode,
+				settings.opacity)
+	else:
+		layer = Layer.new()
+		layer.code = data.shader
 	if "properties" in data:
 		for property in data.properties:
 			if "shader_param" in property and not property.shader_param:
@@ -91,6 +101,9 @@ func load_data() -> void:
 	read_file.close()
 	type_name = data.name
 	name = type_name
+	if "blends" in data:
+		settings.blend_mode = "normal"
+		settings.opacity = 1.0
 	if "properties" in data:
 		for property in data.properties:
 			if property.name in settings:

@@ -21,12 +21,12 @@ class Layer:
 	var uniform_values : Array
 
 class BlendingLayer extends Layer:
-	func _init(generation_code : String, blend_mode := "normal",
-			opacity := 1.0, mask : Texture = null) -> void:
+	func _init(shader_code : String, blend_mode := "normal", opacity := 1.0,
+			mask : Texture = null) -> void:
 		if mask:
 			code = "return blend{mode}({previous}(uv), {code}, texture({mask}, uv).r);".format({
 				mode = blend_mode,
-				code = generation_code,
+				code = shader_code,
 			})
 			uniform_types.append("sampler2D")
 			uniform_names.append("mask")
@@ -37,7 +37,7 @@ class BlendingLayer extends Layer:
 			uniform_values.append(opacity)
 			code = "return blend{mode}({previous}(uv), {code}, {opacity});".format({
 				mode = blend_mode,
-				code = generation_code,
+				code = shader_code,
 			})
 
 func blend(layers : Array, result_size : Vector2,

@@ -10,5 +10,5 @@
 	],
 	"blends": true,
 	"in_context_menu": true,
-	"shader": "return vec4({value}, {value}, {value}, 1.0);"
+	"shader": "vec4({value}, {value}, {value}, 1.0)"
 }
