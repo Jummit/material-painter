@@ -176,8 +176,8 @@ func _on_AddLayerPopupMenu_layer_selected(layer : Resource) -> void:
 	undo_redo.create_action("Add Texture Layer")
 	var new_layer = layer.duplicate()
 	var onto
-	var selected_layer = layer_tree.layer_popup_menu.layer
-	if selected_layer is MaterialLayer:
+	var selected_layer = layer_tree.get_selected_layer()
+	if selected_layer is MaterialLayer or selected_layer is MaterialFolder:
 		onto = layer_tree.get_selected_layer_texture(selected_layer)
 	elif selected_layer is TextureFolder:
 		onto = selected_layer

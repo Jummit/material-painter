@@ -43,20 +43,22 @@ func _init() -> void:
 		layer.parent = self
 
 
-func add_layer(layer, onto, position := -1) -> void:
+func add_layer(layer, onto, position := -1, update := true) -> void:
 	layer.parent = onto
 	if position == -1:
 		onto.layers.append(layer)
 	else:
 		onto.layers.insert(position, layer)
 	layer.mark_dirty(true)
-	update()
+	if update:
+		update()
 
 
-func delete_layer(layer) -> void:
+func delete_layer(layer, update := true) -> void:
 	layer.parent.layers.erase(layer)
 	layer.parent.mark_dirty(true)
-	update()
+	if update:
+		update()
 
 
 func mark_dirty(shader_too := false) -> void:

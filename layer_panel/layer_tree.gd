@@ -322,19 +322,23 @@ func drop_data(position : Vector2, data) -> void:
 			var old_layer_position : int = layer.parent.layers.find(layer)
 			# add the new layer
 			undo_redo.add_do_method(layer_mat, "add_layer", new_layer, onto,
-					onto_position)
+					onto_position, false)
 			# delete the old layer
-			undo_redo.add_do_method(layer_mat, "delete_layer", layer)
+			undo_redo.add_do_method(layer_mat, "delete_layer", layer, false)
 			# delete the new layer
-			undo_redo.add_undo_method(layer_mat, "delete_layer", new_layer)
+			undo_redo.add_undo_method(layer_mat, "delete_layer", new_layer,
+					false)
 			# restore the old layer
 			undo_redo.add_undo_method(layer_mat, "add_layer", layer,
-					layer.parent, old_layer_position)
+					layer.parent, old_layer_position, false)
 		else:
 			undo_redo.add_do_method(layer_mat, "add_layer", new_layer, onto,
-					onto_position)
-			undo_redo.add_undo_method(layer_mat, "delete_layer", new_layer)
+					onto_position, false)
+			undo_redo.add_undo_method(layer_mat, "delete_layer", new_layer,
+					false)
 	
+	undo_redo.add_do_method(layer_mat, "update")
+	undo_redo.add_undo_method(layer_mat, "update")
 	undo_redo.add_do_method(self, "_load_layer_material")
 	undo_redo.add_undo_method(self, "_load_layer_material")
 	undo_redo.commit_action()
@@ -491,6 +495,8 @@ func _setup_texture_layer_item(layer, parent_item : TreeItem,
 		var icon = _get_icon(layer)
 		if icon is GDScriptFunctionState:
 			icon = yield(icon, "completed")
+		if not is_instance_valid(item):
+			return
 		if icon is Texture:
 			item.add_button(0, icon, Buttons.RESULT)
 		item.set_tooltip(1,
