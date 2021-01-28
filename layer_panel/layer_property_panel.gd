@@ -48,12 +48,9 @@ func _on_property_changed(property, value) -> void:
 				break
 	undo_redo.create_action("Set Layer Property")
 	undo_redo.add_do_method(self, "set_value_on_layer", layer, property, value)
-	undo_redo.add_do_method(self, "set_property_value", property, value)
 	undo_redo.add_do_method(layer, "mark_dirty", update_shader)
 	undo_redo.add_do_method(Globals.editing_layer_material, "update")
 	undo_redo.add_undo_method(self, "set_value_on_layer", layer, property,
-			layer.get(property))
-	undo_redo.add_undo_method(self, "set_property_value", property,
 			layer.get(property))
 	undo_redo.add_undo_method(layer, "mark_dirty", update_shader)
 	undo_redo.add_undo_method(Globals.editing_layer_material, "update")

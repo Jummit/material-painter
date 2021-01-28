@@ -459,7 +459,7 @@ func _setup_material_layer_item(layer, parent_item : TreeItem,
 		if not layer in _selected_maps and layer.maps.size() > 0:
 			_selected_maps[layer] = layer.maps.values().front()
 		
-		if layer.maps.size() > 0:
+		if layer.maps.size() > 0 and _selected_maps[layer]:
 			var icon = _get_icon(_selected_maps[layer])
 			if icon is GDScriptFunctionState:
 				icon = yield(icon, "completed")
