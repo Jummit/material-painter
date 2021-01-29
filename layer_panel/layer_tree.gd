@@ -308,8 +308,9 @@ func drop_data(position : Vector2, data) -> void:
 			if section == 1:
 				onto_position += 1
 			onto_position = int(clamp(onto_position, 0, onto.layers.size()))
-			# add the layers in the reverse order to keep the order intact
-			layers.invert()
+	
+	# add the layers in the reverse order to keep the order intact
+	layers.invert()
 	
 	var layer_mat := Globals.editing_layer_material
 	if layers[0].parent:
