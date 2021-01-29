@@ -27,7 +27,7 @@ var assets := []
 var already_tagged_assets := []
 var tagged_assets := {}
 var tag_metadata := {}
-var sidebar_tags := ["all", "texture", "material", "brush"]
+var sidebar_tags := ["all", "texture", "material", "brush", "effect"]
 var current_tag := "all"
 var progress_dialog
 
