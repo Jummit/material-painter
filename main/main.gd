@@ -102,8 +102,6 @@ func _on_FileDialog_file_selected(path : String) -> void:
 	match file_dialog.mode:
 		FileDialog.MODE_SAVE_FILE:
 			var to_save = file_dialog.get_meta("to_save")
-			if to_save is SaveFile:
-				to_save.pre_save()
 			ResourceSaver.save(path, to_save)
 			# ResourceSaver.FLAG_CHANGE_PATH doesn't work for some reason
 			to_save.resource_path = path
@@ -114,6 +112,7 @@ func _on_FileDialog_file_selected(path : String) -> void:
 			match path.get_extension():
 				"res", "tres":
 					Globals.current_file = ResourceLoader.load(path, "", true)
+					Globals.current_file.replace_paths("local", Globals.current_file.resource_path.get_base_dir())
 					load_mesh(Globals.current_file.model_path)
 				"obj":
 					load_mesh(path)
@@ -297,6 +296,11 @@ func _on_QuitConfirmationDialog_custom_action(_action : String) -> void:
 func _on_QuitConfirmationDialog_confirmed() -> void:
 	if save_file():
 		yield(file_dialog, "confirmed")
+	Globals.current_file.save_bitmap_layers()
+	Globals.current_file.replace_paths(
+			Globals.current_file.resource_path.get_base_dir(), "local")
+	# todo: don't save twice
+	ResourceSaver.save(Globals.current_file.resource_path, Globals.current_file)
 	get_tree().quit()
 
 
@@ -398,21 +402,21 @@ func load_mesh(path : String) -> void:
 				Globals.mesh = mesh
 				return
 
-
+# returns if the file wasn't saved and the user needs to specify where to
+# save it
 func save_file() -> bool:
-	if not Globals.current_file.resource_path:
-		open_save_project_dialog()
-		return true
-	else:
-		Globals.current_file.pre_save()
+	if Globals.current_file.resource_path:
 		ResourceSaver.save(Globals.current_file.resource_path,
 				Globals.current_file)
 		return false
+	else:
+		open_save_project_dialog()
+		return true
 
 
 func start_empty_project() -> void:
 	var new_file := SaveFile.new()
-	Globals.set_current_file(new_file)
+	Globals.current_file = new_file
 	Globals.mesh = preload("res://misc/cube.obj")
 
 
