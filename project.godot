@@ -13,6 +13,8 @@ config_version=4
 config/name="Material Painter"
 config/description="A Substance Painter alternative made in the Godot Engine"
 run/main_scene="res://main/main.tscn"
+config/use_custom_user_dir=true
+config/custom_user_dir_name="material_painter"
 run/low_processor_mode=true
 config/icon="res://icon.svg"
 
