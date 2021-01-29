@@ -310,17 +310,17 @@ func _load_assets(directory : String, asset_type : AssetType) -> Array:
 	var dir := Directory.new()
 	dir.make_dir_recursive(directory)
 	var files := _get_files_in_folder(directory)
+	progress_dialog.set_action(asset_type.name)
+	yield(get_tree(), "idle_frame")
 	for file_num in files.size():
 		var file := files[file_num]
 		if file.get_extension() != asset_type.extension:
 			continue
-		progress_dialog.set_action(file)
 		var asset = load_asset(directory.plus_file(file), asset_type)
 		if asset is GDScriptFunctionState:
 			asset = yield(asset, "completed")
 		if asset:
 			new_assets.append(asset)
-	yield(get_tree(), "idle_frame")
 	return new_assets
 
 
