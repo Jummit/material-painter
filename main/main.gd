@@ -193,7 +193,7 @@ func _on_AddLayerPopupMenu_layer_selected(layer : Resource) -> void:
 
 
 func _on_MaterialLayerPopupMenu_layer_saved() -> void:
-	var material_layer = layer_tree.get_selected_layer().duplicate(true)
+	var material_layer = layer_tree.get_selected_layer().duplicate()
 	for layer_texture in material_layer.get_layer_textures():
 		for texture_layer in layer_texture.get_flat_layers():
 			if texture_layer is FileTextureLayer:
