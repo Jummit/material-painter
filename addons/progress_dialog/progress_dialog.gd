@@ -1,4 +1,4 @@
-extends Panel
+extends PanelContainer
 
 """
 A panel which shows the progress of a task

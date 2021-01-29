@@ -4,6 +4,8 @@ extends CanvasLayer
 A utility for showing multiple `ProgressDialogs` at the same time
 """
 
+var theme : Theme setget set_theme
+
 onready var dialog_container : VBoxContainer = $CenterContainer/VBoxContainer
 
 const ProgressDialog = preload("res://addons/progress_dialog/progress_dialog.gd")
@@ -15,3 +17,7 @@ func create_task(task_name : String, action_count : int) -> ProgressDialog:
 	progress_dialog.setup(task_name, action_count)
 	dialog_container.queue_sort()
 	return progress_dialog
+
+func set_theme(to) -> void:
+	theme = to
+	dialog_container.theme = to

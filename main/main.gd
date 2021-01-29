@@ -70,6 +70,8 @@ onready var layout_name_edit : LineEdit = $SaveLayoutDialog/LayoutNameEdit
 onready var root : Control = $VBoxContainer/Control
 
 func _ready() -> void:
+	ProgressDialogManager.theme = theme
+	
 	undo_redo.connect("version_changed", self, "_on_UndoRedo_version_changed")
 	var popup := file_menu_button.get_popup()
 	popup.connect("id_pressed", self, "_on_FileMenu_id_pressed")
