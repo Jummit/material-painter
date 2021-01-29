@@ -33,7 +33,7 @@ func get_preview_for_material(material : Resource,
 				if texture_layer is FileTextureLayer:
 					texture_layer.cached_path = ""
 					if texture_layer.path.begins_with("local"):
-						texture_layer.path = "res://preview_renderer" +\
+						texture_layer.path = "res://asset_browser/preview_renderer" +\
 							texture_layer.path.trim_prefix("local")
 	var result = material.update(true)
 	if result is GDScriptFunctionState:

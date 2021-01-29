@@ -51,6 +51,7 @@ const ResourceUtils = preload("res://utils/resource_utils.gd")
 const LayoutUtils = preload("res://addons/customizable_ui/layout_utils.gd")
 const ObjParser = preload("res://addons/obj_parser/obj_parser.gd")
 const JSONTextureLayer = preload("res://resources/texture/json_texture_layer.gd")
+const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/FileMenuButton
 onready var about_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/AboutMenuButton
@@ -192,7 +193,13 @@ func _on_AddLayerPopupMenu_layer_selected(layer : Resource) -> void:
 
 
 func _on_MaterialLayerPopupMenu_layer_saved() -> void:
-	var material_layer = layer_tree.get_selected_layer()
+	var material_layer = layer_tree.get_selected_layer().duplicate(true)
+	for layer_texture in material_layer.get_layer_textures():
+		for texture_layer in layer_texture.get_flat_layers():
+			if texture_layer is FileTextureLayer:
+				texture_layer.path = texture_layer.path.replace(
+						Globals.current_file.resource_path.get_base_dir(),
+						"local")
 	var save_path := MATERIALS_FOLDER.plus_file(material_layer.name) + ".tres"
 	ResourceSaver.save(save_path, material_layer)
 	asset_browser.load_asset(save_path, asset_browser.ASSET_TYPES.MATERIAL)
