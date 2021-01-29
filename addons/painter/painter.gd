@@ -42,7 +42,6 @@ func _ready() -> void:
 
 
 func set_initial_texture(texture : Texture) -> void:
-	texture.get_data().save_png("user://init%s.png" % randf())
 	black_background.show()
 	initial_texture_rect.texture = texture
 	paint_viewport.render_target_clear_mode = Viewport.CLEAR_MODE_ONLY_NEXT_FRAME
