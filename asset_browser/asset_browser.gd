@@ -65,11 +65,7 @@ func _ready():
 	
 	_load_tag_metadata()
 	
-	var files := 0
-	for asset_type in ASSET_TYPES.values():
-		files += _get_files_in_folder(asset_type.get_directory()).size()
-	
-	progress_dialog = ProgressDialogManager.create_task("Load Assets", files)
+	progress_dialog = ProgressDialogManager.create_task("Load Assets", ASSET_TYPES.size())
 	
 	for asset_type in ASSET_TYPES.values():
 		var result = _load_assets(asset_type.get_directory(), asset_type)
