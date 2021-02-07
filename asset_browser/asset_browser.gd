@@ -51,6 +51,7 @@ onready var delete_asset_confirmation_dialog : ConfirmationDialog = $"../../../.
 onready var asset_popup_menu : PopupMenu = $"VBoxContainer2/AssetList/AssetPopupMenu"
 onready var tag_modification_dialog : ConfirmationDialog = $"../../../../../../../TagModificationDialog"
 onready var tag_edit : LineEdit = $"../../../../../../../TagModificationDialog/TagEdit"
+onready var preview_renderer : Node = $PreviewRenderer
 
 const Asset = preload("res://asset_browser/asset_classes.gd").Asset
 const AssetType = preload("res://asset_browser/asset_classes.gd").AssetType
@@ -102,7 +103,7 @@ func load_asset(path : String, asset_type : AssetType) -> Asset:
 	for tag in tag_metadata:
 		if asset.file in tag_metadata[tag]:
 			_add_asset_to_tag(asset, tag)
-	var result = asset_type.get_preview(asset)
+	var result = asset_type.get_preview(preview_renderer, asset)
 	if result is GDScriptFunctionState:
 		result = yield(result, "completed")
 	asset.preview = result

@@ -24,7 +24,6 @@ Globals="*res://main/globals.gd"
 LayerBlendViewportManager="*res://addons/layer_blending_viewport/layer_blend_viewport_manager.gd"
 NormalMapGenerationViewport="*res://addons/normal_map_generation_viewport/normal_map_generation_viewport.tscn"
 TriplanarTextureGenerator="*res://addons/triplanar_texture_generator/triplanar_texture_generator.tscn"
-PreviewRenderer="*res://asset_browser/preview_renderer/preview_renderer.tscn"
 ProgressDialogManager="*res://addons/progress_dialog/progress_dialog_manager.tscn"
 Settings="*res://main/settings.gd"
 

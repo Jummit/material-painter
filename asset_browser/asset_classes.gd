@@ -28,7 +28,7 @@ class AssetType:
 		tag = _tag
 		extension = _extension
 	
-	func get_preview(asset : Asset) -> Texture:
+	func get_preview(preview_renderer : Node, asset : Asset) -> Texture:
 		var cached_thumbnail_path := asset.get_cached_thumbnail_path()
 		var custom_thumbnail_path := asset.get_custom_thumbnail_path()
 		var dir := Directory.new()
@@ -45,14 +45,14 @@ class AssetType:
 			preview = ImageTexture.new()
 			preview.create_from_image(preview_image)
 		else:
-			preview = _generate_preview(asset)
+			preview = _generate_preview(preview_renderer, asset)
 			if preview is GDScriptFunctionState:
 				preview = yield(preview, "completed")
 			if preview and preview.get_data():
 				preview.get_data().save_png(cached_thumbnail_path)
 		return preview
 	
-	func _generate_preview(_asset : Asset) -> Texture:
+	func _generate_preview(_preview_renderer : Node, _asset : Asset) -> Texture:
 		return null
 	
 	func _load(asset : Asset):
@@ -73,7 +73,7 @@ class TextureAssetType extends AssetType:
 	func _init().("Textures", "texture", "png") -> void:
 		pass
 	
-	func _generate_preview(asset) -> Texture:
+	func _generate_preview(_preview_renderer : Node, asset) -> Texture:
 		var image := Image.new()
 		image.load(asset.file)
 		image.resize(128, 128)
@@ -93,10 +93,10 @@ class MaterialAssetType extends AssetType:
 	func _init().("Materials", "material", "tres") -> void:
 		pass
 	
-	func _generate_preview(asset : Asset) -> Texture:
+	func _generate_preview(preview_renderer : Node, asset : Asset) -> Texture:
 		var material_to_render := LayerMaterial.new()
 		material_to_render.layers.append(asset.data)
-		return yield(PreviewRenderer.get_preview_for_material(material_to_render,
+		return yield(preview_renderer.get_preview_for_material(material_to_render,
 				Vector2(128, 128)), "completed")
 
 
@@ -104,8 +104,8 @@ class BrushAssetType extends AssetType:
 	func _init().("Brushes", "brush", "tres") -> void:
 		pass
 	
-	func _generate_preview(asset : Asset) -> Texture:
-		return yield(PreviewRenderer.get_preview_for_brush(asset.data,
+	func _generate_preview(preview_renderer : Node, asset : Asset) -> Texture:
+		return yield(preview_renderer.get_preview_for_brush(asset.data,
 				Vector2(128, 128)), "completed")
 
 
@@ -117,7 +117,7 @@ class EffectAssetType extends AssetType:
 		var layer := JsonTextureLayer.new(asset.file)
 		return layer
 	
-	func _generate_preview(_asset : Asset) -> Texture:
+	func _generate_preview(_preview_renderer : Node, _asset : Asset) -> Texture:
 		return preload("res://icon.svg")
 
 
@@ -125,8 +125,8 @@ class HDRAssetType extends AssetType:
 	func _init().("HDRIs", "hdris", "hdr") -> void:
 		pass
 	
-	func _generate_preview(asset) -> Texture:
-		return yield(PreviewRenderer.get_preview_for_hdr(asset.data,
+	func _generate_preview(preview_renderer : Node, asset) -> Texture:
+		return yield(preview_renderer.get_preview_for_hdr(asset.data,
 				Vector2(128, 128)), "completed")
 	
 	func _load(asset : Asset):
