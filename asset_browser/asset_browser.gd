@@ -411,3 +411,9 @@ func _on_layout_changed() -> void:
 	if get_parent().has_meta("layout"):
 		_current_tag = get_parent().get_meta("layout")
 		update_asset_list()
+
+
+func _on_Main_current_file_changed(to : ProjectFile) -> void:
+	project = to
+	if project.resource_path:
+		_load_local_assets(project.resource_path)

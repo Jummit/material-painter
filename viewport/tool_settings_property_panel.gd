@@ -6,6 +6,7 @@ The `PropertyPanel` that exposes the settings of the current brush
 Only visible when the paint tool is selected.
 """
 
+var selected_tool : int = Constants.Tools.PAINT
 var painting := false
 
 signal brush_changed(brush)
@@ -40,11 +41,11 @@ func _ready() -> void:
 		TextureAssetProperty.new("texture_mask"),
 	])
 	load_values(Brush.new())
-	emit_signal("brush_changed", Brush.new())
 
 
 func _update_visibility() -> void:
-	get_parent().get_parent().visible = painting and Constants.selected_tool == Constants.Tools.PAINT
+	get_parent().get_parent().visible = painting and\
+			selected_tool == Constants.Tools.PAINT
 
 
 func _on_property_changed(_property : String, _value) -> void:
@@ -64,4 +65,9 @@ func _on_LayerTree_layer_selected(layer) -> void:
 
 
 func _on_layout_changed() -> void:
+	_update_visibility()
+
+
+func _on_Main_selected_tool_changed(to : int) -> void:
+	selected_tool = to
 	_update_visibility()

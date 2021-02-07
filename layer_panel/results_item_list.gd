@@ -11,10 +11,6 @@ const LayerMaterial = preload("res://resources/material/layer_material.gd")
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 
-func _ready():
-	Constants.connect("current_layer_material_changed", self, "_on_Constants_current_layer_material_changed")
-
-
 func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.control:
 		var size = fixed_icon_size.x
@@ -31,11 +27,15 @@ func _on_item_activated(index : int) -> void:
 	emit_signal("map_selected", get_item_metadata(index))
 
 
-func _on_Constants_current_layer_material_changed() -> void:
-	if not Constants.current_layer_material.is_connected("results_changed", self,
-			"_on_LayerMaterial_results_changed"):
-		Constants.current_layer_material.connect("results_changed", self,
-				"_on_LayerMaterial_results_changed")
+func _on_layout_changed() -> void:
+	if get_parent().has_meta("layout"):
+		fixed_icon_size = Vector2.ONE * get_parent().get_meta("layout")
+
+
+func _on_Main_current_layer_material_changed(to : LayerMaterial) -> void:
+	if to.is_connected("changed", self, "_on_LayerMaterial_results_changed"):
+		return
+	to.connect("changed", self, "_on_LayerMaterial_results_changed")
 
 
 func _on_LayerMaterial_results_changed() -> void:
@@ -43,8 +43,3 @@ func _on_LayerMaterial_results_changed() -> void:
 	for map in Constants.current_layer_material.results:
 		add_item(map, Constants.current_layer_material.results[map])
 		set_item_metadata(get_item_count() - 1, map)
-
-
-func _on_layout_changed() -> void:
-	if get_parent().has_meta("layout"):
-		fixed_icon_size = Vector2.ONE * get_parent().get_meta("layout")

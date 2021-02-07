@@ -10,7 +10,7 @@ Responsible for selecting HDRIs and toggling HDRI visibility.
 
 export var light_sensitivity := 0.01
 
-var selected_tool : int setget set_selected_tool
+var selected_tool : int
 var mesh : Mesh setget set_mesh
 
 var _last_painted_position : Vector2
@@ -88,11 +88,6 @@ func _on_LayerTree_layer_selected(layer) -> void:
 		_painting_layer = null
 
 
-func set_selected_tool(to : int) -> void:
-	selected_tool = to
-	_load_bitmap_layer()
-
-
 func _load_bitmap_layer() -> void:
 	if not _painting_layer or selected_tool != Constants.Tools.PAINT:
 		return
@@ -141,6 +136,11 @@ func update_mesh_maps() -> void:
 		selection_utils._prepared_meshes[selection_type] = prepared_mesh
 	progress_dialog.complete_task()
 	_mesh_maps_generated = true
+
+
+func _on_Main_selected_tool_changed(to : int) -> void:
+	selected_tool = to
+	_load_bitmap_layer()
 
 
 func _on_ResultsItemList_map_selected(map : String) -> void:

@@ -685,6 +685,13 @@ margin_bottom = -45.0
 
 [node name="MeshMapsGenerator" parent="." instance=ExtResource( 9 )]
 
+[connection signal="current_file_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser" method="_on_Main_current_file_changed"]
+[connection signal="current_file_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/LayersWindow/LayerTree" method="_on_Main_current_file_changed"]
+[connection signal="current_layer_material_changed" from="." to="VBoxContainer/Control/HBoxContainer/ResultsWindow/ResultsItemList" method="_on_Main_current_layer_material_changed"]
+[connection signal="current_layer_material_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/LayersWindow/LayerTree" method="_on_Main_current_layer_material_changed"]
+[connection signal="mesh_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/LayersWindow/HBoxContainer/MaterialOptionButton" method="_on_Main_mesh_changed"]
+[connection signal="selected_tool_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/ToolSettingsWindow/ToolSettingsContainer/ToolSettingsPropertyPanel" method="_on_Main_selected_tool_changed"]
+[connection signal="selected_tool_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewportWindow/3DViewport" method="_on_Main_selected_tool_changed"]
 [connection signal="bake_mesh_maps_pressed" from="VBoxContainer/Panel/TopButtons/EditMenuButton" to="." method="_on_EditMenuButton_bake_mesh_maps_pressed"]
 [connection signal="settings_pressed" from="VBoxContainer/Panel/TopButtons/EditMenuButton" to="SettingsDialog" method="_on_EditMenuButton_settings_pressed"]
 [connection signal="size_selected" from="VBoxContainer/Panel/TopButtons/EditMenuButton" to="." method="_on_EditMenuButton_size_selected"]

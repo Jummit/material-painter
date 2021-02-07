@@ -4,12 +4,7 @@ extends OptionButton
 `OptionButton` used to switch between surfaces of the loaded model
 """
 
-var mesh : Mesh setget set_mesh
-
-const LayerMaterial = preload("res://resources/material/layer_material.gd")
-
-func set_mesh(to : Mesh) -> void:
-	mesh = to
+func _on_Main_mesh_changed(mesh : Mesh) -> void:
 	clear()
 	for surface in mesh.get_surface_count():
 		var mat := mesh.surface_get_material(surface)

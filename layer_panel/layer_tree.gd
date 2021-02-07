@@ -538,3 +538,11 @@ func _get_icon(layer):
 
 func _on_ViewMenuButton_update_icons_toggled() -> void:
 	update_icons = not update_icons
+
+
+func _on_Main_current_file_changed(to : ProjectFile) -> void:
+	project = to
+
+
+func _on_Main_current_layer_material_changed(to : LayerMaterial) -> void:
+	layer_material = to

@@ -25,8 +25,6 @@ var dirty := true
 var shader_dirty := false
 var busy := false
 
-signal results_changed
-
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 const MaterialLayer = preload("res://resources/material/material_layer.gd")
 const MaterialFolder = preload("res://resources/material/material_folder.gd")
@@ -115,7 +113,7 @@ func update(force_all := false) -> void:
 	dirty = false
 	shader_dirty = false
 	busy = false
-	emit_signal("results_changed")
+	emit_signal("changed")
 
 
 func get_material(existing : SpatialMaterial = null) -> SpatialMaterial:

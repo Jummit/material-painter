@@ -67,5 +67,5 @@ func _set_map_enabled(on_layer : MaterialLayer, map : String, enabled : bool) ->
 	
 	_silently_set_button_pressed(buttons[map], true)
 	on_layer.mark_dirty(true)
-	Constants.current_layer_material.update()
+	on_layer.get_layer_material_in().update()
 	emit_signal("changed", map, enabled)
