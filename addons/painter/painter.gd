@@ -105,7 +105,8 @@ func set_brush(to : Brush) -> void:
 	if brush.texture_mask:
 		texture_mask = _load_image_texture(brush.texture_mask)
 	
-	paint_material.set_shader_param("brush_size", Vector2.ONE * brush.size / _viewport_size)
+	paint_material.set_shader_param("brush_size",
+			Vector2.ONE * brush.size / _viewport_size)
 	paint_material.set_shader_param("brush_strength", brush.strength)
 	paint_material.set_shader_param("brush_texture", brush_texture)
 	paint_material.set_shader_param("brush_color", brush.color)

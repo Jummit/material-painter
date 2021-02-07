@@ -40,7 +40,6 @@ func _ready() -> void:
 		TextureAssetProperty.new("texture_mask"),
 	])
 	load_values(Brush.new())
-	Constants.connect("tool_changed", self, "_on_Constants_tool_changed")
 	emit_signal("brush_changed", Brush.new())
 
 

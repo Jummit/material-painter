@@ -104,7 +104,9 @@ func _load_bitmap_layer() -> void:
 
 
 func _on_ToolSettingsPropertyPanel_brush_changed(brush : Brush) -> void:
-	$Painter.brush = brush
+	if not painter:
+		yield(self, "ready")
+	painter.brush = brush
 
 
 func _on_AssetBrowser_asset_activated(asset : Asset) -> void:

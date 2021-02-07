@@ -8,12 +8,15 @@ saving and loading, switching layouts, undo and redo and some `LayerTree`
 modification.
 """
 
+signal selected_tool_changed(to)
+signal current_layer_material_changed(to)
+signal current_file_changed(to)
+
 var mesh : Mesh
 var selected_tool : int = Constants.Tools.PAINT
 var current_file : SaveFile
 var current_layer_material : LayerMaterial
 var result_size := Vector2(2048, 2048)
-var file_system := ProjectFileSystem.new()
 var undo_redo := UndoRedo.new()
 
 onready var mesh_maps_generator : Node = $MeshMapsGenerator
@@ -46,7 +49,7 @@ enum FILE_MENU_ITEMS {
 }
 
 const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
-const SaveFile = preload("res://resources/save_file.gd")
+const SaveFile = preload("res://resources/project_file.gd")
 const MaterialLayer = preload("res://resources/material/material_layer.gd")
 const LayerMaterial = preload("res://resources/material/layer_material.gd")
 const MaterialFolder = preload("res://resources/material/material_folder.gd")
@@ -59,7 +62,6 @@ const LayoutUtils = preload("res://addons/customizable_ui/layout_utils.gd")
 const ObjParser = preload("res://addons/obj_parser/obj_parser.gd")
 const JSONTextureLayer = preload("res://resources/texture/json_texture_layer.gd")
 const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
-const ProjectFileSystem = preload("res://project_file_system.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/FileMenuButton
 onready var about_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/AboutMenuButton
