@@ -46,7 +46,7 @@ func _get_as_shader_layer():
 		if triplanar_mapping:
 			cached_image = TextureUtils.viewport_to_image(
 					yield(TriplanarTextureGenerator.get_triplanar_texture(
-					cached_image, Globals.mesh, Globals.result_size,
+					cached_image, Constants.mesh, Constants.result_size,
 					Vector3.ONE * uv_scale), "completed"))
 		cached_path = path
 		cached_triplanar_mapping = triplanar_mapping

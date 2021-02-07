@@ -54,7 +54,7 @@ func update(force_all := false) -> void:
 			shader_layer = yield(shader_layer, "completed")
 		blending_layers.append(shader_layer)
 	result = yield(LayerBlendViewportManager.blend(blending_layers,
-			Globals.result_size, get_instance_id(), shader_dirty), "completed")
+			Constants.result_size, get_instance_id(), shader_dirty), "completed")
 
 
 func _get_as_shader_layer() -> BlendingLayer:

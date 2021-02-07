@@ -5,7 +5,8 @@ The `PropertyPanel` that shows the properties of the selected layer
 """
 
 var editing_layer
-onready var undo_redo := Globals.undo_redo
+
+onready var undo_redo : UndoRedo = find_parent("Main").undo_redo
 
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")
@@ -21,7 +22,7 @@ func _on_LayerTree_layer_selected(layer) -> void:
 		
 		for type in layer.maps.keys():
 			properties += [
-				Properties.EnumProperty.new("blend_mode", Globals.BLEND_MODES),
+				Properties.EnumProperty.new("blend_mode", Constants.BLEND_MODES),
 				Properties.FloatProperty.new("opacity", 0.0, 1.0),
 			]
 		
@@ -49,11 +50,11 @@ func _on_property_changed(property, value) -> void:
 	undo_redo.create_action("Set Layer Property")
 	undo_redo.add_do_method(self, "set_value_on_layer", layer, property, value)
 	undo_redo.add_do_method(layer, "mark_dirty", update_shader)
-	undo_redo.add_do_method(Globals.editing_layer_material, "update")
+	undo_redo.add_do_method(Constants.current_layer_material, "update")
 	undo_redo.add_undo_method(self, "set_value_on_layer", layer, property,
 			layer.get(property))
 	undo_redo.add_undo_method(layer, "mark_dirty", update_shader)
-	undo_redo.add_undo_method(Globals.editing_layer_material, "update")
+	undo_redo.add_undo_method(Constants.current_layer_material, "update")
 	undo_redo.commit_action()
 
 

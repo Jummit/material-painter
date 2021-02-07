@@ -5,7 +5,7 @@ Buttons used to specify the enabled maps of the selected `MaterialLayer`
 """
 
 var buttons : Dictionary
-var undo_redo := Globals.undo_redo
+onready var undo_redo : UndoRedo = find_parent("Main").undo_redo
 
 # warning-ignore:unused_signal
 signal changed(map, enabled)
@@ -16,7 +16,7 @@ const MaterialLayer = preload("res://resources/material/material_layer.gd")
 onready var layer_property_panel : Panel = $"../LayerPropertyPanel"
 
 func _ready() -> void:
-	for map in Globals.TEXTURE_MAP_TYPES:
+	for map in Constants.TEXTURE_MAP_TYPES:
 		var new_button := Button.new()
 		new_button.text = map
 		new_button.name = map
@@ -67,5 +67,5 @@ func _set_map_enabled(on_layer : MaterialLayer, map : String, enabled : bool) ->
 	
 	_silently_set_button_pressed(buttons[map], true)
 	on_layer.mark_dirty(true)
-	Globals.editing_layer_material.update()
+	Constants.current_layer_material.update()
 	emit_signal("changed", map, enabled)

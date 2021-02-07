@@ -49,7 +49,7 @@ func get_properties() -> Array:
 	if "blends" in data:
 		list.append(Properties.FloatProperty.new("opacity", 0.0, 1.0, 1.0))
 		list.append(Properties.EnumProperty.new("blend_mode",
-				Globals.BLEND_MODES))
+				Constants.BLEND_MODES))
 	if not "properties" in data:
 		return list
 	for property in data.properties:

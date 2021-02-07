@@ -5,8 +5,8 @@ func _ready() -> void:
 	painter.paint_through = true
 
 
-func _prepare_mesh(mesh : Mesh) -> Mesh:
-	return uv_to_vertex_positions(mesh)
+static func _prepare_mesh(to_prepare : Mesh) -> Mesh:
+	return uv_to_vertex_positions(to_prepare)
 
 
 static func uv_to_vertex_positions(mesh : Mesh) -> Mesh:

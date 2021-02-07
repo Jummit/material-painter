@@ -4,13 +4,14 @@ extends OptionButton
 `OptionButton` used to switch between surfaces of the loaded model
 """
 
-func _ready():
-	Globals.connect("mesh_changed", self, "_on_Globals_mesh_changed")
+var mesh : Mesh setget set_mesh
 
+const LayerMaterial = preload("res://resources/material/layer_material.gd")
 
-func _on_Globals_mesh_changed(mesh : Mesh) -> void:
+func set_mesh(to : Mesh) -> void:
+	mesh = to
 	clear()
-	for surface in Globals.current_file.layer_materials.size():
+	for surface in mesh.get_surface_count():
 		var mat := mesh.surface_get_material(surface)
 		var material_name : String = "Material %s" % surface
 		if mat:

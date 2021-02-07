@@ -40,12 +40,12 @@ func _ready() -> void:
 		TextureAssetProperty.new("texture_mask"),
 	])
 	load_values(Brush.new())
-	Globals.connect("tool_changed", self, "_on_Globals_tool_changed")
+	Constants.connect("tool_changed", self, "_on_Constants_tool_changed")
 	emit_signal("brush_changed", Brush.new())
 
 
 func _update_visibility() -> void:
-	get_parent().get_parent().visible = painting and Globals.selected_tool == Globals.Tools.PAINT
+	get_parent().get_parent().visible = painting and Constants.selected_tool == Constants.Tools.PAINT
 
 
 func _on_property_changed(_property : String, _value) -> void:
@@ -57,10 +57,6 @@ func _on_property_changed(_property : String, _value) -> void:
 func _on_AssetBrowser_asset_activated(asset : Asset) -> void:
 	if asset.type is BrushAssetType:
 		load_values(asset.data)
-
-
-func _on_Globals_tool_changed() -> void:
-	_update_visibility()
 
 
 func _on_LayerTree_layer_selected(layer) -> void:

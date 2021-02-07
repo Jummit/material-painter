@@ -42,7 +42,7 @@ func update(force_all := false) -> void:
 		var update_result = layer.update(force_all)
 		if update_result is GDScriptFunctionState:
 			yield(update_result, "completed")
-	result = yield(generate_result(Globals.result_size,
+	result = yield(generate_result(Constants.result_size,
 			shader_dirty or force_all, get_instance_id()), "completed")
 	shader_dirty = false
 	dirty = false

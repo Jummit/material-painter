@@ -78,7 +78,7 @@ func update(force_all := false) -> void:
 			result = yield(result, "completed")
 	
 	var generated_height := false
-	for map in Globals.TEXTURE_MAP_TYPES:
+	for map in Constants.TEXTURE_MAP_TYPES:
 		var blending_layers := []
 		for layer in layers:
 			var map_result : Texture = layer.get_map_result(map)
@@ -103,7 +103,7 @@ func update(force_all := false) -> void:
 			continue
 		
 		var result : Texture = yield(LayerBlendViewportManager.blend(
-				blending_layers, Globals.result_size,
+				blending_layers, Constants.result_size,
 				get_instance_id() + map.hash(), shader_dirty), "completed")
 		
 		if map == "height":
@@ -119,7 +119,7 @@ func update(force_all := false) -> void:
 
 
 func get_material(existing : SpatialMaterial = null) -> SpatialMaterial:
-	var material_maps = Globals.TEXTURE_MAP_TYPES.duplicate()
+	var material_maps = Constants.TEXTURE_MAP_TYPES.duplicate()
 	material_maps.erase("height")
 	material_maps.append("normal")
 	

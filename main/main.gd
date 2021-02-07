@@ -8,9 +8,15 @@ saving and loading, switching layouts, undo and redo and some `LayerTree`
 modification.
 """
 
-var undo_redo := Globals.undo_redo
+var mesh : Mesh
+var selected_tool : int = Constants.Tools.PAINT
+var current_file : SaveFile
+var current_layer_material : LayerMaterial
+var result_size := Vector2(2048, 2048)
+var file_system := ProjectFileSystem.new()
+var undo_redo := UndoRedo.new()
 
-onready var _mesh_maps_generator : Node = $MeshMapsGenerator
+onready var mesh_maps_generator : Node = $MeshMapsGenerator
 
 # to avoid https://github.com/godotengine/godot/issues/36895,
 # this is passed to add_do_action instead of null
@@ -53,6 +59,7 @@ const LayoutUtils = preload("res://addons/customizable_ui/layout_utils.gd")
 const ObjParser = preload("res://addons/obj_parser/obj_parser.gd")
 const JSONTextureLayer = preload("res://resources/texture/json_texture_layer.gd")
 const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
+const ProjectFileSystem = preload("res://project_file_system.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/FileMenuButton
 onready var about_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/AboutMenuButton
@@ -113,9 +120,9 @@ func _on_FileDialog_file_selected(path : String) -> void:
 		FileDialog.MODE_OPEN_FILE:
 			match path.get_extension():
 				"res", "tres":
-					Globals.current_file = ResourceLoader.load(path, "", true)
-					Globals.current_file.replace_paths("local", Globals.current_file.resource_path.get_base_dir())
-					load_mesh(Globals.current_file.model_path)
+					current_file = ResourceLoader.load(path, "", true)
+					current_file.replace_paths("local", current_file.resource_path.get_base_dir())
+					load_mesh(current_file.model_path)
 				"obj":
 					load_mesh(path)
 
@@ -125,13 +132,13 @@ func _on_AddButton_pressed() -> void:
 	if layer_tree.is_folder(layer_tree.get_selected_layer()):
 		onto = layer_tree.get_selected_layer()
 	else:
-		onto = Globals.editing_layer_material
+		onto = current_layer_material
 	undo_redo.create_action("Add Material Layer")
 	var new_layer := MaterialLayer.new()
 	new_layer.parent = onto
-	undo_redo.add_do_method(Globals.editing_layer_material, "add_layer",
+	undo_redo.add_do_method(current_layer_material, "add_layer",
 			new_layer, onto)
-	undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer",
+	undo_redo.add_undo_method(current_layer_material, "delete_layer",
 			new_layer)
 	undo_redo.commit_action()
 
@@ -146,7 +153,7 @@ func _on_AddFolderButton_pressed() -> void:
 			layer_tree.get_selected_layer_texture(selected_layer):
 		onto = layer_tree.get_selected_layer_texture(selected_layer)
 	else:
-		onto = Globals.editing_layer_material
+		onto = current_layer_material
 	
 	var new_layer
 	if onto is LayerMaterial or onto is MaterialFolder:
@@ -154,9 +161,9 @@ func _on_AddFolderButton_pressed() -> void:
 	else:
 		new_layer = TextureFolder.new()
 	
-	undo_redo.add_do_method(Globals.editing_layer_material, "add_layer",
+	undo_redo.add_do_method(current_layer_material, "add_layer",
 			new_layer, onto)
-	undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer",
+	undo_redo.add_undo_method(current_layer_material, "delete_layer",
 			new_layer)
 	undo_redo.commit_action()
 
@@ -165,11 +172,11 @@ func _on_DeleteButton_pressed() -> void:
 	if layer_tree.get_selected():
 		undo_redo.create_action("Delete Layer")
 		var selected_layer = layer_tree.get_selected().get_meta("layer")
-		undo_redo.add_do_method(Globals.editing_layer_material, "delete_layer",
+		undo_redo.add_do_method(current_layer_material, "delete_layer",
 				selected_layer)
 		undo_redo.add_do_method(layer_property_panel, "clear")
 		undo_redo.add_do_method(texture_map_buttons, "hide")
-		undo_redo.add_undo_method(Globals.editing_layer_material, "add_layer",
+		undo_redo.add_undo_method(current_layer_material, "add_layer",
 				selected_layer, selected_layer.parent)
 		undo_redo.add_undo_method(texture_map_buttons, "show")
 		undo_redo.commit_action()
@@ -186,9 +193,9 @@ func _on_AddLayerPopupMenu_layer_selected(layer : Resource) -> void:
 		onto = selected_layer
 	else:
 		onto = selected_layer.parent
-	undo_redo.add_do_method(Globals.editing_layer_material, "add_layer",
+	undo_redo.add_do_method(current_layer_material, "add_layer",
 			new_layer, onto)
-	undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer",
+	undo_redo.add_undo_method(current_layer_material, "delete_layer",
 			new_layer)
 	undo_redo.commit_action()
 
@@ -199,7 +206,7 @@ func _on_MaterialLayerPopupMenu_layer_saved() -> void:
 		for texture_layer in layer_texture.get_flat_layers():
 			if texture_layer is FileTextureLayer:
 				texture_layer.path = texture_layer.path.replace(
-						Globals.current_file.resource_path.get_base_dir(),
+						current_file.resource_path.get_base_dir(),
 						"local")
 	var save_path := MATERIALS_FOLDER.plus_file(material_layer.name) + ".tres"
 	ResourceSaver.save(save_path, material_layer)
@@ -224,9 +231,9 @@ func _on_MaterialLayerPopupMenu_duplicated() -> void:
 	undo_redo.create_action("Duplicate Layer")
 	var new_layer = ResourceUtils.deep_copy_of_resource(
 			layer_tree.get_selected_layer())
-	undo_redo.add_do_method(Globals.editing_layer_material, "add_layer",
-			new_layer, Globals.editing_layer_material)
-	undo_redo.add_undo_method(Globals.editing_layer_material, "delete_layer",
+	undo_redo.add_do_method(current_layer_material, "add_layer",
+			new_layer, current_layer_material)
+	undo_redo.add_undo_method(current_layer_material, "delete_layer",
 			new_layer)
 	undo_redo.commit_action()
 
@@ -243,24 +250,24 @@ func _on_SaveButton_pressed() -> void:
 
 
 func _on_MaterialOptionButton_item_selected(index : int) -> void:
-	Globals.editing_layer_material = Globals.current_file.layer_materials[index]
+	current_layer_material = current_file.layer_materials[index]
 
 
 func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 	var texture_dir : String = asset_browser.ASSET_TYPES.TEXTURE.\
-			get_local_directory(Globals.current_file.resource_path)
+			get_local_directory(current_file.resource_path)
 	var dir := Directory.new()
 	dir.make_dir_recursive(texture_dir)
 	
 	var progress_dialog = ProgressDialogManager.create_task("Bake Mesh Maps",
-			_mesh_maps_generator.BAKE_FUNCTIONS.size())
+			mesh_maps_generator.BAKE_FUNCTIONS.size())
 	
-	for map in _mesh_maps_generator.BAKE_FUNCTIONS:
+	for map in mesh_maps_generator.BAKE_FUNCTIONS:
 		var file := texture_dir.plus_file(map) + ".png"
 		progress_dialog.set_action(file)
 		
-		var result : ImageTexture = yield(_mesh_maps_generator.generate_mesh_map(
-				map, Globals.mesh, Vector2(1024, 1024)), "completed")
+		var result : ImageTexture = yield(mesh_maps_generator.generate_mesh_map(
+				map, mesh, Vector2(1024, 1024)), "completed")
 		
 		result.get_data().save_png(file)
 		
@@ -276,8 +283,8 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 
 
 func _on_EditMenuButton_size_selected(size) -> void:
-	Globals.result_size = size
-	Globals.editing_layer_material.update(true)
+	result_size = size
+	current_layer_material.update(true)
 
 
 func _on_LayoutNameEdit_text_entered(new_text : String) -> void:
@@ -308,11 +315,11 @@ func _on_QuitConfirmationDialog_custom_action(_action : String) -> void:
 func _on_QuitConfirmationDialog_confirmed() -> void:
 	if save_file():
 		yield(file_dialog, "confirmed")
-	Globals.current_file.save_bitmap_layers()
-	Globals.current_file.replace_paths(
-			Globals.current_file.resource_path.get_base_dir(), "local")
+	current_file.save_bitmap_layers()
+	current_file.replace_paths(
+			current_file.resource_path.get_base_dir(), "local")
 	# todo: don't save twice
-	ResourceSaver.save(Globals.current_file.resource_path, Globals.current_file)
+	ResourceSaver.save(current_file.resource_path, current_file)
 	get_tree().quit()
 
 
@@ -346,7 +353,7 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 		FILE_MENU_ITEMS.SAVE_AS:
 			open_save_project_dialog()
 		FILE_MENU_ITEMS.EXPORT:
-			if Globals.current_file.resource_path:
+			if current_file.resource_path:
 				export_materials()
 			else:
 				export_error_dialog.popup_centered()
@@ -368,16 +375,16 @@ func _on_UndoRedo_version_changed() -> void:
 
 func export_materials() -> void:
 	var progress_dialog = ProgressDialogManager.create_task("Export Textures",
-			Globals.editing_layer_material.results.size())
+			current_layer_material.results.size())
 	yield(get_tree(), "idle_frame")
-	for surface in Globals.current_file.layer_materials.size():
-		var material_name := Globals.mesh.surface_get_material(
+	for surface in current_file.layer_materials.size():
+		var material_name := mesh.surface_get_material(
 				surface).resource_name
-		var export_folder := Globals.current_file.resource_path.get_base_dir()\
+		var export_folder := current_file.resource_path.get_base_dir()\
 				.plus_file("export").plus_file(material_name)
 		var dir := Directory.new()
 		dir.make_dir_recursive(export_folder)
-		var results : Dictionary = Globals.current_file.layer_materials[surface].results
+		var results : Dictionary = current_file.layer_materials[surface].results
 		for type in results:
 			progress_dialog.set_action("%s of %s" % [type, material_name])
 			var result_data : Image = results[type].get_data()
@@ -394,32 +401,30 @@ func set_mask(layer, mask : LayerTexture) -> void:
 		mask.parent = layer
 		mask.mark_dirty()
 	layer.mark_dirty()
-	Globals.editing_layer_material.update()
+	current_layer_material.update()
 
 
 func load_mesh(path : String) -> void:
 	var interactive_loader := ObjParser.parse_obj_interactive(path)
-	var stage_count := interactive_loader.get_stage_count()
+	var stage_count := int(interactive_loader.get_stage_count() / 20000.0)
 	var progress_dialog = ProgressDialogManager.create_task("Load OBJ Model",
 			stage_count)
 	while true:
 		progress_dialog.set_action("Stage %s / %s" % [
-				interactive_loader.get_stage(), stage_count],
-				interactive_loader.get_stage())
+				interactive_loader.get_stage(), stage_count])
 		yield(get_tree(), "idle_frame")
 		for i in 20000:
-			var mesh = interactive_loader.poll()
+			mesh = interactive_loader.poll()
 			if mesh:
 				progress_dialog.complete_task()
-				Globals.mesh = mesh
 				return
 
 # returns if the file wasn't saved and the user needs to specify where to
 # save it
 func save_file() -> bool:
-	if Globals.current_file.resource_path:
-		ResourceSaver.save(Globals.current_file.resource_path,
-				Globals.current_file)
+	if current_file.resource_path:
+		ResourceSaver.save(current_file.resource_path,
+				current_file)
 		return false
 	else:
 		open_save_project_dialog()
@@ -428,8 +433,8 @@ func save_file() -> bool:
 
 func start_empty_project() -> void:
 	var new_file := SaveFile.new()
-	Globals.current_file = new_file
-	Globals.mesh = preload("res://misc/cube.obj")
+	current_file = new_file
+	mesh = preload("res://misc/cube.obj")
 
 
 func open_save_project_dialog() -> void:
@@ -438,7 +443,7 @@ func open_save_project_dialog() -> void:
 	file_dialog.filters = ["*.res,*.tres;Material Painter File"]
 	file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
 	file_dialog.current_file = ""
-	file_dialog.set_meta("to_save", Globals.current_file)
+	file_dialog.set_meta("to_save", current_file)
 	file_dialog.popup_centered()
 
 
@@ -461,3 +466,28 @@ func initialise_layouts() -> void:
 		yield(get_tree(), "idle_frame")
 		LayoutUtils.load_layout(root, default)
 	view_menu_button.update_layout_options()
+
+
+func set_mesh(to) -> void:
+	mesh = to
+	current_file.model_path = to.resource_path
+	current_file.layer_materials.resize(mesh.get_surface_count())
+	for surface in mesh.get_surface_count():
+		if not current_file.layer_materials[surface]:
+			current_file.layer_materials[surface] = LayerMaterial.new()
+	current_file.layer_materials.front().update(true)
+	current_layer_material = current_file.layer_materials.front()
+	emit_signal("mesh_changed", mesh)
+
+
+func set_current_file(save_file : SaveFile) -> void:
+	current_file = save_file
+	for layer_material in current_file.layer_materials:
+		var result = layer_material.update(true)
+		if result is GDScriptFunctionState:
+			yield(result, "completed")
+	emit_signal("current_file_changed")
+
+
+func _on_ToolButtonContainer_tool_selected(selected : int) -> void:
+	selected_tool = selected

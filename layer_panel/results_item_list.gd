@@ -12,7 +12,7 @@ const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 
 func _ready():
-	Globals.connect("editing_layer_material_changed", self, "_on_Globals_editing_layer_material_changed")
+	Constants.connect("current_layer_material_changed", self, "_on_Constants_current_layer_material_changed")
 
 
 func _gui_input(event : InputEvent) -> void:
@@ -31,17 +31,17 @@ func _on_item_activated(index : int) -> void:
 	emit_signal("map_selected", get_item_metadata(index))
 
 
-func _on_Globals_editing_layer_material_changed() -> void:
-	if not Globals.editing_layer_material.is_connected("results_changed", self,
+func _on_Constants_current_layer_material_changed() -> void:
+	if not Constants.current_layer_material.is_connected("results_changed", self,
 			"_on_LayerMaterial_results_changed"):
-		Globals.editing_layer_material.connect("results_changed", self,
+		Constants.current_layer_material.connect("results_changed", self,
 				"_on_LayerMaterial_results_changed")
 
 
 func _on_LayerMaterial_results_changed() -> void:
 	clear()
-	for map in Globals.editing_layer_material.results:
-		add_item(map, Globals.editing_layer_material.results[map])
+	for map in Constants.current_layer_material.results:
+		add_item(map, Constants.current_layer_material.results[map])
 		set_item_metadata(get_item_count() - 1, map)
 
 

@@ -11,8 +11,8 @@ If `isolated_map` is specified it will be used as albedo.
 var isolated_map : String setget set_isolated_map
 
 func _ready() -> void:
-	Globals.connect("editing_layer_material_changed", self,
-			"_on_Globals_editing_layer_material_changed")
+	Constants.connect("current_layer_material_changed", self,
+			"_on_Constants_current_layer_material_changed")
 
 
 func load_materials(layer_materials : Array) -> void:
@@ -25,8 +25,8 @@ func load_materials(layer_materials : Array) -> void:
 func set_isolated_map(to : String) -> void:
 	isolated_map = to
 	if isolated_map:
-		for material_num in Globals.current_file.layer_materials.size():
-			var results : Dictionary = Globals.current_file.layer_materials[\
+		for material_num in Constants.current_file.layer_materials.size():
+			var results : Dictionary = Constants.current_file.layer_materials[\
 					material_num].results
 			if isolated_map in results:
 				var material := SpatialMaterial.new()
@@ -34,15 +34,15 @@ func set_isolated_map(to : String) -> void:
 				material.flags_albedo_tex_force_srgb = true
 				set_surface_material(material_num, material)
 	else:
-		load_materials(Globals.current_file.layer_materials)
+		load_materials(Constants.current_file.layer_materials)
 
 
-func _on_Globals_editing_layer_material_changed() -> void:
-	if not Globals.editing_layer_material.is_connected("results_changed", self,
+func _on_Constants_current_layer_material_changed() -> void:
+	if not Constants.current_layer_material.is_connected("results_changed", self,
 			"_on_LayerMaterial_results_changed"):
-		Globals.editing_layer_material.connect("results_changed", self,
+		Constants.current_layer_material.connect("results_changed", self,
 				"_on_LayerMaterial_results_changed")
 
 
 func _on_LayerMaterial_results_changed() -> void:
-	load_materials(Globals.current_file.layer_materials)
+	load_materials(Constants.current_file.layer_materials)
