@@ -4,7 +4,7 @@ extends Viewport
 A `Viewport` to render the position map of a mesh in UV-space
 """
 
-func generate_world_map(mesh : Mesh, result_size : Vector2) -> Texture:
+func generate_world_map(mesh : Mesh, result_size : Vector2) -> ViewportTexture:
 	size = result_size
 	$MeshInstance.mesh = mesh
 	render_target_update_mode = Viewport.UPDATE_ONCE

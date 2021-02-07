@@ -446,6 +446,8 @@ func _setup_material_layer_item(layer, parent_item : TreeItem,
 		var icon = _get_icon(layer.mask)
 		if icon is GDScriptFunctionState:
 			icon = yield(icon, "completed")
+		if not is_instance_valid(item):
+			return
 		if icon is Texture:
 			item.add_button(0, icon, Buttons.MASK)
 	

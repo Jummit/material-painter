@@ -1,62 +1,29 @@
+extends Node
+
 """
 Utility for managing generation of different mesh maps
 """
 
 const TextureUtils = preload("res://utils/texture_utils.gd")
 
-class MeshMapGenerator:
-	var name : String
-	
-	func _init(_name : String) -> void:
-		name = _name
-	
-	func _generate_map(_mesh : Mesh, _result_size : Vector2) -> Texture:
-		return null
+const BAKE_FUNCTIONS := {
+	curvature = "bake_curvature_map",
+	id = "generate_id_map",
+	world_normal = "bake_world_normal",
+	world_position = "generate_world_map",
+}
 
-class IDMeshMapGenerator extends MeshMapGenerator:
-	func _init().("id_map") -> void:
-		pass
-	
-	func _generate_map(mesh : Mesh, result_size : Vector2) -> Texture:
-		return TextureUtils.viewport_to_image(
-				yield(IDMapGenerator.generate_id_map(mesh, result_size),
-				"completed"))
+func generate_mesh_map(map : String, mesh : Mesh,
+		result_size : Vector2) -> ImageTexture:
+	var result : Texture = yield(get_node(map).call(BAKE_FUNCTIONS[map], mesh,
+				result_size), "completed")
+	if result is ViewportTexture:
+		return TextureUtils.viewport_to_image(result)
+	return result
 
-class WorldPositionMeshMapGenerator extends MeshMapGenerator:
-	func _init().("world_position_map") -> void:
-		pass
-	
-	func _generate_map(mesh : Mesh, result_size : Vector2) -> Texture:
-		return TextureUtils.viewport_to_image(
-				yield(WorldMapGenerator.generate_world_map(mesh, result_size),
-				"completed"))
-
-class CurvatureMapGenerator extends MeshMapGenerator:
-	func _init().("curvature_map") -> void:
-		pass
-	
-	func _generate_map(mesh : Mesh, result_size : Vector2) -> Texture:
-		return yield(CurvatureBaker.bake_curvature_map(mesh, result_size),
-				"completed")
-
-class WorldNormalMapGenerator extends MeshMapGenerator:
-	func _init().("world_normal") -> void:
-		pass
-	
-	func _generate_map(mesh : Mesh, result_size : Vector2) -> Texture:
-		return yield(WorldNormalBaker.bake_world_normal(mesh, result_size),
-				"completed")
-
-var MESH_MAP_GENERATORS := [
-	IDMeshMapGenerator.new(),
-	CurvatureMapGenerator.new(),
-	WorldPositionMeshMapGenerator.new(),
-	WorldNormalMapGenerator.new(),
-]
 
 func generate_mesh_maps(mesh : Mesh, result_size : Vector2) -> Dictionary:
 	var maps := {}
-	for generator in MESH_MAP_GENERATORS:
-		maps[generator.name] = yield(generator._generate_map(mesh, result_size),
-				"completed")
+	for map in BAKE_FUNCTIONS:
+		maps[map] = yield(generate_mesh_map(map, mesh, result_size), "completed")
 	return maps

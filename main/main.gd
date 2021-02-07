@@ -8,8 +8,9 @@ saving and loading, switching layouts, undo and redo and some `LayerTree`
 modification.
 """
 
-var _mesh_maps_generator = preload("res://main/mesh_maps_generator.gd").new()
 var undo_redo := Globals.undo_redo
+
+onready var _mesh_maps_generator : Node = $MeshMapsGenerator
 
 # to avoid https://github.com/godotengine/godot/issues/36895,
 # this is passed to add_do_action instead of null
@@ -250,22 +251,26 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 			get_local_directory(Globals.current_file.resource_path)
 	var dir := Directory.new()
 	dir.make_dir_recursive(texture_dir)
-	var progress_dialog = ProgressDialogManager.create_task("Bake Mesh Maps",
-			_mesh_maps_generator.MESH_MAP_GENERATORS.size())
 	
-	for generator in _mesh_maps_generator.MESH_MAP_GENERATORS:
-		var result : Texture = yield(generator._generate_map(Globals.mesh, Vector2(1024, 1024)),
-				"completed")
-		var file := texture_dir.plus_file(generator.name) + ".png"
+	var progress_dialog = ProgressDialogManager.create_task("Bake Mesh Maps",
+			_mesh_maps_generator.BAKE_FUNCTIONS.size())
+	
+	for map in _mesh_maps_generator.BAKE_FUNCTIONS:
+		var file := texture_dir.plus_file(map) + ".png"
 		progress_dialog.set_action(file)
+		
+		var result : ImageTexture = yield(_mesh_maps_generator.generate_mesh_map(
+				map, Globals.mesh, Vector2(1024, 1024)), "completed")
+		
 		result.get_data().save_png(file)
+		
 		var asset = asset_browser.load_asset(file,
 				asset_browser.ASSET_TYPES.TEXTURE)
 		asset_browser._add_asset_to_tag(asset, "local")
 		if asset is GDScriptFunctionState:
 			asset = yield(asset, "completed")
 		asset_browser.assets.append(asset)
-		yield(get_tree(), "idle_frame")
+	
 	asset_browser.update_asset_list()
 	progress_dialog.complete_task()
 
