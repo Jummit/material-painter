@@ -13,7 +13,7 @@ with a dropdown. The selected maps are stored in `_selected_maps`.
 """
 
 var layer_material : LayerMaterial setget set_layer_material
-var file_system : ProjectFileSystem
+var project : ProjectFile
 var update_icons := true
 
 var _root : TreeItem
@@ -57,7 +57,7 @@ const Asset = preload("res://asset_browser/asset_classes.gd").Asset
 const TextureAssetType = preload("res://asset_browser/asset_classes.gd").TextureAssetType
 const MaterialAssetType = preload("res://asset_browser/asset_classes.gd").MaterialAssetType
 const EffectAssetType = preload("res://asset_browser/asset_classes.gd").EffectAssetType
-const ProjectFileSystem = preload("res://project_file_system.gd")
+const ProjectFile = preload("res://resources/project_file.gd")
 
 onready var layer_popup_menu : PopupMenu = $LayerPopupMenu
 onready var map_type_popup_menu : PopupMenu = $MapTypePopupMenu
@@ -357,7 +357,7 @@ func _get_layers_of_drop_data(data, position : Vector2) -> Dictionary:
 		material_layer.maps[map] = layer_texture
 		material_layer.name = data.name.replace("normal", "").replace("albedo", "").capitalize()
 		var layer := FileTextureLayer.new()
-		var path : String = file_system.get_global_path(data.file)
+		var path : String = project.get_global_path(data.file)
 		layer.path = path
 		layer.name = path.get_file().get_basename()
 		layer_texture.parent = material_layer
@@ -386,7 +386,7 @@ func _get_layers_of_drop_data(data, position : Vector2) -> Dictionary:
 				for layer_texture in mat_layer.get_layer_textures():
 					for texture_layer in layer_texture.get_flat_layers():
 						if texture_layer is FileTextureLayer:
-							texture_layer.path = file_system.get_global_path(
+							texture_layer.path = project.get_global_path(
 								texture_layer.path)
 		layer_type = LayerType.MATERIAL_LAYER
 		layers = [material_layer]

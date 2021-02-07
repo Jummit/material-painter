@@ -8,14 +8,15 @@ saving and loading, switching layouts, undo and redo and some `LayerTree`
 modification.
 """
 
-signal selected_tool_changed(to)
-signal current_layer_material_changed(to)
 signal current_file_changed(to)
+signal current_layer_material_changed(to)
+signal selected_tool_changed(to)
+signal mesh_changed(to)
 
-var mesh : Mesh
-var selected_tool : int = Constants.Tools.PAINT
-var current_file : SaveFile
+var current_file : SaveFile setget set_current_file
 var current_layer_material : LayerMaterial
+var selected_tool : int = Constants.Tools.PAINT
+var mesh : Mesh setget set_mesh
 var result_size := Vector2(2048, 2048)
 var undo_redo := UndoRedo.new()
 
@@ -416,9 +417,10 @@ func load_mesh(path : String) -> void:
 				interactive_loader.get_stage(), stage_count])
 		yield(get_tree(), "idle_frame")
 		for i in 20000:
-			mesh = interactive_loader.poll()
-			if mesh:
+			var new_mesh = interactive_loader.poll()
+			if new_mesh:
 				progress_dialog.complete_task()
+				set_mesh(new_mesh)
 				return
 
 # returns if the file wasn't saved and the user needs to specify where to
@@ -436,7 +438,8 @@ func save_file() -> bool:
 func start_empty_project() -> void:
 	var new_file := SaveFile.new()
 	current_file = new_file
-	mesh = preload("res://misc/cube.obj")
+	emit_signal("current_file_changed")
+	set_mesh(preload("res://misc/cube.obj"))
 
 
 func open_save_project_dialog() -> void:

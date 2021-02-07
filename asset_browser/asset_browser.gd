@@ -23,7 +23,7 @@ Assets can be searched using the search bar.
 signal asset_activated(asset)
 signal right_click_effect_loaded(effect)
 
-var file_system : ProjectFileSystem
+var project : ProjectFile
 
 var _assets := []
 var _already_tagged_assets := []
@@ -48,7 +48,7 @@ const TAG_METADATA := "user://tags.json"
 const Asset = preload("res://asset_browser/asset_classes.gd").Asset
 const AssetType = preload("res://asset_browser/asset_classes.gd").AssetType
 const AssetTypes = preload("res://asset_browser/asset_classes.gd")
-const ProjectFileSystem = preload("res://project_file_system.gd")
+const ProjectFile = preload("res://resources/project_file.gd")
 
 onready var tag_name_edit : LineEdit = $VBoxContainer/HBoxContainer/TagNameEdit
 onready var asset_list : ItemList = $VBoxContainer2/AssetList
@@ -355,7 +355,7 @@ func _delete_asset(item : int) -> void:
 		_remove_asset_from_tag(asset, tag)
 	
 	var dir := Directory.new()
-	dir.remove(file_system.get_global_path(asset.file))
+	dir.remove(project.get_global_path(asset.file))
 	dir.remove(asset.get_cached_thumbnail_path())
 	
 	asset_list.remove_item(item)
