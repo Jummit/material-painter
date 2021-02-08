@@ -1,7 +1,6 @@
 extends "res://viewport/viewport.gd"
 
 func _ready() -> void:
-	get_parent().title = "2D Viewport"
 	painter.paint_through = true
 
 

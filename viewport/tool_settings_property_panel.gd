@@ -64,7 +64,7 @@ func _on_LayerTree_layer_selected(layer) -> void:
 	_update_visibility()
 
 
-func _on_layout_changed() -> void:
+func _on_layout_changed(_meta) -> void:
 	_update_visibility()
 
 

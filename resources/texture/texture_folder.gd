@@ -28,6 +28,10 @@ func _init():
 		layer.parent = self
 
 
+func get_layer_material_in() -> Resource:
+	return get_layer_texture_in().parent.get_layer_material_in()
+
+
 func get_layer_texture_in() -> Resource:
 	# hacky workaround to avoid cycling references
 	if parent.has_method("get_layer_texture_in"):
@@ -54,7 +58,8 @@ func update(force_all := false) -> void:
 			shader_layer = yield(shader_layer, "completed")
 		blending_layers.append(shader_layer)
 	result = yield(LayerBlendViewportManager.blend(blending_layers,
-			Constants.result_size, get_instance_id(), shader_dirty), "completed")
+			get_layer_material_in().result_size, get_instance_id(),
+			shader_dirty), "completed")
 
 
 func _get_as_shader_layer() -> BlendingLayer:

@@ -11,7 +11,9 @@ Responsible for selecting HDRIs and toggling HDRI visibility.
 export var light_sensitivity := 0.01
 
 var selected_tool : int
-var mesh : Mesh setget set_mesh
+var mesh : Mesh
+var result_size : Vector2
+var project : ProjectFile
 
 var _last_painted_position : Vector2
 var _cached_camera_transform : Transform
@@ -24,6 +26,7 @@ const Asset = preload("res://asset_browser/asset_classes.gd").Asset
 const AssetType = preload("res://asset_browser/asset_classes.gd").AssetType
 const BrushAssetType = preload("res://asset_browser/asset_classes.gd").BrushAssetType
 const SelectionUtils = preload("res://addons/selection_utils/selection_utils.gd")
+const ProjectFile = preload("res://resources/project_file.gd")
 
 onready var model : MeshInstance = $Viewport/Model
 onready var world_environment : WorldEnvironment = $Viewport/WorldEnvironment
@@ -73,9 +76,28 @@ func _on_ViewMenuButton_hdri_selected(hdri : Texture) -> void:
 	world_environment.environment.background_sky.panorama = hdri
 
 
+func _on_Main_mesh_changed(to : Mesh) -> void:
+	mesh = _prepare_mesh(to)
+	model.mesh = mesh
+	if Settings.get_setting("generate_utility_maps") == "On Startup":
+		update_mesh_maps()
+	
+	while not project:
+		# wait for project to be broadcasted
+		yield(get_tree(), "idle_frame")
+	model.layer_materials = project.layer_materials
+
+
+func _on_Main_current_file_changed(to : ProjectFile) -> void:
+	project = to
+
+
 func _on_HalfResolutionButton_toggled(button_pressed : bool) -> void:
 	stretch_shrink = 2 if button_pressed else 1
-	get_parent().set_meta("layout", button_pressed)
+
+
+func get_layout_data() -> bool:
+	return stretch_shrink == 2
 
 
 func _on_LayerTree_layer_selected(layer) -> void:
@@ -109,13 +131,6 @@ func _on_AssetBrowser_asset_activated(asset : Asset) -> void:
 		painter.brush = asset.data
 
 
-func set_mesh(to : Mesh) -> void:
-	mesh = _prepare_mesh(to)
-	model.mesh = mesh
-	if Settings.get_setting("generate_utility_maps") == "On Startup":
-		update_mesh_maps()
-
-
 func update_mesh_maps() -> void:
 	var progress_dialog = ProgressDialogManager.create_task(
 			"Generate Painter Maps", 1)
@@ -147,17 +162,20 @@ func _on_ResultsItemList_map_selected(map : String) -> void:
 	model.isolated_map = "" if map == model.isolated_map else map
 
 
-func _on_layout_changed() -> void:
-	if get_parent().has_meta("layout"):
-		var meta : bool = get_parent().get_meta("layout")
+func _on_layout_changed(meta) -> void:
+	if meta != null:
 		half_resolution_button.pressed = meta
+
+
+func _on_Main_result_size_changed(to) -> void:
+	result_size = to
 
 
 # perform a selection with the given `type` using `selection_utils`
 func select(type : int, position : Vector2) -> void:
 	selection_utils.update_view(viewport)
 	_painting_layer.texture = yield(selection_utils.add_selection(
-			type, position, Constants.result_size,
+			type, position, result_size,
 			_painting_layer.texture), "completed")
 	_painting_layer.mark_dirty()
 	_painting_layer.get_layer_texture_in().parent.get_layer_material_in().update()
@@ -165,7 +183,7 @@ func select(type : int, position : Vector2) -> void:
 
 # perform a paintstroke from `from` to `to` using the `painter`
 func paint(from : Vector2, to : Vector2) -> void:
-	painter.result_size = Constants.result_size
+	painter.result_size = result_size
 	var camera : Camera = viewport.get_camera()
 	var camera_transform = camera.global_transform
 	if camera_transform != _cached_camera_transform:

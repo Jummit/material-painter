@@ -81,7 +81,7 @@ func update(force_all := false) -> void:
 			continue
 		
 		var result : Texture = yield(LayerBlendViewportManager.blend(
-				blending_layers, Constants.result_size,
+				blending_layers, get_layer_material_in().result_size,
 				get_instance_id() + map.hash(), shader_dirty), "completed")
 		
 		results[map] = result

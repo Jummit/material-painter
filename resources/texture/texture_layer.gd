@@ -55,6 +55,10 @@ func update_icon() -> void:
 	icon_dirty = false
 
 
+func get_layer_material_in() -> Resource:
+	return get_layer_texture_in().parent.get_layer_material_in()
+
+
 func get_layer_texture_in() -> LayerTexture:
 	if parent is LayerTexture:
 		return parent

@@ -164,8 +164,11 @@ func _on_AddTagButton_pressed() -> void:
 
 func _on_TagList_cell_selected() -> void:
 	_current_tag = tag_list.get_selected().get_text(0)
-	get_parent().set_meta("layout", _current_tag)
 	update_asset_list()
+
+
+func get_layout_data() -> String:
+	return _current_tag
 
 
 func _on_SearchEdit_text_changed(_new_text: String) -> void:
@@ -407,9 +410,9 @@ func _load_tag_metadata() -> void:
 	file.close()
 
 
-func _on_layout_changed() -> void:
-	if get_parent().has_meta("layout"):
-		_current_tag = get_parent().get_meta("layout")
+func _on_layout_changed(meta) -> void:
+	if meta:
+		_current_tag = meta
 		update_asset_list()
 
 

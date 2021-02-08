@@ -14,7 +14,6 @@ const HDRAssetType = preload("res://asset_browser/asset_classes.gd").HDRAssetTyp
 
 func _ready():
 	sky_viewport_texture.flags = Texture.FLAG_FILTER
-	get_parent().title = "3D Viewport"
 
 
 func _on_ViewMenuButton_show_background_toggled() -> void:

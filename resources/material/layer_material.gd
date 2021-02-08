@@ -20,6 +20,10 @@ necessary if only parameters changed.
 
 export var layers : Array
 
+var result_size := Vector2(1024, 1024)
+# warning-ignore:unused_class_variable
+var mesh : Mesh
+
 var results : Dictionary
 var dirty := true
 var shader_dirty := false
@@ -101,8 +105,8 @@ func update(force_all := false) -> void:
 			continue
 		
 		var result : Texture = yield(LayerBlendViewportManager.blend(
-				blending_layers, Constants.result_size,
-				get_instance_id() + map.hash(), shader_dirty), "completed")
+				blending_layers, result_size, get_instance_id() + map.hash(),
+				shader_dirty), "completed")
 		
 		if map == "height":
 			result = yield(NormalMapGenerationViewport.get_normal_map(result),

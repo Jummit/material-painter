@@ -11,13 +11,14 @@ modification.
 signal current_file_changed(to)
 signal current_layer_material_changed(to)
 signal selected_tool_changed(to)
+signal result_size_changed(to)
 signal mesh_changed(to)
 
 var current_file : SaveFile setget set_current_file
-var current_layer_material : LayerMaterial
+var current_layer_material : LayerMaterial setget set_current_layer_material
 var selected_tool : int = Constants.Tools.PAINT
 var mesh : Mesh setget set_mesh
-var result_size := Vector2(2048, 2048)
+var result_size := Vector2(2048, 2048) setget set_result_size
 var undo_redo := UndoRedo.new()
 
 onready var mesh_maps_generator : Node = $MeshMapsGenerator
@@ -94,6 +95,8 @@ func _ready() -> void:
 	
 	initialise_layouts()
 	start_empty_project()
+	
+	set_result_size(result_size)
 
 
 func _input(event : InputEvent) -> void:
@@ -141,8 +144,10 @@ func _on_AddButton_pressed() -> void:
 	new_layer.parent = onto
 	undo_redo.add_do_method(current_layer_material, "add_layer",
 			new_layer, onto)
+	undo_redo.add_do_method(layer_tree, "reload")
 	undo_redo.add_undo_method(current_layer_material, "delete_layer",
 			new_layer)
+	undo_redo.add_undo_method(layer_tree, "reload")
 	undo_redo.commit_action()
 
 
@@ -166,23 +171,28 @@ func _on_AddFolderButton_pressed() -> void:
 	
 	undo_redo.add_do_method(current_layer_material, "add_layer",
 			new_layer, onto)
+	undo_redo.add_do_method(layer_tree, "reload")
 	undo_redo.add_undo_method(current_layer_material, "delete_layer",
 			new_layer)
+	undo_redo.add_undo_method(layer_tree, "reload")
 	undo_redo.commit_action()
 
 
 func _on_DeleteButton_pressed() -> void:
-	if layer_tree.get_selected():
-		undo_redo.create_action("Delete Layer")
-		var selected_layer = layer_tree.get_selected().get_meta("layer")
-		undo_redo.add_do_method(current_layer_material, "delete_layer",
-				selected_layer)
-		undo_redo.add_do_method(layer_property_panel, "clear")
-		undo_redo.add_do_method(texture_map_buttons, "hide")
-		undo_redo.add_undo_method(current_layer_material, "add_layer",
-				selected_layer, selected_layer.parent)
-		undo_redo.add_undo_method(texture_map_buttons, "show")
-		undo_redo.commit_action()
+	if not layer_tree.get_selected():
+		return
+	undo_redo.create_action("Delete Layer")
+	var selected_layer = layer_tree.get_selected().get_meta("layer")
+	undo_redo.add_do_method(current_layer_material, "delete_layer",
+			selected_layer)
+	undo_redo.add_do_method(layer_property_panel, "clear")
+	undo_redo.add_do_method(texture_map_buttons, "hide")
+	undo_redo.add_do_method(layer_tree, "reload")
+	undo_redo.add_undo_method(current_layer_material, "add_layer",
+			selected_layer, selected_layer.parent)
+	undo_redo.add_undo_method(texture_map_buttons, "show")
+	undo_redo.add_undo_method(layer_tree, "reload")
+	undo_redo.commit_action()
 
 
 func _on_AddLayerPopupMenu_layer_selected(layer : Resource) -> void:
@@ -198,8 +208,10 @@ func _on_AddLayerPopupMenu_layer_selected(layer : Resource) -> void:
 		onto = selected_layer.parent
 	undo_redo.add_do_method(current_layer_material, "add_layer",
 			new_layer, onto)
+	undo_redo.add_do_method(layer_tree, "reload")
 	undo_redo.add_undo_method(current_layer_material, "delete_layer",
 			new_layer)
+	undo_redo.add_undo_method(layer_tree, "reload")
 	undo_redo.commit_action()
 
 
@@ -236,8 +248,10 @@ func _on_MaterialLayerPopupMenu_duplicated() -> void:
 			layer_tree.get_selected_layer())
 	undo_redo.add_do_method(current_layer_material, "add_layer",
 			new_layer, current_layer_material)
+	undo_redo.add_do_method(layer_tree, "reload")
 	undo_redo.add_undo_method(current_layer_material, "delete_layer",
 			new_layer)
+	undo_redo.add_undo_method(layer_tree, "reload")
 	undo_redo.commit_action()
 
 
@@ -253,7 +267,7 @@ func _on_SaveButton_pressed() -> void:
 
 
 func _on_MaterialOptionButton_item_selected(index : int) -> void:
-	current_layer_material = current_file.layer_materials[index]
+	set_current_layer_material(current_file.layer_materials[index])
 
 
 func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
@@ -438,8 +452,8 @@ func save_file() -> bool:
 func start_empty_project() -> void:
 	var new_file := SaveFile.new()
 	current_file = new_file
-	emit_signal("current_file_changed")
 	set_mesh(preload("res://misc/cube.obj"))
+	emit_signal("current_file_changed", new_file)
 
 
 func open_save_project_dialog() -> void:
@@ -455,7 +469,9 @@ func open_save_project_dialog() -> void:
 func do_change_mask_action(action_name : String, layer, mask : LayerTexture) -> void:
 	undo_redo.create_action(action_name)
 	undo_redo.add_do_method(self, "set_mask", layer, mask)
+	undo_redo.add_do_method(layer_tree, "reload")
 	undo_redo.add_undo_method(self, "set_mask", layer, layer.mask)
+	undo_redo.add_undo_method(layer_tree, "reload")
 	undo_redo.commit_action()
 
 
@@ -481,8 +497,14 @@ func set_mesh(to) -> void:
 		if not current_file.layer_materials[surface]:
 			current_file.layer_materials[surface] = LayerMaterial.new()
 	current_file.layer_materials.front().update(true)
-	current_layer_material = current_file.layer_materials.front()
+	set_current_layer_material(current_file.layer_materials.front())
 	emit_signal("mesh_changed", mesh)
+
+
+func set_current_layer_material(to) -> void:
+	current_layer_material = to
+	current_layer_material.mesh = mesh
+	emit_signal("current_layer_material_changed", to)
 
 
 func set_current_file(save_file : SaveFile) -> void:
@@ -494,5 +516,12 @@ func set_current_file(save_file : SaveFile) -> void:
 	emit_signal("current_file_changed")
 
 
+func set_result_size(to) -> void:
+	result_size = to
+	current_layer_material.result_size = to
+	emit_signal("result_size_changed", to)
+
+
 func _on_ToolButtonContainer_tool_selected(selected : int) -> void:
 	selected_tool = selected
+	emit_signal("selected_tool_changed", selected)

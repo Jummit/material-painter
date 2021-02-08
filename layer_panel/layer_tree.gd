@@ -140,24 +140,24 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 					_layer_states.erase(layer)
 				else:
 					_layer_states[layer] = LayerState.MAP_EXPANDED
-				set_layer_material(layer_material)
+				reload()
 		Buttons.MASK:
 			if layer in _layer_states and\
 					_layer_states[layer] == LayerState.MASK_EXPANDED:
 				_layer_states.erase(layer)
 			else:
 				_layer_states[layer] = LayerState.MASK_EXPANDED
-			set_layer_material(layer_material)
+			reload()
 		Buttons.VISIBILITY:
 			undo_redo.create_action("Toggle Layer Visibility")
 			undo_redo.add_do_property(layer, "visible", not layer.visible)
 			undo_redo.add_do_method(layer.parent, "mark_dirty", true)
 			undo_redo.add_do_method(layer_material, "update")
-			undo_redo.add_do_method(self, "_load_layer_material")
+			undo_redo.add_do_method(self, "reload")
 			undo_redo.add_undo_property(layer, "visible", layer.visible)
 			undo_redo.add_undo_method(layer.parent, "mark_dirty", true)
 			undo_redo.add_undo_method(layer_material, "update")
-			undo_redo.add_undo_method(self, "_load_layer_material")
+			undo_redo.add_undo_method(self, "reload")
 			undo_redo.commit_action()
 		Buttons.ICON:
 			if layer in _layer_states and\
@@ -165,7 +165,7 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 				_layer_states.erase(layer)
 			else:
 				_layer_states[layer] = LayerState.FOLDER_EXPANDED
-			set_layer_material(layer_material)
+			reload()
 
 
 func _on_MapTypePopupMenu_about_to_show() -> void:
@@ -183,17 +183,17 @@ func _on_MapTypePopupMenu_about_to_show() -> void:
 func _on_MapTypePopupMenu_id_pressed(id : int) -> void:
 	var layer : MaterialLayer = map_type_popup_menu.get_meta("layer")
 	_selected_maps[layer] = layer.maps.values()[id]
-	set_layer_material(layer_material)
+	reload()
 
 
 func _on_item_edited() -> void:
 	undo_redo.create_action("Rename Layer")
 	var edited_layer = get_edited().get_meta("layer")
 	undo_redo.add_do_property(edited_layer, "name", get_edited().get_text(1))
-	undo_redo.add_do_method(self, "_load_layer_material")
-	undo_redo.add_undo_method(self, "_load_layer_material")
+	undo_redo.add_do_method(self, "reload")
+	undo_redo.add_undo_method(self, "reload")
 	undo_redo.add_undo_property(edited_layer, "name", edited_layer.name)
-	undo_redo.add_undo_method(self, "_load_layer_material")
+	undo_redo.add_undo_method(self, "reload")
 	undo_redo.commit_action()
 	_lastly_edited_layer = null
 
@@ -329,9 +329,13 @@ func drop_data(position : Vector2, data) -> void:
 	
 	undo_redo.add_do_method(layer_mat, "update")
 	undo_redo.add_undo_method(layer_mat, "update")
-	undo_redo.add_do_method(self, "_load_layer_material")
-	undo_redo.add_undo_method(self, "_load_layer_material")
+	undo_redo.add_do_method(self, "reload")
+	undo_redo.add_undo_method(self, "reload")
 	undo_redo.commit_action()
+
+
+func reload() -> void:
+	set_layer_material(layer_material)
 
 
 func _get_layer_at_position(position : Vector2):
@@ -414,6 +418,7 @@ func _select_map(layer : MaterialLayer, map : String, expand := false) -> void:
 	_selected_maps[layer] = layer.maps[map]
 	if expand:
 		_layer_states[layer] = LayerState.MAP_EXPANDED
+	reload()
 
 
 func _setup_material_layer_item(layer, parent_item : TreeItem,
@@ -545,4 +550,4 @@ func _on_Main_current_file_changed(to : ProjectFile) -> void:
 
 
 func _on_Main_current_layer_material_changed(to : LayerMaterial) -> void:
-	layer_material = to
+	set_layer_material(to)
