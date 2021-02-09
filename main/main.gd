@@ -216,15 +216,15 @@ func _on_AddLayerPopupMenu_layer_selected(layer : Resource) -> void:
 
 
 func _on_MaterialLayerPopupMenu_layer_saved() -> void:
-	var material_layer = layer_tree.get_selected_layer().duplicate()
-	for layer_texture in material_layer.get_layer_textures():
-		for texture_layer in layer_texture.get_flat_layers():
-			if texture_layer is FileTextureLayer:
-				texture_layer.path = texture_layer.path.replace(
-						current_file.resource_path.get_base_dir(),
-						"local")
+	# hack to avoid recursively replacing paths: temprarily replace the paths
+	# of all file layers and then revert back.
+	current_layer_material.replace_paths(
+			current_file.resource_path.get_base_dir(), "local")
+	var material_layer = layer_tree.get_selected_layer()
 	var save_path := MATERIALS_FOLDER.plus_file(material_layer.name) + ".tres"
 	ResourceSaver.save(save_path, material_layer)
+	current_layer_material.replace_paths("local",
+			current_file.resource_path.get_base_dir())
 	asset_browser.load_asset(save_path, asset_browser.ASSET_TYPES.MATERIAL)
 	asset_browser.update_asset_list()
 
@@ -376,7 +376,7 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 				export_error_dialog.popup_centered()
 		FILE_MENU_ITEMS.LOAD_MESH:
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
-			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
+			file_dialog.access = FileDialog.ACCESS_FILESYST
 			file_dialog.filters = ["*.obj;Object File"]
 			file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
 			file_dialog.current_file = ""

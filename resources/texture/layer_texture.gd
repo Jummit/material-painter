@@ -14,7 +14,7 @@ If `shader_dirty` is true, the shader needs to be recompiled. This is not
 necessary if only parameters changed.
 """
 
-export var layers : Array
+export var layers : Array setget set_layers
 # warning-ignore:unused_class_variable
 
 var parent
@@ -28,6 +28,10 @@ const TextureFolder = preload("res://resources/texture/texture_folder.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
+
+
+func set_layers(to):
+	layers = to
 	for layer in layers:
 		layer.parent = self
 

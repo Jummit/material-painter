@@ -95,7 +95,8 @@ class MaterialAssetType extends AssetType:
 	
 	func _generate_preview(preview_renderer : Node, asset : Asset) -> Texture:
 		var material_to_render := LayerMaterial.new()
-		material_to_render.layers.append(asset.data)
+		material_to_render.add_layer(asset.data, material_to_render, -1,
+				false)
 		return yield(preview_renderer.get_preview_for_material(material_to_render,
 				Vector2(128, 128)), "completed")
 

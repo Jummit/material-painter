@@ -116,5 +116,4 @@ func mouse_near_grabber() -> bool:
 
 
 func _on_focus_entered() -> void:
-	print("focus")
 	_text_editing = true

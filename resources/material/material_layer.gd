@@ -15,8 +15,8 @@ parent `LayerMaterial` dirty.
 """
 
 # warning-ignore-all:unused_class_variable
-export var maps : Dictionary
-export var mask : Resource
+export var maps : Dictionary setget set_maps
+export var mask : Resource setget set_mask
 export var name := "Untitled Layer"
 export var opacity := 1.0
 export var blend_mode := "normal"
@@ -31,8 +31,17 @@ const MaterialFolder = preload("res://resources/material/material_folder.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
-	for layer_texture in get_layer_textures():
-		layer_texture.parent = self
+
+func set_maps(to):
+	maps = to
+	for map in maps.values():
+		map.parent = self
+
+
+func set_mask(to):
+	mask = to
+	if mask:
+		mask.parent = self
 
 
 func update(force_all := false) -> void:
@@ -47,10 +56,8 @@ func update(force_all := false) -> void:
 
 func get_layer_material_in() -> Resource:
 	if parent is MaterialFolder:
-		print("ret prev")
 		return parent.get_layer_material_in()
 	else:
-		print("ret parent (%s)" % parent)
 		return parent
 
 

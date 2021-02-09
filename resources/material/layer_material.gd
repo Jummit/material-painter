@@ -35,6 +35,7 @@ const MaterialFolder = preload("res://resources/material/material_folder.gd")
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 const TextureFolder = preload("res://resources/texture/texture_folder.gd")
+const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
@@ -150,3 +151,18 @@ func get_flat_layers(layer_array : Array = layers, add_hidden := true) -> Array:
 		else:
 			flat_layers.append(layer)
 	return flat_layers
+
+
+func replace_paths(path : String, with : String) -> void:
+	for texture_layer in get_texture_layers():
+		if texture_layer is FileTextureLayer:
+			texture_layer.path = texture_layer.path.replace(path, with)
+
+
+func get_texture_layers() -> Array:
+	var texture_layers := []
+	for material_layer in get_flat_layers():
+		for layer_texture in material_layer.get_layer_textures():
+			for texture_layer in layer_texture.get_flat_layers():
+				texture_layers.append(texture_layer)
+	return texture_layers

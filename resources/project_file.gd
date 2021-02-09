@@ -16,24 +16,10 @@ func _init() -> void:
 
 
 func save_bitmap_layers() -> void:
-	for texture_layer in find_texture_layers(BitmapTextureLayer):
-		texture_layer.save()
-
-
-func replace_paths(path : String, with : String) -> void:
-	for texture_layer in find_texture_layers(FileTextureLayer):
-		texture_layer.path = texture_layer.path.replace(path, with)
-
-
-func find_texture_layers(type) -> Array:
-	var layers := []
-	for layer_material in layer_materials:
-		for material_layer in layer_material.get_flat_layers():
-			for layer_texture in material_layer.get_layer_textures():
-				for texture_layer in layer_texture.get_flat_layers():
-					if texture_layer is type:
-						layers.append(texture_layer)
-	return layers
+	for material in layer_materials:
+		for layer in material.get_layer_textures():
+			if layer is BitmapTextureLayer:
+				layer.save()
 
 
 func get_global_path(path : String) -> String:

@@ -9,9 +9,12 @@ Replaces all local textures of the material with res://preview_renderer to make
 mesh maps used in the material work.
 """
 
+var mesh : Mesh
+
 const TextureUtils = preload("res://utils/texture_utils.gd")
 const Brush = preload("res://addons/painter/brush.gd")
 const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
+const LayerMaterial = preload("res://resources/material/layer_material.gd")
 
 onready var material_viewport : Viewport = $MaterialViewport
 onready var model : MeshInstance = $MaterialViewport/Model
@@ -24,17 +27,10 @@ onready var mesh_instance : MeshInstance = $BrushViewport/MeshInstance
 onready var hdr_viewport : Viewport = $HDRViewport
 onready var sky_dome : MeshInstance = $HDRViewport/SkyDome
 
-func get_preview_for_material(material : Resource,
+func get_preview_for_material(material : LayerMaterial,
 		result_size : Vector2) -> ImageTexture:
-	material = material.duplicate(true)
-	for material_layer in material.get_flat_layers():
-		for layer_texture in material_layer.get_layer_textures():
-			for texture_layer in layer_texture.get_flat_layers():
-				if texture_layer is FileTextureLayer:
-					texture_layer.cached_path = ""
-					if texture_layer.path.begins_with("local"):
-						texture_layer.path = "res://asset_browser/preview_renderer" +\
-							texture_layer.path.trim_prefix("local")
+	material.replace_paths("local", "res://asset_browser/preview_renderer")
+	material.mesh = mesh
 	var result = material.update(true)
 	if result is GDScriptFunctionState:
 		yield(result, "completed")

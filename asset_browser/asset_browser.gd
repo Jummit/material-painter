@@ -420,3 +420,7 @@ func _on_Main_current_file_changed(to : ProjectFile) -> void:
 	project = to
 	if project.resource_path:
 		_load_local_assets(project.resource_path)
+
+
+func _on_Main_mesh_changed(to : Mesh) -> void:
+	preview_renderer.mesh = to

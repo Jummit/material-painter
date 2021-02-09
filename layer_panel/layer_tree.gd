@@ -94,9 +94,11 @@ func _gui_input(event : InputEvent) -> void:
 		undo_redo.create_action("Delete Layer")
 		undo_redo.add_do_method(layer_material, "delete_layer",
 			layer)
+		undo_redo.add_do_method(self, "reload")
 		undo_redo.add_undo_method(layer_material, "add_layer",
 			layer, layer.parent)
 		undo_redo.add_undo_method(self, "_emit_select_signal", layer)
+		undo_redo.add_undo_method(self, "reload")
 		undo_redo.commit_action()
 
 
@@ -310,11 +312,11 @@ func drop_data(position : Vector2, data) -> void:
 		var new_layer = layer
 		if layer.parent:
 			var old_layer_position : int = layer.parent.layers.find(layer)
+			# delete the old layer
+			undo_redo.add_do_method(layer_mat, "delete_layer", layer, false)
 			# add the new layer
 			undo_redo.add_do_method(layer_mat, "add_layer", new_layer, onto,
 					onto_position, false)
-			# delete the old layer
-			undo_redo.add_do_method(layer_mat, "delete_layer", layer, false)
 			# delete the new layer
 			undo_redo.add_undo_method(layer_mat, "delete_layer", new_layer,
 					false)

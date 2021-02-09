@@ -431,7 +431,7 @@ __meta__ = {
 [node name="TextureMapButtons" type="GridContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/PropertiesWindow/VBoxContainer"]
 visible = false
 margin_right = 240.0
-columns = 3
+columns = 4
 script = ExtResource( 8 )
 __meta__ = {
 "_edit_use_anchors_": false
@@ -701,6 +701,7 @@ margin_bottom = -45.0
 [connection signal="current_layer_material_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/LayersWindow/LayerTree" method="_on_Main_current_layer_material_changed"]
 [connection signal="mesh_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewportWindow/3DViewport" method="_on_Main_mesh_changed"]
 [connection signal="mesh_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/2DViewportWindow/2DViewport" method="_on_Main_mesh_changed"]
+[connection signal="mesh_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser" method="_on_Main_mesh_changed"]
 [connection signal="mesh_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/LayersWindow/HBoxContainer/MaterialOptionButton" method="_on_Main_mesh_changed"]
 [connection signal="result_size_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewportWindow/3DViewport" method="_on_Main_result_size_changed"]
 [connection signal="result_size_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/2DViewportWindow/2DViewport" method="_on_Main_result_size_changed"]
