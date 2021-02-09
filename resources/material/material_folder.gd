@@ -20,9 +20,6 @@ const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blendi
 
 func _init() -> void:
 	resource_local_to_scene = true
-	# for some reason, NOTIFICATION_POSTINITIALIZE doesn't fire,
-	# so use this hack instead
-	yield(VisualServer, "frame_post_draw")
 	for layer in layers:
 		layer.parent = self
 	if mask:

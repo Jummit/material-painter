@@ -67,11 +67,14 @@ func _on_id_pressed(id : int) -> void:
 			emit_signal("mask_added", LayerTexture.new())
 		Items.ADD_BLACK_MASK:
 			var mask := LayerTexture.new()
-			mask.layers.append(BitmapTextureLayer.new())
+			var bitmap := BitmapTextureLayer.new()
+			bitmap.parent = mask
+			mask.layers.append(bitmap)
 			emit_signal("mask_added", mask)
 		Items.ADD_WHITE_MASK:
 			var bitmap := BitmapTextureLayer.new()
 			var mask := LayerTexture.new()
+			bitmap.parent = mask
 			mask.layers.append(bitmap)
 			yield(get_tree(), "idle_frame")
 			emit_signal("mask_added", mask)

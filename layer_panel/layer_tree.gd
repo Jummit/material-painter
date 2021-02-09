@@ -307,7 +307,7 @@ func drop_data(position : Vector2, data) -> void:
 	else:
 		undo_redo.create_action("Drop Layers")
 	for layer in layers:
-		var new_layer = layer.duplicate()
+		var new_layer = layer
 		if layer.parent:
 			var old_layer_position : int = layer.parent.layers.find(layer)
 			# add the new layer
@@ -355,24 +355,29 @@ func _get_layers_of_drop_data(data, position : Vector2) -> Dictionary:
 		layers = [data.data.duplicate()]
 		layer_type = LayerType.TEXTURE_LAYER
 	elif data is Asset and data.type is TextureAssetType:
-		var material_layer := MaterialLayer.new()
-		var layer_texture := LayerTexture.new()
-		var map := "normal" if "normal" in data.tags else "albedo"
-		material_layer.maps[map] = layer_texture
-		material_layer.name = data.name.replace("normal", "").replace("albedo", "").capitalize()
 		var layer := FileTextureLayer.new()
 		var path : String = project.get_global_path(data.file)
 		layer.path = path
 		layer.name = path.get_file().get_basename()
-		layer_texture.parent = material_layer
+		
 		if get_selected_layer_texture(_get_layer_at_position(position)) or\
 				_get_layer_at_position(position) is TextureFolder or\
 				_get_layer_at_position(position) is TextureLayer:
 			layers = [layer]
 			layer_type = LayerType.TEXTURE_LAYER
 		else:
+			# create a material layer with the dropped texture as normal or albedo
+			var layer_texture := LayerTexture.new()
 			layer_texture.layers.append(layer)
+			
+			var material_layer := MaterialLayer.new()
+			var map := "normal" if "normal" in data.tags else "albedo"
+			material_layer.maps[map] = layer_texture
+			material_layer.name = data.name.replace("normal", "").replace("albedo", "").capitalize()
+			
+			layer_texture.parent = material_layer
 			layer.parent = layer_texture
+			
 			layers = [material_layer]
 			layer_type = LayerType.MATERIAL_LAYER
 	elif data is Asset and data.type is MaterialAssetType:

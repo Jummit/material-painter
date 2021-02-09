@@ -31,9 +31,6 @@ const MaterialFolder = preload("res://resources/material/material_folder.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
-	# for some reason, NOTIFICATION_POSTINITIALIZE doesn't fire,
-	# so use this hack instead
-	yield(VisualServer, "frame_post_draw")
 	for layer_texture in get_layer_textures():
 		layer_texture.parent = self
 
@@ -50,8 +47,10 @@ func update(force_all := false) -> void:
 
 func get_layer_material_in() -> Resource:
 	if parent is MaterialFolder:
+		print("ret prev")
 		return parent.get_layer_material_in()
 	else:
+		print("ret parent (%s)" % parent)
 		return parent
 
 

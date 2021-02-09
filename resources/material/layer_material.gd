@@ -38,9 +38,6 @@ const TextureFolder = preload("res://resources/texture/texture_folder.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
-	# for some reason, NOTIFICATION_POSTINITIALIZE doesn't fire,
-	# so use this hack instead
-	yield(VisualServer, "frame_post_draw")
 	for layer in layers:
 		layer.parent = self
 
