@@ -70,12 +70,9 @@ func _ready():
 	_progress_dialog = ProgressDialogManager.create_task("Load Assets", ASSET_TYPES.size())
 	
 	for asset_type in ASSET_TYPES.values():
-		var result = _load_assets(asset_type.get_directory(), asset_type)
-		if result is GDScriptFunctionState:
-			result = yield(result, "completed")
-		_assets += result
-	_assets += yield(_load_assets(EFFECTS, ASSET_TYPES.EFFECT), "completed")
-	_assets += yield(_load_assets(HDRS, ASSET_TYPES.HDR), "completed")
+		_load_assets(asset_type.get_directory(), asset_type)
+	yield(_load_assets(EFFECTS, ASSET_TYPES.EFFECT), "completed")
+	yield(_load_assets(HDRS, ASSET_TYPES.HDR), "completed")
 	
 	_progress_dialog.complete_task()
 	_save_tag_metadata()
@@ -84,7 +81,7 @@ func _ready():
 	update_asset_list()
 
 
-func load_asset(path : String, asset_type : AssetType) -> Asset:
+func load_asset(path : String, asset_type : AssetType, custom_tag := "") -> Asset:
 	var asset := Asset.new()
 	asset.name = path.get_file().get_basename()
 	asset.type = asset_type
@@ -103,10 +100,13 @@ func load_asset(path : String, asset_type : AssetType) -> Asset:
 	for tag in _tag_metadata:
 		if asset.file in _tag_metadata[tag]:
 			_add_asset_to_tag(asset, tag)
+	if custom_tag:
+		_add_asset_to_tag(asset, custom_tag)
 	var result = asset_type.get_preview(preview_renderer, asset)
 	if result is GDScriptFunctionState:
 		result = yield(result, "completed")
 	asset.preview = result
+	_assets.append(asset)
 	return asset
 
 
@@ -290,18 +290,14 @@ func _load_local_assets(project_file : String) -> void:
 		total_files)
 	for asset_type in ASSET_TYPES.values():
 		var result = _load_assets(asset_type.get_local_directory(
-				project_file), asset_type)
+				project_file), asset_type, "local")
 		if result is GDScriptFunctionState:
 			result = yield(result, "completed")
-		_assets += result
-		for asset in result:
-			_add_asset_to_tag(asset, "local")
 	_progress_dialog.complete_task()
 	_save_tag_metadata()
 
 
-func _load_assets(directory : String, asset_type : AssetType) -> Array:
-	var new_assets := []
+func _load_assets(directory : String, asset_type : AssetType, custom_tag := "") -> void:
 	var dir := Directory.new()
 	dir.make_dir_recursive(directory)
 	var files := _get_files_in_folder(directory)
@@ -311,12 +307,7 @@ func _load_assets(directory : String, asset_type : AssetType) -> Array:
 		var file := files[file_num]
 		if file.get_extension() != asset_type.extension:
 			continue
-		var asset = load_asset(directory.plus_file(file), asset_type)
-		if asset is GDScriptFunctionState:
-			asset = yield(asset, "completed")
-		if asset:
-			new_assets.append(asset)
-	return new_assets
+		load_asset(directory.plus_file(file), asset_type, custom_tag)
 
 
 func _get_tags(asset_name : String) -> PoolStringArray:

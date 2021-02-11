@@ -295,12 +295,8 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 				map, mesh, Vector2(1024, 1024)), "completed")
 		
 		result.get_data().save_png(file)
-		
-		var asset = asset_browser.load_asset(file,
-				asset_browser.ASSET_TYPES.TEXTURE)
-		if asset is GDScriptFunctionState:
-			asset = yield(asset, "completed")
-		asset_browser._add_asset_to_tag(asset, "local")
+		asset_browser.load_asset(file, asset_browser.ASSET_TYPES.TEXTURE,
+				"local")
 	
 	asset_browser.update_asset_list()
 	progress_dialog.complete_task()
