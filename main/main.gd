@@ -79,6 +79,7 @@ onready var save_layout_dialog : ConfirmationDialog = $SaveLayoutDialog
 onready var license_dialog : AcceptDialog = $LicenseDialog
 onready var about_dialog : AcceptDialog = $AboutDialog
 onready var export_error_dialog : AcceptDialog = $ExportErrorDialog
+onready var bake_error_dialog : AcceptDialog = $BakeErrorDialog
 onready var quit_confirmation_dialog : ConfirmationDialog = $QuitConfirmationDialog
 onready var layout_name_edit : LineEdit = $SaveLayoutDialog/LayoutNameEdit
 onready var root : Control = $VBoxContainer/Control
@@ -274,6 +275,10 @@ func _on_MaterialOptionButton_item_selected(index : int) -> void:
 
 
 func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
+	if not current_file.resource_path:
+		bake_error_dialog.popup()
+		return
+	
 	var texture_dir : String = asset_browser.ASSET_TYPES.TEXTURE.\
 			get_local_directory(current_file.resource_path)
 	var dir := Directory.new()
@@ -293,10 +298,9 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 		
 		var asset = asset_browser.load_asset(file,
 				asset_browser.ASSET_TYPES.TEXTURE)
-		asset_browser._add_asset_to_tag(asset, "local")
 		if asset is GDScriptFunctionState:
 			asset = yield(asset, "completed")
-		asset_browser.assets.append(asset)
+		asset_browser._add_asset_to_tag(asset, "local")
 	
 	asset_browser.update_asset_list()
 	progress_dialog.complete_task()
