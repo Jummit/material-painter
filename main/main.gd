@@ -9,6 +9,7 @@ modification.
 """
 
 signal current_file_changed(to)
+signal layer_materials_changed(to)
 signal current_layer_material_changed(to)
 signal selected_tool_changed(to)
 signal result_size_changed(to)
@@ -126,7 +127,7 @@ func _on_FileDialog_file_selected(path : String) -> void:
 		FileDialog.MODE_OPEN_FILE:
 			match path.get_extension():
 				"res", "tres":
-					current_file = ResourceLoader.load(path, "", true)
+					set_current_file(ResourceLoader.load(path, "", true))
 					for layer_mat in current_file.layer_materials:
 						layer_mat.replace_paths("local",
 								current_file.resource_path.get_base_dir())
@@ -453,7 +454,7 @@ func save_file() -> bool:
 
 
 func start_empty_project() -> void:
-	current_file = SaveFile.new()
+	set_current_file(SaveFile.new())
 	set_mesh(preload("res://misc/cube.obj"))
 	emit_signal("current_file_changed", current_file)
 
@@ -498,8 +499,9 @@ func set_mesh(to) -> void:
 		if not current_file.layer_materials[surface]:
 			current_file.layer_materials[surface] = LayerMaterial.new()
 	current_file.layer_materials.front().update(true)
-	set_current_layer_material(current_file.layer_materials.front())
 	emit_signal("mesh_changed", mesh)
+	emit_signal("layer_materials_changed", current_file.layer_materials)
+	set_current_layer_material(current_file.layer_materials.front())
 
 
 func set_current_layer_material(to) -> void:
@@ -514,7 +516,7 @@ func set_current_file(save_file : SaveFile) -> void:
 		var result = layer_material.update(true)
 		if result is GDScriptFunctionState:
 			yield(result, "completed")
-	emit_signal("current_file_changed")
+	emit_signal("current_file_changed", current_file)
 
 
 func set_result_size(to) -> void:

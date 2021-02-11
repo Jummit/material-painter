@@ -13,7 +13,6 @@ export var light_sensitivity := 0.01
 var selected_tool : int
 var mesh : Mesh
 var result_size : Vector2
-var project : ProjectFile
 
 var _last_painted_position : Vector2
 var _cached_camera_transform : Transform
@@ -82,14 +81,9 @@ func _on_Main_mesh_changed(to : Mesh) -> void:
 	if Settings.get_setting("generate_utility_maps") == "On Startup":
 		update_mesh_maps()
 	
-	while not project:
-		# wait for project to be broadcasted
-		yield(get_tree(), "idle_frame")
-	model.layer_materials = project.layer_materials
 
-
-func _on_Main_current_file_changed(to : ProjectFile) -> void:
-	project = to
+func _on_Main_layer_materials_changed(to) -> void:
+	model.layer_materials = to
 
 
 func _on_HalfResolutionButton_toggled(button_pressed : bool) -> void:
