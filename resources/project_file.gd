@@ -17,7 +17,7 @@ func _init() -> void:
 
 func save_bitmap_layers() -> void:
 	for material in layer_materials:
-		for layer in material.get_layer_textures():
+		for layer in material.get_texture_layers():
 			if layer is BitmapTextureLayer:
 				layer.save()
 

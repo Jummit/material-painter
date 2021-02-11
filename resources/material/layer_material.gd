@@ -18,7 +18,7 @@ If `shader_dirty` is true, the shader needs to be recompiled. This is not
 necessary if only parameters changed.
 """
 
-export var layers : Array
+export var layers : Array setget set_layers
 
 var result_size := Vector2(1024, 1024)
 # warning-ignore:unused_class_variable
@@ -39,8 +39,6 @@ const FileTextureLayer = preload("res://resources/texture/layers/file_texture_la
 
 func _init() -> void:
 	resource_local_to_scene = true
-	for layer in layers:
-		layer.parent = self
 
 
 func add_layer(layer, onto, position := -1, update := true) -> void:
@@ -166,3 +164,9 @@ func get_texture_layers() -> Array:
 			for texture_layer in layer_texture.get_flat_layers():
 				texture_layers.append(texture_layer)
 	return texture_layers
+
+
+func set_layers(to):
+	layers = to
+	for layer in layers:
+		layer.parent = self

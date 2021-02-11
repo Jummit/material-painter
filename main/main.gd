@@ -127,7 +127,9 @@ func _on_FileDialog_file_selected(path : String) -> void:
 			match path.get_extension():
 				"res", "tres":
 					current_file = ResourceLoader.load(path, "", true)
-					current_file.replace_paths("local", current_file.resource_path.get_base_dir())
+					for layer_mat in current_file.layer_materials:
+						layer_mat.replace_paths("local",
+								current_file.resource_path.get_base_dir())
 					load_mesh(current_file.model_path)
 				"obj":
 					load_mesh(path)
@@ -333,8 +335,9 @@ func _on_QuitConfirmationDialog_confirmed() -> void:
 	if save_file():
 		yield(file_dialog, "confirmed")
 	current_file.save_bitmap_layers()
-	current_file.replace_paths(
-			current_file.resource_path.get_base_dir(), "local")
+	for layer_mat in current_file.layer_materials:
+		layer_mat.replace_paths(current_file.resource_path.get_base_dir(),
+				"local")
 	# todo: don't save twice
 	ResourceSaver.save(current_file.resource_path, current_file)
 	get_tree().quit()
@@ -376,7 +379,7 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 				export_error_dialog.popup_centered()
 		FILE_MENU_ITEMS.LOAD_MESH:
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
-			file_dialog.access = FileDialog.ACCESS_FILESYST
+			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
 			file_dialog.filters = ["*.obj;Object File"]
 			file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
 			file_dialog.current_file = ""
@@ -450,10 +453,9 @@ func save_file() -> bool:
 
 
 func start_empty_project() -> void:
-	var new_file := SaveFile.new()
-	current_file = new_file
+	current_file = SaveFile.new()
 	set_mesh(preload("res://misc/cube.obj"))
-	emit_signal("current_file_changed", new_file)
+	emit_signal("current_file_changed", current_file)
 
 
 func open_save_project_dialog() -> void:
@@ -479,12 +481,11 @@ func initialise_layouts() -> void:
 	var dir := Directory.new()
 	dir.make_dir_recursive("user://layouts")
 	var default := LAYOUTS_FOLDER.plus_file("default.json")
+	# wait for all windows to be ready
+	yield(get_tree(), "idle_frame")
 	if not dir.file_exists(default):
-		# wait for all windows to be ready
-		yield(get_tree(), "idle_frame")
 		LayoutUtils.save_layout(root.get_child(0), default)
 	else:
-		yield(get_tree(), "idle_frame")
 		LayoutUtils.load_layout(root, default)
 	view_menu_button.update_layout_options()
 
