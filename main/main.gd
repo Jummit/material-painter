@@ -10,7 +10,7 @@ modification.
 
 signal current_file_changed(to)
 signal layer_materials_changed(to)
-signal current_layer_material_changed(to)
+signal current_layer_material_changed(to, id)
 signal selected_tool_changed(to)
 signal result_size_changed(to)
 signal mesh_changed(to)
@@ -73,7 +73,6 @@ onready var file_dialog : FileDialog = $FileDialog
 onready var layer_property_panel : Panel = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/PropertiesWindow/VBoxContainer/LayerPropertyPanel
 onready var texture_map_buttons : GridContainer = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/PropertiesWindow/VBoxContainer/TextureMapButtons
 onready var layer_tree : Tree = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/LayersWindow/LayerTree
-onready var painter : Node = $"VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewportWindow/3DViewport/Painter"
 onready var asset_browser : HBoxContainer = $VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser
 onready var save_layout_dialog : ConfirmationDialog = $SaveLayoutDialog
 onready var license_dialog : AcceptDialog = $LicenseDialog
@@ -507,7 +506,8 @@ func set_mesh(to) -> void:
 func set_current_layer_material(to) -> void:
 	current_layer_material = to
 	current_layer_material.mesh = mesh
-	emit_signal("current_layer_material_changed", to)
+	emit_signal("current_layer_material_changed", to,
+			current_file.layer_materials.find(current_layer_material))
 
 
 func set_current_file(save_file : SaveFile) -> void:

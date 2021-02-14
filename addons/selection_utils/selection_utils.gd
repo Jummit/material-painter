@@ -10,8 +10,6 @@ The vertex color at the given screen position is then sampled
 and isolated to get the selected area on the texture.
 """
 
-var mesh : Mesh setget set_mesh
-
 var _prepared_meshes := {}
 var _selection_types := {
 	SelectionType.TRIANGLE : preload("selection_types/triangle_selection.gd"),
@@ -74,10 +72,9 @@ func add_selection(selection_type : int, mouse_position : Vector2,
 	return isolate_viewport.get_texture()
 
 
-func set_mesh(to : Mesh) -> void:
-	mesh = to
+func set_mesh(to : Mesh, surface : int) -> void:
 	for selection_type in _selection_types:
-		var result = _selection_types[selection_type].prepare_mesh(mesh)
+		var result = _selection_types[selection_type].prepare_mesh(to, surface)
 		if result is GDScriptFunctionState:
 			result = yield(result, "completed")
 		_prepared_meshes[selection_type] = result

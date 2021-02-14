@@ -1,4 +1,4 @@
-static func prepare_mesh(mesh : Mesh) -> Mesh:
+static func prepare_mesh(mesh : Mesh, _surface : int) -> Mesh:
 	return mesh
 
 static func get_color() -> Color:

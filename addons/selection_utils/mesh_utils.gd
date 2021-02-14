@@ -37,9 +37,9 @@ static func get_connected_geometry(data_tool : MeshDataTool,
 	return ids
 
 
-static func uv_to_vertex_positions(mesh : Mesh) -> Mesh:
+static func uv_to_vertex_positions(mesh : Mesh, surface : int) -> Mesh:
 	var data_tool := MeshDataTool.new()
-	data_tool.create_from_surface(mesh, 0)
+	data_tool.create_from_surface(mesh, surface)
 	for vertex in data_tool.get_vertex_count():
 		var uv := data_tool.get_vertex_uv(vertex)
 		data_tool.set_vertex(vertex, Vector3(uv.x, uv.y, 0))
@@ -77,9 +77,9 @@ static func get_quads(data_tool : MeshDataTool) -> Dictionary:
 	return quads
 
 
-static func join_duplicates(mesh : Mesh) -> Dictionary:
+static func join_duplicates(mesh : Mesh, surface : int) -> Dictionary:
 	var data_tool := MeshDataTool.new()
-	if not data_tool.create_from_surface(_deindex(mesh), 0) == OK:
+	if not data_tool.create_from_surface(_deindex(mesh), surface) == OK:
 		return {}
 	
 	var old_vertex_ids := {}
@@ -125,10 +125,13 @@ static func join_duplicates(mesh : Mesh) -> Dictionary:
 
 
 static func _deindex(mesh : Mesh) -> Mesh:
+	var new_mesh := Mesh.new()
 	var surface_tool := SurfaceTool.new()
-	surface_tool.create_from(mesh, 0)
-	surface_tool.deindex()
-	return surface_tool.commit()
+	for surface in mesh.get_surface_count():
+		surface_tool.create_from(mesh, surface)
+		surface_tool.deindex()
+		surface_tool.commit(new_mesh)
+	return new_mesh
 
 
 static func _get_normal(a : Vector3, b : Vector3, c : Vector3) -> Vector3:

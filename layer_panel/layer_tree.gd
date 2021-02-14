@@ -556,5 +556,5 @@ func _on_Main_current_file_changed(to : ProjectFile) -> void:
 	project = to
 
 
-func _on_Main_current_layer_material_changed(to : LayerMaterial) -> void:
+func _on_Main_current_layer_material_changed(to : LayerMaterial, _id : int) -> void:
 	set_layer_material(to)

@@ -11,13 +11,17 @@ Responsible for selecting HDRIs and toggling HDRI visibility.
 export var light_sensitivity := 0.01
 
 var selected_tool : int
-var mesh : Mesh
+var mesh : Mesh setget set_mesh
 var result_size : Vector2
+var current_surface := 0
 
 var _last_painted_position : Vector2
 var _cached_camera_transform : Transform
 var _painting_layer : BitmapTextureLayer
 var _mesh_maps_generated := false
+
+var _painters := {}
+var _selection_utils := {}
 
 const Brush = preload("res://addons/painter/brush.gd")
 const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
@@ -26,19 +30,17 @@ const AssetType = preload("res://asset_browser/asset_classes.gd").AssetType
 const BrushAssetType = preload("res://asset_browser/asset_classes.gd").BrushAssetType
 const SelectionUtils = preload("res://addons/selection_utils/selection_utils.gd")
 const ProjectFile = preload("res://resources/project_file.gd")
+const Painter = preload("res://addons/painter/painter.gd")
 
 onready var model : MeshInstance = $Viewport/Model
 onready var world_environment : WorldEnvironment = $Viewport/WorldEnvironment
 onready var directional_light : DirectionalLight = $Viewport/DirectionalLight
 onready var viewport : Viewport = $Viewport
-onready var painter : Node = $Painter
-onready var selection_utils : Node = $SelectionUtils
 onready var navigation_camera : Camera = $Viewport/NavigationCamera
 onready var fps_label : Label = $FPSLabel
 onready var half_resolution_button : CheckButton = $HalfResolutionButton
 
 func _ready() -> void:
-	painter.mesh_instance = model
 	navigation_camera.set_process_input(false)
 	world_environment.environment = world_environment.environment.duplicate()
 
@@ -76,11 +78,13 @@ func _on_ViewMenuButton_hdri_selected(hdri : Texture) -> void:
 
 
 func _on_Main_mesh_changed(to : Mesh) -> void:
-	mesh = _prepare_mesh(to)
-	model.mesh = mesh
+	set_mesh(to)
+
+
+func _on_Main_current_layer_material_changed(_to : Resource, _id : int) -> void:
 	if Settings.get_setting("generate_utility_maps") == "On Startup":
 		update_mesh_maps()
-	
+
 
 func _on_Main_layer_materials_changed(to) -> void:
 	model.layer_materials = to
@@ -88,6 +92,13 @@ func _on_Main_layer_materials_changed(to) -> void:
 
 func _on_HalfResolutionButton_toggled(button_pressed : bool) -> void:
 	stretch_shrink = 2 if button_pressed else 1
+
+
+func set_mesh(to):
+	mesh = to
+	model.mesh = mesh
+	_painters.clear()
+	_selection_utils.clear()
 
 
 func get_layout_data() -> bool:
@@ -105,33 +116,37 @@ func _on_LayerTree_layer_selected(layer) -> void:
 
 
 func _load_bitmap_layer() -> void:
-	if not _painting_layer or selected_tool != Constants.Tools.PAINT:
+	if not _painting_layer or selected_tool != Constants.Tools.PAINT or not is_visible_in_tree():
 		return
 	# don't make this the initial texture if it's already the painter's texture
-	if _painting_layer.texture == painter.paint_viewport.get_texture():
+	if _painting_layer.texture == get_painter().paint_viewport.get_texture():
 		return
-	painter.clear()
-	painter.set_initial_texture(_painting_layer.texture)
+	yield(get_painter().clear(), "completed")
+	yield(get_painter().set_initial_texture(_painting_layer.texture), "completed")
+	_painting_layer.texture = get_painter().result
+	_painting_layer.mark_dirty()
+	_painting_layer.get_layer_texture_in().parent.get_layer_material_in().update()
 
 
 func _on_ToolSettingsPropertyPanel_brush_changed(brush : Brush) -> void:
-	if not painter:
+	if not get_painter():
 		yield(self, "ready")
-	painter.brush = brush
+	get_painter().brush = brush
 
 
 func _on_AssetBrowser_asset_activated(asset : Asset) -> void:
 	if asset.type is BrushAssetType:
-		painter.brush = asset.data
+		get_painter().brush = asset.data
 
 
 func update_mesh_maps() -> void:
 	var progress_dialog = ProgressDialogManager.create_task(
 			"Generate Painter Maps", 1)
 	progress_dialog.set_action("Generate Maps")
-	yield(painter.set_mesh_instance(model), "completed")
+	yield(get_painter().set_mesh_instance(model), "completed")
 	progress_dialog.complete_task()
 	yield(get_tree(), "idle_frame")
+	var selection_utils := get_selection_utils()
 	progress_dialog = ProgressDialogManager.create_task(
 			"Generate Selection Maps", selection_utils.SelectionType.size())
 	for selection_type in selection_utils._selection_types:
@@ -139,7 +154,7 @@ func update_mesh_maps() -> void:
 				selection_type])
 		yield(get_tree(), "idle_frame")
 		var prepared_mesh = selection_utils._selection_types[selection_type].\
-				prepare_mesh(model.mesh)
+				prepare_mesh(model.mesh, current_surface)
 		if prepared_mesh is GDScriptFunctionState:
 			prepared_mesh = yield(prepared_mesh, "completed")
 		selection_utils._prepared_meshes[selection_type] = prepared_mesh
@@ -165,10 +180,10 @@ func _on_Main_result_size_changed(to) -> void:
 	result_size = to
 
 
-# perform a selection with the given `type` using `selection_utils`
+# perform a selection with the given `type` using selection utils
 func select(type : int, position : Vector2) -> void:
-	selection_utils.update_view(viewport)
-	_painting_layer.texture = yield(selection_utils.add_selection(
+	get_selection_utils().update_view(viewport)
+	_painting_layer.texture = yield(get_selection_utils().add_selection(
 			type, position, result_size,
 			_painting_layer.texture), "completed")
 	_painting_layer.mark_dirty()
@@ -177,6 +192,7 @@ func select(type : int, position : Vector2) -> void:
 
 # perform a paintstroke from `from` to `to` using the `painter`
 func paint(from : Vector2, to : Vector2) -> void:
+	var painter := get_painter()
 	painter.result_size = result_size
 	var camera : Camera = viewport.get_camera()
 	var camera_transform = camera.global_transform
@@ -189,10 +205,25 @@ func paint(from : Vector2, to : Vector2) -> void:
 	_painting_layer.get_layer_texture_in().parent.get_layer_material_in().update()
 
 
-static func _prepare_mesh(to_prepare : Mesh) -> Mesh:
-	return to_prepare
-
-
 func _on_visibility_changed() -> void:
 	if get_parent().visible:
 		_load_bitmap_layer()
+
+
+func get_painter() -> Painter:
+	if not current_surface in _painters:
+		var painter : Painter = preload("res://addons/painter/painter.tscn").instance()
+		add_child(painter)
+		painter.mesh_instance = model
+		painter.painting_material = current_surface
+		_painters[current_surface] = painter
+	return _painters[current_surface]
+
+
+func get_selection_utils() -> SelectionUtils:
+	if not current_surface in _selection_utils:
+		var selection_utils : SelectionUtils = preload("res://addons/selection_utils/selection_utils.tscn").instance()
+		add_child(selection_utils)
+		selection_utils.set_mesh(mesh, current_surface)
+		_selection_utils[current_surface] = selection_utils
+	return _selection_utils[current_surface]

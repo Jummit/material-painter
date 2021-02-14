@@ -1,10 +1,8 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://viewport/viewport.gd" type="Script" id=1]
-[ext_resource path="res://addons/painter/painter.tscn" type="PackedScene" id=2]
 [ext_resource path="res://addons/navigation_camera/navigation_camera.gd" type="Script" id=3]
 [ext_resource path="res://viewport/environment.tres" type="Environment" id=4]
-[ext_resource path="res://addons/selection_utils/selection_utils.tscn" type="PackedScene" id=5]
 [ext_resource path="res://viewport/model.gd" type="Script" id=7]
 
 [sub_resource type="StyleBoxEmpty" id=1]
@@ -36,16 +34,17 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2 )
 current = true
 far = 4305.1
 script = ExtResource( 3 )
+rotation_sensitity = 0.48
+moving_sensitity = 0.14
+zoom_sensitity = 0.3
+pan_only = false
+focus_point = Vector3( 0, 0, 0 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="Viewport"]
 transform = Transform( 0.822333, 0.397311, -0.407324, 0, 0.715851, 0.698253, 0.569007, -0.574196, 0.588668, 0, 10, 0 )
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Viewport"]
 environment = ExtResource( 4 )
-
-[node name="Painter" parent="." instance=ExtResource( 2 )]
-
-[node name="SelectionUtils" parent="." instance=ExtResource( 5 )]
 
 [node name="FPSLabel" type="Label" parent="."]
 margin_right = 40.0

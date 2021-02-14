@@ -2,11 +2,11 @@ extends "res://addons/selection_utils/selection_type.gd"
 
 const MeshUtils = preload("res://addons/selection_utils/mesh_utils.gd")
 
-static func prepare_mesh(mesh : Mesh) -> Mesh:
+static func prepare_mesh(mesh : Mesh, surface : int) -> Mesh:
 	var original_data_tool := MeshDataTool.new()
-	original_data_tool.create_from_surface(mesh, 0)
+	original_data_tool.create_from_surface(mesh, surface)
 	
-	var joined_data := MeshUtils.join_duplicates(mesh)
+	var joined_data := MeshUtils.join_duplicates(mesh, surface)
 	
 	var data_tool := MeshDataTool.new()
 	data_tool.create_from_surface(joined_data.mesh, 0)

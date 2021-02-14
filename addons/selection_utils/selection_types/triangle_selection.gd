@@ -2,9 +2,9 @@ extends "res://addons/selection_utils/selection_type.gd"
 
 const MeshUtils = preload("res://addons/selection_utils/mesh_utils.gd")
 
-static func prepare_mesh(mesh : Mesh) -> Mesh:
+static func prepare_mesh(mesh : Mesh, surface : int) -> Mesh:
 	var mesh_tool := MeshDataTool.new()
-	mesh_tool.create_from_surface(mesh, 0)
+	mesh_tool.create_from_surface(mesh, surface)
 	
 	var vertices : PoolVector3Array = []
 	var uvs : PoolVector2Array = []
