@@ -358,9 +358,8 @@ func _get_layers_of_drop_data(data, position : Vector2) -> Dictionary:
 		layer_type = LayerType.TEXTURE_LAYER
 	elif data is Asset and data.type is TextureAssetType:
 		var layer := FileTextureLayer.new()
-		var path : String = project.get_global_path(data.file)
-		layer.path = path
-		layer.name = path.get_file().get_basename()
+		layer.path = data.file.replace(project.resource_path.get_base_dir(), "local:/")
+		layer.name = data.file.get_file().get_basename()
 		
 		if get_selected_layer_texture(_get_layer_at_position(position)) or\
 				_get_layer_at_position(position) is TextureFolder or\
@@ -393,12 +392,6 @@ func _get_layers_of_drop_data(data, position : Vector2) -> Dictionary:
 			var mat_layer : Resource = mat_layers.pop_back()
 			if mat_layer is MaterialFolder:
 				mat_layers += mat_layer.layers
-			else:
-				for layer_texture in mat_layer.get_layer_textures():
-					for texture_layer in layer_texture.get_flat_layers():
-						if texture_layer is FileTextureLayer:
-							texture_layer.path = project.get_global_path(
-								texture_layer.path)
 		layer_type = LayerType.MATERIAL_LAYER
 		layers = [material_layer]
 	elif data is Dictionary and "type" in data and data.type == "layers":

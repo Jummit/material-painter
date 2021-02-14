@@ -23,6 +23,8 @@ export var layers : Array setget set_layers
 var result_size := Vector2(1024, 1024)
 # warning-ignore:unused_class_variable
 var mesh : Mesh
+# warning-ignore:unused_class_variable
+var root_folder : String
 
 var results : Dictionary
 var dirty := true
@@ -149,12 +151,6 @@ func get_flat_layers(layer_array : Array = layers, add_hidden := true) -> Array:
 		else:
 			flat_layers.append(layer)
 	return flat_layers
-
-
-func replace_paths(path : String, with : String) -> void:
-	for texture_layer in get_texture_layers():
-		if texture_layer is FileTextureLayer:
-			texture_layer.path = texture_layer.path.replace(path, with)
 
 
 func get_texture_layers() -> Array:

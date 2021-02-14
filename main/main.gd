@@ -124,13 +124,15 @@ func _on_FileDialog_file_selected(path : String) -> void:
 			if to_save is Brush:
 				asset_browser.load_asset(path, asset_browser.ASSET_TYPES.BRUSH)
 				asset_browser.update_asset_list()
+			if to_save is SaveFile:
+				for mat in to_save.layer_materials:
+					mat.root_folder = current_file.resource_path.get_base_dir()
 		FileDialog.MODE_OPEN_FILE:
 			match path.get_extension():
 				"res", "tres":
 					set_current_file(ResourceLoader.load(path, "", true))
 					for layer_mat in current_file.layer_materials:
-						layer_mat.replace_paths("local",
-								current_file.resource_path.get_base_dir())
+						layer_mat.root_folder = current_file.resource_path.get_base_dir()
 					load_mesh(current_file.model_path)
 				"obj":
 					load_mesh(path)
@@ -219,15 +221,9 @@ func _on_AddLayerPopupMenu_layer_selected(layer : Resource) -> void:
 
 
 func _on_MaterialLayerPopupMenu_layer_saved() -> void:
-	# hack to avoid recursively replacing paths: temprarily replace the paths
-	# of all file layers and then revert back.
-	current_layer_material.replace_paths(
-			current_file.resource_path.get_base_dir(), "local")
 	var material_layer = layer_tree.get_selected_layer()
 	var save_path := MATERIALS_FOLDER.plus_file(material_layer.name) + ".tres"
 	ResourceSaver.save(save_path, material_layer)
-	current_layer_material.replace_paths("local",
-			current_file.resource_path.get_base_dir())
 	asset_browser.load_asset(save_path, asset_browser.ASSET_TYPES.MATERIAL)
 	asset_browser.update_asset_list()
 
@@ -265,7 +261,8 @@ func _on_SaveButton_pressed() -> void:
 	file_dialog.current_file = ""
 	file_dialog.mode = FileDialog.MODE_SAVE_FILE
 	file_dialog.filters = ["*.tres;Brush File"]
-	file_dialog.set_meta("to_save", painter.brush)
+	# todo: brush saving
+#	file_dialog.set_meta("to_save", painter.brush)
 	file_dialog.popup_centered()
 
 
@@ -335,9 +332,6 @@ func _on_QuitConfirmationDialog_confirmed() -> void:
 	if save_file():
 		yield(file_dialog, "confirmed")
 	current_file.save_bitmap_layers()
-	for layer_mat in current_file.layer_materials:
-		layer_mat.replace_paths(current_file.resource_path.get_base_dir(),
-				"local")
 	# todo: don't save twice
 	ResourceSaver.save(current_file.resource_path, current_file)
 	get_tree().quit()

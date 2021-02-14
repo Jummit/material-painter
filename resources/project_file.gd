@@ -20,14 +20,3 @@ func save_bitmap_layers() -> void:
 		for layer in material.get_texture_layers():
 			if layer is BitmapTextureLayer:
 				layer.save()
-
-
-func get_global_path(path : String) -> String:
-	if path.begins_with("local"):
-		return resource_path.get_base_dir().plus_file(path.trim_prefix("local"))
-	else:
-		return path
-
-
-func get_local_asset_dir() -> String:
-	return resource_path.get_base_dir().plus_file("assets")

@@ -349,7 +349,7 @@ func _delete_asset(item : int) -> void:
 		_remove_asset_from_tag(asset, tag)
 	
 	var dir := Directory.new()
-	dir.remove(project.get_global_path(asset.file))
+	dir.remove(asset.file)
 	dir.remove(asset.get_cached_thumbnail_path())
 	
 	asset_list.remove_item(item)
