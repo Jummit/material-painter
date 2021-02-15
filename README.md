@@ -17,5 +17,5 @@ git clone git@github.com:Jummit/material-painter.git
 cd material-painter
 git submodule update --init
 cd package_manager
-sh update_modules.sh
+python package_manager.py
 ```

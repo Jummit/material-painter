@@ -1,0 +1,5 @@
+git@github.com:Jummit/curvature-baker.git master
+git@github.com:Jummit/navigation-camera.git master
+git@github.com:Jummit/customizable-ui.git master
+git@github.com:Jummit/godot-obj-parser.git master
+git@github.com:Jummit/node-referencer-addon.git master
