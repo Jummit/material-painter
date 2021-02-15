@@ -281,18 +281,20 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 	dir.make_dir_recursive(texture_dir)
 	
 	var progress_dialog = ProgressDialogManager.create_task("Bake Mesh Maps",
-			mesh_maps_generator.BAKE_FUNCTIONS.size())
+			mesh_maps_generator.BAKE_FUNCTIONS.size() * mesh.get_surface_count())
 	
-	for map in mesh_maps_generator.BAKE_FUNCTIONS:
-		var file := texture_dir.plus_file(map) + ".png"
-		progress_dialog.set_action(file)
-		
-		var result : ImageTexture = yield(mesh_maps_generator.generate_mesh_map(
-				map, mesh, Vector2(1024, 1024)), "completed")
-		
-		result.get_data().save_png(file)
-		asset_browser.load_asset(file, asset_browser.ASSET_TYPES.TEXTURE,
-				"local")
+	for surface in mesh.get_surface_count():
+		var mat_name : String = current_file.layer_materials[surface].resource_name
+		for map in mesh_maps_generator.BAKE_FUNCTIONS:
+			var file := texture_dir.plus_file(mat_name + map) + ".png"
+			progress_dialog.set_action("%s: %s" % [mat_name, file])
+			
+			var result : ImageTexture = yield(mesh_maps_generator.generate_mesh_map(
+					map, mesh, Vector2(1024, 1024), surface), "completed")
+			
+			result.get_data().save_png(file)
+			asset_browser.load_asset(file, asset_browser.ASSET_TYPES.TEXTURE,
+					"local")
 	
 	asset_browser.update_asset_list()
 	progress_dialog.complete_task()

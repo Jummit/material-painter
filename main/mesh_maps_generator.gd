@@ -14,16 +14,16 @@ const BAKE_FUNCTIONS := {
 }
 
 func generate_mesh_map(map : String, mesh : Mesh,
-		result_size : Vector2) -> ImageTexture:
+		result_size : Vector2, surface : int) -> ImageTexture:
 	var result : Texture = yield(get_node(map).call(BAKE_FUNCTIONS[map], mesh,
-				result_size), "completed")
+				result_size, surface), "completed")
 	if result is ViewportTexture:
 		return TextureUtils.viewport_to_image(result)
 	return result
 
 
-func generate_mesh_maps(mesh : Mesh, result_size : Vector2) -> Dictionary:
+func generate_mesh_maps(mesh : Mesh, result_size : Vector2, surface : int) -> Dictionary:
 	var maps := {}
 	for map in BAKE_FUNCTIONS:
-		maps[map] = yield(generate_mesh_map(map, mesh, result_size), "completed")
+		maps[map] = yield(generate_mesh_map(map, mesh, result_size, surface), "completed")
 	return maps
