@@ -18,8 +18,8 @@ parent `LayerMaterial` dirty.
 export var maps : Dictionary setget set_maps
 export var mask : Resource setget set_mask
 export var name := "Untitled Layer"
-export var opacity := 1.0
-export var blend_mode := "normal"
+export var opacities := {}
+export var blend_modes := {}
 export var visible := true
 
 var parent
@@ -31,6 +31,10 @@ const MaterialFolder = preload("res://resources/material/material_folder.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
+	for map in Constants.TEXTURE_MAP_TYPES:
+		opacities[map] = 1.0
+		blend_modes[map] = "normal"
+
 
 func set_maps(to):
 	maps = to

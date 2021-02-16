@@ -16,6 +16,10 @@ necessary if only parameters changed.
 
 export var layers : Array setget set_layers
 # warning-ignore:unused_class_variable
+export var opacity := 1.0
+# warning-ignore:unused_class_variable
+export var blend_mode := "normal"
+# warning-ignore:unused_class_variable
 
 var parent
 var result : Texture
@@ -84,5 +88,10 @@ func get_flat_layers(layer_array : Array = layers, add_hidden := true, add_folde
 func mark_dirty(shader_too := false) -> void:
 	dirty = true
 	icon_dirty = true
-	shader_dirty = shader_too
+	if shader_too:
+		shader_dirty = true
 	parent.mark_dirty(shader_too)
+
+
+func get_layer_material_in() -> Resource:
+	return parent.get_layer_material_in()

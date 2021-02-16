@@ -13,17 +13,19 @@ const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 const MaterialLayer = preload("res://resources/material/material_layer.gd")
 const Properties = preload("res://addons/property_panel/properties.gd")
 const JSONTextureLayer = preload("res://resources/texture/json_texture_layer.gd")
+const MaterialFolder = preload("res://resources/material/material_folder.gd")
 
 func _on_LayerTree_layer_selected(layer) -> void:
 	editing_layer = layer
-	if layer is MaterialLayer:
-		# todo: add blend mode
+	if layer is MaterialLayer or layer is MaterialFolder:
 		properties = []
 		
-		for type in layer.maps.keys():
+		for type in Constants.TEXTURE_MAP_TYPES if layer is MaterialFolder else layer.maps:
 			properties += [
-				Properties.EnumProperty.new("blend_mode", Constants.BLEND_MODES),
-				Properties.FloatProperty.new("opacity", 0.0, 1.0),
+				Properties.EnumProperty.new(type + "/blend_modes",
+						Constants.BLEND_MODES, layer.blend_modes[type]),
+				Properties.FloatProperty.new(type + "/opacities", 0.0, 1.0,
+						layer.opacities[type]),
 			]
 		
 		set_properties(properties)
@@ -41,6 +43,7 @@ func _on_LayerTree_layer_selected(layer) -> void:
 func _on_property_changed(property, value) -> void:
 	var update_shader = property == "blend_mode"
 	var layer = editing_layer
+	# don't update the shader if the changed value is a shader parameter
 	if layer is JSONTextureLayer:
 		for property_data in layer.data.properties:
 			if property_data.name == property:
@@ -59,7 +62,10 @@ func _on_property_changed(property, value) -> void:
 
 
 func set_value_on_layer(layer, property : String, value) -> void:
-	if layer is JSONTextureLayer:
+	if "/" in property:
+		layer[property.split("/")[1]][property.split("/")[0]] = value
+		layer.mark_dirty("blend_mode" in property)
+	elif layer is JSONTextureLayer:
 		layer.settings[property] = value
 	else:
 		layer[property] = value

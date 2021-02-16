@@ -63,7 +63,8 @@ func delete_layer(layer, update := true) -> void:
 
 func mark_dirty(shader_too := false) -> void:
 	dirty = true
-	shader_dirty = shader_too
+	if shader_too:
+		shader_dirty = true
 
 
 func update(force_all := false) -> void:
@@ -86,12 +87,12 @@ func update(force_all := false) -> void:
 				continue
 			
 			var blending_layer : BlendingLayer
+			var mask
 			if layer.mask:
-				blending_layer = BlendingLayer.new(
-					"texture({layer_result}, uv)",
-					"normal", 1.0, layer.mask.result)
-			else:
-				blending_layer = BlendingLayer.new("texture({layer_result}, uv)")
+				mask = layer.mask.result
+			blending_layer = BlendingLayer.new(
+				"texture({layer_result}, uv)",
+				layer.blend_modes[map], layer.opacities[map], mask)
 			blending_layer.uniform_types.append("sampler2D")
 			blending_layer.uniform_names.append("layer_result")
 			blending_layer.uniform_values.append(map_result)

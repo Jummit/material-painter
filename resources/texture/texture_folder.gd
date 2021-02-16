@@ -39,7 +39,8 @@ func get_layer_texture_in() -> Resource:
 
 func mark_dirty(shader_too := false) -> void:
 	dirty = true
-	shader_dirty = shader_too
+	if shader_too:
+		shader_dirty = true
 	parent.mark_dirty(shader_dirty)
 
 

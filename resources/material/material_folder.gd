@@ -10,6 +10,8 @@ export var name := "Untitled Folder"
 export var mask : Resource setget set_mask
 export var visible := true
 export var layers : Array setget set_layers
+export var opacities := {}
+export var blend_modes := {}
 
 var results : Dictionary
 var parent
@@ -18,13 +20,18 @@ var shader_dirty := false
 
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 
+func _init() -> void:
+	resource_local_to_scene = true
+	for map in Constants.TEXTURE_MAP_TYPES:
+		opacities[map] = 1.0
+		blend_modes[map] = "normal"
+
+
 func set_layers(to):
 	layers = to
 	for layer in layers:
 		layer.parent = self
 
-func _init() -> void:
-	resource_local_to_scene = true
 
 func set_mask(to):
 	mask = to
@@ -42,7 +49,8 @@ func get_layer_material_in() -> Resource:
 
 func mark_dirty(shader_too := false) -> void:
 	dirty = true
-	shader_dirty = shader_too
+	if shader_too:
+		shader_dirty = true
 	parent.mark_dirty(shader_dirty)
 
 
