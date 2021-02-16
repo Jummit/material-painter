@@ -492,7 +492,10 @@ func set_mesh(to) -> void:
 	current_file.layer_materials.resize(mesh.get_surface_count())
 	for surface in mesh.get_surface_count():
 		if not current_file.layer_materials[surface]:
-			current_file.layer_materials[surface] = LayerMaterial.new()
+			var new_material := LayerMaterial.new()
+			if mesh.surface_get_material(surface):
+				new_material.resource_name = mesh.surface_get_material(surface).resource_name
+			current_file.layer_materials[surface] = new_material
 	current_file.layer_materials.front().update(true)
 	emit_signal("mesh_changed", mesh)
 	emit_signal("layer_materials_changed", current_file.layer_materials)
