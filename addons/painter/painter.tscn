@@ -1,11 +1,11 @@
-[gd_scene load_steps=11 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://misc/cube.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://addons/painter/shaders/paint.shader" type="Shader" id=2]
 [ext_resource path="res://addons/painter/shaders/seams.shader" type="Shader" id=3]
 [ext_resource path="res://addons/painter/painter.gd" type="Script" id=4]
-[ext_resource path="res://addons/painter/shaders/view_to_texture.shader" type="Shader" id=5]
-[ext_resource path="res://addons/painter/shaders/texture_to_view.shader" type="Shader" id=6]
+[ext_resource path="res://addons/painter/shaders/view_to_texture.material" type="Material" id=5]
+[ext_resource path="res://addons/painter/shaders/texture_to_view.material" type="Material" id=6]
 
 [sub_resource type="ShaderMaterial" id=1]
 resource_local_to_scene = true
@@ -20,18 +20,6 @@ shader_param/texture_angle = 0.0
 shader_param/stamp_mode = false
 shader_param/texture_mask = Plane( 1, 1, 1, 1 )
 shader_param/paint_through = false
-
-[sub_resource type="ShaderMaterial" id=2]
-shader = ExtResource( 5 )
-
-[sub_resource type="ShaderMaterial" id=3]
-resource_local_to_scene = true
-shader = ExtResource( 6 )
-shader_param/model_transform = null
-shader_param/fovy_degrees = 45.0
-shader_param/z_near = 0.01
-shader_param/z_far = 60.0
-shader_param/aspect = 1.0
 
 [sub_resource type="ShaderMaterial" id=4]
 resource_local_to_scene = true
@@ -55,12 +43,6 @@ material = SubResource( 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="BlackBackground" type="ColorRect" parent="PaintViewport"]
-visible = false
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color( 0, 0, 0, 1 )
-
 [node name="InitialTextureRect" type="TextureRect" parent="PaintViewport"]
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -79,7 +61,7 @@ render_target_update_mode = 0
 current = true
 
 [node name="MeshInstance" type="MeshInstance" parent="ViewToTextureViewport"]
-material_override = SubResource( 2 )
+material_override = ExtResource( 5 )
 
 [node name="TextureToViewViewport" type="Viewport" parent="."]
 size = Vector2( 1024, 1024 )
@@ -95,7 +77,7 @@ projection = 1
 current = true
 
 [node name="MeshInstance" type="MeshInstance" parent="TextureToViewViewport"]
-material_override = SubResource( 3 )
+material_override = ExtResource( 6 )
 mesh = ExtResource( 1 )
 material/0 = null
 

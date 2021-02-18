@@ -204,7 +204,8 @@ func paint(from : Vector2, to : Vector2) -> void:
 	painter.paint(from / rect_size, to / rect_size)
 	_painting_layer.texture = painter.result
 	_painting_layer.mark_dirty()
-	_painting_layer.get_layer_texture_in().parent.get_layer_material_in().update()
+	_painting_layer.get_layer_texture_in().parent.get_layer_material_in()\
+			.update()
 
 
 func _on_visibility_changed() -> void:
@@ -214,17 +215,19 @@ func _on_visibility_changed() -> void:
 
 func get_painter() -> Painter:
 	if not current_surface in _painters:
-		var painter : Painter = preload("res://addons/painter/painter.tscn").instance()
+		var painter : Painter = preload(\
+				"res://addons/painter/painter.tscn").instance()
 		add_child(painter)
+		painter.surface = current_surface
 		painter.mesh_instance = model
-		painter.painting_material = current_surface
 		_painters[current_surface] = painter
 	return _painters[current_surface]
 
 
 func get_selection_utils() -> SelectionUtils:
 	if not current_surface in _selection_utils:
-		var selection_utils : SelectionUtils = preload("res://addons/selection_utils/selection_utils.tscn").instance()
+		var selection_utils : SelectionUtils = preload(\
+				"res://addons/selection_utils/selection_utils.tscn").instance()
 		add_child(selection_utils)
 		selection_utils.set_mesh(mesh, current_surface)
 		_selection_utils[current_surface] = selection_utils
