@@ -294,11 +294,12 @@ func drop_data(position : Vector2, data) -> void:
 			onto_position = onto.layers.size()
 		var section:
 			# dropped above/below layer
+			# FIXME: this produces wrong results when droping a layer down
 			onto = onto_layer.parent
 			onto_position = onto.layers.find(onto_layer)
 			if section == 1:
 				onto_position += 1
-			onto_position = int(clamp(onto_position, 0, onto.layers.size()))
+			onto_position = int(clamp(onto_position, 0, onto.layers.size() - 1))
 	
 	# add the layers in the reverse order to keep the order intact
 	layers.invert()
