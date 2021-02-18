@@ -52,10 +52,11 @@ func _gui_input(event : InputEvent) -> void:
 			and event.pressed) or (event is InputEventMouseMotion and\
 			event.button_mask == BUTTON_LEFT)):
 		if selected_tool == Constants.Tools.PAINT:
-			paint(event.position, event.position)
+			paint(_last_painted_position if _last_painted_position else event.position, event.position)
 			_last_painted_position = event.position
 		else:
 			select(selected_tool, event.position / stretch_shrink)
+	
 	
 	if event is InputEventMouseButton and event.pressed and\
 			event.button_mask == BUTTON_MASK_RIGHT:
@@ -67,6 +68,7 @@ func _gui_input(event : InputEvent) -> void:
 					directional_light.rotation_degrees.y
 	if event is InputEventMouseButton and not event.pressed:
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+		_last_painted_position = Vector2()
 
 
 func _process(_delta : float) -> void:
