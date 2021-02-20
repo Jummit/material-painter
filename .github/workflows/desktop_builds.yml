@@ -28,7 +28,7 @@ jobs:
       - name: Install Modules
         run: |
           apt update
-          apt-get -y install python3.8
+          apt-get -y install python3.8 ssh-client
           cd package_manager
           python3.8 package_manager.py
       - name: Setup
