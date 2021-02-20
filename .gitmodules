@@ -1,3 +1,3 @@
 [submodule "package_manager"]
 	path = package_manager
-	url = git@github.com:Jummit/godot-package-manager.git
+	url = https://github.com/Jummit/godot-package-manager.git
