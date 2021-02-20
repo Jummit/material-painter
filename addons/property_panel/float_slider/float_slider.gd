@@ -5,10 +5,10 @@ export(float, 0, 3) var min_value : float
 var max_value : float = 10
 var step : float
 
-# if the user is dragging the text field
+# If the user is dragging the text field.
 var _dragging := false
 var _dragged_position : Vector2
-# if the user has grabbed the slider grabber
+# If the user has grabbed the slider grabber.
 var _grabbed := false
 var _sensitivity := 1000.0
 var _clicked := false
