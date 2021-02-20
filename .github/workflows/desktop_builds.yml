@@ -9,6 +9,8 @@ on:
 env:
   GODOT_VERSION: 3.2.3
   NAME: material_painter
+  ITCHIO_GAME: material-painter
+  ITCHIO_USERNAME: jummit
   VERSION: "1.0"
 
 jobs:
@@ -57,3 +59,9 @@ jobs:
         with:
           name: Mac OSX Snapshot
           path: build/${{ env.NAME }}_${{ env.VERSION }}_macosx.zip
+      - name: Butler Upload
+        run: |
+          cd build
+          butler push ${NAME}_${VERSION}_windows.zip $ITCHIO_USERNAME/$ITCHIO_GAME:windows
+          butler push ${NAME}_${VERSION}_macosx.zip $ITCHIO_USERNAME/$ITCHIO_GAME:mac
+          butler push ${NAME}_${VERSION}_linux.tar.gz $ITCHIO_USERNAME/$ITCHIO_GAME:linux
