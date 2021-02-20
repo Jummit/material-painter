@@ -9,6 +9,7 @@ on:
 env:
   GODOT_VERSION: 3.2.3
   NAME: material_painter
+  BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
   ITCHIO_GAME: material-painter
   ITCHIO_USERNAME: jummit
   VERSION: "1.0"
