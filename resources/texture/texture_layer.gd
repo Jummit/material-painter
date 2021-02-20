@@ -63,7 +63,7 @@ func get_layer_texture_in() -> LayerTexture:
 	if parent is LayerTexture:
 		return parent
 	else:
-		# parent is a `TextureFolder`
+		# Parent is a `TextureFolder`.
 		return parent.get_layer_texture_in()
 
 

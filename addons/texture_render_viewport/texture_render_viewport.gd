@@ -13,7 +13,7 @@ func render_texture(subject : Node, result_size : Vector2,
 			while busy:
 				yield(VisualServer, "frame_post_draw")
 		else:
-			# yield because a `GDScriptFunctionState` is probably expected
+			# Yield because a `GDScriptFunctionState` is probably expected.
 			yield()
 			return ViewportTexture.new()
 	add_child(subject)

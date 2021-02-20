@@ -28,7 +28,7 @@ static func uv_to_vertex_positions(mesh : Mesh, surface : int) -> Mesh:
 				var uv := data_tool.get_vertex_uv(vertex)
 				data_tool.set_vertex(vertex, Vector3(uv.x, 1.0 - uv.y, 0))
 			else:
-				# kind hacky: move all vertices of the unused surfaces to 0,0,0
+				# Kinda hacky: move all vertices of the unused surfaces to 0,0,0.
 				data_tool.set_vertex(vertex, Vector3.ZERO)
 		data_tool.commit_to_surface(new_mesh)
 	return new_mesh

@@ -24,8 +24,8 @@ var undo_redo := UndoRedo.new()
 
 onready var mesh_maps_generator : Node = $MeshMapsGenerator
 
-# to avoid https://github.com/godotengine/godot/issues/36895,
-# this is passed to add_do_action instead of null
+# To avoid https://github.com/godotengine/godot/issues/36895,
+# this is passed to add_do_action instead of null.
 var NO_MASK := LayerTexture.new()
 
 const MATERIALS_FOLDER := "user://materials"
@@ -119,7 +119,7 @@ func _on_FileDialog_file_selected(path : String) -> void:
 		FileDialog.MODE_SAVE_FILE:
 			var to_save = file_dialog.get_meta("to_save")
 			ResourceSaver.save(path, to_save)
-			# ResourceSaver.FLAG_CHANGE_PATH doesn't work for some reason
+			# ResourceSaver.FLAG_CHANGE_PATH doesn't work for some reason.
 			to_save.resource_path = path
 			if to_save is Brush:
 				asset_browser.load_asset(path, asset_browser.ASSET_TYPES.BRUSH)
@@ -261,8 +261,8 @@ func _on_SaveButton_pressed() -> void:
 	file_dialog.current_file = ""
 	file_dialog.mode = FileDialog.MODE_SAVE_FILE
 	file_dialog.filters = ["*.tres;Brush File"]
-	# todo: brush saving
-#	file_dialog.set_meta("to_save", painter.brush)
+	# Todo: brush saving.
+#	file_dialog.set_meta("to_save", painter.brush).
 	file_dialog.popup_centered()
 
 
@@ -334,7 +334,7 @@ func _on_QuitConfirmationDialog_confirmed() -> void:
 	if save_file():
 		yield(file_dialog, "confirmed")
 	current_file.save_bitmap_layers()
-	# todo: don't save twice
+	# Todo: don't save twice.
 	ResourceSaver.save(current_file.resource_path, current_file)
 	get_tree().quit()
 
@@ -436,8 +436,8 @@ func load_mesh(path : String) -> void:
 				set_mesh(new_mesh)
 				return
 
-# returns if the file wasn't saved and the user needs to specify where to
-# save it
+# Returns if the file wasn't saved and the user needs to specify where to
+# save it.
 func save_file() -> bool:
 	if current_file.resource_path:
 		ResourceSaver.save(current_file.resource_path,
@@ -477,7 +477,7 @@ func initialise_layouts() -> void:
 	var dir := Directory.new()
 	dir.make_dir_recursive("user://layouts")
 	var default := LAYOUTS_FOLDER.plus_file("default.json")
-	# wait for all windows to be ready
+	# Wait for all windows to be ready.
 	yield(get_tree(), "idle_frame")
 	if not dir.file_exists(default):
 		LayoutUtils.save_layout(root.get_child(0), default)

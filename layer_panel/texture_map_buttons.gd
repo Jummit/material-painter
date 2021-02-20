@@ -50,7 +50,7 @@ func _on_Button_toggled(button_pressed : bool, map : String) -> void:
 		undo_redo.commit_action()
 
 
-# block `toggled` signals to avoid emitting the `changed` signal
+# Block `toggled` signals to avoid emitting the `changed` signal.
 func _silently_set_button_pressed(button : Button, pressed : bool) -> void:
 	button.set_block_signals(true)
 	button.pressed = pressed

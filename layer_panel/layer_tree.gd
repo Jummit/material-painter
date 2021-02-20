@@ -80,11 +80,11 @@ func _gui_input(event : InputEvent) -> void:
 		layer_popup_menu.popup()
 	elif event is InputEventMouseButton and event.button_index == BUTTON_LEFT\
 		and event.pressed:
-		# `get_selected` returns null the first time a layer is clicked
-		# if it doesn't, in thin case it means the layer was "double clicked"
+		# `get_selected` returns null the first time a layer is clicked.
+		# If it doesn't, in thin case it means the layer was "double clicked".
 		if get_selected():
 			get_selected().set_editable(1, true)
-			# if a layer was set editable reset it to not editable again
+			# If a layer was set editable reset it to not editable again.
 			if is_instance_valid(_lastly_edited_layer):
 				_lastly_edited_layer.set_editable(1, false)
 			_lastly_edited_layer = get_selected()
@@ -277,31 +277,31 @@ func drop_data(position : Vector2, data) -> void:
 	var onto_position : int
 	match get_drop_section_at_position(position):
 		0:
-			# dropped onto layer
+			# Dropped onto layer.
 			if layer_data.type == LayerType.TEXTURE_LAYER:
 				if onto_layer is TextureFolder:
 					onto = onto_layer
 				else:
-					# it's a material layer or folder
+					# It's a material layer or folder.
 					onto = get_selected_layer_texture(onto_layer)
 			else:
-				# it's a material folder
+				# It's a material folder.
 				onto = onto_layer
 			onto_position = onto.layers.size()
 		-100:
-			# dropped onto nothing
+			# Dropped onto nothing.
 			onto = layer_material
 			onto_position = onto.layers.size()
 		var section:
-			# dropped above/below layer
-			# FIXME: this produces wrong results when droping a layer down
+			# Dropped above/below layer.
+			# FIXME: this produces wrong results when droping a layer down.
 			onto = onto_layer.parent
 			onto_position = onto.layers.find(onto_layer)
 			if section == 1:
 				onto_position += 1
 			onto_position = int(clamp(onto_position, 0, onto.layers.size() - 1))
 	
-	# add the layers in the reverse order to keep the order intact
+	# Add the layers in the reverse order to keep the order intact.
 	layers.invert()
 	
 	var layer_mat := layer_material
@@ -313,15 +313,15 @@ func drop_data(position : Vector2, data) -> void:
 		var new_layer = layer
 		if layer.parent:
 			var old_layer_position : int = layer.parent.layers.find(layer)
-			# delete the old layer
+			# Delete the old layer.
 			undo_redo.add_do_method(layer_mat, "delete_layer", layer, false)
-			# add the new layer
+			# Add the new layer.
 			undo_redo.add_do_method(layer_mat, "add_layer", new_layer, onto,
 					onto_position, false)
-			# delete the new layer
+			# Delete the new layer.
 			undo_redo.add_undo_method(layer_mat, "delete_layer", new_layer,
 					false)
-			# restore the old layer
+			# Restore the old layer.
 			undo_redo.add_undo_method(layer_mat, "add_layer", layer,
 					layer.parent, old_layer_position, false)
 		else:
@@ -368,7 +368,7 @@ func _get_layers_of_drop_data(data, position : Vector2) -> Dictionary:
 			layers = [layer]
 			layer_type = LayerType.TEXTURE_LAYER
 		else:
-			# create a material layer with the dropped texture as normal or albedo
+			# Create a material layer with the dropped texture as normal or albedo.
 			var layer_texture := LayerTexture.new()
 			layer_texture.layers.append(layer)
 			
@@ -526,7 +526,7 @@ func _get_visibility_icon(is_visible : bool) -> Texture:
 
 
 func _select_item(item : TreeItem) -> void:
-	# hack to select a `TreeItem` in SelectMode.SELECT_MULTI
+	# Hack to select a `TreeItem` in SelectMode.SELECT_MULTI.
 	select_mode = Tree.SELECT_SINGLE
 	set_block_signals(true)
 	item.select(1)

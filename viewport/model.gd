@@ -8,7 +8,7 @@ If `isolated_map` is specified it will be used as albedo.
 """
 
 var layer_materials : Array setget set_layer_materials
-# the name of the currently viewing map, for example "albedo"
+# The name of the currently viewing map, for example "albedo".
 var isolated_map : String setget set_isolated_map
 
 func set_layer_materials(to) -> void:

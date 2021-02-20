@@ -120,7 +120,7 @@ func _on_LayerTree_layer_selected(layer) -> void:
 func _load_bitmap_layer() -> void:
 	if not _painting_layer or selected_tool != Constants.Tools.PAINT or not is_visible_in_tree():
 		return
-	# don't make this the initial texture if it's already the painter's texture
+	# Don't make this the initial texture if it's already the painter's texture.
 	if _painting_layer.texture == get_painter().paint_viewport.get_texture():
 		return
 	yield(get_painter().clear(), "completed")
@@ -182,7 +182,7 @@ func _on_Main_result_size_changed(to) -> void:
 	result_size = to
 
 
-# perform a selection with the given `type` using selection utils
+# Perform a selection with the given `type` using selection utils.
 func select(type : int, position : Vector2) -> void:
 	get_selection_utils().update_view(viewport)
 	_painting_layer.texture = yield(get_selection_utils().add_selection(
@@ -192,7 +192,7 @@ func select(type : int, position : Vector2) -> void:
 	_painting_layer.get_layer_texture_in().parent.get_layer_material_in().update()
 
 
-# perform a paintstroke from `from` to `to` using the `painter`
+# Perform a paintstroke from `from` to `to` using the `painter`.
 func paint(from : Vector2, to : Vector2) -> void:
 	var painter := get_painter()
 	painter.result_size = result_size

@@ -40,7 +40,7 @@ func set_mask(to):
 
 
 func get_layer_material_in() -> Resource:
-	# hacky workaround to avoid cycling references
+	# Hacky workaround to avoid cycling references.
 	if parent.has_method("get_layer_material_in"):
 		return parent.get_layer_material_in()
 	else:

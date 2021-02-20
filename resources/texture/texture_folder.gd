@@ -30,7 +30,7 @@ func get_layer_material_in() -> Resource:
 
 
 func get_layer_texture_in() -> Resource:
-	# hacky workaround to avoid cycling references
+	# Hacky workaround to avoid cycling references.
 	if parent.has_method("get_layer_texture_in"):
 		return parent.get_layer_texture_in()
 	else:
