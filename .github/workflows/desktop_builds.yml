@@ -28,7 +28,7 @@ jobs:
       - name: Install Modules
         run: |
           cd package_manager
-          python package_manager.py
+          python3 package_manager.py
       - name: Setup
         run: |
           mkdir -v -p build/${NAME}_${VERSION}_windows build/${NAME}_${VERSION}_linux build/${NAME}_${VERSION}_macosx ~/.local/share/godot/templates
