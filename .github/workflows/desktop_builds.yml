@@ -27,6 +27,7 @@ jobs:
           submodules: true
       - name: Install Modules
         run: |
+          sudo apt-get install python3
           cd package_manager
           python3 package_manager.py
       - name: Setup
