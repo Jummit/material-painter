@@ -30,7 +30,7 @@ jobs:
           apt update
           apt-get -y install python3.8
           cd package_manager
-          python3 package_manager.py
+          python3.8 package_manager.py
       - name: Setup
         run: |
           mkdir -v -p build/${NAME}_${VERSION}_windows build/${NAME}_${VERSION}_linux build/${NAME}_${VERSION}_macosx ~/.local/share/godot/templates
