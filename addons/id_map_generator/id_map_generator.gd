@@ -36,11 +36,3 @@ func generate_id_map(mesh : Mesh, result_size : Vector2, surface : int) -> Viewp
 	render_target_update_mode = Viewport.UPDATE_ONCE
 	yield(VisualServer, "frame_post_draw")
 	return get_texture()
-
-
-static func _get_triangle_bounds(a : Vector2, b : Vector2, c : Vector2) -> Rect2:
-	var bounds := Rect2()
-	bounds = bounds.expand(a)
-	bounds = bounds.expand(b)
-	bounds = bounds.expand(c)
-	return bounds
