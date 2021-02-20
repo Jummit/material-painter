@@ -27,6 +27,7 @@ jobs:
           submodules: true
       - name: Install Modules
         run: |
+          apt update
           apt-get install python3.8
           cd package_manager
           python3 package_manager.py
