@@ -27,7 +27,7 @@ jobs:
           mkdir -v -p build/${NAME}_${VERSION}_windows build/${NAME}_${VERSION}_linux build/${NAME}_${VERSION}_macosx ~/.local/share/godot/templates
           mv /root/.local/share/godot/templates/${GODOT_VERSION}.stable ~/.local/share/godot/templates/${GODOT_VERSION}.stable
       - name: Windows Build
-        run: godot -v --export "Windows" ./build/${NAME}_${VERSION}_windows/$NAME.exe
+        run: godot -v --export "Windows Desktop" ./build/${NAME}_${VERSION}_windows/$NAME.exe
       - name: Linux Build
         run: godot -v --export "Linux/X11" ./build/${NAME}_${VERSION}_linux/$NAME.x86_64
       - name: Mac OSX Build
