@@ -81,7 +81,7 @@ func _ready():
 	update_asset_list()
 
 
-func load_asset(path : String, asset_type : AssetType, custom_tag := "") -> Asset:
+func load_asset(path : String, asset_type : AssetType, custom_tag := "") -> void:
 	var asset := Asset.new()
 	asset.name = path.get_file().get_basename()
 	asset.type = asset_type
@@ -90,7 +90,7 @@ func load_asset(path : String, asset_type : AssetType, custom_tag := "") -> Asse
 	if asset_type == ASSET_TYPES.EFFECT and "in_context_menu" in asset.data.data\
 			and asset.data.data.in_context_menu:
 		emit_signal("right_click_effect_loaded", asset.data)
-		return null
+		return
 	if not path in _already_tagged_assets:
 		_add_asset_to_tag(asset, asset_type.tag)
 		for tag in _get_tags(asset.name):
@@ -107,7 +107,6 @@ func load_asset(path : String, asset_type : AssetType, custom_tag := "") -> Asse
 		result = yield(result, "completed")
 	asset.preview = result
 	_assets.append(asset)
-	return asset
 
 
 func update_asset_list() -> void:
