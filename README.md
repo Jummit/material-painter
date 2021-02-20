@@ -1,6 +1,6 @@
 # Material Painter
 
-![GitHub](https://img.shields.io/github/license/jummit/material-painter) [![Godot Engine](https://img.shields.io/badge/godot-v3.2.3-blue)](https://godotengine.org) [![Itch.io](https://img.shields.io/badge/download-itch.io-red)](https://jummit.itch.io/material-painter) [![Material Painter Docs](https://img.shields.io/badge/wiki-Read%20The%20Docs-blue)](https://jummit.github.io/material-painter-docs)
+[![GitHub](https://img.shields.io/github/license/jummit/material-painter)](https://github.com/Jummit/material-painter/blob/master/LICENSE) [![Godot Engine](https://img.shields.io/badge/godot-v3.2.3-blue)](https://godotengine.org) [![Itch.io](https://img.shields.io/badge/download-itch.io-red)](https://jummit.itch.io/material-painter) [![Material Painter Docs](https://img.shields.io/badge/wiki-Read%20The%20Docs-blue)](https://jummit.github.io/material-painter-docs)
 
 A Substance Painter alternative made in the Godot Engine.
 
