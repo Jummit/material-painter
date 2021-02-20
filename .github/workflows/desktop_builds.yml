@@ -1,0 +1,59 @@
+name: "desktop-builds"
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  GODOT_VERSION: 3.2.3
+  NAME: material_painter
+  VERSION: 1.0
+
+jobs:
+  generate_releases:
+    name: Generate Releases
+    runs-on: ubuntu-latest
+    container:
+      image: docker://barichello/godot-ci:3.2.3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+        with:
+          submodules: true
+      - name: Setup
+        run: |
+          mkdir -v -p build/${NAME}_${VERSION}_windows build/${NAME}_${VERSION}_linux build/${NAME}_${VERSION}_macosx ~/.local/share/godot/templates
+          mv /root/.local/share/godot/templates/${GODOT_VERSION}.stable ~/.local/share/godot/templates/${GODOT_VERSION}.stable
+      - name: Windows Build
+        run: godot -v --export "Windows" ./build/${NAME}_${VERSION}_windows/$NAME.exe
+      - name: Linux Build
+        run: godot -v --export "Linux/X11" ./build/${NAME}_${VERSION}_linux/$NAME.x86_64
+      - name: Mac OSX Build
+        run: godot -v --export "Mac OSX" ./build/${NAME}_${VERSION}_macosx.zip
+      - name: Unzip Mac OSX build
+        run: |
+          cd build
+          unzip ${NAME}_${VERSION}_macosx.zip
+      - name: Create Archives
+        run: |
+          cd build
+          zip -r ${NAME}_${VERSION}_windows.zip ${NAME}_${VERSION}_windows
+          tar zcvf ${NAME}_${VERSION}_linux.tar.gz ${NAME}_${VERSION}_linux
+          zip -r ${NAME}_${VERSION}_macosx.zip material_painter.app
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Windows Snapshot
+          path: build/${{ env.NAME }}_${{ env.VERSION }}_windows.zip
+      - name: Upload Linux Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: Linux Snapshot
+          path: build/${{ env.NAME }}_${{ env.VERSION }}_linux.tar.gz
+      - name: Upload Mac OSX Artifact 🚀
+        uses: actions/upload-artifact@v2
+        with:
+          name: Mac OSX Snapshot
+          path: build/${{ env.NAME }}_${{ env.VERSION }}_macosx.zip
