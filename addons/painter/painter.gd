@@ -37,7 +37,7 @@ var _viewport_size : Vector2
 var _cached_images : Dictionary = {}
 
 const Brush = preload("res://addons/painter/brush.gd")
-const MeshUtils = preload("res://addons/mesh_utils/mesh_utils.gd")
+const MeshUtils = preload("res://addons/third_party/mesh_utils/mesh_utils.gd")
 
 onready var paint_material : ShaderMaterial = $PaintViewport/PaintRect.material
 onready var paint_viewport : Viewport = $PaintViewport

@@ -29,6 +29,7 @@ var icon_dirty := true
 var shader_dirty := false
 
 const TextureFolder = preload("res://resources/texture/texture_folder.gd")
+const MaterialGenerationContext = preload("res://material_generation_context.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
@@ -40,36 +41,38 @@ func set_layers(to):
 		layer.parent = self
 
 
-func update(force_all := false) -> void:
+func update(context : MaterialGenerationContext, force_all := false) -> void:
 	if not dirty and not force_all:
 		return
 	for layer in layers:
 		var update_result = layer.update(force_all)
 		if update_result is GDScriptFunctionState:
 			yield(update_result, "completed")
-	result = yield(generate_result(parent.get_layer_material_in().result_size,
-			shader_dirty or force_all, get_instance_id()), "completed")
+	result = yield(generate_result(context, shader_dirty or force_all,
+			get_instance_id()), "completed")
 	shader_dirty = false
 	dirty = false
 
 
-func generate_result(result_size : Vector2, update_shader := false,
+func generate_result(context : MaterialGenerationContext, update_shader := false,
 		id := -1) -> Texture:
 	var blending_layers := []
 	for layer in layers:
 		if not layer.visible:
 			continue
-		var shader_layer = layer._get_as_shader_layer()
+		var shader_layer = layer._get_as_shader_layer(context)
 		if shader_layer is GDScriptFunctionState:
 			shader_layer = yield(shader_layer, "completed")
 		blending_layers.append(shader_layer)
-	return yield(LayerBlendViewportManager.blend(blending_layers, result_size,
-			id, update_shader), "completed")
+	return yield(context.blending_viewport_manager.blend(blending_layers,
+			context.result_size, id, update_shader), "completed")
 
 
-func update_icon() -> void:
+func update_icon(context : MaterialGenerationContext) -> void:
 	if icon_dirty:
-		icon = yield(generate_result(Vector2(32, 32)), "completed")
+		var small_context : MaterialGenerationContext = context.duplicate()
+		small_context.result_size = Vector2(32, 32)
+		icon = yield(generate_result(small_context), "completed")
 		icon_dirty = false
 
 

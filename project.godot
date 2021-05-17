@@ -8,6 +8,16 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "Camera",
+"class": "NavigationCamera",
+"language": "GDScript",
+"path": "res://addons/third_party/navigation_camera/navigation_camera.gd"
+} ]
+_global_script_class_icons={
+"NavigationCamera": "res://addons/third_party/navigation_camera/navigation_camera_icon.svg"
+}
+
 [application]
 
 config/name="Material Painter"
@@ -22,9 +32,6 @@ config/icon="res://icon.svg"
 
 Settings="*res://main/settings.gd"
 Constants="*res://main/constants.gd"
-LayerBlendViewportManager="*res://addons/layer_blending_viewport/layer_blend_viewport_manager.gd"
-NormalMapGenerationViewport="*res://addons/normal_map_generation_viewport/normal_map_generation_viewport.tscn"
-TriplanarTextureGenerator="*res://addons/triplanar_texture_generator/triplanar_texture_generator.tscn"
 ProgressDialogManager="*res://addons/progress_dialog/progress_dialog_manager.tscn"
 
 [debug]
@@ -35,29 +42,29 @@ gdscript/warnings/return_value_discarded=false
 
 [editor_plugins]
 
-enabled=PoolStringArray( "navigation_camera", "node_referencer" )
+enabled=PoolStringArray( "res://addons/third_party/navigation_camera/plugin.cfg", "res://addons/third_party/node_referencer/plugin.cfg" )
 
 [input]
 
 save={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":true,"meta":false,"command":true,"pressed":false,"scancode":83,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":true,"meta":false,"command":true,"pressed":false,"scancode":83,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 undo={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":true,"meta":false,"command":true,"pressed":false,"scancode":90,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":true,"meta":false,"command":true,"pressed":false,"scancode":90,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 redo={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":true,"control":true,"meta":false,"command":true,"pressed":false,"scancode":90,"unicode":0,"echo":false,"script":null)
-, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":true,"meta":false,"command":true,"pressed":false,"scancode":89,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":true,"control":true,"meta":false,"command":true,"pressed":false,"scancode":90,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
+, Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":true,"meta":false,"command":true,"pressed":false,"scancode":89,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 delete_asset={
 "deadzone": 0.5,
-"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777224,"unicode":0,"echo":false,"script":null)
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777224,"physical_scancode":0,"unicode":0,"echo":false,"script":null)
  ]
 }
 

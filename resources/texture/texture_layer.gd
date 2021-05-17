@@ -22,6 +22,7 @@ var icon_dirty := true
 
 const Layer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").Layer
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
+const MaterialGenerationContext = preload("res://material_generation_context.gd")
 
 func _init(_name : String):
 	resource_local_to_scene = true
@@ -35,23 +36,23 @@ func mark_dirty(shader_dirty := false) -> void:
 	get_layer_texture_in().mark_dirty(shader_dirty)
 
 
-func update(force_all := false) -> void:
+func update(context : MaterialGenerationContext, force_all := false) -> void:
 	if not dirty and not force_all:
 		return
-	var shader_layer = _get_as_shader_layer()
+	var shader_layer = _get_as_shader_layer(context)
 	if shader_layer is GDScriptFunctionState:
 		shader_layer = yield(shader_layer, "completed")
 	dirty = false
 
 
-func update_icon() -> void:
+func update_icon(context : MaterialGenerationContext) -> void:
 	if not icon_dirty:
 		return
-	var shader_layer = _get_as_shader_layer()
+	var shader_layer = _get_as_shader_layer(context)
 	if shader_layer is GDScriptFunctionState:
 		shader_layer = yield(shader_layer, "completed")
-	icon = yield(LayerBlendViewportManager.blend(
-			[shader_layer], Vector2(16, 16)), "completed")
+	icon = yield(context.blending_viewport_manager.blend([shader_layer],
+			context.icon_size), "completed")
 	icon_dirty = false
 
 
@@ -71,5 +72,5 @@ func get_properties() -> Array:
 	return []
 
 
-func _get_as_shader_layer() -> Layer:
+func _get_as_shader_layer(_context : MaterialGenerationContext) -> Layer:
 	return null

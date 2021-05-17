@@ -12,15 +12,13 @@ signal current_file_changed(to)
 signal layer_materials_changed(to)
 signal current_layer_material_changed(to, id)
 signal selected_tool_changed(to)
-signal result_size_changed(to)
 signal mesh_changed(to)
 
 var current_file : SaveFile setget set_current_file
 var current_layer_material : LayerMaterial setget set_current_layer_material
 var selected_tool : int = Constants.Tools.PAINT
-var mesh : Mesh setget set_mesh
-var result_size := Vector2(2048, 2048) setget set_result_size
 var undo_redo := UndoRedo.new()
+var context : MaterialGenerationContext
 
 onready var mesh_maps_generator : Node = $MeshMapsGenerator
 
@@ -61,10 +59,11 @@ const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 const TextureFolder = preload("res://resources/texture/texture_folder.gd")
 const Brush = preload("res://addons/painter/brush.gd")
 const ResourceUtils = preload("res://utils/resource_utils.gd")
-const LayoutUtils = preload("res://addons/customizable_ui/layout_utils.gd")
-const ObjParser = preload("res://addons/obj_parser/obj_parser.gd")
+const LayoutUtils = preload("res://addons/third_party/customizable_ui/layout_utils.gd")
+const ObjParser = preload("res://addons/third_party/obj_parser/obj_parser.gd")
 const JSONTextureLayer = preload("res://resources/texture/json_texture_layer.gd")
-const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
+const MaterialGenerationContext = preload("res://material_generation_context.gd")
+#const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/FileMenuButton
 onready var about_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/AboutMenuButton
@@ -82,8 +81,14 @@ onready var bake_error_dialog : AcceptDialog = $BakeErrorDialog
 onready var quit_confirmation_dialog : ConfirmationDialog = $QuitConfirmationDialog
 onready var layout_name_edit : LineEdit = $SaveLayoutDialog/LayoutNameEdit
 onready var root : Control = $VBoxContainer/Control
+onready var triplanar_texture_generator : Viewport = $TriplanarTextureGenerator
+onready var normal_map_generation_viewport : Viewport = $NormalMapGenerationViewport
+onready var layer_blend_viewport_manager : Node = $LayerBlendViewportManager
 
 func _ready() -> void:
+	context = MaterialGenerationContext.new(layer_blend_viewport_manager,
+			normal_map_generation_viewport, triplanar_texture_generator)
+	
 	ProgressDialogManager.theme = theme
 	
 	undo_redo.connect("version_changed", self, "_on_UndoRedo_version_changed")
@@ -96,8 +101,6 @@ func _ready() -> void:
 	
 	initialise_layouts()
 	start_empty_project()
-	
-	set_result_size(result_size)
 
 
 func _input(event : InputEvent) -> void:
@@ -281,16 +284,16 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 	dir.make_dir_recursive(texture_dir)
 	
 	var progress_dialog = ProgressDialogManager.create_task("Bake Mesh Maps",
-			mesh_maps_generator.BAKE_FUNCTIONS.size() * mesh.get_surface_count())
+			mesh_maps_generator.BAKE_FUNCTIONS.size() * context.mesh.get_surface_count())
 	
-	for surface in mesh.get_surface_count():
+	for surface in context.mesh.get_surface_count():
 		var mat_name : String = current_file.layer_materials[surface].resource_name
 		for map in mesh_maps_generator.BAKE_FUNCTIONS:
 			var file := texture_dir.plus_file(mat_name + map) + ".png"
 			progress_dialog.set_action("%s: %s" % [mat_name, file])
 			
 			var result : ImageTexture = yield(mesh_maps_generator.generate_mesh_map(
-					map, mesh, Vector2(1024, 1024), surface), "completed")
+					map, context.mesh, Vector2(1024, 1024), surface), "completed")
 			
 			result.get_data().save_png(file)
 			asset_browser.load_asset(file, asset_browser.ASSET_TYPES.TEXTURE,
@@ -301,7 +304,7 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 
 
 func _on_EditMenuButton_size_selected(size) -> void:
-	result_size = size
+	context.result_size = size
 	current_layer_material.update(true)
 
 
@@ -394,7 +397,7 @@ func export_materials() -> void:
 			current_layer_material.results.size())
 	yield(get_tree(), "idle_frame")
 	for surface in current_file.layer_materials.size():
-		var material_name := mesh.surface_get_material(
+		var material_name := context.mesh.surface_get_material(
 				surface).resource_name
 		var export_folder := current_file.resource_path.get_base_dir()\
 				.plus_file("export").plus_file(material_name)
@@ -487,24 +490,24 @@ func initialise_layouts() -> void:
 
 
 func set_mesh(to) -> void:
-	mesh = to
+	context.mesh = to
 	current_file.model_path = to.resource_path
-	current_file.layer_materials.resize(mesh.get_surface_count())
-	for surface in mesh.get_surface_count():
+	current_file.layer_materials.resize(context.mesh.get_surface_count())
+	for surface in context.mesh.get_surface_count():
 		if not current_file.layer_materials[surface]:
 			var new_material := LayerMaterial.new()
-			if mesh.surface_get_material(surface):
-				new_material.resource_name = mesh.surface_get_material(surface).resource_name
+			if context.mesh.surface_get_material(surface):
+				new_material.resource_name = context.mesh.surface_get_material(surface).resource_name
 			current_file.layer_materials[surface] = new_material
 	current_file.layer_materials.front().update(true)
-	emit_signal("mesh_changed", mesh)
+	emit_signal("mesh_changed", context.mesh)
 	emit_signal("layer_materials_changed", current_file.layer_materials)
 	set_current_layer_material(current_file.layer_materials.front())
 
 
 func set_current_layer_material(to) -> void:
 	current_layer_material = to
-	current_layer_material.mesh = mesh
+	current_layer_material.context = context
 	emit_signal("current_layer_material_changed", to,
 			current_file.layer_materials.find(current_layer_material))
 
@@ -516,12 +519,6 @@ func set_current_file(save_file : SaveFile) -> void:
 		if result is GDScriptFunctionState:
 			yield(result, "completed")
 	emit_signal("current_file_changed", current_file)
-
-
-func set_result_size(to) -> void:
-	result_size = to
-	current_layer_material.result_size = to
-	emit_signal("result_size_changed", to)
 
 
 func _on_ToolButtonContainer_tool_selected(selected : int) -> void:

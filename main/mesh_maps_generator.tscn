@@ -2,7 +2,7 @@
 
 [ext_resource path="res://addons/world_map_generator/world_map_generator.tscn" type="PackedScene" id=1]
 [ext_resource path="res://addons/id_map_generator/id_map_generator.tscn" type="PackedScene" id=2]
-[ext_resource path="res://addons/curvature_baker/curvature_baker.tscn" type="PackedScene" id=3]
+[ext_resource path="res://addons/third_party/curvature_baker/curvature_baker.tscn" type="PackedScene" id=3]
 [ext_resource path="res://addons/world_normal_baker/world_normal_baker.tscn" type="PackedScene" id=4]
 [ext_resource path="res://main/mesh_maps_generator.gd" type="Script" id=5]
 

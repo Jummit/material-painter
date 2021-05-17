@@ -1,20 +1,4 @@
-extends "res://addons/license_dialog/license_dialog.gd"
-
-func _ready() -> void:
-	set_components({
-		"Curvature Baker": "MIT License\n\nCopyright 2020 Jummit",
-		"Customizable UI": "MIT License\n\nCopyright 2020 Jummit",
-		"Gaussian Blur From ShaderToy": "Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0) ",
-		"Gidole Font": "The MIT License (MIT)\n\nCopyright (c) 2015 Andreas Larsen @larsenwork",
-		"GLSL Blending Modes": "The MIT License (MIT) Copyright (c) 2015 Jamie Owen",
-		"Godot Engine Icons": "Copyright (c) 2007-2020 Juan Linietsky, Ariel Manzur.\nCopyright (c) 2014-2020 Godot Engine contributors.",
-		"Godot Material Spray": "MIT License\n\nCopyright (c) 2018 Rodz Labs",
-		"HDRI Haven HDRIs": "CC0 License",
-		"HSV Color Wheel": "From Wikimedia Commons, the free media repository.\nBy Alexandre Van de Sande.\nLicensed under the Creative Commons Attribution-Share Alike 3.0 Unported license.",
-		"OBJ Parser": "MIT License\n\nCopyright (c) 2018-2019 Ezcha",
-	})
-	
-	set_licenses({
+{
 "MIT License": """Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
@@ -513,4 +497,4 @@ Creative Commons Notice
 	this trademark restriction does not form part of this License.
 
 	Creative Commons may be contacted at https://creativecommons.org/."""
-	})
+}

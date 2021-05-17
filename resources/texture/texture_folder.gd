@@ -18,6 +18,7 @@ var shader_dirty := false
 var icon : Texture
 
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
+const MaterialGenerationContext = preload("res://material_generation_context.gd")
 
 func _init():
 	resource_local_to_scene = true
@@ -44,7 +45,7 @@ func mark_dirty(shader_too := false) -> void:
 	parent.mark_dirty(shader_dirty)
 
 
-func update(force_all := false) -> void:
+func update(context : MaterialGenerationContext, force_all := false) -> void:
 	if not dirty and not force_all:
 		return
 	var blending_layers := []
@@ -55,8 +56,8 @@ func update(force_all := false) -> void:
 		if shader_layer is GDScriptFunctionState:
 			shader_layer = yield(shader_layer, "completed")
 		blending_layers.append(shader_layer)
-	result = yield(LayerBlendViewportManager.blend(blending_layers,
-			get_layer_material_in().result_size, get_instance_id(),
+	result = yield(context.blending_viewport_manager.blend(blending_layers,
+			context.result_size, get_instance_id(),
 			shader_dirty), "completed")
 
 

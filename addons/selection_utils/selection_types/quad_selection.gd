@@ -1,6 +1,6 @@
-extends "res://addons/selection_utils/selection_type.gd"
+extends "../selection_type.gd"
 
-const MeshUtils = preload("res://addons/mesh_utils/mesh_utils.gd")
+const MeshUtils = preload("res://addons/third_party/mesh_utils/mesh_utils.gd")
 
 static func prepare_mesh(mesh : Mesh, surface : int) -> Mesh:
 	var original_data_tool := MeshDataTool.new()

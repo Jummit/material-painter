@@ -5,7 +5,7 @@ A `Viewport` to render the position map of a mesh in UV-space
 """
 
 func generate_world_map(mesh : Mesh, result_size : Vector2,
-		surface : int) -> ViewportTexture:
+		_surface : int) -> ViewportTexture:
 	# Todo: use correct surface.
 	size = result_size
 	$MeshInstance.mesh = mesh

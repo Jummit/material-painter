@@ -19,13 +19,10 @@ necessary if only parameters changed.
 """
 
 export var layers : Array setget set_layers
-
-var result_size := Vector2(1024, 1024)
-# warning-ignore:unused_class_variable
-var mesh : Mesh
 # warning-ignore:unused_class_variable
 var root_folder : String
 
+var context : MaterialGenerationContext
 var results : Dictionary
 var dirty := true
 var shader_dirty := false
@@ -38,6 +35,7 @@ const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 const TextureFolder = preload("res://resources/texture/texture_folder.gd")
 const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
+const MaterialGenerationContext = preload("res://material_generation_context.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
@@ -74,7 +72,7 @@ func update(force_all := false) -> void:
 	busy = true
 	
 	for layer in layers:
-		var result = layer.update(force_all)
+		var result = layer.update(context, force_all)
 		if result is GDScriptFunctionState:
 			result = yield(result, "completed")
 	
@@ -102,13 +100,12 @@ func update(force_all := false) -> void:
 			if map != "normal" or not generated_height:
 				results.erase(map)
 			continue
-		
-		var result : Texture = yield(LayerBlendViewportManager.blend(
-				blending_layers, result_size, get_instance_id() + map.hash(),
-				shader_dirty), "completed")
+		var result : Texture = yield(context.blending_viewport_manager.blend(
+				blending_layers, context.result_size,
+				get_instance_id() + map.hash(), shader_dirty), "completed")
 		
 		if map == "height":
-			result = yield(NormalMapGenerationViewport.get_normal_map(result),
+			result = yield(context.normal_map_generator.get_normal_map(result),
 					"completed")
 			map = "normal"
 			generated_height = true

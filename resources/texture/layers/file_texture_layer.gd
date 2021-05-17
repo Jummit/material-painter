@@ -29,8 +29,8 @@ func get_properties() -> Array:
 		]
 
 
-func _get_as_shader_layer():
-	var layer : BlendingLayer = ._get_as_shader_layer()
+func _get_as_shader_layer(context : MaterialGenerationContext):
+	var layer : BlendingLayer = ._get_as_shader_layer(context)
 	layer.uniform_types.append("sampler2D")
 	layer.uniform_names.append("texture")
 	
@@ -48,10 +48,10 @@ func _get_as_shader_layer():
 		cached_image.create_from_image(image)
 		if triplanar_mapping:
 			cached_image = TextureUtils.viewport_to_image(
-					yield(TriplanarTextureGenerator.get_triplanar_texture(
-					cached_image, get_layer_material_in().mesh,
-					get_layer_material_in().result_size,
-					Vector3.ONE * uv_scale), "completed"))
+					yield(context.triplanar_generator.get_triplanar_texture(
+						cached_image, get_layer_material_in().mesh,
+						context.result_size, Vector3.ONE * uv_scale),
+						"completed"))
 		cached_path = path
 		cached_triplanar_mapping = triplanar_mapping
 		cached_scale = uv_scale

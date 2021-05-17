@@ -28,6 +28,7 @@ var dirty := true
 const TextureLayer = preload("res://resources/texture/texture_layer.gd")
 const LayerTexture = preload("res://resources/texture/layer_texture.gd")
 const MaterialFolder = preload("res://resources/material/material_folder.gd")
+const MaterialGenerationContext = preload("res://material_generation_context.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
@@ -48,11 +49,11 @@ func set_mask(to):
 		mask.parent = self
 
 
-func update(force_all := false) -> void:
+func update(context : MaterialGenerationContext, force_all := false) -> void:
 	if not dirty and not force_all:
 		return
 	for layer in get_layer_textures():
-		var result = layer.update(force_all)
+		var result = layer.update(context, force_all)
 		if result is GDScriptFunctionState:
 			yield(result, "completed")
 	dirty = false

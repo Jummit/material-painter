@@ -19,6 +19,7 @@ var dirty := false
 var shader_dirty := false
 
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
+const MaterialGenerationContext = preload("res://material_generation_context.gd")
 
 func _init() -> void:
 	resource_local_to_scene = true
@@ -54,7 +55,7 @@ func mark_dirty(shader_too := false) -> void:
 	parent.mark_dirty(shader_dirty)
 
 
-func update(force_all := false) -> void:
+func update(context : MaterialGenerationContext, force_all := false) -> void:
 	if not dirty and not force_all:
 		return
 	
@@ -91,8 +92,8 @@ func update(force_all := false) -> void:
 			results.erase(map)
 			continue
 		
-		var result : Texture = yield(LayerBlendViewportManager.blend(
-				blending_layers, get_layer_material_in().result_size,
+		var result : Texture = yield(context.blending_viewport_manager.blend(
+				blending_layers, context.result_size,
 				get_instance_id() + map.hash(), shader_dirty), "completed")
 		
 		results[map] = result

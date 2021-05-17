@@ -4,7 +4,7 @@ extends Viewport
 A `Viewport` that renders each part of the mesh with a different color
 """
 
-const MeshUtils = preload("res://addons/mesh_utils/mesh_utils.gd")
+const MeshUtils = preload("res://addons/third_party/mesh_utils/mesh_utils.gd")
 
 func generate_id_map(mesh : Mesh, result_size : Vector2, surface : int) -> ViewportTexture:
 	var original_data_tool := MeshDataTool.new()

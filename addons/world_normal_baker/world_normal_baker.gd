@@ -1,7 +1,7 @@
 extends Viewport
 
 func bake_world_normal(mesh : Mesh, result_size : Vector2,
-		surface : int) -> ViewportTexture:
+		_surface : int) -> ViewportTexture:
 	# Todo: use correct surface.
 	size = result_size
 	$MeshInstance.mesh = mesh

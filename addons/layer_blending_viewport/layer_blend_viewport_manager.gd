@@ -1,7 +1,7 @@
 extends Node
 
 """
-Global utility used to blend textures from anywhere
+Utility used to blend textures
 
 Adds persistent `LayerBlendingViewport`s if `blend` is called with a given `id`.
 This avoids having to make the resulting texture local by keeping the viewport.

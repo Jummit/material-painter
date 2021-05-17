@@ -19,5 +19,5 @@ func get_properties() -> Array:
 			]
 
 
-func _get_as_shader_layer():
+func _get_as_shader_layer(_context : MaterialGenerationContext) -> Layer:
 	return BlendingLayer.new(code, blend_mode, opacity)

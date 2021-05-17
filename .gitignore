@@ -7,10 +7,4 @@ build/
 data_*/
 
 # packages
-addons/obj_parser
-addons/curvature_baker
-addons/navigation_camera
-addons/line_renderer
-addons/customizable_ui
-addons/node_referencer
-addons/mesh_utils
+addons/third_party

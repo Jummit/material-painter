@@ -178,10 +178,6 @@ func _on_layout_changed(meta) -> void:
 		half_resolution_button.pressed = meta
 
 
-func _on_Main_result_size_changed(to) -> void:
-	result_size = to
-
-
 # Perform a selection with the given `type` using selection utils.
 func select(type : int, position : Vector2) -> void:
 	get_selection_utils().update_view(viewport)

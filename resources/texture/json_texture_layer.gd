@@ -70,7 +70,7 @@ func get_properties() -> Array:
 	return list
 
 
-func _get_as_shader_layer() -> Layer:
+func _get_as_shader_layer(_context : MaterialGenerationContext) -> Layer:
 	load_data()
 	var layer : Layer
 	if "blends" in data:
