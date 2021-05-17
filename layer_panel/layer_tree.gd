@@ -534,9 +534,9 @@ func _select_item(item : TreeItem) -> void:
 	set_block_signals(false)
 
 
-func _get_icon(layer):
+func _get_icon(layer) -> Texture:
 	if update_icons and not _painting:
-		var result = layer.update_icon()
+		var result = layer.update_icon(layer_material.context)
 		if result is GDScriptFunctionState:
 			yield(result, "completed")
 	return layer.icon

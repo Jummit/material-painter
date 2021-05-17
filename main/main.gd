@@ -22,8 +22,8 @@ var context : MaterialGenerationContext
 
 onready var mesh_maps_generator : Node = $MeshMapsGenerator
 
-# To avoid https://github.com/godotengine/godot/issues/36895,
-# this is passed to add_do_action instead of null.
+# To avoid https://github.com/godotengine/godot/issues/36895, this is passed to
+# `add_do_action` instead of null.
 var NO_MASK := LayerTexture.new()
 
 const MATERIALS_FOLDER := "user://materials"

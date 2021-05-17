@@ -17,8 +17,3 @@ func _init(_blending_viewport_manager : LayerBlendViewportManager,
 	blending_viewport_manager = _blending_viewport_manager
 	normal_map_generator = _normal_map_generator
 	triplanar_generator = _triplanar_generator
-
-
-func duplicate():
-	return get_script().new(mesh, result_size, blending_viewport_manager,
-			normal_map_generator)

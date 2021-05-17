@@ -48,14 +48,15 @@ func update(context : MaterialGenerationContext, force_all := false) -> void:
 		var update_result = layer.update(force_all)
 		if update_result is GDScriptFunctionState:
 			yield(update_result, "completed")
-	result = yield(generate_result(context, shader_dirty or force_all,
+	result = yield(generate_result(context, context.result_size,
+			shader_dirty or force_all,
 			get_instance_id()), "completed")
 	shader_dirty = false
 	dirty = false
 
 
-func generate_result(context : MaterialGenerationContext, update_shader := false,
-		id := -1) -> Texture:
+func generate_result(context : MaterialGenerationContext, result_size : Vector2,
+		update_shader := false, id := -1) -> Texture:
 	var blending_layers := []
 	for layer in layers:
 		if not layer.visible:
@@ -65,14 +66,12 @@ func generate_result(context : MaterialGenerationContext, update_shader := false
 			shader_layer = yield(shader_layer, "completed")
 		blending_layers.append(shader_layer)
 	return yield(context.blending_viewport_manager.blend(blending_layers,
-			context.result_size, id, update_shader), "completed")
+			result_size, id, update_shader), "completed")
 
 
 func update_icon(context : MaterialGenerationContext) -> void:
 	if icon_dirty:
-		var small_context : MaterialGenerationContext = context.duplicate()
-		small_context.result_size = Vector2(32, 32)
-		icon = yield(generate_result(small_context), "completed")
+		icon = yield(generate_result(context, context.icon_size), "completed")
 		icon_dirty = false
 
 
