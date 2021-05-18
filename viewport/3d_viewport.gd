@@ -6,11 +6,11 @@ var hdri := preload("res://viewport/cannon.hdr").get_data()
 
 var cached_skys := {}
 
+const HdriAsset = preload("res://asset_browser/hdri_asset.gd")
+
 onready var texture_rect : TextureRect = $Viewport/SkyViewport/TextureRect
 onready var sky_viewport : Viewport = $Viewport/SkyViewport
 onready var sky_viewport_texture := sky_viewport.get_texture()
-
-const HDRAssetType = preload("res://asset_browser/asset_classes.gd").HDRAssetType
 
 func _ready():
 	sky_viewport_texture.flags = Texture.FLAG_FILTER
@@ -22,10 +22,10 @@ func _on_ViewMenuButton_show_background_toggled() -> void:
 
 
 func can_drop_data(_position : Vector2, data) -> bool:
-	return data is Asset and data.type is HDRAssetType
+	return data is Asset and data.type is HdriAsset
 
 
-func drop_data(_position : Vector2, data) -> void:
+func drop_data(_position : Vector2, data : HdriAsset) -> void:
 	hdri = data.data
 	update_sky()
 

@@ -53,10 +53,9 @@ const FileTextureLayer = preload("res://resources/texture/layers/file_texture_la
 const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
 const TextureFolder = preload("res://resources/texture/texture_folder.gd")
 const MaterialFolder = preload("res://resources/material/material_folder.gd")
-const Asset = preload("res://asset_browser/asset_classes.gd").Asset
-const TextureAssetType = preload("res://asset_browser/asset_classes.gd").TextureAssetType
-const MaterialAssetType = preload("res://asset_browser/asset_classes.gd").MaterialAssetType
-const EffectAssetType = preload("res://asset_browser/asset_classes.gd").EffectAssetType
+const TextureAsset = preload("res://asset_browser/texture_asset.gd")
+const SmartMaterialAsset = preload("res://asset_browser/smart_material_asset.gd")
+const LayerAsset = preload("res://asset_browser/layer_asset.gd")
 const ProjectFile = preload("res://resources/project_file.gd")
 
 onready var layer_popup_menu : PopupMenu = $LayerPopupMenu
@@ -354,10 +353,10 @@ func _emit_select_signal(layer) -> void:
 func _get_layers_of_drop_data(data, position : Vector2) -> Dictionary:
 	var layers : Array
 	var layer_type : int
-	if data is Asset and data.type is EffectAssetType:
+	if data is LayerAsset:
 		layers = [data.data.duplicate()]
 		layer_type = LayerType.TEXTURE_LAYER
-	elif data is Asset and data.type is TextureAssetType:
+	elif data is TextureAsset:
 		var layer := FileTextureLayer.new()
 		layer.path = data.file.replace(project.resource_path.get_base_dir(), "local:/")
 		layer.name = data.file.get_file().get_basename()
@@ -382,7 +381,7 @@ func _get_layers_of_drop_data(data, position : Vector2) -> Dictionary:
 			
 			layers = [material_layer]
 			layer_type = LayerType.MATERIAL_LAYER
-	elif data is Asset and data.type is MaterialAssetType:
+	elif data is SmartMaterialAsset:
 		var material_layer : Resource = data.data.duplicate()
 		var mat_layers := []
 		if material_layer is MaterialFolder:

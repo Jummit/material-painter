@@ -25,12 +25,11 @@ var _selection_utils := {}
 
 const Brush = preload("res://addons/painter/brush.gd")
 const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
-const Asset = preload("res://asset_browser/asset_classes.gd").Asset
-const AssetType = preload("res://asset_browser/asset_classes.gd").AssetType
-const BrushAssetType = preload("res://asset_browser/asset_classes.gd").BrushAssetType
 const SelectionUtils = preload("res://addons/selection_utils/selection_utils.gd")
 const ProjectFile = preload("res://resources/project_file.gd")
 const Painter = preload("res://addons/painter/painter.gd")
+const BrushAsset = preload("res://asset_browser/brush_asset.gd")
+const Asset = preload("res://asset_browser/asset.gd")
 
 onready var model : MeshInstance = $Viewport/Model
 onready var world_environment : WorldEnvironment = $Viewport/WorldEnvironment
@@ -137,7 +136,7 @@ func _on_ToolSettingsPropertyPanel_brush_changed(brush : Brush) -> void:
 
 
 func _on_AssetBrowser_asset_activated(asset : Asset) -> void:
-	if asset.type is BrushAssetType:
+	if asset is BrushAsset:
 		get_painter().brush = asset.data
 
 

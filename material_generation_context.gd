@@ -1,9 +1,9 @@
 extends Reference
 
+# warning-ignore-all:unused_class_variable
 var mesh : Mesh
 var result_size : Vector2
-# warning-ignore:unused_class_variable
-var icon_size : Vector2
+var icon_size := Vector2(128, 128)
 var blending_viewport_manager : LayerBlendViewportManager
 var triplanar_generator : TriplanarTextureGenerator
 var normal_map_generator : Viewport

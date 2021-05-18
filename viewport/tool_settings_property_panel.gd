@@ -13,10 +13,9 @@ signal brush_changed(brush)
 
 const Properties = preload("res://addons/property_panel/properties.gd")
 const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
-const Asset = preload("res://asset_browser/asset_classes.gd").Asset
-const AssetType = preload("res://asset_browser/asset_classes.gd").AssetType
-const TextureAssetType = preload("res://asset_browser/asset_classes.gd").TextureAssetType
-const BrushAssetType = preload("res://asset_browser/asset_classes.gd").BrushAssetType
+const Asset = preload("res://asset_browser/asset.gd")
+const BrushAsset = preload("res://asset_browser/brush_asset.gd")
+const TextureAsset = preload("res://asset_browser/texture_asset.gd")
 const Brush = preload("res://addons/painter/brush.gd")
 
 class TextureAssetProperty extends Properties.FilePathProperty:
@@ -24,7 +23,7 @@ class TextureAssetProperty extends Properties.FilePathProperty:
 		pass
 	
 	func _can_drop_data(_control : Control, data) -> bool:
-		return data is Asset and data.type is TextureAssetType
+		return data is TextureAsset
 	
 	func _drop_data(control : Control, data) -> void:
 		_set_value(control, data.data)
@@ -55,7 +54,7 @@ func _on_property_changed(_property : String, _value) -> void:
 
 
 func _on_AssetBrowser_asset_activated(asset : Asset) -> void:
-	if asset.type is BrushAssetType:
+	if asset is BrushAsset:
 		load_values(asset.data)
 
 

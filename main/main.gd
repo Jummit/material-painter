@@ -518,6 +518,7 @@ func set_current_file(save_file : SaveFile) -> void:
 		var result = layer_material.update(true)
 		if result is GDScriptFunctionState:
 			yield(result, "completed")
+	context.result_size = current_file.result_size
 	emit_signal("current_file_changed", current_file)
 
 
