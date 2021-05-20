@@ -15,6 +15,7 @@ signal selected_tool_changed(to)
 signal mesh_changed(to)
 
 var current_file : SaveFile setget set_current_file
+var file_path : String
 var current_layer_material : LayerMaterial setget set_current_layer_material
 var selected_tool : int = Constants.Tools.PAINT
 var undo_redo := UndoRedo.new()
@@ -50,10 +51,9 @@ enum FILE_MENU_ITEMS {
 }
 
 const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
-const SaveFile = preload("res://data/project_file.gd")
+const SaveFile = preload("res://main/project_file.gd")
 const MaterialLayer = preload("res://data/material/material_layer.gd")
 const LayerMaterial = preload("res://data/material/layer_material.gd")
-const MaterialFolder = preload("res://data/material/material_folder.gd")
 const LayerTexture = preload("res://data/texture/layer_texture.gd")
 const TextureLayer = preload("res://data/texture/texture_layer.gd")
 const TextureFolder = preload("res://data/texture/texture_folder.gd")
@@ -133,10 +133,12 @@ func _on_FileDialog_file_selected(path : String) -> void:
 					mat.root_folder = current_file.resource_path.get_base_dir()
 		FileDialog.MODE_OPEN_FILE:
 			match path.get_extension():
-				"res", "tres":
-					set_current_file(ResourceLoader.load(path, "", true))
-					for layer_mat in current_file.layer_materials:
-						layer_mat.root_folder = current_file.resource_path.get_base_dir()
+				"mproject":
+					var file := File.new()
+					file.open(path, File.READ)
+					var project := SaveFile.new(parse_json(file.get_as_text()))
+					file.close()
+					set_current_file(project)
 					load_mesh(current_file.model_path)
 				"obj":
 					load_mesh(path)
@@ -173,10 +175,13 @@ func _on_AddFolderButton_pressed() -> void:
 		onto = current_layer_material
 	
 	var new_layer
-	if onto is LayerMaterial or onto is MaterialFolder:
-		new_layer = MaterialFolder.new()
+	if onto is LayerMaterial:
+		new_layer = MaterialLayer.new()
+		new_layer.name = "Untitled Folder"
+		new_layer.is_folder = true
 	else:
 		new_layer = TextureFolder.new()
+		new_layer.name = "Untitled Folder"
 	
 	undo_redo.add_do_method(current_layer_material, "add_layer",
 			new_layer, onto)
@@ -209,7 +214,7 @@ func _on_AddLayerPopupMenu_layer_selected(layer : Resource) -> void:
 	var new_layer = layer.duplicate()
 	var onto
 	var selected_layer = layer_tree.get_selected_layer()
-	if selected_layer is MaterialLayer or selected_layer is MaterialFolder:
+	if selected_layer is MaterialLayer:
 		onto = layer_tree.get_selected_layer_texture(selected_layer)
 	elif selected_layer is TextureFolder:
 		onto = selected_layer
@@ -335,12 +340,20 @@ func _on_QuitConfirmationDialog_custom_action(_action : String) -> void:
 
 
 func _on_QuitConfirmationDialog_confirmed() -> void:
-	if save_file():
-		yield(file_dialog, "confirmed")
-	current_file.save_bitmap_layers()
-	# Todo: don't save twice.
-	ResourceSaver.save(current_file.resource_path, current_file)
+	var result = request_save_file()
+	if result is GDScriptFunctionState:
+		yield(result, "completed")
 	get_tree().quit()
+
+
+func request_save_file() -> void:
+	if not file_path:
+		open_save_project_dialog()
+		yield(file_dialog, "confirmed")
+	var file := File.new()
+	file.open(file_path, File.WRITE)
+	file.store_string(to_json(current_file.serialize()))
+	file.close()
 
 
 func _on_AboutMenuButton_id_pressed(id : int) -> void:
@@ -364,12 +377,12 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 		FILE_MENU_ITEMS.OPEN:
 			file_dialog.mode = FileDialog.MODE_OPEN_FILE
 			file_dialog.access = FileDialog.ACCESS_FILESYSTEM
-			file_dialog.filters = ["*.res,*.tres;Material Painter File"]
+			file_dialog.filters = ["*.mproject;Material Painter File"]
 			file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
 			file_dialog.current_file = ""
 			file_dialog.popup_centered()
 		FILE_MENU_ITEMS.SAVE:
-			save_file()
+			request_save_file()
 		FILE_MENU_ITEMS.SAVE_AS:
 			open_save_project_dialog()
 		FILE_MENU_ITEMS.EXPORT:
@@ -400,8 +413,8 @@ func export_materials() -> void:
 	for surface in current_file.layer_materials.size():
 		var material_name := context.mesh.surface_get_material(
 				surface).resource_name
-		var export_folder := current_file.resource_path.get_base_dir()\
-				.plus_file("export").plus_file(material_name)
+		var export_folder := file_path.get_base_dir().plus_file("export")\
+				.plus_file(material_name)
 		var dir := Directory.new()
 		dir.make_dir_recursive(export_folder)
 		var results : Dictionary = current_file.layer_materials[surface].results
@@ -439,17 +452,6 @@ func load_mesh(path : String) -> void:
 				progress_dialog.complete_task()
 				set_mesh(new_mesh)
 				return
-
-# Returns if the file wasn't saved and the user needs to specify where to
-# save it.
-func save_file() -> bool:
-	if current_file.resource_path:
-		ResourceSaver.save(current_file.resource_path,
-				current_file)
-		return false
-	else:
-		open_save_project_dialog()
-		return true
 
 
 func start_empty_project() -> void:
@@ -515,11 +517,11 @@ func set_current_layer_material(to) -> void:
 
 func set_current_file(save_file : SaveFile) -> void:
 	current_file = save_file
+	context.result_size = current_file.result_size
 	for layer_material in current_file.layer_materials:
 		var result = layer_material.update(true)
 		if result is GDScriptFunctionState:
 			yield(result, "completed")
-	context.result_size = current_file.result_size
 	emit_signal("current_file_changed", current_file)
 
 

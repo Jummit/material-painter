@@ -1,23 +1,31 @@
-extends Resource
+extends Reference
 
 """
 A Material Painter file
 """
 
-const BitmapTextureLayer = preload("res://data/texture/layers/bitmap_texture_layer.gd")
-const FileTextureLayer = preload("res://data/texture/layers/file_texture_layer.gd")
-
 # warning-ignore-all:unused_class_variable
-export var layer_materials : Array 
-export var model_path : String
-export var result_size := Vector2(1024, 1024)
+var layer_materials : Array 
+var model_path : String
+var result_size := Vector2(1024, 1024)
 
-func _init() -> void:
-	resource_local_to_scene = true
+const LayerMaterial = preload("res://data/material/layer_material.gd")
+
+func _init(data := {}) -> void:
+	model_path = data.get("model_path", "")
+	result_size = data.get("result_size", Vector2(1024, 1024))
+	for layer_data in data.get("layer_materials", []):
+		var layer := LayerMaterial.new(layer_data)
+		layer.parent = self
+		layer_materials.append(layer)
 
 
-func save_bitmap_layers() -> void:
-	for material in layer_materials:
-		for layer in material.get_texture_layers():
-			if layer is BitmapTextureLayer:
-				layer.save()
+func serialize() -> Dictionary:
+	var data := {
+		layer_materials = [],
+		model_path = model_path,
+		result_size = result_size,
+	}
+	for layer in layer_materials:
+		data.layer_materials.append(layer.serialize())
+	return data

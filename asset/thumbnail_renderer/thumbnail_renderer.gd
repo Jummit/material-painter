@@ -29,7 +29,7 @@ onready var sky_dome : MeshInstance = $HDRIViewport/SkyDome
 
 func get_preview_for_smart_material(material : LayerMaterial,
 		result_size : Vector2) -> ImageTexture:
-	material.root_folder = "res://asset_browser/preview_renderer"
+	material.root_folder = "res://asset/preview_renderer"
 	material.mesh = mesh
 	var result = material.update(true)
 	if result is GDScriptFunctionState:

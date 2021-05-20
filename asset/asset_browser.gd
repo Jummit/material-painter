@@ -28,7 +28,7 @@ var _progress_dialog
 var _modifying_assets : Array
 var _adding_tags : bool
 
-const TextureAsset = preload("res://asset_browser/texture_asset.gd")
+const TextureAsset = preload("res://asset/texture_asset.gd")
 
 onready var asset_store : Node = $"../../../../../../../AssetStore"
 onready var tag_name_edit : LineEdit = $VBoxContainer/HBoxContainer/TagNameEdit

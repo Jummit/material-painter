@@ -15,8 +15,8 @@ necessary if only parameters changed.
 """
 
 var layers : Array setget set_layers
-var opacity := 1.0
-var blend_mode := "normal"
+var opacity : float
+var blend_mode : String
 
 var parent
 var result : Texture
@@ -28,15 +28,15 @@ var shader_dirty := false
 const TextureFolder = preload("res://data/texture/texture_folder.gd")
 const MaterialGenerationContext = preload("res://material_generation_context.gd")
 
-func _init(data) -> void:
+func _init(data := {}) -> void:
 	var types := {
 		"bitmap": load("res://data/texture/bitmap_texture_layer.gd"),
 		"file": load("res://data/texture/file_texture_layer.gd"),
 		"json": load("res://data/texture/json_texture_layer.gd"),
 	}
-	opacity = data.opacity
-	blend_mode = data.blend_mode
-	for layer in data.layers:
+	opacity = data.get("opacity", 1.0)
+	blend_mode = data.get("blend_mode", "normal")
+	for layer in data.get("layers", []):
 		layers.append(types[layer.type].new(layer))
 
 

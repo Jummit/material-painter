@@ -28,8 +28,8 @@ const BitmapTextureLayer = preload("res://data/texture/layers/bitmap_texture_lay
 const SelectionUtils = preload("res://addons/selection_utils/selection_utils.gd")
 const ProjectFile = preload("res://data/project_file.gd")
 const Painter = preload("res://addons/painter/painter.gd")
-const BrushAsset = preload("res://asset_browser/brush_asset.gd")
-const Asset = preload("res://asset_browser/asset.gd")
+const BrushAsset = preload("res://asset/brush_asset.gd")
+const Asset = preload("res://asset/asset.gd")
 
 onready var model : MeshInstance = $Viewport/Model
 onready var world_environment : WorldEnvironment = $Viewport/WorldEnvironment

@@ -38,7 +38,7 @@ const MaterialFolder = preload("res://data/material/material_folder.gd")
 const LayerTexture = preload("res://data/texture/layer_texture.gd")
 const BitmapTextureLayer = preload("res://data/texture/layers/bitmap_texture_layer.gd")
 const FileTextureLayer = preload("res://data/texture/layers/file_texture_layer.gd")
-const LayerAsset = preload("res://asset_browser/layer_asset.gd")
+const LayerAsset = preload("res://asset/layer_asset.gd")
 const JSONTextureLayer = preload("res://data/texture/json_texture_layer.gd")
 
 func _on_about_to_show() -> void:

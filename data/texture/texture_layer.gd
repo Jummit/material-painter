@@ -14,10 +14,10 @@ var visible : bool
 var parent
 var icon : Texture
 var dirty := true
+var shader_dirty := true
 var icon_dirty := true
 
 const Layer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").Layer
-const LayerTexture = preload("res://data/texture/layer_texture.gd")
 const MaterialGenerationContext = preload("res://material_generation_context.gd")
 
 func _init(data := {}) -> void:
@@ -33,10 +33,11 @@ func serialize() -> Dictionary:
 	return data
 
 
-func mark_dirty(shader_dirty := false) -> void:
+func mark_dirty(shader_too := false) -> void:
 	dirty = true
 	icon_dirty = true
-	get_layer_texture_in().mark_dirty(shader_dirty)
+	shader_dirty = shader_dirty or shader_too
+	get_layer_texture_in().mark_dirty(shader_too)
 
 
 func get_type() -> String:
@@ -67,16 +68,15 @@ func update_icon(context : MaterialGenerationContext) -> void:
 	icon_dirty = false
 
 
-func get_layer_material_in() -> Resource:
+func get_layer_material_in() -> Reference:
 	return get_layer_texture_in().parent.get_layer_material_in()
 
 
-func get_layer_texture_in() -> LayerTexture:
-	if parent is LayerTexture:
-		return parent
-	else:
-		# Parent is a `TextureFolder`.
+func get_layer_texture_in() -> Reference:
+	if "get_layer_texture_in" in parent:
 		return parent.get_layer_texture_in()
+	else:
+		return parent
 
 
 func get_properties() -> Array:

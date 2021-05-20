@@ -53,9 +53,9 @@ const FileTextureLayer = preload("res://data/texture/layers/file_texture_layer.g
 const BitmapTextureLayer = preload("res://data/texture/layers/bitmap_texture_layer.gd")
 const TextureFolder = preload("res://data/texture/texture_folder.gd")
 const MaterialFolder = preload("res://data/material/material_folder.gd")
-const TextureAsset = preload("res://asset_browser/texture_asset.gd")
-const SmartMaterialAsset = preload("res://asset_browser/smart_material_asset.gd")
-const LayerAsset = preload("res://asset_browser/layer_asset.gd")
+const TextureAsset = preload("res://asset/texture_asset.gd")
+const SmartMaterialAsset = preload("res://asset/smart_material_asset.gd")
+const LayerAsset = preload("res://asset/layer_asset.gd")
 const ProjectFile = preload("res://data/project_file.gd")
 
 onready var layer_popup_menu : PopupMenu = $LayerPopupMenu

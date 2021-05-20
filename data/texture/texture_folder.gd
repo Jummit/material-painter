@@ -2,6 +2,8 @@ extends "blending_texture_layer.gd"
 
 var layers : Array
 
+var result : Texture
+
 func _init(data := {}).(data) -> void:
 	for layer in data.layers:
 		layers.append(get_script().new(layer))
@@ -29,3 +31,11 @@ func update(context : MaterialGenerationContext, force_all := false) -> void:
 			context.result_size, get_instance_id(),
 			shader_dirty), "completed")
 	dirty = false
+
+
+func _get_as_shader_layer(_context : MaterialGenerationContext) -> Layer:
+	var layer := BlendingLayer.new("texture({texture}, uv)", blend_mode, opacity)
+	layer.uniform_types.append("sampler2D")
+	layer.uniform_names.append("texture")
+	layer.uniform_values.append(result)
+	return layer
