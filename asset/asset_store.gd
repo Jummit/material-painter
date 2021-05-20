@@ -62,8 +62,6 @@ func load_asset(path : String, type : GDScript) -> void:
 	# Load stored tags.
 	if path in asset_tags:
 		for tag in asset_tags[path]:
-			print(asset_tags[path])
-			print(tag)
 			add_asset_tag(asset, tag)
 	# Generate tags from name.
 	var asset_name := asset.name
@@ -84,9 +82,9 @@ func load_asset(path : String, type : GDScript) -> void:
 		image.load(thumbnail_path)
 		thumbnail = ImageTexture.new()
 		thumbnail.create_from_image(image)
-	else:
+	elif "get_thumbnail_for_" + asset.get_type() in thumbnail_renderer:
 		thumbnail = yield(thumbnail_renderer.call(
-			"get_thumbnail_for" + asset.get_type(), asset.data,
+			"get_thumbnail_for_" + asset.get_type(), asset.data,
 			Vector2(128, 128)), "completed")
 		thumbnail.get_data().save_png(thumbnail_path)
 	thumbnails[path] = thumbnail

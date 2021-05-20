@@ -9,7 +9,7 @@ It is used in the `EffectAssetType` in the `AssetBrowser`.
 var settings : Dictionary
 var file : String setget set_file
 
-var data : Dictionary
+var layer_data : Dictionary
 
 const DEFAULTS := {
 	int = 0,
@@ -37,12 +37,12 @@ func set_file(to):
 		return
 	var read_file := File.new()
 	read_file.open(file, File.READ)
-	data = parse_json(read_file.get_as_text())
+	layer_data = parse_json(read_file.get_as_text())
 	read_file.close()
-	if "blends" in data:
+	if "blends" in layer_data:
 		settings.blend_mode = "normal"
 		settings.opacity = 1.0
-	for property in data.get("properties", []):
+	for property in layer_data.get("properties", []):
 		if property.name in settings:
 			continue
 		var default
@@ -68,13 +68,13 @@ func get_type() -> String:
 
 func get_properties() -> Array:
 	var list := []
-	if "blends" in data:
+	if "blends" in layer_data:
 		list.append(Properties.FloatProperty.new("opacity", 0.0, 1.0, 1.0))
 		list.append(Properties.EnumProperty.new("blend_mode",
 				Constants.BLEND_MODES))
-	if not "properties" in data:
+	if not "properties" in layer_data:
 		return list
-	for property in data.properties:
+	for property in layer_data.properties:
 		match property.type:
 			"float":
 				list.append(Properties.FloatProperty.new(property.name,
@@ -94,14 +94,14 @@ func get_properties() -> Array:
 
 func _get_as_shader_layer(_context : MaterialGenerationContext) -> Layer:
 	var layer : Layer
-	if "blends" in data:
-		layer = BlendingLayer.new(data.shader, settings.blend_mode,
+	if "blends" in layer_data:
+		layer = BlendingLayer.new(layer_data.shader, settings.blend_mode,
 				settings.opacity)
 	else:
 		layer = Layer.new()
-		layer.code = data.shader
-	if "properties" in data:
-		for property in data.properties:
+		layer.code = layer_data.shader
+	if "properties" in layer_data:
+		for property in layer_data.properties:
 			if "shader_param" in property and not property.shader_param:
 				layer.code = layer.code.format(
 						{property.name: settings[property.name]})

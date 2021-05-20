@@ -114,7 +114,6 @@ func update(force_all := false) -> void:
 	dirty = false
 	shader_dirty = false
 	busy = false
-	emit_signal("changed")
 
 
 func get_material(existing : SpatialMaterial = null) -> SpatialMaterial:
