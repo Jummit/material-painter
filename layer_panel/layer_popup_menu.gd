@@ -34,16 +34,15 @@ enum Items {
 }
 
 const MaterialLayer = preload("res://data/material/material_layer.gd")
-const MaterialFolder = preload("res://data/material/material_folder.gd")
 const LayerTexture = preload("res://data/texture/layer_texture.gd")
-const BitmapTextureLayer = preload("res://data/texture/layers/bitmap_texture_layer.gd")
-const FileTextureLayer = preload("res://data/texture/layers/file_texture_layer.gd")
+const BitmapTextureLayer = preload("res://data/texture/bitmap_texture_layer.gd")
+const FileTextureLayer = preload("res://data/texture/file_texture_layer.gd")
 const LayerAsset = preload("res://asset/layer_asset.gd")
 const JSONTextureLayer = preload("res://data/texture/json_texture_layer.gd")
 
 func _on_about_to_show() -> void:
 	clear()
-	if layer is MaterialLayer or layer is MaterialFolder:
+	if layer is MaterialLayer:
 		if layer.mask:
 			add_item("Remove Mask", Items.REMOVE_MASK)
 			add_item("Copy Mask", Items.COPY_MASK)

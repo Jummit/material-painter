@@ -49,14 +49,13 @@ const LayerMaterial = preload("res://data/material/layer_material.gd")
 const MaterialLayer = preload("res://data/material/material_layer.gd")
 const LayerTexture = preload("res://data/texture/layer_texture.gd")
 const TextureLayer = preload("res://data/texture/texture_layer.gd")
-const FileTextureLayer = preload("res://data/texture/layers/file_texture_layer.gd")
-const BitmapTextureLayer = preload("res://data/texture/layers/bitmap_texture_layer.gd")
+const FileTextureLayer = preload("res://data/texture/file_texture_layer.gd")
+const BitmapTextureLayer = preload("res://data/texture/bitmap_texture_layer.gd")
 const TextureFolder = preload("res://data/texture/texture_folder.gd")
-const MaterialFolder = preload("res://data/material/material_folder.gd")
 const TextureAsset = preload("res://asset/texture_asset.gd")
 const SmartMaterialAsset = preload("res://asset/smart_material_asset.gd")
 const LayerAsset = preload("res://asset/layer_asset.gd")
-const ProjectFile = preload("res://data/project_file.gd")
+const ProjectFile = preload("res://main/project_file.gd")
 
 onready var layer_popup_menu : PopupMenu = $LayerPopupMenu
 onready var map_type_popup_menu : PopupMenu = $MapTypePopupMenu
@@ -119,7 +118,7 @@ func get_selected_layer():
 
 
 func is_folder(layer) -> bool:
-	return layer is TextureFolder or layer is MaterialFolder
+	return layer is TextureFolder or (layer is MaterialLayer and layer.is_folder)
 
 
 func _on_cell_selected() -> void:
@@ -212,7 +211,7 @@ func _draw_layer_item(item : TreeItem, item_rect : Rect2) -> void:
 	if not state in [LayerState.MAP_EXPANDED, LayerState.MASK_EXPANDED]:
 		return
 	var icon_rect := Rect2(Vector2(64, item_rect.position.y), Vector2(32, 32))
-	if layer.mask and (layer is MaterialFolder or layer.maps.size()) and\
+	if layer.mask and (layer.is_folder or layer.maps.size()) and\
 			state == LayerState.MASK_EXPANDED:
 		icon_rect.position.x -= 46
 	if layer is MaterialLayer and layer.maps.size() > 1:
@@ -382,15 +381,15 @@ func _get_layers_of_drop_data(data, position : Vector2) -> Dictionary:
 			layers = [material_layer]
 			layer_type = LayerType.MATERIAL_LAYER
 	elif data is SmartMaterialAsset:
-		var material_layer : Resource = data.data.duplicate()
+		var material_layer : Reference = data.data.duplicate()
 		var mat_layers := []
-		if material_layer is MaterialFolder:
+		if material_layer.is_folder:
 			mat_layers = material_layer.layers
 		else:
 			mat_layers = [material_layer]
 		while mat_layers.size():
-			var mat_layer : Resource = mat_layers.pop_back()
-			if mat_layer is MaterialFolder:
+			var mat_layer : Reference = mat_layers.pop_back()
+			if mat_layer.is_folder:
 				mat_layers += mat_layer.layers
 		layer_type = LayerType.MATERIAL_LAYER
 		layers = [material_layer]
@@ -449,7 +448,16 @@ func _setup_material_layer_item(layer, parent_item : TreeItem,
 	if get_selected_layer_texture(layer):
 		for texture_layer in get_selected_layer_texture(layer).layers:
 			_setup_texture_layer_item(texture_layer, item, selected_layer)
-	if layer is MaterialLayer:
+	if layer is MaterialLayer and layer.is_folder:
+		var icon := preload("res://icons/large_folder.svg")
+		if state == LayerState.FOLDER_EXPANDED:
+			icon = preload("res://icons/large_open_folder.svg")
+			for sub_layer in layer.layers:
+				_setup_material_layer_item(sub_layer, item, selected_layer)
+		item.add_button(0, icon, Buttons.ICON)
+		item.set_tooltip(1, "%s (contains %s layers)" % [layer.name,
+				layer.layers.size()])
+	else:
 		if layer in _selected_maps and _selected_maps[layer] and not (
 				_selected_maps[layer] in layer.maps.values()):
 			_layer_states.erase(layer)
@@ -469,15 +477,6 @@ func _setup_material_layer_item(layer, parent_item : TreeItem,
 		if layer.maps.size() > 1:
 			item.add_button(0, preload("res://icons/down_arrow.svg"),
 					Buttons.MAP_DROPDOWN)
-	elif layer is MaterialFolder:
-		var icon := preload("res://icons/large_folder.svg")
-		if state == LayerState.FOLDER_EXPANDED:
-			icon = preload("res://icons/large_open_folder.svg")
-			for sub_layer in layer.layers:
-				_setup_material_layer_item(sub_layer, item, selected_layer)
-		item.add_button(0, icon, Buttons.ICON)
-		item.set_tooltip(1, "%s (contains %s layers)" % [layer.name,
-				layer.layers.size()])
 
 
 func _setup_texture_layer_item(layer, parent_item : TreeItem,

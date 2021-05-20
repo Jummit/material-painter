@@ -7,7 +7,7 @@ It is used in the `EffectAssetType` in the `AssetBrowser`.
 """
 
 var settings : Dictionary
-var file : String
+var file : String setget set_file
 
 var data : Dictionary
 
@@ -28,8 +28,31 @@ const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blendi
 
 func _init(data := {}).(data) -> void:
 	settings = data.get("settings", {})
-	file = data.get("file", "")
-	load_data()
+	set_file(data.get("file", ""))
+
+
+func set_file(to):
+	file = to
+	if not file:
+		return
+	var read_file := File.new()
+	read_file.open(file, File.READ)
+	data = parse_json(read_file.get_as_text())
+	read_file.close()
+	if "blends" in data:
+		settings.blend_mode = "normal"
+		settings.opacity = 1.0
+	for property in data.get("properties", []):
+		if property.name in settings:
+			continue
+		var default
+		if "default" in property:
+			default = property.default
+		elif property.type in DEFAULTS:
+			default = DEFAULTS[property.type]
+		elif property.type == "enum":
+			default = property.options.front()
+		settings[property.name] = default
 
 
 func serialize() -> Dictionary:
@@ -44,7 +67,6 @@ func get_type() -> String:
 
 
 func get_properties() -> Array:
-	load_data()
 	var list := []
 	if "blends" in data:
 		list.append(Properties.FloatProperty.new("opacity", 0.0, 1.0, 1.0))
@@ -71,7 +93,6 @@ func get_properties() -> Array:
 
 
 func _get_as_shader_layer(_context : MaterialGenerationContext) -> Layer:
-	load_data()
 	var layer : Layer
 	if "blends" in data:
 		layer = BlendingLayer.new(data.shader, settings.blend_mode,
@@ -90,27 +111,4 @@ func _get_as_shader_layer(_context : MaterialGenerationContext) -> Layer:
 				layer.uniform_names.append(property.name)
 				layer.uniform_values.append(settings[property.name])
 	return layer
-
-
-func load_data() -> void:
-	if data:
-		return
-	var read_file := File.new()
-	read_file.open(file, File.READ)
-	data = parse_json(read_file.get_as_text())
-	read_file.close()
-	if "blends" in data:
-		settings.blend_mode = "normal"
-		settings.opacity = 1.0
-	for property in data.get("properties", []):
-		if property.name in settings:
-			continue
-		var default
-		if "default" in property:
-			default = property.default
-		elif property.type in DEFAULTS:
-			default = DEFAULTS[property.type]
-		elif property.type == "enum":
-			default = property.options.front()
-		settings[property.name] = default
  

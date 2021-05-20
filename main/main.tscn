@@ -450,7 +450,6 @@ margin_bottom = 252.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 6 )
-orientation = 0
 
 [node name="WindowDragReceiver" parent="." instance=ExtResource( 23 )]
 
@@ -679,8 +678,8 @@ script = ExtResource( 30 )
 [connection signal="layout_changed" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/2DViewportWindow" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/2DViewportWindow/2DViewport" method="_on_layout_changed"]
 [connection signal="layout_changed" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser" method="_on_layout_changed"]
 [connection signal="asset_activated" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/ToolSettingsWindow/ToolSettingsContainer/ToolSettingsPropertyPanel" method="_on_AssetBrowser_asset_activated"]
-[connection signal="asset_activated" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/2DViewportWindow/2DViewport" method="_on_AssetBrowser_asset_activated"]
 [connection signal="asset_activated" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewportWindow/3DViewport" method="_on_AssetBrowser_asset_activated"]
+[connection signal="asset_activated" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/2DViewportWindow/2DViewport" method="_on_AssetBrowser_asset_activated"]
 [connection signal="text_entered" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser/VBoxContainer/HBoxContainer/TagNameEdit" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser" method="_on_TagNameEdit_text_entered"]
 [connection signal="pressed" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser/VBoxContainer/HBoxContainer/AddTagButton" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser" method="_on_AddTagButton_pressed"]
 [connection signal="pressed" from="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser/VBoxContainer/HBoxContainer/RemoveTagButton" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser" method="_on_RemoveTagButton_pressed"]

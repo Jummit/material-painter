@@ -13,14 +13,13 @@ const TextureLayer = preload("res://data/texture/texture_layer.gd")
 const MaterialLayer = preload("res://data/material/material_layer.gd")
 const Properties = preload("res://addons/property_panel/properties.gd")
 const JSONTextureLayer = preload("res://data/texture/json_texture_layer.gd")
-const MaterialFolder = preload("res://data/material/material_folder.gd")
 
 func _on_LayerTree_layer_selected(layer) -> void:
 	editing_layer = layer
-	if layer is MaterialLayer or layer is MaterialFolder:
+	if layer is MaterialLayer:
 		properties = []
 		
-		for type in Constants.TEXTURE_MAP_TYPES if layer is MaterialFolder else layer.maps:
+		for type in Constants.TEXTURE_MAP_TYPES if layer.is_folder else layer.maps:
 			properties += [
 				Properties.EnumProperty.new(type + "/blend_modes",
 						Constants.BLEND_MODES, layer.blend_modes[type]),
