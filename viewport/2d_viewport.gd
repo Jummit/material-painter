@@ -13,7 +13,7 @@ func _on_Main_mesh_changed(to : Mesh) -> void:
 	set_mesh(uv_to_vertex_positions(to, 0))
 
 
-func _on_Main_current_layer_material_changed(_to : Resource, id : int) -> void:
+func _on_Main_current_layer_material_changed(_to : Reference, id : int) -> void:
 	._on_Main_current_layer_material_changed(_to, id)
 	set_mesh(uv_to_vertex_positions(original_mesh, id))
 

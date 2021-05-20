@@ -8,9 +8,6 @@ enabled. When generating the results, all `LayerTexture`s of each map are blende
 together and stored in the `results` `Dictionary`. It stores the blended
 `Texture`s with the map names as keys.
 
-To make it possible to use Viewports inside of sub-layers of MaterialLayers,
-this and every `Resource` class that is used inside of it has to be local to scene.
-
 It is marked dirty when a child `MaterialLayer` is marked dirty, and will then
 update the result when `update` is called.
 

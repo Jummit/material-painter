@@ -58,7 +58,6 @@ const LayerTexture = preload("res://data/texture/layer_texture.gd")
 const TextureLayer = preload("res://data/texture/texture_layer.gd")
 const TextureFolder = preload("res://data/texture/texture_folder.gd")
 const Brush = preload("res://addons/painter/brush.gd")
-const ResourceUtils = preload("res://utils/resource_utils.gd")
 const LayoutUtils = preload("res://addons/third_party/customizable_ui/layout_utils.gd")
 const ObjParser = preload("res://addons/third_party/obj_parser/obj_parser.gd")
 const MaterialGenerationContext = preload("res://material_generation_context.gd")
@@ -209,7 +208,7 @@ func _on_DeleteButton_pressed() -> void:
 	undo_redo.commit_action()
 
 
-func _on_AddLayerPopupMenu_layer_selected(layer : Resource) -> void:
+func _on_AddLayerPopupMenu_layer_selected(layer : Reference) -> void:
 	undo_redo.create_action("Add Texture Layer")
 	var new_layer = layer.duplicate()
 	var onto
@@ -252,8 +251,7 @@ func _on_MaterialLayerPopupMenu_mask_pasted(mask : LayerTexture) -> void:
 
 func _on_MaterialLayerPopupMenu_duplicated() -> void:
 	undo_redo.create_action("Duplicate Layer")
-	var new_layer = ResourceUtils.deep_copy_of_resource(
-			layer_tree.get_selected_layer())
+	var new_layer = layer_tree.get_selected_layer().duplicate()
 	undo_redo.add_do_method(current_layer_material, "add_layer",
 			new_layer, current_layer_material)
 	undo_redo.add_do_method(layer_tree, "reload")

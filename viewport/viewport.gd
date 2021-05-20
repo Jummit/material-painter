@@ -82,7 +82,7 @@ func _on_Main_mesh_changed(to : Mesh) -> void:
 	set_mesh(to)
 
 
-func _on_Main_current_layer_material_changed(_to : Resource, _id : int) -> void:
+func _on_Main_current_layer_material_changed(_to : Reference, _id : int) -> void:
 	if Settings.get_setting("generate_utility_maps") == "On Startup":
 		update_mesh_maps()
 

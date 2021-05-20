@@ -111,5 +111,5 @@ func mark_dirty(shader_too := false) -> void:
 	parent.mark_dirty(shader_too)
 
 
-func get_layer_material_in() -> Resource:
+func get_layer_material_in() -> Reference:
 	return parent.get_layer_material_in()

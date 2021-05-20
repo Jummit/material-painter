@@ -135,7 +135,7 @@ func update(context : MaterialGenerationContext, force_all := false) -> void:
 	dirty = false
 
 
-func get_layer_material_in() -> Resource:
+func get_layer_material_in() -> Reference:
 	if "is_folder" in parent and parent.is_folder:
 		return parent.get_layer_material_in()
 	else:
