@@ -14,8 +14,10 @@ var isolated_map : String setget set_isolated_map
 func set_layer_materials(to) -> void:
 	layer_materials = to
 	for layer_material in layer_materials:
-		if not layer_material.is_connected("changed", self, "_on_LayerMaterial_changed"):
-			layer_material.connect("changed", self, "_on_LayerMaterial_changed")
+		if not layer_material.is_connected("results_changed", self,
+				"_on_LayerMaterial_results_changed"):
+			layer_material.connect("results_changed", self,
+					"_on_LayerMaterial_results_changed")
 	_apply_materials()
 
 
@@ -41,5 +43,5 @@ func _apply_materials() -> void:
 					get_surface_material(surface)))
 
 
-func _on_LayerMaterial_changed() -> void:
+func _on_LayerMaterial_results_changed() -> void:
 	_apply_materials()

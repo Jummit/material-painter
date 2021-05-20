@@ -36,11 +36,13 @@ func _on_layout_changed(meta) -> void:
 
 
 func _on_Main_current_layer_material_changed(to : LayerMaterial, _id : int) -> void:
-	if not to.is_connected("changed", self, "_on_LayerMaterial_changed"):
-		to.connect("changed", self, "_on_LayerMaterial_changed", [to])
+	if not to.is_connected("results_changed", self,
+			"_on_LayerMaterial_results_changed"):
+		to.connect("results_changed", self,"_on_LayerMaterial_results_changed",
+				[to])
 
 
-func _on_LayerMaterial_changed(layer_material : LayerMaterial) -> void:
+func _on_LayerMaterial_results_changed(layer_material : LayerMaterial) -> void:
 	clear()
 	for map in layer_material.results:
 		add_item(map, layer_material.results[map])

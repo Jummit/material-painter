@@ -14,9 +14,13 @@ signal current_layer_material_changed(to, id)
 signal selected_tool_changed(to)
 signal mesh_changed(to)
 
+# The current project file.
 var current_file : SaveFile setget set_current_file
+# The path of the current project file.
 var file_path : String
+# The currently editing `LayerMaterial`.
 var current_layer_material : LayerMaterial setget set_current_layer_material
+# The currently selected painting/selection tool.
 var selected_tool : int = Constants.Tools.PAINT
 var undo_redo := UndoRedo.new()
 var context : MaterialGenerationContext

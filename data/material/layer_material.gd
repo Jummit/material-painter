@@ -15,6 +15,8 @@ If `shader_dirty` is true, the shader needs to be recompiled. This is not
 necessary if only parameters changed.
 """
 
+signal results_changed
+
 var layers : Array setget set_layers
 
 var context : MaterialGenerationContext
@@ -114,6 +116,7 @@ func update(force_all := false) -> void:
 	dirty = false
 	shader_dirty = false
 	busy = false
+	emit_signal("results_changed")
 
 
 func get_material(existing : SpatialMaterial = null) -> SpatialMaterial:

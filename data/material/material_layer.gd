@@ -34,17 +34,17 @@ const MaterialGenerationContext = preload("res://material_generation_context.gd"
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 
 func _init(data := {}) -> void:
-	name = data.name
-	visible = data.get("visible", false)
+	name = data.get("name", "")
+	visible = data.get("visible", true)
 	opacities = data.get("opacities", {})
 	blend_modes = data.get("blend_modes", {})
 	is_folder = data.get("folder", false)
 	if mask in data:
 		set_mask(LayerTexture.new(data.mask))
-	for map in data.maps:
+	for map in data.get("maps", {}):
 		maps[map] = LayerTexture.new(data.maps[map])
 	set_maps(maps)
-	for layer in data.layers:
+	for layer in data.get("layers", []):
 		add_layer(get_script().new(layer))
 	name = "Untitled Folder" if is_folder else "Untitled Layer"
 
