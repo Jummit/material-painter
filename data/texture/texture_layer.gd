@@ -1,39 +1,50 @@
-extends Resource
+extends Reference
 
 """
 A layer of a `LayerTexture`
-
-By default the settings include the blend_mode
-and the opacity to configure the strength when blending.
 
 For making the layer editable, `get_properties` is used
 to retrieve a list of `Properties` for the `LayerPropertyPanel`.
 """
 
 # warning-ignore-all:unused_class_variable
-export var name : String
-export var visible := true
+var name : String
+var visible : bool
 
 var parent
-var type_name : String
 var icon : Texture
 var dirty := true
 var icon_dirty := true
 
 const Layer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").Layer
-const LayerTexture = preload("res://resources/texture/layer_texture.gd")
+const LayerTexture = preload("res://data/texture/layer_texture.gd")
 const MaterialGenerationContext = preload("res://material_generation_context.gd")
 
-func _init(_name : String):
-	resource_local_to_scene = true
-	type_name = _name
-	name = _name
+func _init(data := {}) -> void:
+	name = data.get("name", "")
+	visible = data.get("visible", true)
+
+
+func serialize() -> Dictionary:
+	var data := {
+		name = name,
+		visible = visible,
+	}
+	return data
 
 
 func mark_dirty(shader_dirty := false) -> void:
 	dirty = true
 	icon_dirty = true
 	get_layer_texture_in().mark_dirty(shader_dirty)
+
+
+func get_type() -> String:
+	return ""
+
+
+func get_name() -> String:
+	return get_type().capitalize()
 
 
 func update(context : MaterialGenerationContext, force_all := false) -> void:

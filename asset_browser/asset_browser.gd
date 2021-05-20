@@ -10,7 +10,7 @@ Stored assets are sorted in folders by their type. They can be loaded from the
 global asset library located in the user directory or from the asset library
 local to the project.
 
-Built-in effect assets are loaded from res://resources/texture/json.
+Built-in effect assets are loaded from res://data/texture/json.
 
 A list of tags can be modified by the user.
 Assets are automatically tagged using their name and type. The user can

@@ -13,8 +13,8 @@ var mesh : Mesh
 
 const TextureUtils = preload("res://utils/texture_utils.gd")
 const Brush = preload("res://addons/painter/brush.gd")
-const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
-const LayerMaterial = preload("res://resources/material/layer_material.gd")
+const FileTextureLayer = preload("res://data/texture/layers/file_texture_layer.gd")
+const LayerMaterial = preload("res://data/material/layer_material.gd")
 
 onready var material_viewport : Viewport = $MaterialViewport
 onready var model : MeshInstance = $MaterialViewport/Model

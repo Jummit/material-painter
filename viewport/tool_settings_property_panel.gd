@@ -12,7 +12,7 @@ var painting := false
 signal brush_changed(brush)
 
 const Properties = preload("res://addons/property_panel/properties.gd")
-const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
+const BitmapTextureLayer = preload("res://data/texture/layers/bitmap_texture_layer.gd")
 const Asset = preload("res://asset_browser/asset.gd")
 const BrushAsset = preload("res://asset_browser/brush_asset.gd")
 const TextureAsset = preload("res://asset_browser/texture_asset.gd")

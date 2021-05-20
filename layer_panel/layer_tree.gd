@@ -45,18 +45,18 @@ enum LayerState {
 	MAP_EXPANDED
 }
 
-const LayerMaterial = preload("res://resources/material/layer_material.gd")
-const MaterialLayer = preload("res://resources/material/material_layer.gd")
-const LayerTexture = preload("res://resources/texture/layer_texture.gd")
-const TextureLayer = preload("res://resources/texture/texture_layer.gd")
-const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
-const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
-const TextureFolder = preload("res://resources/texture/texture_folder.gd")
-const MaterialFolder = preload("res://resources/material/material_folder.gd")
+const LayerMaterial = preload("res://data/material/layer_material.gd")
+const MaterialLayer = preload("res://data/material/material_layer.gd")
+const LayerTexture = preload("res://data/texture/layer_texture.gd")
+const TextureLayer = preload("res://data/texture/texture_layer.gd")
+const FileTextureLayer = preload("res://data/texture/layers/file_texture_layer.gd")
+const BitmapTextureLayer = preload("res://data/texture/layers/bitmap_texture_layer.gd")
+const TextureFolder = preload("res://data/texture/texture_folder.gd")
+const MaterialFolder = preload("res://data/material/material_folder.gd")
 const TextureAsset = preload("res://asset_browser/texture_asset.gd")
 const SmartMaterialAsset = preload("res://asset_browser/smart_material_asset.gd")
 const LayerAsset = preload("res://asset_browser/layer_asset.gd")
-const ProjectFile = preload("res://resources/project_file.gd")
+const ProjectFile = preload("res://data/project_file.gd")
 
 onready var layer_popup_menu : PopupMenu = $LayerPopupMenu
 onready var map_type_popup_menu : PopupMenu = $MapTypePopupMenu
@@ -500,7 +500,7 @@ func _setup_texture_layer_item(layer, parent_item : TreeItem,
 		if icon is Texture:
 			item.add_button(0, icon, Buttons.RESULT)
 		item.set_tooltip(1,
-			"%s (%s Layer)" % [layer.name, layer.type_name])
+			"%s (%s Layer)" % [layer.name, layer.get_name()])
 	else:
 		var expanded : bool = layer in _layer_states and\
 				_layer_states[layer] == LayerState.FOLDER_EXPANDED

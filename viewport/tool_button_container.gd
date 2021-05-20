@@ -9,7 +9,7 @@ Only shows when a `BitmapTextureLayer` is selected.
 
 signal tool_selected(selected)
 
-const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
+const BitmapTextureLayer = preload("res://data/texture/layers/bitmap_texture_layer.gd")
 
 func _ready() -> void:
 	for tool_name in Constants.Tools:

@@ -8,12 +8,12 @@ var editing_layer
 
 onready var undo_redo : UndoRedo = find_parent("Main").undo_redo
 
-const LayerTexture = preload("res://resources/texture/layer_texture.gd")
-const TextureLayer = preload("res://resources/texture/texture_layer.gd")
-const MaterialLayer = preload("res://resources/material/material_layer.gd")
+const LayerTexture = preload("res://data/texture/layer_texture.gd")
+const TextureLayer = preload("res://data/texture/texture_layer.gd")
+const MaterialLayer = preload("res://data/material/material_layer.gd")
 const Properties = preload("res://addons/property_panel/properties.gd")
-const JSONTextureLayer = preload("res://resources/texture/json_texture_layer.gd")
-const MaterialFolder = preload("res://resources/material/material_folder.gd")
+const JSONTextureLayer = preload("res://data/texture/json_texture_layer.gd")
+const MaterialFolder = preload("res://data/material/material_folder.gd")
 
 func _on_LayerTree_layer_selected(layer) -> void:
 	editing_layer = layer

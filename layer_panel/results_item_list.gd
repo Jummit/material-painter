@@ -6,10 +6,10 @@ A list of map results of the edited `LayerMaterial`
 
 signal map_selected(map)
 
-const MaterialLayer = preload("res://resources/material/material_layer.gd")
-const LayerMaterial = preload("res://resources/material/layer_material.gd")
-const LayerTexture = preload("res://resources/texture/layer_texture.gd")
-const TextureLayer = preload("res://resources/texture/texture_layer.gd")
+const MaterialLayer = preload("res://data/material/material_layer.gd")
+const LayerMaterial = preload("res://data/material/layer_material.gd")
+const LayerTexture = preload("res://data/texture/layer_texture.gd")
+const TextureLayer = preload("res://data/texture/texture_layer.gd")
 
 func _gui_input(event : InputEvent) -> void:
 	if event is InputEventMouseButton and event.control:

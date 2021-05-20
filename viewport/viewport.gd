@@ -24,9 +24,9 @@ var _painters := {}
 var _selection_utils := {}
 
 const Brush = preload("res://addons/painter/brush.gd")
-const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
+const BitmapTextureLayer = preload("res://data/texture/layers/bitmap_texture_layer.gd")
 const SelectionUtils = preload("res://addons/selection_utils/selection_utils.gd")
-const ProjectFile = preload("res://resources/project_file.gd")
+const ProjectFile = preload("res://data/project_file.gd")
 const Painter = preload("res://addons/painter/painter.gd")
 const BrushAsset = preload("res://asset_browser/brush_asset.gd")
 const Asset = preload("res://asset_browser/asset.gd")

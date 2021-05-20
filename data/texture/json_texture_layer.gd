@@ -1,4 +1,4 @@
-extends "res://resources/texture/texture_layer.gd"
+extends "res://data/texture/texture_layer.gd"
 
 """
 A `TextureLayer` that uses a json file to configure the parameters and the shader
@@ -6,8 +6,8 @@ A `TextureLayer` that uses a json file to configure the parameters and the shade
 It is used in the `EffectAssetType` in the `AssetBrowser`.
 """
 
-export var settings : Dictionary
-export var file : String
+var settings : Dictionary
+var file : String
 
 var data : Dictionary
 
@@ -26,21 +26,21 @@ const SHADER_TYPES := {
 const Properties = preload("res://addons/property_panel/properties.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 
-func _init(_file := "").("JSON") -> void:
-	if not _file:
-		return
-	file = _file
+func _init(data := {}).(data) -> void:
+	settings = data.get("settings", {})
+	file = data.get("file", "")
 	load_data()
 
 
-func duplicate(_deep := false) -> Resource:
-	var dup : Resource = get_script().new()
-	dup.settings = settings
-	dup.file = file
-	dup.data = data
-	dup.type_name = type_name
-	dup.name = type_name
-	return dup
+func serialize() -> Dictionary:
+	var data := .serialize()
+	data.settings = settings
+	data.file = file
+	return data
+
+
+func get_type() -> String:
+	return "json"
 
 
 func get_properties() -> Array:
@@ -99,20 +99,18 @@ func load_data() -> void:
 	read_file.open(file, File.READ)
 	data = parse_json(read_file.get_as_text())
 	read_file.close()
-	type_name = data.name
-	name = type_name
 	if "blends" in data:
 		settings.blend_mode = "normal"
 		settings.opacity = 1.0
-	if "properties" in data:
-		for property in data.properties:
-			if property.name in settings:
-				continue
-			var default
-			if "default" in property:
-				default = property.default
-			elif property.type in DEFAULTS:
-				default = DEFAULTS[property.type]
-			elif property.type == "enum":
-				default = property.options.front()
-			settings[property.name] = default
+	for property in data.get("properties", []):
+		if property.name in settings:
+			continue
+		var default
+		if "default" in property:
+			default = property.default
+		elif property.type in DEFAULTS:
+			default = DEFAULTS[property.type]
+		elif property.type == "enum":
+			default = property.options.front()
+		settings[property.name] = default
+ 

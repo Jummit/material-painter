@@ -1,4 +1,4 @@
-extends "res://resources/texture/blending_texture_layer.gd"
+extends "res://data/texture/blending_texture_layer.gd"
 
 """
 A texture layer that uses a loaded file to generate the result
@@ -6,19 +6,29 @@ A texture layer that uses a loaded file to generate the result
 The file is cached in `cached_image` to avoid loading it every shader update.
 """
 
+var path : String
+var triplanar_mapping : bool
+var uv_scale : float
+
 var cached_path : String
 var cached_image : Texture
 var cached_triplanar_mapping : bool
 var cached_scale : float
 
-export var path := ""
-export var triplanar_mapping := false
-export var uv_scale := 1.0
-
 const TextureUtils = preload("res://utils/texture_utils.gd")
 
-func _init().("File", "texture({texture}, uv)") -> void:
-	pass
+func _init(data := {}).(data) -> void:
+	path = data.get("path", "")
+	triplanar_mapping = data.get("triplanar_mapping", false)
+	uv_scale = data.get("uv_scale", 1.0)
+
+
+func serialize() -> Dictionary:
+	var data := .serialize()
+	data.path = path
+	data.triplanar_mapping = triplanar_mapping
+	data.uv_scale = uv_scale
+	return data
 
 
 func get_properties() -> Array:
@@ -27,6 +37,10 @@ func get_properties() -> Array:
 		Properties.BoolProperty.new("triplanar_mapping"),
 		Properties.FloatProperty.new("uv_scale", 0.0, 2.0),
 		]
+
+
+func get_type() -> String:
+	return "file"
 
 
 func _get_as_shader_layer(context : MaterialGenerationContext):

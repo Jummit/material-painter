@@ -33,11 +33,13 @@ enum Items {
 	DUPLICATE,
 }
 
-const MaterialLayer = preload("res://resources/material/material_layer.gd")
-const MaterialFolder = preload("res://resources/material/material_folder.gd")
-const LayerTexture = preload("res://resources/texture/layer_texture.gd")
-const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
-const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
+const MaterialLayer = preload("res://data/material/material_layer.gd")
+const MaterialFolder = preload("res://data/material/material_folder.gd")
+const LayerTexture = preload("res://data/texture/layer_texture.gd")
+const BitmapTextureLayer = preload("res://data/texture/layers/bitmap_texture_layer.gd")
+const FileTextureLayer = preload("res://data/texture/layers/file_texture_layer.gd")
+const LayerAsset = preload("res://asset_browser/layer_asset.gd")
+const JSONTextureLayer = preload("res://data/texture/json_texture_layer.gd")
 
 func _on_about_to_show() -> void:
 	clear()
@@ -54,7 +56,7 @@ func _on_about_to_show() -> void:
 			add_item("Paste Mask", Items.PASTE_MASK)
 	if layer_texture:
 		for layer_type in texture_layers:
-			add_item("Add %s Layer" % layer_type.type_name, Items.ADD_LAYER)
+			add_item("Add %s Layer" % layer_type.get_name(), Items.ADD_LAYER)
 			set_item_metadata(get_item_count() - 1, layer_type)
 	add_item("Save To Library", Items.SAVE_TO_LIBRARY)
 
@@ -93,5 +95,12 @@ func _on_index_pressed(index : int) -> void:
 		emit_signal("layer_selected", get_item_metadata(index))
 
 
-func _on_AssetBrowser_right_click_effect_loaded(effect : Resource) -> void:
-	texture_layers.append(effect)
+func _on_AssetStore_asset_loaded(asset) -> void:
+	if asset is LayerAsset and asset.data is JSONTextureLayer and\
+			asset.data.data.get("in_context_menu"):
+		texture_layers.append(asset.data)
+
+
+func _on_AssetStore_asset_unloaded(asset) -> void:
+	if asset is LayerAsset and asset.data in texture_layers:
+		texture_layers.erase(asset.data)

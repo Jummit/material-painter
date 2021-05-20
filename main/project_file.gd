@@ -4,8 +4,8 @@ extends Resource
 A Material Painter file
 """
 
-const BitmapTextureLayer = preload("res://resources/texture/layers/bitmap_texture_layer.gd")
-const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
+const BitmapTextureLayer = preload("res://data/texture/layers/bitmap_texture_layer.gd")
+const FileTextureLayer = preload("res://data/texture/layers/file_texture_layer.gd")
 
 # warning-ignore-all:unused_class_variable
 export var layer_materials : Array 

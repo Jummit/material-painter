@@ -1,6 +1,7 @@
 extends Node
 
-const Asset = preload("asset.gd")
+signal asset_loaded(asset)
+signal asset_unloaded(asset)
 
 const TAG_PATH := "user://tags.json"
 
@@ -17,6 +18,8 @@ var asset_types := [
 	preload("texture_asset.gd"),
 ]
 
+const Asset = preload("asset.gd")
+
 onready var thumbnail_renderer : Node = $ThumbnailRenderer
 
 func _ready() -> void:
@@ -27,15 +30,16 @@ func _ready() -> void:
 
 
 func load_dir(path : String) -> void:
-	for type in asset_types:
+	for asset in asset_types:
 		var dir := Directory.new()
-		var type_path := path.plus_file(type.new(path).type_name)
+		var type_path := path.plus_file(asset.get_type())
 		if dir.open(type_path) != OK:
 			continue
 		dir.list_dir_begin(true)
 		var file_name := dir.get_next()
 		while file_name:
-			load_asset(type_path.plus_file(file_name), type)
+			if not "thumbnail.png" in file_name:
+				load_asset(type_path.plus_file(file_name), asset)
 			file_name = dir.get_next()
 		dir.list_dir_end()
 	save_asset_tags()
@@ -54,10 +58,12 @@ func load_asset(path : String, type : GDScript) -> void:
 	assets.append(asset)
 	
 	# Tag assignment.
-	add_asset_tag(asset, asset.type_name)
+	add_asset_tag(asset, asset.get_type())
 	# Load stored tags.
 	if path in asset_tags:
 		for tag in asset_tags[path]:
+			print(asset_tags[path])
+			print(tag)
 			add_asset_tag(asset, tag)
 	# Generate tags from name.
 	var asset_name := asset.name
@@ -80,14 +86,17 @@ func load_asset(path : String, type : GDScript) -> void:
 		thumbnail.create_from_image(image)
 	else:
 		thumbnail = yield(thumbnail_renderer.call(
-			"get_thumbnail_for" + asset.type_name, asset.data,
+			"get_thumbnail_for" + asset.get_type(), asset.data,
 			Vector2(128, 128)), "completed")
 		thumbnail.get_data().save_png(thumbnail_path)
 	thumbnails[path] = thumbnail
+	
+	emit_signal("asset_loaded", asset)
 
 
 func unload_asset(asset : Asset) -> void:
 	assets.erase(asset)
+	emit_signal("asset_unloaded", asset)
 
 
 func search(filter : String) -> Array:
@@ -107,11 +116,11 @@ func search(filter : String) -> Array:
 func add_asset_tag(asset : Asset, tag : String) -> void:
 	if not tag in assets_by_tags:
 		assets_by_tags[tag] = [asset]
-	else:
+	elif not asset in assets_by_tags[tag]:
 		assets_by_tags[tag].append(asset)
 	if not asset.path in asset_tags:
 		asset_tags[asset.path] = [tag]
-	else:
+	elif not tag in asset_tags[asset.path]:
 		asset_tags[asset.path].append(tag)
 
 

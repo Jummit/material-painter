@@ -10,8 +10,8 @@ onready var undo_redo : UndoRedo = find_parent("Main").undo_redo
 # warning-ignore:unused_signal
 signal changed(map, enabled)
 
-const LayerTexture = preload("res://resources/texture/layer_texture.gd")
-const MaterialLayer = preload("res://resources/material/material_layer.gd")
+const LayerTexture = preload("res://data/texture/layer_texture.gd")
+const MaterialLayer = preload("res://data/material/material_layer.gd")
 
 onready var layer_property_panel : Panel = $"../LayerPropertyPanel"
 

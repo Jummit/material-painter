@@ -1,4 +1,4 @@
-extends "res://resources/texture/blending_texture_layer.gd"
+extends "res://data/texture/blending_texture_layer.gd"
 
 """
 A texture layer that uses `Image` data to generate the result
@@ -11,17 +11,29 @@ export var image : Image
 
 var texture : Texture
 
-func _init().("Bitmap", "texture({texture}, uv)") -> void:
+func _init(data := {}).(data) -> void:
 	yield(VisualServer, "frame_post_draw")
 	if texture:
 		return
 	texture = ImageTexture.new()
+
+
+func serialize() -> Dictionary:
+	var data := .serialize()
+	return data
+
+
+func initialize() -> void:
 	if image:
 		texture.create_from_image(image)
 	else:
 		image = Image.new()
 		image.create(1024, 1024, false, Image.FORMAT_RGB8)
 	texture.create_from_image(image, ImageTexture.FLAG_FILTER)
+
+
+func get_type() -> String:
+	return "bitmap"
 
 
 func _get_as_shader_layer(context : MaterialGenerationContext) -> Layer:

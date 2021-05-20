@@ -1,4 +1,4 @@
-extends Resource
+extends Reference
 
 """
 A texture made up of blending `TextureLayer`s stored in the `layers` array
@@ -14,12 +14,9 @@ If `shader_dirty` is true, the shader needs to be recompiled. This is not
 necessary if only parameters changed.
 """
 
-export var layers : Array setget set_layers
-# warning-ignore:unused_class_variable
-export var opacity := 1.0
-# warning-ignore:unused_class_variable
-export var blend_mode := "normal"
-# warning-ignore:unused_class_variable
+var layers : Array setget set_layers
+var opacity := 1.0
+var blend_mode := "normal"
 
 var parent
 var result : Texture
@@ -28,11 +25,30 @@ var dirty := true
 var icon_dirty := true
 var shader_dirty := false
 
-const TextureFolder = preload("res://resources/texture/texture_folder.gd")
+const TextureFolder = preload("res://data/texture/texture_folder.gd")
 const MaterialGenerationContext = preload("res://material_generation_context.gd")
 
-func _init() -> void:
-	resource_local_to_scene = true
+func _init(data) -> void:
+	var types := {
+		"bitmap": load("res://data/texture/bitmap_texture_layer.gd"),
+		"file": load("res://data/texture/file_texture_layer.gd"),
+		"json": load("res://data/texture/json_texture_layer.gd"),
+	}
+	opacity = data.opacity
+	blend_mode = data.blend_mode
+	for layer in data.layers:
+		layers.append(types[layer.type].new(layer))
+
+
+func serialize() -> Dictionary:
+	var data := {
+		layers = [],
+		opacity = opacity,
+		blend_mode = blend_mode,
+	}
+	for layer in layers:
+		data.layers.append(layer.serialize())
+	return data
 
 
 func set_layers(to):

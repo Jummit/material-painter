@@ -50,20 +50,18 @@ enum FILE_MENU_ITEMS {
 }
 
 const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
-const SaveFile = preload("res://resources/project_file.gd")
-const MaterialLayer = preload("res://resources/material/material_layer.gd")
-const LayerMaterial = preload("res://resources/material/layer_material.gd")
-const MaterialFolder = preload("res://resources/material/material_folder.gd")
-const LayerTexture = preload("res://resources/texture/layer_texture.gd")
-const TextureLayer = preload("res://resources/texture/texture_layer.gd")
-const TextureFolder = preload("res://resources/texture/texture_folder.gd")
+const SaveFile = preload("res://data/project_file.gd")
+const MaterialLayer = preload("res://data/material/material_layer.gd")
+const LayerMaterial = preload("res://data/material/layer_material.gd")
+const MaterialFolder = preload("res://data/material/material_folder.gd")
+const LayerTexture = preload("res://data/texture/layer_texture.gd")
+const TextureLayer = preload("res://data/texture/texture_layer.gd")
+const TextureFolder = preload("res://data/texture/texture_folder.gd")
 const Brush = preload("res://addons/painter/brush.gd")
 const ResourceUtils = preload("res://utils/resource_utils.gd")
 const LayoutUtils = preload("res://addons/third_party/customizable_ui/layout_utils.gd")
 const ObjParser = preload("res://addons/third_party/obj_parser/obj_parser.gd")
-const JSONTextureLayer = preload("res://resources/texture/json_texture_layer.gd")
 const MaterialGenerationContext = preload("res://material_generation_context.gd")
-#const FileTextureLayer = preload("res://resources/texture/layers/file_texture_layer.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/FileMenuButton
 onready var about_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/AboutMenuButton
@@ -84,10 +82,13 @@ onready var root : Control = $VBoxContainer/Control
 onready var triplanar_texture_generator : Viewport = $TriplanarTextureGenerator
 onready var normal_map_generation_viewport : Viewport = $NormalMapGenerationViewport
 onready var layer_blend_viewport_manager : Node = $LayerBlendViewportManager
+onready var asset_store : Node = $AssetStore
 
 func _ready() -> void:
 	context = MaterialGenerationContext.new(layer_blend_viewport_manager,
 			normal_map_generation_viewport, triplanar_texture_generator)
+	
+	asset_store.load_dir("res://assets")
 	
 	ProgressDialogManager.theme = theme
 	
