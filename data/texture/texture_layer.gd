@@ -11,7 +11,7 @@ to retrieve a list of `Properties` for the `LayerPropertyPanel`.
 var name : String
 var visible : bool
 
-var parent
+var parent : Reference
 var icon : Texture
 var dirty := true
 var shader_dirty := true
@@ -38,6 +38,7 @@ func mark_dirty(shader_too := false) -> void:
 	dirty = true
 	icon_dirty = true
 	shader_dirty = shader_dirty or shader_too
+# warning-ignore:unsafe_method_access
 	get_layer_texture_in().mark_dirty(shader_too)
 
 
@@ -70,11 +71,13 @@ func update_icon(context : MaterialGenerationContext) -> void:
 
 
 func get_layer_material_in() -> Reference:
+# warning-ignore:unsafe_property_access
 	return get_layer_texture_in().parent.get_layer_material_in()
 
 
 func get_layer_texture_in() -> Reference:
 	if "get_layer_texture_in" in parent:
+# warning-ignore:unsafe_method_access
 		return parent.get_layer_texture_in()
 	else:
 		return parent

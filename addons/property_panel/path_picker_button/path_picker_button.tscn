@@ -18,6 +18,8 @@ window_title = "Open a File"
 dialog_hide_on_ok = true
 mode = 0
 access = 2
+current_dir = "/home/jummit/godot/projects/material-painter"
+current_path = "/home/jummit/godot/projects/material-painter/"
 __meta__ = {
 "_edit_use_anchors_": false
 }

@@ -1,5 +1,5 @@
-
 extends "res://data/texture/texture_layer.gd"
+
 export var opacity : float
 export var blend_mode : String
 

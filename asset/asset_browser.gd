@@ -29,8 +29,9 @@ var _modifying_assets : Array
 var _adding_tags : bool
 
 const TextureAsset = preload("res://asset/texture_asset.gd")
+const AssetStore = preload("res://asset/asset_store.gd")
 
-onready var asset_store : Node = $"../../../../../../../AssetStore"
+onready var asset_store : AssetStore = $"../../../../../../../AssetStore"
 onready var tag_name_edit : LineEdit = $VBoxContainer/HBoxContainer/TagNameEdit
 onready var asset_list : ItemList = $VBoxContainer2/AssetList
 onready var search_edit : LineEdit = $VBoxContainer2/SearchEdit
@@ -56,6 +57,7 @@ func update_asset_list() -> void:
 		var item := asset_list.get_item_count()
 		asset_list.add_item(asset.name, asset_store.thumbnails[asset.path])
 		asset_list.set_item_tooltip(item, "%s\n\n%s\nTags: %s" % [asset.name,
+# warning-ignore:unsafe_cast
 				asset.path, (asset_store.asset_tags[asset.path] as PoolStringArray
 				).join(", ")])
 		asset_list.set_item_metadata(item, asset)
@@ -141,6 +143,7 @@ func _on_TagNameEdit_text_entered(_new_text : String) -> void:
 
 
 func _on_SceneTree_files_dropped(files : PoolStringArray, _screen : int) -> void:
+# warning-ignore:unsafe_method_access
 	_progress_dialog = ProgressDialogManager.create_task("Import Assets",
 			files.size())
 	var dir := Directory.new()

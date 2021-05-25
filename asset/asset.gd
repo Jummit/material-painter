@@ -2,7 +2,7 @@ extends Reference
 
 var name : String
 var path : String
-var data
+var data : Object
 
 func _init(_path : String) -> void:
 	path = _path

@@ -58,6 +58,6 @@ func update_sky() -> void:
 		texture_rect.texture = texture
 		sky_viewport.size = hdri.get_size() / (blur_amount * 4)
 		sky_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
-		world_environment.environment.background_sky.panorama = sky_viewport_texture
+		(world_environment.environment.background_sky as PanoramaSky).panorama = sky_viewport_texture
 	else:
 		world_environment.environment.background_sky = get_sky(hdri)

@@ -8,7 +8,7 @@ func _init(_path).(_path) -> void:
 
 func _load_data() -> void:
 	data = JsonTextureLayer.new()
-	data.file = path
+	(data as JsonTextureLayer).file = path
 
 
 static func get_type() -> String:

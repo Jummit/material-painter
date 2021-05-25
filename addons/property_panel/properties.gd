@@ -55,10 +55,12 @@ class EnumProperty extends Property:
 		return option_button
 	
 	func _get_value(control : Control):
-		return choices[control.selected]
+		var option := control as OptionButton
+		return choices[option.selected]
 	
 	func _set_value(control : Control, to) -> void:
-		control.selected = (choices as Array).find(to)
+		var option := control as OptionButton
+		option.selected = (choices as Array).find(to)
 
 class StringProperty extends Property:
 	func _init(_name : String, _default := "").("text_changed", "text", _name, _default):
@@ -78,11 +80,14 @@ class RangeProperty extends Property:
 	var from : float
 	var to : float
 	var step : float
+	
+	const FloatSlider = preload("res://addons/property_panel/float_slider/float_slider.gd")
+	
 	func _init(_name : String, _step : float, _default := 0.0).("changed", "value", _name, _default):
 		_step = step
 	
 	func _get_control() -> Control:
-		var slider : Control = preload("float_slider/float_slider.tscn").instance()
+		var slider : FloatSlider = preload("float_slider/float_slider.tscn").instance()
 		slider.min_value = from
 		slider.max_value = to
 		slider.step = step

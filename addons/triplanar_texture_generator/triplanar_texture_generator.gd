@@ -5,7 +5,7 @@ A `Viewport` to render a triplanar texture in UV-space
 """
 
 onready var mesh_instance : MeshInstance = $MeshInstance
-onready var material : ShaderMaterial = $MeshInstance.material_override
+onready var material : ShaderMaterial = mesh_instance.material_override
 
 func get_triplanar_texture(texture : Texture, mesh : Mesh,
 		result_size : Vector2, uv_scale := Vector3.ONE,

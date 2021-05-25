@@ -11,7 +11,7 @@ var triplanar_mapping : bool
 var uv_scale : float
 
 var cached_path : String
-var cached_image : Texture
+var cached_image : ImageTexture
 var cached_triplanar_mapping : bool
 var cached_scale : float
 
@@ -60,9 +60,8 @@ func _get_as_shader_layer(context : MaterialGenerationContext):
 		if triplanar_mapping:
 			cached_image = TextureUtils.viewport_to_image(
 					yield(context.triplanar_generator.get_triplanar_texture(
-						cached_image, get_layer_material_in().mesh,
-						context.result_size, Vector3.ONE * uv_scale),
-						"completed"))
+						cached_image, context.mesh, context.result_size,
+						Vector3.ONE * uv_scale), "completed"))
 		cached_path = path
 		cached_triplanar_mapping = triplanar_mapping
 		cached_scale = uv_scale

@@ -4,7 +4,7 @@ extends PopupMenu
 The context menu that is shown when right-clicking a layer in the `LayerTree`
 """
 
-var layer
+var layer : Reference
 var layer_texture : LayerTexture
 
 var _copied_mask : LayerTexture
@@ -42,8 +42,9 @@ const JSONTextureLayer = preload("res://data/texture/json_texture_layer.gd")
 
 func _on_about_to_show() -> void:
 	clear()
-	if layer is MaterialLayer:
-		if layer.mask:
+	var mat_layer := layer as MaterialLayer
+	if mat_layer:
+		if mat_layer.mask:
 			add_item("Remove Mask", Items.REMOVE_MASK)
 			add_item("Copy Mask", Items.COPY_MASK)
 		else:
@@ -82,7 +83,7 @@ func _on_id_pressed(id : int) -> void:
 		Items.REMOVE_MASK:
 			emit_signal("mask_removed")
 		Items.COPY_MASK:
-			_copied_mask = layer.mask
+			_copied_mask = (layer as MaterialLayer).mask
 		Items.PASTE_MASK:
 			emit_signal("mask_pasted", _copied_mask)
 		Items.DUPLICATE:

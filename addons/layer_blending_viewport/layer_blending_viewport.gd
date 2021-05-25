@@ -15,6 +15,7 @@ var shader : Shader
 const Constants = preload("constants.gd")
 
 class Layer:
+# warning-ignore-all:unused_class_variable
 	var code : String
 	var uniform_types : Array
 	var uniform_names : Array
@@ -73,25 +74,26 @@ static func _generate_blending_shader(layers : Array) -> String:
 	var uniform_count := 0
 	
 	for layer_num in layers.size():
-		var layer := layers[layer_num] as Layer
-		var generator_function := Constants.GENERATOR_FUNCTION_TEMPLATE.format({
-			name = _function_name(layer_num),
-			code = layer.code,
-		})
-		
-		for uniform in layer.uniform_types.size():
-			uniform_declaration += "uniform %s %s;\n" % [
-					layer.uniform_types[uniform],
-					_uniform_var(uniform_count)]
+		var layer = layers[layer_num]
+		if layer is Layer:
+			var generator_function := Constants.GENERATOR_FUNCTION_TEMPLATE.format({
+				name = _function_name(layer_num),
+				code = layer.code,
+			})
+			
+			for uniform in layer.uniform_types.size():
+				uniform_declaration += "uniform %s %s;\n" % [
+						layer.uniform_types[uniform],
+						_uniform_var(uniform_count)]
+				generator_function = generator_function.replace(
+						"{%s}" % layer.uniform_names[uniform],
+						_uniform_var(uniform_count))
+				uniform_count += 1
 			generator_function = generator_function.replace(
-					"{%s}" % layer.uniform_names[uniform],
-					_uniform_var(uniform_count))
-			uniform_count += 1
-		generator_function = generator_function.replace(
-				"{previous}",
-				_function_name(layer_num - 1))
-		
-		generator_functions += generator_function + "\n"
+					"{previous}",
+					_function_name(layer_num - 1))
+			
+			generator_functions += generator_function + "\n"
 	
 	var shader_code := Constants.SHADER_TEMPLATE.format({
 		uniform_declaration = uniform_declaration,
@@ -103,10 +105,10 @@ static func _generate_blending_shader(layers : Array) -> String:
 	return shader_code
 
 
-static func _setup_shader_vars(material : Material, layers : Array) -> void:
+static func _setup_shader_vars(material : ShaderMaterial, layers : Array) -> void:
 	var uniform_count := 0
 	for layer_num in layers.size():
-		var layer := layers[layer_num] as Layer
+		var layer : Layer = layers[layer_num]
 		for uniform in layer.uniform_values.size():
 			material.set_shader_param(
 					_uniform_var(uniform_count),

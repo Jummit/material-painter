@@ -22,6 +22,7 @@ var _selected_maps : Dictionary
 var _layer_states : Dictionary
 var _painting := false
 
+# warning-ignore:unsafe_property_access
 onready var undo_redo : UndoRedo = find_parent("Main").undo_redo
 
 signal layer_selected(layer)
@@ -56,8 +57,9 @@ const TextureAsset = preload("res://asset/texture_asset.gd")
 const SmartMaterialAsset = preload("res://asset/smart_material_asset.gd")
 const LayerAsset = preload("res://asset/layer_asset.gd")
 const ProjectFile = preload("res://main/project_file.gd")
+const LayerPopupMenu = preload("res://layer_panel/layer_popup_menu.gd")
 
-onready var layer_popup_menu : PopupMenu = $LayerPopupMenu
+onready var layer_popup_menu : LayerPopupMenu = $LayerPopupMenu
 onready var map_type_popup_menu : PopupMenu = $MapTypePopupMenu
 
 func _ready() -> void:
@@ -66,18 +68,18 @@ func _ready() -> void:
 
 
 func _gui_input(event : InputEvent) -> void:
-	if event is InputEventMouseButton and event.button_index == BUTTON_RIGHT\
-		and event.pressed:
-		var layer = _get_layer_at_position(event.position)
-		layer_popup_menu.rect_global_position = event.global_position
+	var button_ev := event as InputEventMouseButton
+	var key_ev := event as InputEventKey
+	if button_ev and button_ev.button_index == BUTTON_RIGHT and button_ev.pressed:
+		var layer = _get_layer_at_position(button_ev.position)
+		layer_popup_menu.rect_global_position = button_ev.global_position
 		layer_popup_menu.layer = layer
 		if get_selected_layer_texture(layer):
 			layer_popup_menu.layer_texture = get_selected_layer_texture(layer)
 		elif layer is TextureFolder:
 			layer_popup_menu.layer_texture = layer.get_layer_texture_in()
 		layer_popup_menu.popup()
-	elif event is InputEventMouseButton and event.button_index == BUTTON_LEFT\
-		and event.pressed:
+	elif button_ev and button_ev.button_index == BUTTON_LEFT and button_ev.pressed:
 		# `get_selected` returns null the first time a layer is clicked.
 		# If it doesn't, in thin case it means the layer was "double clicked".
 		if get_selected():
@@ -86,8 +88,7 @@ func _gui_input(event : InputEvent) -> void:
 			if is_instance_valid(_lastly_edited_layer):
 				_lastly_edited_layer.set_editable(1, false)
 			_lastly_edited_layer = get_selected()
-	elif event is InputEventKey and event.pressed and\
-			event.scancode == KEY_DELETE:
+	elif key_ev and key_ev.pressed and key_ev.scancode == KEY_DELETE:
 		var layer = get_selected_layer()
 		undo_redo.create_action("Delete Layer")
 		undo_redo.add_do_method(layer_material, "delete_layer",
@@ -381,14 +382,14 @@ func _get_layers_of_drop_data(data, position : Vector2) -> Dictionary:
 #			layers = [material_layer]
 #			layer_type = LayerType.MATERIAL_LAYER
 	elif data is SmartMaterialAsset:
-		var material_layer : Reference = data.data.duplicate()
+		var material_layer : MaterialLayer = data.data.duplicate()
 		var mat_layers := []
 		if material_layer.is_folder:
 			mat_layers = material_layer.layers
 		else:
 			mat_layers = [material_layer]
 		while mat_layers.size():
-			var mat_layer : Reference = mat_layers.pop_back()
+			var mat_layer : MaterialLayer = mat_layers.pop_back()
 			if mat_layer.is_folder:
 				mat_layers += mat_layer.layers
 		layer_type = LayerType.MATERIAL_LAYER

@@ -4,6 +4,8 @@ extends Viewport
 A `Viewport` that renders each part of the mesh with a different color
 """
 
+onready var mesh_instance : MeshInstance = $MeshInstance
+
 const MeshUtils = preload("res://addons/third_party/mesh_utils/mesh_utils.gd")
 
 func generate_id_map(mesh : Mesh, result_size : Vector2, surface : int) -> ViewportTexture:
@@ -32,7 +34,7 @@ func generate_id_map(mesh : Mesh, result_size : Vector2, surface : int) -> Viewp
 	var new_mesh := Mesh.new()
 	original_data_tool.commit_to_surface(new_mesh)
 	size = result_size
-	$MeshInstance.mesh = new_mesh
+	mesh_instance.mesh = new_mesh
 	render_target_update_mode = Viewport.UPDATE_ONCE
 	yield(VisualServer, "frame_post_draw")
 	return get_texture()

@@ -4,8 +4,9 @@ extends "res://addons/property_panel/property_panel.gd"
 The `PropertyPanel` that shows the properties of the selected layer
 """
 
-var editing_layer
+var editing_layer : Reference
 
+# warning-ignore:unsafe_property_access
 onready var undo_redo : UndoRedo = find_parent("Main").undo_redo
 
 const LayerTexture = preload("res://data/texture/layer_texture.gd")

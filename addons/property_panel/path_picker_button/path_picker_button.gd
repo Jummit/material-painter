@@ -10,10 +10,13 @@ signal changed
 
 var path := "" setget set_path
 
+onready var file_dialog : FileDialog = $FileDialog
+
 func _gui_input(event : InputEvent) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_RIGHT:
-		set_path("")
-		emit_signal("changed")
+	var button_ev = event as InputEventMouseButton
+	if button_ev and button_ev.pressed and button_ev.button_index == BUTTON_RIGHT:
+			set_path("")
+			emit_signal("changed")
 
 
 func set_path(to : String):
@@ -28,4 +31,4 @@ func _on_FileDialog_file_selected(selected_path : String):
 
 
 func _pressed():
-	$FileDialog.popup_centered()
+	file_dialog.popup_centered()

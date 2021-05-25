@@ -22,9 +22,6 @@ var brush : Brush setget set_brush
 var paint_through := false setget set_paint_through
 # How large the resulting painted texture is.
 var result_size := Vector2(1024, 1024) setget set_result_size
-# The texture of the `Viewport` that generates the result.
-# warning-ignore:unused_class_variable
-onready var result : ViewportTexture = $PaintViewport.get_texture()
 
 # Set to true while the painter is active.
 var _painting := false
@@ -40,7 +37,8 @@ var _cached_images : Dictionary = {}
 const Brush = preload("res://addons/painter/brush.gd")
 const MeshUtils = preload("res://addons/third_party/mesh_utils/mesh_utils.gd")
 
-onready var paint_material : ShaderMaterial = $PaintViewport/PaintRect.material
+onready var paint_rect : ColorRect = $PaintViewport/PaintRect
+onready var paint_material : ShaderMaterial = paint_rect.material
 onready var paint_viewport : Viewport = $PaintViewport
 onready var initial_texture_rect : TextureRect = $PaintViewport/InitialTextureRect
 onready var view_to_texture_viewport : Viewport = $ViewToTextureViewport
@@ -49,7 +47,12 @@ onready var seams_viewport : Viewport = $SeamsViewport
 onready var view_to_texture_camera : Camera = $ViewToTextureViewport/Camera
 onready var texture_to_view_mesh_instance : MeshInstance = $TextureToViewViewport/MeshInstance
 onready var view_to_texture_mesh_instance : MeshInstance = $ViewToTextureViewport/MeshInstance
-onready var seams_rect_material : ShaderMaterial = $SeamsViewport/SeamsRect.material
+onready var seams_rect : ColorRect = $SeamsViewport/SeamsRect
+onready var seams_rect_material : ShaderMaterial = seams_rect.material
+
+# The texture of the `Viewport` that generates the result.
+# warning-ignore:unused_class_variable
+onready var result : ViewportTexture = paint_viewport.get_texture()
 
 func _ready() -> void:
 	# Do this in code because it seems to not work when done in the editor.
@@ -58,8 +61,9 @@ func _ready() -> void:
 	paint_material.set_shader_param("seams", seams_viewport.get_texture())
 	paint_material.set_shader_param("texture_to_view",
 			texture_to_view_viewport.get_texture())
-	texture_to_view_mesh_instance.material_override.set_shader_param(
-			"view_to_texture", view_to_texture_viewport.get_texture())
+	(texture_to_view_mesh_instance.material_override as ShaderMaterial).\
+			set_shader_param("view_to_texture",
+			view_to_texture_viewport.get_texture())
 
 
 func set_initial_texture(texture : Texture) -> void:
@@ -101,7 +105,7 @@ func update_view(viewport : Viewport) -> void:
 	
 	yield(VisualServer, "frame_post_draw")
 	
-	var texture_to_view_material := texture_to_view_mesh_instance.material_override
+	var texture_to_view_material : ShaderMaterial = texture_to_view_mesh_instance.material_override
 	texture_to_view_material.set_shader_param("model_transform", camera.global_transform.affine_inverse() * mesh_instance.global_transform)
 	texture_to_view_material.set_shader_param("fovy_degrees", camera.fov)
 	texture_to_view_material.set_shader_param("z_near", camera.near)

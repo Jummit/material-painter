@@ -23,7 +23,9 @@ var selected_tool : int = Constants.Tools.PAINT
 var undo_redo := UndoRedo.new()
 var context : MaterialGenerationContext
 
-onready var mesh_maps_generator : Node = $MeshMapsGenerator
+const MeshMapsGenerator = preload("res://main/mesh_maps_generator.gd")
+
+onready var mesh_maps_generator : MeshMapsGenerator = $MeshMapsGenerator
 
 # To avoid https://github.com/godotengine/godot/issues/36895, this is passed to
 # `add_do_action` instead of null.
@@ -63,15 +65,20 @@ const Brush = preload("res://addons/painter/brush.gd")
 const LayoutUtils = preload("res://addons/third_party/customizable_ui/layout_utils.gd")
 const ObjParser = preload("res://addons/third_party/obj_parser/obj_parser.gd")
 const MaterialGenerationContext = preload("res://material_generation_context.gd")
+const AssetStore = preload("res://asset/asset_store.gd")
+const LayerTree = preload("res://layer_panel/layer_tree.gd")
+const TextureAsset = preload("res://asset/texture_asset.gd")
+const AssetBrowser = preload("res://asset/asset_browser.gd")
+const ViewMenuButton = preload("res://main/view_menu_button.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/FileMenuButton
 onready var about_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/AboutMenuButton
-onready var view_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/ViewMenuButton
+onready var view_menu_button : ViewMenuButton = $VBoxContainer/Panel/TopButtons/ViewMenuButton
 onready var file_dialog : FileDialog = $FileDialog
 onready var layer_property_panel : Panel = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/PropertiesWindow/VBoxContainer/LayerPropertyPanel
 onready var texture_map_buttons : GridContainer = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/PropertiesWindow/VBoxContainer/TextureMapButtons
-onready var layer_tree : Tree = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/LayersWindow/LayerTree
-onready var asset_browser : HBoxContainer = $VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser
+onready var layer_tree : LayerTree = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/LayersWindow/LayerTree
+onready var asset_browser : AssetBrowser = $VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser
 onready var save_layout_dialog : ConfirmationDialog = $SaveLayoutDialog
 onready var license_dialog : AcceptDialog = $LicenseDialog
 onready var about_dialog : AcceptDialog = $AboutDialog
@@ -83,7 +90,7 @@ onready var root : Control = $VBoxContainer/Control
 onready var triplanar_texture_generator : Viewport = $TriplanarTextureGenerator
 onready var normal_map_generation_viewport : Viewport = $NormalMapGenerationViewport
 onready var layer_blend_viewport_manager : Node = $LayerBlendViewportManager
-onready var asset_store : Node = $AssetStore
+onready var asset_store : AssetStore = $AssetStore
 
 func _ready() -> void:
 	context = MaterialGenerationContext.new(layer_blend_viewport_manager,
@@ -91,6 +98,7 @@ func _ready() -> void:
 	
 	asset_store.load_dir("res://assets")
 	
+# warning-ignore:unsafe_property_access
 	ProgressDialogManager.theme = theme
 	
 	undo_redo.connect("version_changed", self, "_on_UndoRedo_version_changed")
@@ -204,6 +212,7 @@ func _on_DeleteButton_pressed() -> void:
 
 func _on_AddLayerPopupMenu_layer_selected(layer : Reference) -> void:
 	undo_redo.create_action("Add Texture Layer")
+# warning-ignore:unsafe_method_access
 	var new_layer = layer.duplicate()
 	var onto
 	var selected_layer = layer_tree.get_selected_layer()
@@ -223,11 +232,12 @@ func _on_AddLayerPopupMenu_layer_selected(layer : Reference) -> void:
 
 
 func _on_MaterialLayerPopupMenu_layer_saved() -> void:
-	var material_layer = layer_tree.get_selected_layer()
-	var save_path := MATERIALS_FOLDER.plus_file(material_layer.name) + ".tres"
-	ResourceSaver.save(save_path, material_layer)
-	asset_browser.load_asset(save_path, asset_browser.ASSET_TYPES.MATERIAL)
-	asset_browser.update_asset_list()
+	pass
+#	var material_layer = layer_tree.get_selected_layer()
+#	var save_path := MATERIALS_FOLDER.plus_file(material_layer.name) + ".tres"
+#	ResourceSaver.save(save_path, material_layer)
+#	asset_browser.load_asset(save_path, asset_browser.ASSET_TYPES.MATERIAL)
+#	asset_browser.update_asset_list()
 
 
 func _on_MaterialLayerPopupMenu_mask_added(mask : LayerTexture) -> void:
@@ -276,11 +286,11 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 		bake_error_dialog.popup()
 		return
 	
-	var texture_dir : String = asset_browser.ASSET_TYPES.TEXTURE.\
-			get_local_directory(current_file.path)
+	var texture_dir : String = current_file.path.get_base_dir().plus_file("assets/texture")
 	var dir := Directory.new()
 	dir.make_dir_recursive(texture_dir)
 	
+# warning-ignore:unsafe_method_access
 	var progress_dialog = ProgressDialogManager.create_task("Bake Mesh Maps",
 			mesh_maps_generator.BAKE_FUNCTIONS.size() * context.mesh.get_surface_count())
 	
@@ -294,8 +304,7 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 					map, context.mesh, Vector2(1024, 1024), surface), "completed")
 			
 			result.get_data().save_png(file)
-			asset_browser.load_asset(file, asset_browser.ASSET_TYPES.TEXTURE,
-					"local")
+			asset_store.load_asset(file, TextureAsset)
 	
 	asset_browser.update_asset_list()
 	progress_dialog.complete_task()
@@ -399,6 +408,7 @@ func _on_UndoRedo_version_changed() -> void:
 
 
 func export_materials() -> void:
+# warning-ignore:unsafe_method_access
 	var progress_dialog = ProgressDialogManager.create_task("Export Textures",
 			current_layer_material.results.size())
 	yield(get_tree(), "idle_frame")
@@ -432,6 +442,7 @@ func set_mask(layer, mask : LayerTexture) -> void:
 func load_mesh(path : String) -> void:
 	var interactive_loader := ObjParser.parse_obj_interactive(path)
 	var stage_count := int(interactive_loader.get_stage_count() / 20000.0)
+# warning-ignore:unsafe_method_access
 	var progress_dialog = ProgressDialogManager.create_task("Load OBJ Model",
 			stage_count)
 	while true:
@@ -490,10 +501,7 @@ func set_mesh(to) -> void:
 	current_file.layer_materials.resize(context.mesh.get_surface_count())
 	for surface in context.mesh.get_surface_count():
 		if not current_file.layer_materials[surface]:
-			var new_material := LayerMaterial.new()
-			if context.mesh.surface_get_material(surface):
-				new_material.resource_name = context.mesh.surface_get_material(surface).resource_name
-			current_file.layer_materials[surface] = new_material
+			current_file.layer_materials[surface] = LayerMaterial.new()
 	current_file.layer_materials.front().update(true)
 	emit_signal("mesh_changed", context.mesh)
 	emit_signal("layer_materials_changed", current_file.layer_materials)

@@ -12,11 +12,12 @@ const LayerTexture = preload("res://data/texture/layer_texture.gd")
 const TextureLayer = preload("res://data/texture/texture_layer.gd")
 
 func _gui_input(event : InputEvent) -> void:
-	if event is InputEventMouseButton and event.control:
+	var button_ev := event as InputEventMouseButton
+	if button_ev and button_ev.control:
 		var size = fixed_icon_size.x
-		if event.button_index == BUTTON_WHEEL_UP:
+		if button_ev.button_index == BUTTON_WHEEL_UP:
 			size += 5
-		elif event.button_index == BUTTON_WHEEL_DOWN:
+		elif button_ev.button_index == BUTTON_WHEEL_DOWN:
 			size -= 5
 		fixed_icon_size = Vector2.ONE * max(size, 32)
 		notification(NOTIFICATION_RESIZED)

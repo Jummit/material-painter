@@ -15,13 +15,15 @@ const TextureUtils = preload("res://utils/texture_utils.gd")
 const Brush = preload("res://addons/painter/brush.gd")
 const FileTextureLayer = preload("res://data/texture/file_texture_layer.gd")
 const LayerMaterial = preload("res://data/material/layer_material.gd")
+const MaterialGenerationContext = preload("res://material_generation_context.gd")
+const Painter = preload("res://addons/painter/painter.gd")
 
 onready var material_viewport : Viewport = $MaterialViewport
 onready var model : MeshInstance = $MaterialViewport/Model
 
 onready var brush_viewport : Viewport = $BrushViewport
 onready var paint_line : Line2D = $BrushViewport/PaintLine
-onready var painter : Node = $BrushViewport/Painter
+onready var painter : Painter = $BrushViewport/Painter
 onready var mesh_instance : MeshInstance = $BrushViewport/MeshInstance
 
 onready var hdri_viewport : Viewport = $HDRIViewport
@@ -29,8 +31,8 @@ onready var sky_dome : MeshInstance = $HDRIViewport/SkyDome
 
 func get_preview_for_smart_material(material : LayerMaterial,
 		result_size : Vector2) -> ImageTexture:
-	material.root_folder = "res://asset/preview_renderer"
-	material.mesh = mesh
+	material.context = MaterialGenerationContext.new(null, null, null)
+	material.context.mesh = mesh
 	var result = material.update(true)
 	if result is GDScriptFunctionState:
 		yield(result, "completed")
@@ -61,7 +63,7 @@ func get_preview_for_brush(brush : Brush, result_size : Vector2) -> ImageTexture
 func get_preview_for_hdri(hdri : Image, result_size : Vector2) -> Texture:
 	var albedo_texture := ImageTexture.new()
 	albedo_texture.create_from_image(hdri)
-	sky_dome.material_override.albedo_texture = albedo_texture
+	(sky_dome.material_override as SpatialMaterial).albedo_texture = albedo_texture
 	hdri_viewport.size = result_size
 	hdri_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 	yield(VisualServer, "frame_post_draw")

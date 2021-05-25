@@ -47,8 +47,6 @@ func load_dir(path : String) -> void:
 
 func unload_dir(path : String) -> void:
 	for asset in assets:
-		asset = asset as Asset
-		asset.path.beg()
 		if asset.path.begins_with(path):
 			unload_asset(asset)
 
@@ -81,9 +79,10 @@ func load_asset(path : String, type : GDScript) -> void:
 		var image := Image.new()
 		image.load(thumbnail_path)
 		thumbnail = ImageTexture.new()
-		thumbnail.create_from_image(image)
+		(thumbnail as ImageTexture).create_from_image(image)
 	elif "get_thumbnail_for_" + asset.get_type() in thumbnail_renderer:
 		thumbnail = yield(thumbnail_renderer.call(
+# warning-ignore:unsafe_property_access
 			"get_thumbnail_for_" + asset.get_type(), asset.data,
 			Vector2(128, 128)), "completed")
 		thumbnail.get_data().save_png(thumbnail_path)

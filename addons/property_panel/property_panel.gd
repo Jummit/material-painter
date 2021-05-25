@@ -26,9 +26,12 @@ export(Orientation) var orientation := Orientation.VERTICAL
 signal property_changed(property, value)
 
 var properties := [] setget set_properties
+var property_container_scene : PackedScene = load("res://addons/property_panel/property_container/property_container.tscn")
 
 onready var properties_container : Container
 onready var scroll_container : ScrollContainer = $ScrollContainer
+
+const PropertyContainer = preload("res://addons/property_panel/property_container/property_container.gd")
 
 func _ready():
 # warning-ignore:incompatible_ternary
@@ -57,7 +60,7 @@ func setup_property_containers() -> void:
 			label.text = property
 			properties_container.add_child(label)
 		else:
-			var property_container = load("res://addons/property_panel/property_container/property_container.tscn").instance()
+			var property_container = property_container_scene.instance()
 			property_container.name = property.name
 			property_container.connect("property_changed", self, "_on_Property_changed", [property_container])
 
@@ -66,11 +69,11 @@ func setup_property_containers() -> void:
 
 
 func get_property_value(property_name : String):
-	return properties_container.get_node(property_name).get_value()
+	return (properties_container.get_node(property_name) as PropertyContainer).get_value()
 
 
 func set_property_value(property_name : String, value):
-	return properties_container.get_node(property_name).set_value(value)
+	return (properties_container.get_node(property_name) as PropertyContainer).set_value(value)
 
 
 func has_property(property_name : String) -> bool:
@@ -105,5 +108,5 @@ func clear() -> void:
 	set_properties([])
 
 
-func _on_Property_changed(value, property_container : Control):
+func _on_Property_changed(value, property_container : PropertyContainer):
 	emit_signal("property_changed", property_container.property.name, value)

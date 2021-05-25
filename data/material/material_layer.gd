@@ -24,7 +24,7 @@ var blend_modes : Dictionary
 var layers : Array
 
 var results : Dictionary
-var parent
+var parent : Reference
 var dirty := true
 
 const TextureLayer = preload("res://data/texture/texture_layer.gd")
@@ -59,6 +59,7 @@ func serialize() -> Dictionary:
 		is_folder = is_folder,
 	}
 	if mask:
+# warning-ignore:unsafe_method_access
 		data.mask = mask.serialize()
 	for map in maps:
 		data.maps[map] = maps[map].serialize()
@@ -89,6 +90,7 @@ func add_layer(layer) -> void:
 func set_mask(to):
 	mask = to
 	if mask:
+# warning-ignore:unsafe_property_access
 		mask.parent = self
 
 
@@ -102,6 +104,7 @@ func update(context : MaterialGenerationContext, force_all := false) -> void:
 				result = yield(result, "completed")
 		
 		if mask:
+# warning-ignore:unsafe_method_access
 			var result = mask.update(context, force_all)
 			if result is GDScriptFunctionState:
 				yield(result, "completed")
@@ -143,7 +146,9 @@ func update(context : MaterialGenerationContext, force_all := false) -> void:
 
 
 func get_layer_material_in() -> Reference:
+# warning-ignore:unsafe_property_access
 	if "is_folder" in parent and parent.is_folder:
+# warning-ignore:unsafe_method_access
 		return parent.get_layer_material_in()
 	else:
 		return parent
@@ -158,6 +163,7 @@ func get_layer_textures() -> Array:
 
 func mark_dirty(shader_dirty := false) -> void:
 	dirty = true
+# warning-ignore:unsafe_method_access
 	get_layer_material_in().mark_dirty(shader_dirty)
 
 

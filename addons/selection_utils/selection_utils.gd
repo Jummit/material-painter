@@ -61,10 +61,13 @@ func add_selection(selection_type : int, mouse_position : Vector2,
 	var clicked_id := screen_data.get_pixel(0, 0)
 	
 	if onto:
-		base_texture_mesh.material_override.set_shader_param("albedo", onto)
+		(base_texture_mesh.material_override as ShaderMaterial).set_shader_param(
+				"albedo", onto)
 	isolate_mesh_instance.mesh = _prepared_meshes[selection_type]
-	isolate_mesh_instance.material_override.set_shader_param("id", Vector3(clicked_id.r, clicked_id.g, clicked_id.b))
-	isolate_mesh_instance.material_override.set_shader_param("color", color)
+	(isolate_mesh_instance.material_override as ShaderMaterial).set_shader_param(
+			"id", Vector3(clicked_id.r, clicked_id.g, clicked_id.b))
+	(isolate_mesh_instance.material_override as ShaderMaterial).set_shader_param(
+			"color", color)
 	isolate_viewport.size = result_size
 	isolate_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 	yield(VisualServer, "frame_post_draw")

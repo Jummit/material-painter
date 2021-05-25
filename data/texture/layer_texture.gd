@@ -18,7 +18,7 @@ var layers : Array setget set_layers
 var opacity : float
 var blend_mode : String
 
-var parent
+var parent : Reference
 var result : Texture
 var icon : Texture
 var dirty := true
@@ -108,10 +108,12 @@ func mark_dirty(shader_too := false) -> void:
 	icon_dirty = true
 	if shader_too:
 		shader_dirty = true
+# warning-ignore:unsafe_method_access
 	parent.mark_dirty(shader_too)
 
 
 func get_layer_material_in() -> Reference:
+# warning-ignore:unsafe_method_access
 	return parent.get_layer_material_in()
 
 

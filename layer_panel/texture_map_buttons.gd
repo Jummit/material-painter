@@ -5,6 +5,7 @@ Buttons used to specify the enabled maps of the selected `MaterialLayer`
 """
 
 var buttons : Dictionary
+# warning-ignore:unsafe_property_access
 onready var undo_redo : UndoRedo = find_parent("Main").undo_redo
 
 # warning-ignore:unused_signal
@@ -12,8 +13,10 @@ signal changed(map, enabled)
 
 const LayerTexture = preload("res://data/texture/layer_texture.gd")
 const MaterialLayer = preload("res://data/material/material_layer.gd")
+const LayerPropertyPanel = preload("res://layer_panel/layer_property_panel.gd")
+const LayerMaterial = preload("res://data/material/layer_material.gd")
 
-onready var layer_property_panel : Panel = $"../LayerPropertyPanel"
+onready var layer_property_panel : LayerPropertyPanel = $"../LayerPropertyPanel"
 
 func _ready() -> void:
 	for map in Constants.TEXTURE_MAP_TYPES:
@@ -36,7 +39,7 @@ func _on_LayerTree_layer_selected(layer) -> void:
 
 
 func _on_Button_toggled(button_pressed : bool, map : String) -> void:
-	var maps : Dictionary = layer_property_panel.editing_layer.maps
+	var maps : Dictionary = (layer_property_panel.editing_layer as MaterialLayer).maps
 	if button_pressed:
 		if not map in maps:
 			undo_redo.create_action("Enable Texture Map")
@@ -67,5 +70,5 @@ func _set_map_enabled(on_layer : MaterialLayer, map : String, enabled : bool) ->
 	
 	_silently_set_button_pressed(buttons[map], true)
 	on_layer.mark_dirty(true)
-	on_layer.get_layer_material_in().update()
+	(on_layer.get_layer_material_in() as LayerMaterial).update()
 	emit_signal("changed", map, enabled)

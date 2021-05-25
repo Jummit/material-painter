@@ -12,24 +12,19 @@ export var image : Image
 var texture : Texture
 
 func _init(data := {}).(data) -> void:
-	yield(VisualServer, "frame_post_draw")
-	if texture:
-		return
-	texture = ImageTexture.new()
+	var new := ImageTexture.new()
+	if image:
+		new.create_from_image(image)
+	else:
+		image = Image.new()
+		image.create(1024, 1024, false, Image.FORMAT_RGB8)
+	new.create_from_image(image, ImageTexture.FLAG_FILTER)
+	texture = new
 
 
 func serialize() -> Dictionary:
 	var data := .serialize()
 	return data
-
-
-func initialize() -> void:
-	if image:
-		texture.create_from_image(image)
-	else:
-		image = Image.new()
-		image.create(1024, 1024, false, Image.FORMAT_RGB8)
-	texture.create_from_image(image, ImageTexture.FLAG_FILTER)
 
 
 func get_type() -> String:

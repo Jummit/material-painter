@@ -43,7 +43,7 @@ func _ready() -> void:
 
 
 func _update_visibility() -> void:
-	get_parent().get_parent().visible = painting and\
+	(get_parent().get_parent() as CanvasItem).visible = painting and\
 			selected_tool == Constants.Tools.PAINT
 
 
