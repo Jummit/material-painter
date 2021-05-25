@@ -35,7 +35,8 @@ func _on_layout_changed(meta) -> void:
 		fixed_icon_size = Vector2.ONE * meta
 
 
-func _on_Main_current_layer_material_changed(to : LayerMaterial, _id : int) -> void:
+func _on_Main_current_layer_material_changed(to : LayerMaterial,
+		_id : int) -> void:
 	if not to.is_connected("results_changed", self,
 			"_on_LayerMaterial_results_changed"):
 		to.connect("results_changed", self,"_on_LayerMaterial_results_changed",

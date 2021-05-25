@@ -55,6 +55,10 @@ func set_file(to):
 		settings[property.name] = default
 
 
+func show_in_menu() -> bool:
+	return layer_data.get("in_context_menu", false)
+
+
 func serialize() -> Dictionary:
 	var data := .serialize()
 	data.settings = settings
@@ -64,6 +68,10 @@ func serialize() -> Dictionary:
 
 func get_type() -> String:
 	return "json"
+
+
+func get_name() -> String:
+	return layer_data.get("name", "JSON Layer")
 
 
 func get_properties() -> Array:

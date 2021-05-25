@@ -96,7 +96,7 @@ func _on_index_pressed(index : int) -> void:
 
 func _on_AssetStore_asset_loaded(asset) -> void:
 	if asset is LayerAsset and asset.data is JSONTextureLayer and\
-			asset.data.data.get("in_context_menu"):
+			asset.data.show_in_menu():
 		texture_layers.append(asset.data)
 
 

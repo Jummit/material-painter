@@ -49,11 +49,15 @@ func _ready():
 
 func update_asset_list() -> void:
 	asset_list.clear()
-	for asset in asset_store.search(search_edit.text + " " + _current_tag):
+	var filter := search_edit.text
+	if _current_tag != "all":
+		filter += " " + _current_tag
+	for asset in asset_store.search(filter):
 		var item := asset_list.get_item_count()
-		asset_list.add_item(asset.name, asset.preview)
+		asset_list.add_item(asset.name, asset_store.thumbnails[asset.path])
 		asset_list.set_item_tooltip(item, "%s\n\n%s\nTags: %s" % [asset.name,
-				asset.path, (asset.tags as PoolStringArray).join(", ")])
+				asset.path, (asset_store.asset_tags[asset.path] as PoolStringArray
+				).join(", ")])
 		asset_list.set_item_metadata(item, asset)
 
 
@@ -144,8 +148,9 @@ func _on_SceneTree_files_dropped(files : PoolStringArray, _screen : int) -> void
 		_progress_dialog.set_action(file)
 		yield(get_tree(), "idle_frame")
 		if file.get_extension() == "png":
+			dir.make_dir_recursive("user://assets/texture")
 			var destination := "user://assets/texture".plus_file(
-					file.get_base_dir())
+					file.get_file())
 			dir.copy(file, destination)
 			asset_store.load_asset(destination, TextureAsset)
 			update_asset_list()

@@ -16,8 +16,6 @@ signal mesh_changed(to)
 
 # The current project file.
 var current_file : SaveFile setget set_current_file
-# The path of the current project file.
-var file_path : String
 # The currently editing `LayerMaterial`.
 var current_layer_material : LayerMaterial setget set_current_layer_material
 # The currently selected painting/selection tool.
@@ -124,16 +122,7 @@ func _input(event : InputEvent) -> void:
 func _on_FileDialog_file_selected(path : String) -> void:
 	match file_dialog.mode:
 		FileDialog.MODE_SAVE_FILE:
-			var to_save = file_dialog.get_meta("to_save")
-			ResourceSaver.save(path, to_save)
-			# ResourceSaver.FLAG_CHANGE_PATH doesn't work for some reason.
-			to_save.resource_path = path
-			if to_save is Brush:
-				asset_browser.load_asset(path, asset_browser.ASSET_TYPES.BRUSH)
-				asset_browser.update_asset_list()
-			if to_save is SaveFile:
-				for mat in to_save.layer_materials:
-					mat.root_folder = current_file.resource_path.get_base_dir()
+			current_file.path = path
 		FileDialog.MODE_OPEN_FILE:
 			match path.get_extension():
 				"mproject":
@@ -141,6 +130,7 @@ func _on_FileDialog_file_selected(path : String) -> void:
 					file.open(path, File.READ)
 					var project := SaveFile.new(parse_json(file.get_as_text()))
 					file.close()
+					project.path = path
 					set_current_file(project)
 					load_mesh(current_file.model_path)
 				"obj":
@@ -282,12 +272,12 @@ func _on_MaterialOptionButton_item_selected(index : int) -> void:
 
 
 func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
-	if not current_file.resource_path:
+	if not current_file.path:
 		bake_error_dialog.popup()
 		return
 	
 	var texture_dir : String = asset_browser.ASSET_TYPES.TEXTURE.\
-			get_local_directory(current_file.resource_path)
+			get_local_directory(current_file.path)
 	var dir := Directory.new()
 	dir.make_dir_recursive(texture_dir)
 	
@@ -349,11 +339,11 @@ func _on_QuitConfirmationDialog_confirmed() -> void:
 
 
 func request_save_file() -> void:
-	if not file_path:
+	if not current_file.path:
 		open_save_project_dialog()
-		yield(file_dialog, "confirmed")
+		yield(file_dialog, "file_selected")
 	var file := File.new()
-	file.open(file_path, File.WRITE)
+	file.open(current_file.path, File.WRITE)
 	file.store_string(to_json(current_file.serialize()))
 	file.close()
 
@@ -388,7 +378,7 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 		FILE_MENU_ITEMS.SAVE_AS:
 			open_save_project_dialog()
 		FILE_MENU_ITEMS.EXPORT:
-			if current_file.resource_path:
+			if current_file.path:
 				export_materials()
 			else:
 				export_error_dialog.popup_centered()
@@ -415,7 +405,7 @@ func export_materials() -> void:
 	for surface in current_file.layer_materials.size():
 		var material_name := context.mesh.surface_get_material(
 				surface).resource_name
-		var export_folder := file_path.get_base_dir().plus_file("export")\
+		var export_folder := current_file.path.get_base_dir().plus_file("export")\
 				.plus_file(material_name)
 		var dir := Directory.new()
 		dir.make_dir_recursive(export_folder)
@@ -465,7 +455,7 @@ func start_empty_project() -> void:
 func open_save_project_dialog() -> void:
 	file_dialog.mode = FileDialog.MODE_SAVE_FILE
 	file_dialog.access = FileDialog.ACCESS_FILESYSTEM
-	file_dialog.filters = ["*.res,*.tres;Material Painter File"]
+	file_dialog.filters = ["*.mproject;Material Painter File"]
 	file_dialog.current_dir = OS.get_system_dir(OS.SYSTEM_DIR_DOCUMENTS)
 	file_dialog.current_file = ""
 	file_dialog.set_meta("to_save", current_file)
@@ -521,6 +511,7 @@ func set_current_file(save_file : SaveFile) -> void:
 	current_file = save_file
 	context.result_size = current_file.result_size
 	for layer_material in current_file.layer_materials:
+		layer_material.context = context
 		var result = layer_material.update(true)
 		if result is GDScriptFunctionState:
 			yield(result, "completed")

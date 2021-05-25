@@ -29,6 +29,7 @@ func serialize() -> Dictionary:
 	var data := {
 		name = name,
 		visible = visible,
+		type = get_type(),
 	}
 	return data
 
@@ -85,3 +86,7 @@ func get_properties() -> Array:
 
 func _get_as_shader_layer(_context : MaterialGenerationContext) -> Layer:
 	return null
+
+
+func duplicate() -> Object:
+	return get_script().new(serialize())

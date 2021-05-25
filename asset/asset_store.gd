@@ -105,7 +105,7 @@ func search(filter : String) -> Array:
 	for asset in assets:
 		found.append(asset)
 		for tag in search_terms:
-			if not tag in asset_tags[asset.path]:
+			if not tag in PoolStringArray(asset_tags[asset.path]).join(" "):
 				found.pop_back()
 				break
 	return found

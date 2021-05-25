@@ -61,7 +61,7 @@ func update(context : MaterialGenerationContext, force_all := false) -> void:
 	if not dirty and not force_all:
 		return
 	for layer in layers:
-		var update_result = layer.update(force_all)
+		var update_result = layer.update(context, force_all)
 		if update_result is GDScriptFunctionState:
 			yield(update_result, "completed")
 	result = yield(generate_result(context, context.result_size,
@@ -113,3 +113,7 @@ func mark_dirty(shader_too := false) -> void:
 
 func get_layer_material_in() -> Reference:
 	return parent.get_layer_material_in()
+
+
+func duplicate() -> Object:
+	return get_script().new(serialize())

@@ -22,9 +22,9 @@ func _on_LayerTree_layer_selected(layer) -> void:
 		for type in Constants.TEXTURE_MAP_TYPES if layer.is_folder else layer.maps:
 			properties += [
 				Properties.EnumProperty.new(type + "/blend_modes",
-						Constants.BLEND_MODES, layer.blend_modes[type]),
+						Constants.BLEND_MODES, layer.get_blend_mode(type)),
 				Properties.FloatProperty.new(type + "/opacities", 0.0, 1.0,
-						layer.opacities[type]),
+						layer.get_opacity(type)),
 			]
 		
 		set_properties(properties)
@@ -44,7 +44,7 @@ func _on_property_changed(property, value) -> void:
 	var layer = editing_layer
 	# don't update the shader if the changed value is a shader parameter
 	if layer is JSONTextureLayer:
-		for property_data in layer.data.properties:
+		for property_data in layer.layer_data.properties:
 			if property_data.name == property:
 				if "shader_param" in property_data:
 					update_shader = not property_data.shader_param

@@ -1,5 +1,5 @@
-extends "res://data/texture/texture_layer.gd"
 
+extends "res://data/texture/texture_layer.gd"
 export var opacity : float
 export var blend_mode : String
 
@@ -30,4 +30,4 @@ func _get_as_shader_layer(_context : MaterialGenerationContext) -> Layer:
 
 
 static func get_shader() -> String:
-	return ""
+	return "texture({texture}, uv)"

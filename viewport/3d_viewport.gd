@@ -22,7 +22,7 @@ func _on_ViewMenuButton_show_background_toggled() -> void:
 
 
 func can_drop_data(_position : Vector2, data) -> bool:
-	return data is Asset and data.type is HdriAsset
+	return data is Asset and data is HdriAsset
 
 
 func drop_data(_position : Vector2, data : HdriAsset) -> void:

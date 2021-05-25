@@ -357,29 +357,29 @@ func _get_layers_of_drop_data(data, position : Vector2) -> Dictionary:
 		layer_type = LayerType.TEXTURE_LAYER
 	elif data is TextureAsset:
 		var layer := FileTextureLayer.new()
-		layer.path = data.file.replace(project.resource_path.get_base_dir(), "local:/")
-		layer.name = data.file.get_file().get_basename()
+		layer.path = data.path
+		layer.name = data.path.get_file().get_basename()
 		
 		if get_selected_layer_texture(_get_layer_at_position(position)) or\
 				_get_layer_at_position(position) is TextureFolder or\
 				_get_layer_at_position(position) is TextureLayer:
 			layers = [layer]
 			layer_type = LayerType.TEXTURE_LAYER
-		else:
-			# Create a material layer with the dropped texture as normal or albedo.
-			var layer_texture := LayerTexture.new()
-			layer_texture.layers.append(layer)
-			
-			var material_layer := MaterialLayer.new()
-			var map := "normal" if "normal" in data.tags else "albedo"
-			material_layer.maps[map] = layer_texture
-			material_layer.name = data.name.replace("normal", "").replace("albedo", "").capitalize()
-			
-			layer_texture.parent = material_layer
-			layer.parent = layer_texture
-			
-			layers = [material_layer]
-			layer_type = LayerType.MATERIAL_LAYER
+#		else:
+#			# Create a material layer with the dropped texture as normal or albedo.
+#			var layer_texture := LayerTexture.new()
+#			layer_texture.layers.append(layer)
+#
+#			var material_layer := MaterialLayer.new()
+#			var map := "normal" if "normal" in data.tags else "albedo"
+#			material_layer.maps[map] = layer_texture
+#			material_layer.name = data.name.replace("normal", "").replace("albedo", "").capitalize()
+#
+#			layer_texture.parent = material_layer
+#			layer.parent = layer_texture
+#
+#			layers = [material_layer]
+#			layer_type = LayerType.MATERIAL_LAYER
 	elif data is SmartMaterialAsset:
 		var material_layer : Reference = data.data.duplicate()
 		var mat_layers := []

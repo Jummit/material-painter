@@ -34,7 +34,7 @@ const MaterialGenerationContext = preload("res://material_generation_context.gd"
 
 func _init(data := []) -> void:
 	for layer in data:
-		add_layer(MaterialLayer.new(layer), -1, false)
+		add_layer(MaterialLayer.new(layer), self, -1, false)
 
 
 func serialize() -> Array:
@@ -93,7 +93,7 @@ func update(force_all := false) -> void:
 				mask = layer.mask.result
 			blending_layer = BlendingLayer.new(
 				"texture({layer_result}, uv)",
-				layer.blend_modes[map], layer.opacities[map], mask)
+				layer.get_blend_mode(map), layer.get_opacity(map), mask)
 			blending_layer.uniform_types.append("sampler2D")
 			blending_layer.uniform_names.append("layer_result")
 			blending_layer.uniform_values.append(map_result)
@@ -146,3 +146,7 @@ func set_layers(to):
 	layers = to
 	for layer in layers:
 		layer.parent = self
+
+
+func duplicate() -> Object:
+	return get_script().new(serialize())

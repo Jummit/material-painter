@@ -23,6 +23,7 @@ var paint_through := false setget set_paint_through
 # How large the resulting painted texture is.
 var result_size := Vector2(1024, 1024) setget set_result_size
 # The texture of the `Viewport` that generates the result.
+# warning-ignore:unused_class_variable
 onready var result : ViewportTexture = $PaintViewport.get_texture()
 
 # Set to true while the painter is active.
@@ -97,8 +98,6 @@ func update_view(viewport : Viewport) -> void:
 	view_to_texture_camera.near = camera.near
 	view_to_texture_camera.far = camera.far
 	view_to_texture_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
-	
-	result.get_data().save_png("user://b.png")
 	
 	yield(VisualServer, "frame_post_draw")
 	

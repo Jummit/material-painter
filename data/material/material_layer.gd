@@ -17,14 +17,13 @@ parent `LayerMaterial` dirty.
 var maps : Dictionary setget set_maps
 var mask : Reference setget set_mask
 var name : String
-var opacities : Dictionary
-var blend_modes : Dictionary
 var visible := true
 var is_folder := false
-
-var results : Dictionary
+var opacities : Dictionary
+var blend_modes : Dictionary
 var layers : Array
 
+var results : Dictionary
 var parent
 var dirty := true
 
@@ -68,6 +67,14 @@ func serialize() -> Dictionary:
 	return data
 
 
+func get_opacity(map : String) -> float:
+	return opacities.get(map, 1.0)
+
+
+func get_blend_mode(map : String) -> float:
+	return blend_modes.get(map, "normal")
+
+
 func set_maps(to):
 	maps = to
 	for map in maps.values():
@@ -90,12 +97,12 @@ func update(context : MaterialGenerationContext, force_all := false) -> void:
 		return
 	if is_folder:
 		for layer in layers:
-			var result = layer.update(force_all)
+			var result = layer.update(context, force_all)
 			if result is GDScriptFunctionState:
 				result = yield(result, "completed")
 		
 		if mask:
-			var result = mask.update(force_all)
+			var result = mask.update(context, force_all)
 			if result is GDScriptFunctionState:
 				yield(result, "completed")
 		
@@ -163,3 +170,7 @@ func get_map_result(map : String) -> Texture:
 		if not map in maps:
 			return null
 		return maps[map].result
+
+
+func duplicate() -> Object:
+	return get_script().new(serialize())
