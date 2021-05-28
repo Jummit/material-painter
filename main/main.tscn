@@ -48,7 +48,7 @@ __meta__ = {
 }
 
 [node name="Panel" type="Panel" parent="VBoxContainer"]
-margin_right = 1024.0
+margin_right = 1280.0
 margin_bottom = 23.0
 rect_min_size = Vector2( 0, 23 )
 
@@ -93,8 +93,8 @@ switch_on_hover = true
 
 [node name="Control" type="Control" parent="VBoxContainer"]
 margin_top = 27.0
-margin_right = 1024.0
-margin_bottom = 600.0
+margin_right = 1280.0
+margin_bottom = 720.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -129,18 +129,18 @@ __meta__ = {
 }
 
 [node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer/Control/HBoxContainer"]
-margin_right = 1024.0
-margin_bottom = 573.0
+margin_right = 1280.0
+margin_bottom = 693.0
+split_offset = 381
 
 [node name="VBoxContainer" type="VSplitContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer"]
-margin_right = 772.0
-margin_bottom = 573.0
-size_flags_horizontal = 3
+margin_right = 781.0
+margin_bottom = 693.0
+split_offset = 194
 
 [node name="VBoxContainer" type="VSplitContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer"]
-margin_right = 772.0
-margin_bottom = 381.0
-size_flags_vertical = 3
+margin_right = 781.0
+margin_bottom = 416.0
 
 [node name="ToolSettingsWindow" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer" instance=ExtResource( 22 )]
 visible = false
@@ -179,8 +179,8 @@ __meta__ = {
 }
 
 [node name="HBoxContainer" type="HSplitContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer"]
-margin_right = 772.0
-margin_bottom = 381.0
+margin_right = 781.0
+margin_bottom = 416.0
 
 [node name="ToolsWindow" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 22 )]
 visible = false
@@ -202,10 +202,8 @@ __meta__ = {
 }
 
 [node name="ViewportTabContainer" type="TabContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
-margin_right = 772.0
-margin_bottom = 381.0
-size_flags_horizontal = 3
-size_flags_vertical = 3
+margin_right = 781.0
+margin_bottom = 416.0
 drag_to_rearrange_enabled = true
 
 [node name="3DViewportWindow" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer" instance=ExtResource( 22 )]
@@ -237,9 +235,9 @@ margin_top = 26.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 0.0
-margin_top = 393.0
-margin_right = 772.0
-margin_bottom = 573.0
+margin_top = 428.0
+margin_right = 781.0
+margin_bottom = 693.0
 rect_min_size = Vector2( 400, 180 )
 
 [node name="AssetBrowser" type="HBoxContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow"]
@@ -256,7 +254,7 @@ __meta__ = {
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser"]
 margin_right = 240.0
-margin_bottom = 158.0
+margin_bottom = 243.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.34
@@ -285,7 +283,7 @@ text = "Remove Tag"
 [node name="TagList" type="Tree" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser/VBoxContainer"]
 margin_top = 33.0
 margin_right = 240.0
-margin_bottom = 158.0
+margin_bottom = 243.0
 rect_min_size = Vector2( 200, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -293,21 +291,21 @@ hide_root = true
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser"]
 margin_left = 244.0
-margin_right = 772.0
-margin_bottom = 158.0
+margin_right = 781.0
+margin_bottom = 243.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="SearchEdit" type="LineEdit" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser/VBoxContainer2"]
-margin_right = 528.0
+margin_right = 537.0
 margin_bottom = 29.0
 clear_button_enabled = true
 placeholder_text = "search..."
 
 [node name="AssetList" type="ItemList" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser/VBoxContainer2"]
 margin_top = 33.0
-margin_right = 528.0
-margin_bottom = 158.0
+margin_right = 537.0
+margin_bottom = 243.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 select_mode = 1
@@ -327,9 +325,9 @@ __meta__ = {
 }
 
 [node name="LayerPanelContainer" type="VSplitContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer"]
-margin_left = 784.0
-margin_right = 1024.0
-margin_bottom = 573.0
+margin_left = 793.0
+margin_right = 1280.0
+margin_bottom = 693.0
 split_offset = 187
 
 [node name="LayersWindow" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer" instance=ExtResource( 22 )]
@@ -337,7 +335,7 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 0.0
 margin_top = 0.0
-margin_right = 240.0
+margin_right = 487.0
 margin_bottom = 287.0
 rect_min_size = Vector2( 180, 100 )
 
@@ -352,7 +350,7 @@ __meta__ = {
 }
 
 [node name="MaterialOptionButton" type="OptionButton" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/LayersWindow/LayerTreeToolbar"]
-margin_right = 167.0
+margin_right = 414.0
 margin_bottom = 29.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -360,22 +358,22 @@ disabled = true
 script = ExtResource( 24 )
 
 [node name="AddLayerButton" type="Button" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/LayersWindow/LayerTreeToolbar"]
-margin_left = 171.0
-margin_right = 190.0
+margin_left = 418.0
+margin_right = 437.0
 margin_bottom = 29.0
 disabled = true
 text = "+"
 
 [node name="AddFolderButton" type="Button" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/LayersWindow/LayerTreeToolbar"]
-margin_left = 194.0
-margin_right = 220.0
+margin_left = 441.0
+margin_right = 467.0
 margin_bottom = 29.0
 disabled = true
 icon = ExtResource( 14 )
 
 [node name="DeleteButton" type="Button" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/LayersWindow/LayerTreeToolbar"]
-margin_left = 224.0
-margin_right = 240.0
+margin_left = 471.0
+margin_right = 487.0
 margin_bottom = 29.0
 disabled = true
 text = "-"
@@ -423,8 +421,8 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 0.0
 margin_top = 299.0
-margin_right = 240.0
-margin_bottom = 573.0
+margin_right = 487.0
+margin_bottom = 693.0
 rect_min_size = Vector2( 240, 200 )
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/PropertiesWindow"]
@@ -445,8 +443,8 @@ __meta__ = {
 }
 
 [node name="LayerPropertyPanel" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/PropertiesWindow/VBoxContainer" instance=ExtResource( 17 )]
-margin_right = 240.0
-margin_bottom = 252.0
+margin_right = 487.0
+margin_bottom = 372.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 6 )

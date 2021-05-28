@@ -483,11 +483,11 @@ func do_change_mask_action(action_name : String, layer, mask : LayerTexture) -> 
 
 
 func initialise_layouts() -> void:
+	# Wait for all windows to be ready.
+	yield(get_tree(), "idle_frame")
 	var dir := Directory.new()
 	dir.make_dir_recursive("user://layouts")
 	var default := LAYOUTS_FOLDER.plus_file("default.json")
-	# Wait for all windows to be ready.
-	yield(get_tree(), "idle_frame")
 	if not dir.file_exists(default):
 		LayoutUtils.save_layout(root.get_child(0), default)
 	else:
