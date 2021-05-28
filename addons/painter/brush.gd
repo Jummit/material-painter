@@ -1,7 +1,7 @@
 extends Resource
 
 """
-A brush that stores settings that will be used to paint
+A brush which stores settings that will be used to paint
 """
 
 # warning-ignore-all:unused_class_variable

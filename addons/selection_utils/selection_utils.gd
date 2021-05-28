@@ -5,10 +5,18 @@ A utility for performing different mesh selections on the GPU
 
 Selections will be added in white ontop of the given texture.
 There are multiple `SelectionType`s, each preparing the mesh by setting the
-vertex colors of selectable areas the same.
+vertex colors of selectable areas the same color.
 The vertex color at the given screen position is then sampled
 and isolated to get the selected area on the texture.
 """
+
+enum SelectionType {
+	TRIANGLE,
+	QUAD,
+	MESH_ISLAND,
+	UV_ISLAND,
+	FLAT_SURFACE,
+}
 
 var _prepared_meshes := {}
 var _selection_types := {
@@ -17,14 +25,6 @@ var _selection_types := {
 	SelectionType.MESH_ISLAND : preload("selection_types/mesh_island_selection.gd"),
 	SelectionType.UV_ISLAND : preload("selection_types/uv_island_selection.gd"),
 	SelectionType.FLAT_SURFACE : preload("selection_types/flat_surface_selection.gd"),
-}
-
-enum SelectionType {
-	TRIANGLE,
-	QUAD,
-	MESH_ISLAND,
-	UV_ISLAND,
-	FLAT_SURFACE,
 }
 
 onready var isolate_viewport : Viewport = $IsolateViewport
@@ -37,6 +37,17 @@ onready var screen_sample_viewport : Viewport = $ScreenSampleViewport
 onready var pixel_sample_viewport : Viewport = $PixelSampleViewport
 onready var screen_viewport_texture : TextureRect = $PixelSampleViewport/ScreenViewportTexture
 
+# Set's the mesh and surface that the selections will be performed on. This
+# takes a while because the selection maps have to be generated.
+func set_mesh(to : Mesh, surface : int) -> void:
+	for selection_type in _selection_types:
+		var result = _selection_types[selection_type].prepare_mesh(to, surface)
+		if result is GDScriptFunctionState:
+			result = yield(result, "completed")
+		_prepared_meshes[selection_type] = result
+
+
+# Update the viewport size and camera data.
 func update_view(viewport : Viewport) -> void:
 	screen_sample_viewport.size = viewport.size
 	screen_viewport_texture.rect_size = viewport.size
@@ -46,6 +57,8 @@ func update_view(viewport : Viewport) -> void:
 	sample_camera.near = viewport.get_camera().near
 
 
+# Perform a selection with the given type, color and position and return the
+# result, optionally adding it to the `onto` texture.
 func add_selection(selection_type : int, mouse_position : Vector2,
 		result_size : Vector2, onto : Texture = null,
 		color := Color.white) -> Texture:
@@ -73,11 +86,3 @@ func add_selection(selection_type : int, mouse_position : Vector2,
 	yield(VisualServer, "frame_post_draw")
 	
 	return isolate_viewport.get_texture()
-
-
-func set_mesh(to : Mesh, surface : int) -> void:
-	for selection_type in _selection_types:
-		var result = _selection_types[selection_type].prepare_mesh(to, surface)
-		if result is GDScriptFunctionState:
-			result = yield(result, "completed")
-		_prepared_meshes[selection_type] = result

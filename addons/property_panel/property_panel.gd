@@ -3,17 +3,14 @@ extends Panel
 """
 An inspector-like panel that builds a list of `PropertyContainer`s
 
-When the `properties` are set,
-a `PropertyContainer` is generated for each property.
+When the `properties` are set, a `PropertyContainer` is generated for each
+property.
 
-The resulting values can be retrieved using
-`get_property_value` and `get_property_values`.
+The resulting values can be retrieved using `get_property_value` and
+`get_property_values`.
 
-`get_property_values` returns a `Dictionary` with the
-property names as keys and the values as values.
-
-A `Dictionary` similar to the result of `get_property_values` can be fed
-to `load_values` to update the values of the `PropertyContainers`s.
+A `Dictionary` similar to the result of `get_property_values` can be given to
+`load_values` to update the values of the `PropertyContainers`s.
 """
 
 enum Orientation {
@@ -21,17 +18,19 @@ enum Orientation {
 	HORIZONTAL,
 }
 
-export(Orientation) var orientation := Orientation.VERTICAL
-
 signal property_changed(property, value)
 
+# If the properties should be alligned from left to right or from top to bottom.
+export(Orientation) var orientation := Orientation.VERTICAL
+
 var properties := [] setget set_properties
-var property_container_scene : PackedScene = load("res://addons/property_panel/property_container/property_container.tscn")
+
+var _property_container_scene : PackedScene = load("res://addons/property_panel/property_container/property_container.tscn")
+
+const PropertyContainer = preload("res://addons/property_panel/property_container/property_container.gd")
 
 onready var properties_container : Container
 onready var scroll_container : ScrollContainer = $ScrollContainer
-
-const PropertyContainer = preload("res://addons/property_panel/property_container/property_container.gd")
 
 func _ready():
 # warning-ignore:incompatible_ternary
@@ -39,33 +38,7 @@ func _ready():
 	properties_container.size_flags_horizontal = SIZE_EXPAND_FILL
 	properties_container.size_flags_vertical = SIZE_EXPAND_FILL
 	scroll_container.add_child(properties_container)
-	setup_property_containers()
-
-
-func set_properties(to):
-	properties = to
-	setup_property_containers()
-
-
-func setup_property_containers() -> void:
-	for property_container in properties_container.get_children():
-		# use ´free´ instead of ´queue_free´ to immediatly remove nodes
-		# because otherwise duplicate properties get automatically renamed
-		property_container.free()
-	
-	for property in properties:
-		if property is String:
-			var label := Label.new()
-			label.align = Label.ALIGN_CENTER
-			label.text = property
-			properties_container.add_child(label)
-		else:
-			var property_container = property_container_scene.instance()
-			property_container.name = property.name
-			property_container.connect("property_changed", self, "_on_Property_changed", [property_container])
-
-			properties_container.add_child(property_container)
-			property_container.setup(property)
+	_setup_property_containers()
 
 
 func get_property_value(property_name : String):
@@ -76,10 +49,13 @@ func set_property_value(property_name : String, value):
 	return (properties_container.get_node(property_name) as PropertyContainer).set_value(value)
 
 
+# Returns true if the property is exposed.
 func has_property(property_name : String) -> bool:
 	return properties_container.has_node(property_name)
 
 
+# Returns a `Dictionary` with the property names as keys and the values as
+# values.
 func get_property_values() -> Dictionary:
 	var values := {}
 	for property_container in properties_container.get_children():
@@ -88,13 +64,15 @@ func get_property_values() -> Dictionary:
 	return values
 
 
-func store_values(instance) -> void:
+# Store the values in an object.
+func store_values(instance : Object) -> void:
 	var property_values := get_property_values()
 	for value in property_values:
 		instance.set(value, property_values[value])
 
 
-func load_values(instance) -> void:
+# Load the property values from an object.
+func load_values(instance : Object) -> void:
 	set_block_signals(true)
 	for property_container in properties_container.get_children():
 		if not property_container is Label:
@@ -104,8 +82,35 @@ func load_values(instance) -> void:
 	set_block_signals(false)
 
 
+# Clear the panel, removing every property.
 func clear() -> void:
 	set_properties([])
+
+
+func set_properties(to):
+	properties = to
+	_setup_property_containers()
+
+
+func _setup_property_containers() -> void:
+	for property_container in properties_container.get_children():
+		# use ´free´ instead of ´queue_free´ to immediatly remove nodes
+		# because otherwise duplicate properties get automatically renamed
+		property_container.free()
+		
+	for property in properties:
+		if property is String:
+			var label := Label.new()
+			label.align = Label.ALIGN_CENTER
+			label.text = property
+			properties_container.add_child(label)
+		else:
+			var property_container = _property_container_scene.instance()
+			property_container.name = property.name
+			property_container.connect("property_changed", self, "_on_Property_changed", [property_container])
+			
+			properties_container.add_child(property_container)
+			property_container.setup(property)
 
 
 func _on_Property_changed(value, property_container : PropertyContainer):

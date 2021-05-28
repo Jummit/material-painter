@@ -1,35 +1,55 @@
 extends AcceptDialog
 
 """
-A dialog inspired by the Godot Engine `About` popup
+A dialog inspired by the Godot Engine's `About` popup
 
 Shows the components used in the software and their licenses.
-Some licenses are added by default.
+
+To configure the components and licenses set the `components` and `licenses`
+variables:
+
+```
+dialog.components = {
+	"Example Component": "MIT License\n\nCopyright 2021"
+}
+dialog.licenses = {
+	"MIT License": "Permission is hereby granted, free of charge ..."
+}
+```
 """
 
-onready var tab_container : TabContainer = $TabContainer
-onready var license_text : RichTextLabel = $TabContainer/ProgramLicense/LicenseText
-onready var info_text_label : RichTextLabel = $TabContainer/ThirdPartyLicenses/HBoxContainer/InfoTextLabel
-onready var component_tree : Tree = $TabContainer/ThirdPartyLicenses/HBoxContainer/ComponentTree
-
-
 # The name of the program that uses the components.
-export var program_name : String
-# The license of the main program.
-export(String, MULTILINE) var program_license : String
+export var program_name : String setget set_program_name
+# The license of the program.
+export(String, MULTILINE) var program_license : String setget set_program_license
 
 # A map of component names to their license texts.
 var components : Dictionary setget set_components
 # A map of license names to their complete texts.
 var licenses : Dictionary setget set_licenses
 
-var all_components := ""
-var all_licenses := ""
+var _all_components := ""
+var _all_licenses := ""
+
+onready var tab_container : TabContainer = $TabContainer
+onready var license_text : RichTextLabel = $TabContainer/ProgramLicense/LicenseText
+onready var info_text_label : RichTextLabel = $TabContainer/ThirdPartyLicenses/HBoxContainer/InfoTextLabel
+onready var component_tree : Tree = $TabContainer/ThirdPartyLicenses/HBoxContainer/ComponentTree
 
 func _ready() -> void:
-	tab_container.set_tab_title(0, program_name + " License")
-	tab_container.set_tab_title(1, "Third-Party Licenses")
+	set_program_name(program_name)
+	set_program_license(program_license)
 	license_text.text = program_license
+
+
+func set_program_name(to : String) -> void:
+	program_name = to
+	tab_container.set_tab_title(0, program_name + " License")
+
+
+func set_program_license(to : String) -> void:
+	program_license = to
+	tab_container.set_tab_title(1, "Third-Party Licenses")
 
 
 func set_components(to : Dictionary) -> void:
@@ -54,9 +74,9 @@ func _update_tree() -> void:
 		component_item.set_metadata(0, component)
 		component_item.set_text(0, component)
 	
-	all_components = ""
+	_all_components = ""
 	for component in components:
-		all_components += "%s\n%s\n\n" % [component, indent(
+		_all_components += "%s\n%s\n\n" % [component, _indent(
 				components[component])]
 	
 	var licenses_item := component_tree.create_item(root)
@@ -67,9 +87,9 @@ func _update_tree() -> void:
 		license_item.set_metadata(0, license)
 		license_item.set_text(0, license)
 	
-	all_licenses = ""
+	_all_licenses = ""
 	for license in licenses:
-		all_licenses += "%s\n%s\n\n" % [license, indent(licenses[license])]
+		_all_licenses += "%s\n%s\n\n" % [license, _indent(licenses[license])]
 
 
 func _on_ComponentTree_item_selected() -> void:
@@ -77,9 +97,9 @@ func _on_ComponentTree_item_selected() -> void:
 	var text : String
 	match metadata:
 		"components":
-			text = all_components
+			text = _all_components
 		"licenses":
-			text = all_licenses
+			text = _all_licenses
 		var item:
 			if item in components:
 				text = components[item]
@@ -88,5 +108,5 @@ func _on_ComponentTree_item_selected() -> void:
 	info_text_label.text = text
 
 
-static func indent(string : String) -> String:
+static func _indent(string : String) -> String:
 	return "	" + string.replace("\n", "\n	")

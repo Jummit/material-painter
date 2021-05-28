@@ -14,7 +14,7 @@ func render_texture(subject : Node, result_size : Vector2,
 				yield(VisualServer, "frame_post_draw")
 		else:
 			# Yield because a `GDScriptFunctionState` is probably expected.
-			yield()
+			yield(get_tree(), "idle_frame")
 			return ViewportTexture.new()
 	add_child(subject)
 	size = result_size
@@ -24,6 +24,5 @@ func render_texture(subject : Node, result_size : Vector2,
 	busy = false
 	subject.queue_free()
 	var texture := get_texture()
-	texture.viewport_path = get_path()
 	texture.flags = Texture.FLAG_MIPMAPS | Texture.FLAG_REPEAT | Texture.FLAG_FILTER
 	return texture

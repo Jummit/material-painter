@@ -4,8 +4,8 @@ extends HBoxContainer
 An item in a `PropertyPanel`
 
 Contains a `name_label` and the `property_control` the `property` returns.
-Emmits the `property_changed` signal when the `property_control`
-emitted the `changed_signal` the `property` specified.
+Emits the `property_changed` signal when the `property_control` emitted the
+`changed_signal` the `property` specified.
 """
 
 signal property_changed(value)

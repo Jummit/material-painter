@@ -19,16 +19,16 @@ func _gui_input(event : InputEvent) -> void:
 			emit_signal("changed")
 
 
-func set_path(to : String):
+func set_path(to : String) -> void:
 	path = to
 	text = path.get_file()
 	hint_tooltip = path
 
 
-func _on_FileDialog_file_selected(selected_path : String):
+func _on_FileDialog_file_selected(selected_path : String) -> void:
 	set_path(selected_path)
 	emit_signal("changed")
 
 
-func _pressed():
+func _pressed() -> void:
 	file_dialog.popup_centered()
