@@ -27,6 +27,7 @@ const Properties = preload("res://addons/property_panel/properties.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 
 func _init(data := {}).(data) -> void:
+	name = data.get("name", "")
 	settings = data.get("settings", {})
 	set_file(data.get("file", ""))
 
@@ -53,6 +54,8 @@ func set_file(to):
 		elif property.type == "enum":
 			default = property.options.front()
 		settings[property.name] = default
+	if not name:
+		name = get_name()
 
 
 func show_in_menu() -> bool:
@@ -71,7 +74,7 @@ func get_type() -> String:
 
 
 func get_name() -> String:
-	return layer_data.get("name", "JSON Layer")
+	return layer_data.get("name", "JSON")
 
 
 func get_properties() -> Array:
