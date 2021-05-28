@@ -399,6 +399,8 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 			file_dialog.current_file = ""
 			file_dialog.popup_centered()
 		FILE_MENU_ITEMS.QUIT:
+			LayoutUtils.save_layout(root.get_child(0),
+					LAYOUTS_FOLDER.plus_file("default.json"))
 			quit_confirmation_dialog.popup()
 
 
