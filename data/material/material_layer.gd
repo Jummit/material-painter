@@ -29,7 +29,7 @@ var dirty := true
 
 const TextureLayer = preload("res://data/texture/texture_layer.gd")
 const LayerTexture = preload("res://data/texture/layer_texture.gd")
-const MaterialGenerationContext = preload("res://material_generation_context.gd")
+const MaterialGenerationContext = preload("res://main/material_generation_context.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 
 func _init(data := {}) -> void:

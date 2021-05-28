@@ -30,6 +30,7 @@ var _adding_tags : bool
 
 const TextureAsset = preload("res://asset/texture_asset.gd")
 const AssetStore = preload("res://asset/asset_store.gd")
+const LayerAsset = preload("res://asset/layer_asset.gd")
 
 onready var asset_store : AssetStore = $"../../../../../../../AssetStore"
 onready var tag_name_edit : LineEdit = $VBoxContainer/HBoxContainer/TagNameEdit
@@ -54,6 +55,8 @@ func update_asset_list() -> void:
 	if _current_tag != "all":
 		filter += " " + _current_tag
 	for asset in asset_store.search(filter):
+		if asset is LayerAsset and asset.data.show_in_menu():
+			continue
 		var item := asset_list.get_item_count()
 		asset_list.add_item(asset.name, asset_store.thumbnails[asset.path])
 		asset_list.set_item_tooltip(item, "%s\n\n%s\nTags: %s" % [asset.name,

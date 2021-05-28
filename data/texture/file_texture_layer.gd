@@ -33,9 +33,9 @@ func serialize() -> Dictionary:
 
 func get_properties() -> Array:
 	return .get_properties() + [
-		Properties.FilePathProperty.new("path"),
-		Properties.BoolProperty.new("triplanar_mapping"),
-		Properties.FloatProperty.new("uv_scale", 0.0, 2.0),
+			Properties.FilePathProperty.new("path"),
+			Properties.BoolProperty.new("triplanar_mapping"),
+			Properties.FloatProperty.new("uv_scale", 0.0, 2.0),
 		]
 
 

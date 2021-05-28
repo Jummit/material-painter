@@ -63,7 +63,7 @@ const TextureFolder = preload("res://data/texture/texture_folder.gd")
 const Brush = preload("res://addons/painter/brush.gd")
 const LayoutUtils = preload("res://addons/third_party/customizable_ui/layout_utils.gd")
 const ObjParser = preload("res://addons/third_party/obj_parser/obj_parser.gd")
-const MaterialGenerationContext = preload("res://material_generation_context.gd")
+const MaterialGenerationContext = preload("res://main/material_generation_context.gd")
 const AssetStore = preload("res://asset/asset_store.gd")
 const LayerTree = preload("res://layer_panel/layer_tree.gd")
 const TextureAsset = preload("res://asset/texture_asset.gd")
@@ -290,22 +290,25 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 		bake_error_dialog.popup()
 		return
 	
-	var texture_dir : String = current_file.path.get_base_dir().plus_file("assets/texture")
+	var texture_dir : String = current_file.path.get_base_dir().plus_file(
+			"assets/texture")
 	var dir := Directory.new()
 	dir.make_dir_recursive(texture_dir)
 	
 # warning-ignore:unsafe_method_access
 	var progress_dialog = ProgressDialogManager.create_task("Bake Mesh Maps",
-			mesh_maps_generator.BAKE_FUNCTIONS.size() * context.mesh.get_surface_count())
+			mesh_maps_generator.BAKE_FUNCTIONS.size() *\
+			context.mesh.get_surface_count())
 	
 	for surface in context.mesh.get_surface_count():
-		var mat_name : String = current_file.layer_materials[surface].resource_name
+		var mat_name := context.mesh.surface_get_material(surface).resource_name
 		for map in mesh_maps_generator.BAKE_FUNCTIONS:
 			var file := texture_dir.plus_file(mat_name + map) + ".png"
 			progress_dialog.set_action("%s: %s" % [mat_name, file])
 			
-			var result : ImageTexture = yield(mesh_maps_generator.generate_mesh_map(
-					map, context.mesh, Vector2(1024, 1024), surface), "completed")
+			var result : ImageTexture = yield(
+					mesh_maps_generator.generate_mesh_map(map, context.mesh,
+					Vector2(1024, 1024), surface), "completed")
 			
 			result.get_data().save_png(file)
 			asset_store.load_asset(file, TextureAsset)

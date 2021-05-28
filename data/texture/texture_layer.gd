@@ -18,7 +18,7 @@ var shader_dirty := true
 var icon_dirty := true
 
 const Layer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").Layer
-const MaterialGenerationContext = preload("res://material_generation_context.gd")
+const MaterialGenerationContext = preload("res://main/material_generation_context.gd")
 
 func _init(data := {}) -> void:
 	name = data.get("name", "")

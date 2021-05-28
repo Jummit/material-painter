@@ -15,7 +15,7 @@ const TextureUtils = preload("res://utils/texture_utils.gd")
 const Brush = preload("res://addons/painter/brush.gd")
 const FileTextureLayer = preload("res://data/texture/file_texture_layer.gd")
 const LayerMaterial = preload("res://data/material/layer_material.gd")
-const MaterialGenerationContext = preload("res://material_generation_context.gd")
+const MaterialGenerationContext = preload("res://main/material_generation_context.gd")
 const Painter = preload("res://addons/painter/painter.gd")
 const MaterialLayer = preload("res://data/material/material_layer.gd")
 const LayerBlendViewportManager = preload("res://addons/layer_blending_viewport/layer_blend_viewport_manager.gd")
@@ -79,3 +79,12 @@ func get_thumbnail_for_hdri(hdri : Image, result_size : Vector2) -> Texture:
 	hdri_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 	yield(VisualServer, "frame_post_draw")
 	return TextureUtils.viewport_to_image(hdri_viewport.get_texture())
+
+
+func get_thumbnail_for_texture(texture : Image,
+		result_size : Vector2) -> Texture:
+	var smaller := ImageTexture.new()
+	texture.resize(int(result_size.x), int(result_size.y),
+			Image.INTERPOLATE_BILINEAR)
+	smaller.create_from_image(texture)
+	return smaller

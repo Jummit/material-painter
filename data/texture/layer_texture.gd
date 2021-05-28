@@ -26,7 +26,7 @@ var icon_dirty := true
 var shader_dirty := false
 
 const TextureFolder = preload("res://data/texture/texture_folder.gd")
-const MaterialGenerationContext = preload("res://material_generation_context.gd")
+const MaterialGenerationContext = preload("res://main/material_generation_context.gd")
 
 func _init(data := {}) -> void:
 	var types := {
