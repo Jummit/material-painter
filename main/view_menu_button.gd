@@ -91,8 +91,7 @@ func _on_Popup_id_pressed(id : int) -> void:
 			get_popup().set_item_checked(Item.FULLSCREEN, OS.window_fullscreen)
 		Item.VIEW_RESULTS:
 			results_item_list_window.visible = not results_item_list_window.visible
-			get_popup().set_item_checked(get_popup().get_item_index(
-					Item.VIEW_RESULTS), results_item_list_window.visible)
+			get_popup().set_item_checked(Item.VIEW_RESULTS, results_item_list_window.visible)
 		Item.UPDATE_ICONS:
 			get_popup().set_item_checked(Item.UPDATE_ICONS,
 					not get_popup().is_item_checked(Item.UPDATE_ICONS))
