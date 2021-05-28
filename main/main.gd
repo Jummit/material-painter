@@ -31,7 +31,6 @@ onready var mesh_maps_generator : MeshMapsGenerator = $MeshMapsGenerator
 # `add_do_action` instead of null.
 var NO_MASK := LayerTexture.new()
 
-const MATERIALS_FOLDER := "user://materials"
 const LAYOUTS_FOLDER := "user://layouts"
 
 var file_menu_shortcuts := [
@@ -70,6 +69,7 @@ const LayerTree = preload("res://layer_panel/layer_tree.gd")
 const TextureAsset = preload("res://asset/texture_asset.gd")
 const AssetBrowser = preload("res://asset/asset_browser.gd")
 const ViewMenuButton = preload("res://main/view_menu_button.gd")
+const SmartMaterialAsset = preload("res://asset/smart_material_asset.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/FileMenuButton
 onready var about_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/AboutMenuButton
@@ -232,12 +232,16 @@ func _on_AddLayerPopupMenu_layer_selected(layer : Reference) -> void:
 
 
 func _on_MaterialLayerPopupMenu_layer_saved() -> void:
-	pass
-#	var material_layer = layer_tree.get_selected_layer()
-#	var save_path := MATERIALS_FOLDER.plus_file(material_layer.name) + ".tres"
-#	ResourceSaver.save(save_path, material_layer)
-#	asset_browser.load_asset(save_path, asset_browser.ASSET_TYPES.MATERIAL)
-#	asset_browser.update_asset_list()
+	var material_layer : MaterialLayer = layer_tree.get_selected_layer()
+	var dir := Directory.new()
+	dir.make_dir_recursive("user://assets/smart_material")
+	var save_path := "user://assets/smart_material".plus_file(material_layer.name) + ".json"
+	var file := File.new()
+	file.open(save_path, File.WRITE)
+	file.store_string(to_json(material_layer.serialize()))
+	file.close()
+	asset_store.load_asset(save_path, SmartMaterialAsset)
+	asset_browser.update_asset_list()
 
 
 func _on_MaterialLayerPopupMenu_mask_added(mask : LayerTexture) -> void:

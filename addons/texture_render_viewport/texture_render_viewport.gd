@@ -24,6 +24,6 @@ func render_texture(subject : Node, result_size : Vector2,
 	busy = false
 	subject.queue_free()
 	var texture := get_texture()
-#	texture.viewport_path = get_path()
-#	texture.flags = Texture.FLAG_MIPMAPS | Texture.FLAG_REPEAT | Texture.FLAG_FILTER
+	texture.viewport_path = get_path()
+	texture.flags = Texture.FLAG_MIPMAPS | Texture.FLAG_REPEAT | Texture.FLAG_FILTER
 	return texture

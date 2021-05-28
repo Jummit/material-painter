@@ -2,7 +2,7 @@ extends Reference
 
 # warning-ignore-all:unused_class_variable
 var mesh : Mesh
-var result_size : Vector2
+var result_size := Vector2(64, 64)
 var icon_size := Vector2(32, 32)
 #var icon_size := Vector2(128, 128)
 var blending_viewport_manager : LayerBlendViewportManager

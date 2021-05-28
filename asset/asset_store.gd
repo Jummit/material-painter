@@ -75,12 +75,13 @@ func load_asset(path : String, type : GDScript) -> void:
 	var dir := Directory.new()
 	var thumbnail_path := get_thumbnail_path(asset)
 	var thumbnail : Texture
+	print("get_thumbnail_for_" + asset.get_type())
 	if dir.file_exists(thumbnail_path):
 		var image := Image.new()
 		image.load(thumbnail_path)
 		thumbnail = ImageTexture.new()
 		(thumbnail as ImageTexture).create_from_image(image)
-	elif "get_thumbnail_for_" + asset.get_type() in thumbnail_renderer:
+	elif thumbnail_renderer.has_method("get_thumbnail_for_" + asset.get_type()):
 		thumbnail = yield(thumbnail_renderer.call(
 # warning-ignore:unsafe_property_access
 			"get_thumbnail_for_" + asset.get_type(), asset.data,

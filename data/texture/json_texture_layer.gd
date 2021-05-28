@@ -28,7 +28,10 @@ const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blendi
 
 func _init(data := {}).(data) -> void:
 	name = data.get("name", "")
-	settings = data.get("settings", {})
+	settings = {}
+	var settings_data : Dictionary = data.get("settings", {})
+	for setting in settings_data:
+		settings[setting] = str2var(settings_data[setting])
 	set_file(data.get("file", ""))
 
 
@@ -64,7 +67,9 @@ func show_in_menu() -> bool:
 
 func serialize() -> Dictionary:
 	var data := .serialize()
-	data.settings = settings
+	data.settings = {}
+	for setting in settings:
+		data.settings[setting] = var2str(settings[setting])
 	data.file = file
 	return data
 

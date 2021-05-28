@@ -6,6 +6,7 @@ extends OptionButton
 
 func _on_Main_mesh_changed(mesh : Mesh) -> void:
 	clear()
+	ResourceSaver.save("res://test.mesh", mesh)
 	for surface in mesh.get_surface_count():
 		var mat := mesh.surface_get_material(surface)
 		var material_name : String = "Material %s" % surface

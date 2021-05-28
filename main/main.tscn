@@ -131,16 +131,16 @@ __meta__ = {
 [node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer/Control/HBoxContainer"]
 margin_right = 1280.0
 margin_bottom = 693.0
-split_offset = 381
+split_offset = 794
 
 [node name="VBoxContainer" type="VSplitContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer"]
-margin_right = 781.0
+margin_right = 1028.0
 margin_bottom = 693.0
-split_offset = 194
+split_offset = 232
 
 [node name="VBoxContainer" type="VSplitContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer"]
-margin_right = 781.0
-margin_bottom = 416.0
+margin_right = 1028.0
+margin_bottom = 454.0
 
 [node name="ToolSettingsWindow" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer" instance=ExtResource( 22 )]
 visible = false
@@ -179,8 +179,8 @@ __meta__ = {
 }
 
 [node name="HBoxContainer" type="HSplitContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer"]
-margin_right = 781.0
-margin_bottom = 416.0
+margin_right = 1028.0
+margin_bottom = 454.0
 
 [node name="ToolsWindow" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer" instance=ExtResource( 22 )]
 visible = false
@@ -202,8 +202,8 @@ __meta__ = {
 }
 
 [node name="ViewportTabContainer" type="TabContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
-margin_right = 781.0
-margin_bottom = 416.0
+margin_right = 1028.0
+margin_bottom = 454.0
 drag_to_rearrange_enabled = true
 
 [node name="3DViewportWindow" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer" instance=ExtResource( 22 )]
@@ -235,8 +235,8 @@ margin_top = 26.0
 anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 0.0
-margin_top = 428.0
-margin_right = 781.0
+margin_top = 466.0
+margin_right = 1028.0
 margin_bottom = 693.0
 rect_min_size = Vector2( 400, 180 )
 
@@ -253,14 +253,14 @@ __meta__ = {
 }
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser"]
-margin_right = 240.0
-margin_bottom = 243.0
+margin_right = 259.0
+margin_bottom = 205.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.34
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser/VBoxContainer"]
-margin_right = 240.0
+margin_right = 259.0
 margin_bottom = 29.0
 
 [node name="TagNameEdit" type="LineEdit" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser/VBoxContainer/HBoxContainer"]
@@ -282,30 +282,30 @@ text = "Remove Tag"
 
 [node name="TagList" type="Tree" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser/VBoxContainer"]
 margin_top = 33.0
-margin_right = 240.0
-margin_bottom = 243.0
+margin_right = 259.0
+margin_bottom = 205.0
 rect_min_size = Vector2( 200, 0 )
 size_flags_horizontal = 3
 size_flags_vertical = 3
 hide_root = true
 
 [node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser"]
-margin_left = 244.0
-margin_right = 781.0
-margin_bottom = 243.0
+margin_left = 263.0
+margin_right = 1028.0
+margin_bottom = 205.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="SearchEdit" type="LineEdit" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser/VBoxContainer2"]
-margin_right = 537.0
+margin_right = 765.0
 margin_bottom = 29.0
 clear_button_enabled = true
 placeholder_text = "search..."
 
 [node name="AssetList" type="ItemList" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser/VBoxContainer2"]
 margin_top = 33.0
-margin_right = 537.0
-margin_bottom = 243.0
+margin_right = 765.0
+margin_bottom = 205.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 select_mode = 1
@@ -325,7 +325,7 @@ __meta__ = {
 }
 
 [node name="LayerPanelContainer" type="VSplitContainer" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer"]
-margin_left = 793.0
+margin_left = 1040.0
 margin_right = 1280.0
 margin_bottom = 693.0
 split_offset = 187
@@ -335,7 +335,7 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 0.0
 margin_top = 0.0
-margin_right = 487.0
+margin_right = 240.0
 margin_bottom = 287.0
 rect_min_size = Vector2( 180, 100 )
 
@@ -350,7 +350,7 @@ __meta__ = {
 }
 
 [node name="MaterialOptionButton" type="OptionButton" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/LayersWindow/LayerTreeToolbar"]
-margin_right = 414.0
+margin_right = 167.0
 margin_bottom = 29.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -358,22 +358,22 @@ disabled = true
 script = ExtResource( 24 )
 
 [node name="AddLayerButton" type="Button" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/LayersWindow/LayerTreeToolbar"]
-margin_left = 418.0
-margin_right = 437.0
+margin_left = 171.0
+margin_right = 190.0
 margin_bottom = 29.0
 disabled = true
 text = "+"
 
 [node name="AddFolderButton" type="Button" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/LayersWindow/LayerTreeToolbar"]
-margin_left = 441.0
-margin_right = 467.0
+margin_left = 194.0
+margin_right = 220.0
 margin_bottom = 29.0
 disabled = true
 icon = ExtResource( 14 )
 
 [node name="DeleteButton" type="Button" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/LayersWindow/LayerTreeToolbar"]
-margin_left = 471.0
-margin_right = 487.0
+margin_left = 224.0
+margin_right = 240.0
 margin_bottom = 29.0
 disabled = true
 text = "-"
@@ -421,7 +421,7 @@ anchor_right = 0.0
 anchor_bottom = 0.0
 margin_left = 0.0
 margin_top = 299.0
-margin_right = 487.0
+margin_right = 240.0
 margin_bottom = 693.0
 rect_min_size = Vector2( 240, 200 )
 
@@ -443,7 +443,7 @@ __meta__ = {
 }
 
 [node name="LayerPropertyPanel" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/PropertiesWindow/VBoxContainer" instance=ExtResource( 17 )]
-margin_right = 487.0
+margin_right = 240.0
 margin_bottom = 372.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -668,6 +668,7 @@ script = ExtResource( 30 )
 [connection signal="current_layer_material_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/2DViewportWindow/2DViewport" method="_on_Main_current_layer_material_changed"]
 [connection signal="layer_materials_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewportWindow/3DViewport" method="_on_Main_layer_materials_changed"]
 [connection signal="layer_materials_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/2DViewportWindow/2DViewport" method="_on_Main_layer_materials_changed"]
+[connection signal="mesh_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/LayersWindow/LayerTreeToolbar/MaterialOptionButton" method="_on_Main_mesh_changed"]
 [connection signal="mesh_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/3DViewportWindow/3DViewport" method="_on_Main_mesh_changed"]
 [connection signal="mesh_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/HBoxContainer/ViewportTabContainer/2DViewportWindow/2DViewport" method="_on_Main_mesh_changed"]
 [connection signal="selected_tool_changed" from="." to="VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/VBoxContainer/ToolSettingsWindow/ToolSettingsContainer/ToolSettingsPropertyPanel" method="_on_Main_selected_tool_changed"]

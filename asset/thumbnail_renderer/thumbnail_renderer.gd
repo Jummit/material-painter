@@ -1,11 +1,11 @@
 extends Node
 
 """
-Utility for rendering previews of `Asset`s used in the `AssetBrowser`
+Utility for rendering thumbnails of `Asset`s used in the `AssetBrowser`
 
-Renders previews of `MaterialAssetTypes`s, `BrushAssetTypes`s and `HDRAssetTypes`.
+Renders thumbnails of `MaterialAssetTypes`s, `BrushAssetTypes`s and `HDRAssetTypes`.
 
-Replaces all local textures of the material with res://preview_renderer to make
+Replaces all local textures of the material with res://thumbnail_renderer to make
 mesh maps used in the material work.
 """
 
@@ -17,6 +17,10 @@ const FileTextureLayer = preload("res://data/texture/file_texture_layer.gd")
 const LayerMaterial = preload("res://data/material/layer_material.gd")
 const MaterialGenerationContext = preload("res://material_generation_context.gd")
 const Painter = preload("res://addons/painter/painter.gd")
+const MaterialLayer = preload("res://data/material/material_layer.gd")
+const LayerBlendViewportManager = preload("res://addons/layer_blending_viewport/layer_blend_viewport_manager.gd")
+const TriplanarTextureGenerator = preload("res://addons/triplanar_texture_generator/triplanar_texture_generator.gd")
+const NormalMapGenerationViewport = preload("res://addons/normal_map_generation_viewport/normal_map_generation_viewport.gd")
 
 onready var material_viewport : Viewport = $MaterialViewport
 onready var model : MeshInstance = $MaterialViewport/Model
@@ -29,14 +33,21 @@ onready var mesh_instance : MeshInstance = $BrushViewport/MeshInstance
 onready var hdri_viewport : Viewport = $HDRIViewport
 onready var sky_dome : MeshInstance = $HDRIViewport/SkyDome
 
-func get_preview_for_smart_material(material : LayerMaterial,
+onready var layer_blending_viewport : LayerBlendViewportManager = $LayerBlendingViewportManager
+onready var normal_map_generation_viewport : NormalMapGenerationViewport = $NormalMapGenerationViewport
+onready var triplanar_texture_generator : TriplanarTextureGenerator = $TriplanarTextureGenerator
+
+func get_thumbnail_for_smart_material(material : MaterialLayer,
 		result_size : Vector2) -> ImageTexture:
-	material.context = MaterialGenerationContext.new(null, null, null)
-	material.context.mesh = mesh
-	var result = material.update(true)
+	var layer_mat := LayerMaterial.new()
+	layer_mat.context = MaterialGenerationContext.new(layer_blending_viewport,
+			normal_map_generation_viewport, triplanar_texture_generator)
+	layer_mat.context.mesh = mesh
+	layer_mat.add_layer(material, layer_mat, -1, false)
+	var result = layer_mat.update(true)
 	if result is GDScriptFunctionState:
 		yield(result, "completed")
-	model.material_override = material.get_material()
+	model.material_override = layer_mat.get_material()
 	material_viewport.size = result_size
 	material_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 	yield(VisualServer, "frame_post_draw")
@@ -44,7 +55,7 @@ func get_preview_for_smart_material(material : LayerMaterial,
 	return texture
 
 
-func get_preview_for_brush(brush : Brush, result_size : Vector2) -> ImageTexture:
+func get_thumbnail_for_brush(brush : Brush, result_size : Vector2) -> ImageTexture:
 	if brush_viewport.size != result_size:
 		brush_viewport.size = result_size
 		yield(painter.set_mesh_instance(mesh_instance), "completed")
@@ -60,7 +71,7 @@ func get_preview_for_brush(brush : Brush, result_size : Vector2) -> ImageTexture
 	return TextureUtils.viewport_to_image(painter.result)
 
 
-func get_preview_for_hdri(hdri : Image, result_size : Vector2) -> Texture:
+func get_thumbnail_for_hdri(hdri : Image, result_size : Vector2) -> Texture:
 	var albedo_texture := ImageTexture.new()
 	albedo_texture.create_from_image(hdri)
 	(sky_dome.material_override as SpatialMaterial).albedo_texture = albedo_texture

@@ -107,6 +107,8 @@ func update(force_all := false) -> void:
 				blending_layers, context.result_size,
 				get_instance_id() + map.hash(), shader_dirty), "completed")
 		
+#		result.get_data().save_png("res://test.png")
+		
 		if map == "height":
 			result = yield(context.normal_map_generator.get_normal_map(result),
 					"completed")
