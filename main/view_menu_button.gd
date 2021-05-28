@@ -17,6 +17,7 @@ enum Item {
 	BACKGROUND_BLUR,
 	ENABLE_SHADOWS,
 	VIEW_RESULTS,
+	FULLSCREEN,
 	UPDATE_ICONS,
 	LAYOUTS,
 }
@@ -50,6 +51,8 @@ func _ready() -> void:
 	popup.connect("id_pressed", self, "_on_Popup_id_pressed")
 	popup.add_check_item("View results", Item.VIEW_RESULTS)
 	popup.set_item_shortcut(Item.VIEW_RESULTS, ShortcutUtils.shortcut(KEY_R))
+	popup.add_check_item("Fullscreen", Item.FULLSCREEN)
+	popup.set_item_shortcut(Item.FULLSCREEN, ShortcutUtils.shortcut(KEY_F11))
 	
 	popup.add_check_item("Update Layer Icons", Item.UPDATE_ICONS)
 	popup.set_item_tooltip(Item.UPDATE_ICONS, "Disable this if generating the material is slow.")
@@ -83,6 +86,9 @@ func _on_Popup_id_pressed(id : int) -> void:
 			get_popup().set_item_checked(get_popup().get_item_index(
 					Item.SHOW_BACKGROUND), show_background)
 			emit_signal("show_background_toggled")
+		Item.FULLSCREEN:
+			OS.window_fullscreen = not OS.window_fullscreen
+			get_popup().set_item_checked(Item.FULLSCREEN, OS.window_fullscreen)
 		Item.VIEW_RESULTS:
 			results_item_list_window.visible = not results_item_list_window.visible
 			get_popup().set_item_checked(get_popup().get_item_index(
