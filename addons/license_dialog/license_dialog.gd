@@ -37,18 +37,20 @@ onready var info_text_label : RichTextLabel = $TabContainer/ThirdPartyLicenses/H
 onready var component_tree : Tree = $TabContainer/ThirdPartyLicenses/HBoxContainer/ComponentTree
 
 func _ready() -> void:
-	set_program_name(program_name)
-	set_program_license(program_license)
 	license_text.text = program_license
 
 
 func set_program_name(to : String) -> void:
 	program_name = to
+	if not tab_container:
+		yield(self, "ready")
 	tab_container.set_tab_title(0, program_name + " License")
 
 
 func set_program_license(to : String) -> void:
 	program_license = to
+	if not tab_container:
+		yield(self, "ready")
 	tab_container.set_tab_title(1, "Third-Party Licenses")
 
 
