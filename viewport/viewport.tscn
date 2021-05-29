@@ -19,7 +19,7 @@ __meta__ = {
 }
 
 [node name="Viewport" type="Viewport" parent="."]
-size = Vector2( 1024, 600 )
+size = Vector2( 1280, 720 )
 own_world = true
 handle_input_locally = false
 msaa = 1

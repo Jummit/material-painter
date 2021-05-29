@@ -85,10 +85,6 @@ func _process(_delta : float) -> void:
 	fps_label.text = str(Engine.get_frames_per_second())
 
 
-func _on_ViewMenuButton_hdri_selected(hdri : Texture) -> void:
-	(world_environment.environment.background_sky as PanoramaSky).panorama = hdri
-
-
 func _on_Main_mesh_changed(to : Mesh) -> void:
 	set_mesh(to)
 

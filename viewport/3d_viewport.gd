@@ -16,11 +16,6 @@ func _ready():
 	sky_viewport_texture.flags = Texture.FLAG_FILTER
 
 
-func _on_ViewMenuButton_show_background_toggled() -> void:
-	background_visible = not background_visible
-	update_sky()
-
-
 func can_drop_data(_position : Vector2, data) -> bool:
 	return data is Asset and data is HdriAsset
 
@@ -40,11 +35,6 @@ func get_sky(hdr : Image) -> PanoramaSky:
 	new_sky.panorama = hdr_texture
 	cached_skys[hdr] = new_sky
 	return new_sky
-
-
-func _on_ViewMenuButton_background_blur_selected(amount : int) -> void:
-	blur_amount = amount
-	update_sky()
 
 
 func update_sky() -> void:

@@ -87,7 +87,7 @@ func clear() -> void:
 	set_properties([])
 
 
-func set_properties(to):
+func set_properties(to : Array) -> void:
 	properties = to
 	_setup_property_containers()
 
