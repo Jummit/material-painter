@@ -43,6 +43,9 @@ onready var half_resolution_button : CheckButton = $HalfResolutionButton
 func _ready() -> void:
 	navigation_camera.set_process_input(false)
 	world_environment.environment = world_environment.environment.duplicate()
+	if Settings.get_setting("enable_antialiasing"):
+		viewport.fxaa = true
+		viewport.msaa = Viewport.MSAA_2X
 
 
 func _gui_input(event : InputEvent) -> void:

@@ -26,6 +26,9 @@ glow_bicubic_upscale = true
 [node name="3DViewport" instance=ExtResource( 1 )]
 script = ExtResource( 2 )
 
+[node name="Viewport" parent="." index="0"]
+size = Vector2( 1280, 720 )
+
 [node name="NavigationCamera" parent="Viewport" index="1"]
 moving_sensitity = 0.3
 
