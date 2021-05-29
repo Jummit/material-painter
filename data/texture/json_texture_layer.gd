@@ -127,4 +127,3 @@ func _get_as_shader_layer(_context : MaterialGenerationContext) -> Layer:
 				layer.uniform_names.append(property.name)
 				layer.uniform_values.append(settings[property.name])
 	return layer
- 

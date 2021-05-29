@@ -22,6 +22,8 @@ const MaterialGenerationContext = preload("res://main/material_generation_contex
 
 func _init(data := {}) -> void:
 	name = data.get("name", "")
+	if not name:
+		name = get_name()
 	visible = data.get("visible", true)
 
 

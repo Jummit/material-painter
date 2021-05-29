@@ -64,15 +64,15 @@ func get_property_values() -> Dictionary:
 	return values
 
 
-# Store the values in an object.
-func store_values(instance : Object) -> void:
+# Store the values in an instance.
+func store_values(instance) -> void:
 	var property_values := get_property_values()
 	for value in property_values:
 		instance.set(value, property_values[value])
 
 
-# Load the property values from an object.
-func load_values(instance : Object) -> void:
+# Load the property values from any instance.
+func load_values(instance) -> void:
 	set_block_signals(true)
 	for property_container in properties_container.get_children():
 		if not property_container is Label:
