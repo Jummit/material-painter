@@ -5,7 +5,7 @@ var layers : Array
 var result : Texture
 
 func _init(data := {}).(data) -> void:
-	for layer in data.layers:
+	for layer in data.get("layers", []):
 		layers.append(get_script().new(layer))
 
 
@@ -23,7 +23,7 @@ func update(context : MaterialGenerationContext, force_all := false) -> void:
 	for layer in layers:
 		if not layer.visible:
 			continue
-		var shader_layer = layer._get_as_shader_layer()
+		var shader_layer = layer._get_as_shader_layer(context)
 		if shader_layer is GDScriptFunctionState:
 			shader_layer = yield(shader_layer, "completed")
 		blending_layers.append(shader_layer)

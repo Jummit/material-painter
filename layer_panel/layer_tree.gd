@@ -12,6 +12,8 @@ When a `MaterialLayer` has multiple maps enabled, the current map can be selecte
 with a dropdown. The selected maps are stored in `_selected_maps`.
 """
 
+signal layer_selected(layer)
+
 var layer_material : LayerMaterial setget set_layer_material
 var project : ProjectFile
 var update_icons := true
@@ -24,8 +26,6 @@ var _painting := false
 
 # warning-ignore:unsafe_property_access
 onready var undo_redo : UndoRedo = find_parent("Main").undo_redo
-
-signal layer_selected(layer)
 
 enum Buttons {
 	MASK,
@@ -70,7 +70,8 @@ func _ready() -> void:
 func _gui_input(event : InputEvent) -> void:
 	var button_ev := event as InputEventMouseButton
 	var key_ev := event as InputEventKey
-	if button_ev and button_ev.button_index == BUTTON_RIGHT and button_ev.pressed:
+	if button_ev and button_ev.button_index == BUTTON_RIGHT and\
+			button_ev.pressed:
 		var layer = _get_layer_at_position(button_ev.position)
 		layer_popup_menu.rect_global_position = button_ev.global_position
 		layer_popup_menu.layer = layer
@@ -79,7 +80,8 @@ func _gui_input(event : InputEvent) -> void:
 		elif layer is TextureFolder:
 			layer_popup_menu.layer_texture = layer.get_layer_texture_in()
 		layer_popup_menu.popup()
-	elif button_ev and button_ev.button_index == BUTTON_LEFT and button_ev.pressed:
+	elif button_ev and button_ev.button_index == BUTTON_LEFT and\
+			button_ev.pressed:
 		# `get_selected` returns null the first time a layer is clicked.
 		# If it doesn't, in thin case it means the layer was "double clicked".
 		if get_selected():
@@ -480,19 +482,30 @@ func _setup_material_layer_item(layer, parent_item : TreeItem,
 					Buttons.MAP_DROPDOWN)
 
 
-func _setup_texture_layer_item(layer, parent_item : TreeItem,
-		selected_layer) -> void:
+func _setup_texture_layer_item(layer : Reference, parent_item : TreeItem,
+		selected_layer : Reference) -> void:
+	var tex_layer := layer as TextureLayer
+	var tex_folder := layer as TextureFolder
+	
 	var item := create_item(parent_item)
 	if layer == selected_layer:
 		_select_item(item)
 	item.set_meta("layer", layer)
 	item.custom_minimum_height = 16
 	
-	item.set_text(1, layer.name)
-	item.add_button(1, _get_visibility_icon(layer.visible), Buttons.VISIBILITY)
+	var layer_name : String
+	var layer_visible : bool
+	if tex_layer:
+		layer_name = tex_layer.name
+		layer_visible = tex_layer.visible
+	else:
+		layer_name = tex_folder.name
+		layer_visible = tex_folder.visible
+	item.set_text(1, layer_name)
+	item.add_button(1, _get_visibility_icon(layer_visible), Buttons.VISIBILITY)
 	
-	if layer is TextureLayer:
-		var icon = _get_icon(layer)
+	if tex_layer:
+		var icon = _get_icon(tex_layer)
 		if icon is GDScriptFunctionState:
 			icon = yield(icon, "completed")
 		if not is_instance_valid(item):
@@ -500,23 +513,23 @@ func _setup_texture_layer_item(layer, parent_item : TreeItem,
 		if icon is Texture:
 			item.add_button(0, icon, Buttons.RESULT)
 		item.set_tooltip(1,
-			"%s (%s Layer)" % [layer.name, layer.get_name()])
-	else:
-		var expanded : bool = layer in _layer_states and\
-				_layer_states[layer] == LayerState.FOLDER_EXPANDED
+			"%s (%s Layer)" % [tex_layer.name, tex_layer.get_name()])
+	elif tex_folder:
+		var expanded : bool = tex_folder in _layer_states and\
+				_layer_states[tex_folder] == LayerState.FOLDER_EXPANDED
 		var icon := preload("res://icons/folder.svg")
 		if expanded:
 			icon = preload("res://icons/open_folder.svg")
-			for sub_layer in layer.layers:
+			for sub_layer in tex_folder.layers:
 				_setup_texture_layer_item(sub_layer, item, selected_layer)
 		item.add_button(0, icon, Buttons.ICON)
 
 
 func _get_layer_type(item : TreeItem) -> int:
-	if item.get_meta("layer") is TextureFolder or item.get_meta("layer") is TextureLayer:
-		return LayerType.TEXTURE_LAYER
-	else:
+	if item.get_meta("layer") is MaterialLayer:
 		return LayerType.MATERIAL_LAYER
+	else:
+		return LayerType.TEXTURE_LAYER
 
 
 func _get_visibility_icon(is_visible : bool) -> Texture:
@@ -533,7 +546,7 @@ func _select_item(item : TreeItem) -> void:
 	set_block_signals(false)
 
 
-func _get_icon(layer) -> Texture:
+func _get_icon(layer : TextureLayer) -> Texture:
 	if update_icons and not _painting:
 		var result = layer.update_icon(layer_material.context)
 		if result is GDScriptFunctionState:
@@ -549,5 +562,6 @@ func _on_Main_current_file_changed(to : ProjectFile) -> void:
 	project = to
 
 
-func _on_Main_current_layer_material_changed(to : LayerMaterial, _id : int) -> void:
+func _on_Main_current_layer_material_changed(to : LayerMaterial,
+		_id : int) -> void:
 	set_layer_material(to)
