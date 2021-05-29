@@ -347,7 +347,7 @@ func _get_layer_at_position(position : Vector2):
 		return get_item_at_position(position).get_meta("layer")
 
 
-func _emit_select_signal(layer) -> void:
+func _emit_select_signal(layer : Reference) -> void:
 	_painting = layer is BitmapTextureLayer
 	emit_signal("layer_selected", layer)
 
@@ -423,8 +423,8 @@ func _select_map(layer : MaterialLayer, map : String, expand := false) -> void:
 	reload()
 
 
-func _setup_material_layer_item(layer, parent_item : TreeItem,
-	selected_layer) -> void:
+func _setup_material_layer_item(layer : MaterialLayer, parent_item : TreeItem,
+	selected_layer : Reference) -> void:
 	var item := create_item(parent_item)
 	if layer == selected_layer:
 		_select_item(item)
