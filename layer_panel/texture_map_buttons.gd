@@ -11,10 +11,10 @@ onready var undo_redo : UndoRedo = find_parent("Main").undo_redo
 # warning-ignore:unused_signal
 signal changed(map, enabled)
 
-const LayerTexture = preload("res://data/texture/layer_texture.gd")
-const MaterialLayer = preload("res://data/material/material_layer.gd")
+const LayerTexture = preload("res://material/layer_texture.gd")
+const MaterialLayer = preload("res://material/material_layer.gd")
 const LayerPropertyPanel = preload("res://layer_panel/layer_property_panel.gd")
-const LayerMaterial = preload("res://data/material/layer_material.gd")
+const LayerMaterial = preload("res://material/layer_material.gd")
 
 onready var layer_property_panel : LayerPropertyPanel = $"../LayerPropertyPanel"
 
@@ -39,7 +39,7 @@ func _on_LayerTree_layer_selected(layer) -> void:
 
 
 func _on_Button_toggled(button_pressed : bool, map : String) -> void:
-	var maps : Dictionary = (layer_property_panel.editing_layer as MaterialLayer).maps
+	var maps := (layer_property_panel.editing_layer as MaterialLayer).maps
 	if button_pressed:
 		if not map in maps:
 			undo_redo.create_action("Enable Texture Map")

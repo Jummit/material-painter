@@ -17,20 +17,20 @@ var current_surface := 0
 
 var _last_painted_position : Vector2
 var _cached_camera_transform : Transform
-var _painting_layer : BitmapTextureLayer
+var _painting_layer : PaintTextureLayer
 var _mesh_maps_generated := false
 
 var _painters := {}
 var _selection_utils := {}
 
-const Brush = preload("res://addons/painter/brush.gd")
-const BitmapTextureLayer = preload("res://data/texture/bitmap_texture_layer.gd")
+const Brush = preload("res://main/brush.gd")
 const SelectionUtils = preload("res://addons/selection_utils/selection_utils.gd")
 const ProjectFile = preload("res://main/project_file.gd")
 const Painter = preload("res://addons/painter/painter.gd")
-const BrushAsset = preload("res://asset/brush_asset.gd")
-const Asset = preload("res://asset/asset.gd")
+const BrushAsset = preload("res://asset/assets/brush_asset.gd")
+const Asset = preload("res://asset/assets/asset.gd")
 const Model = preload("res://viewport/model.gd")
+const PaintTextureLayer = preload("res://material/texture_layer/paint_texture_layer.gd")
 
 onready var model : Model = $Viewport/Model
 onready var world_environment : WorldEnvironment = $Viewport/WorldEnvironment
@@ -114,33 +114,37 @@ func get_layout_data() -> bool:
 
 
 func _on_LayerTree_layer_selected(layer) -> void:
-	if layer is BitmapTextureLayer:
+	if layer is PaintTextureLayer:
 		if not _mesh_maps_generated:
 			update_mesh_maps()
 		_painting_layer = layer
-		_load_bitmap_layer()
+		_load_paint_layer()
 	else:
 		_painting_layer = null
 
 
-func _load_bitmap_layer() -> void:
-	if not _painting_layer or selected_tool != Constants.Tools.PAINT or not is_visible_in_tree():
-		return
-	# Don't make this the initial texture if it's already the painter's texture.
-	if _painting_layer.texture == get_painter().paint_viewport.get_texture():
-		return
-	yield(get_painter().clear(), "completed")
-	yield(get_painter().set_initial_texture(_painting_layer.texture), "completed")
-	_painting_layer.texture = get_painter().result
-	_painting_layer.mark_dirty()
-# warning-ignore:unsafe_property_access
-	_painting_layer.get_layer_texture_in().parent.get_layer_material_in().update()
+func _load_paint_layer() -> void:
+#	if not _painting_layer or selected_tool != Constants.Tools.PAINT or not is_visible_in_tree():
+#		return
+#	# Don't make this the initial texture if it's already the painter's texture.
+#	if _painting_layer.texture == get_painter().paint_viewport.get_texture():
+#		return
+#	yield(get_painter().clear(), "completed")
+#	yield(get_painter().set_initial_texture(_painting_layer.texture), "completed")
+#	_painting_layer.texture = get_painter().result
+#	_painting_layer.mark_dirty()
+## warning-ignore:unsafe_property_access
+#	_painting_layer.get_layer_texture_in().parent.get_layer_material_in().update()
+	pass
 
 
 func _on_ToolSettingsPropertyPanel_brush_changed(brush : Brush) -> void:
 	if not get_painter():
 		yield(self, "ready")
-	get_painter().brush = brush
+	var brushes := []
+	for map in _painting_layer.enabled_maps:
+		brushes.append(brush.get_brush(map))
+	get_painter().brushes = brushes
 
 
 func _on_AssetBrowser_asset_activated(asset : Asset) -> void:
@@ -176,7 +180,7 @@ func update_mesh_maps() -> void:
 
 func _on_Main_selected_tool_changed(to : int) -> void:
 	selected_tool = to
-	_load_bitmap_layer()
+	_load_paint_layer()
 
 
 func _on_ResultsItemList_map_selected(map : String) -> void:
@@ -189,14 +193,15 @@ func _on_layout_changed(meta) -> void:
 
 
 # Perform a selection with the given `type` using selection utils.
-func select(type : int, position : Vector2) -> void:
-	get_selection_utils().update_view(viewport)
-	_painting_layer.texture = yield(get_selection_utils().add_selection(
-			type, position, result_size,
-			_painting_layer.texture), "completed")
-	_painting_layer.mark_dirty()
-# warning-ignore:unsafe_property_access
-	_painting_layer.get_layer_texture_in().parent.get_layer_material_in().update()
+func select(_type : int, _position : Vector2) -> void:
+#	get_selection_utils().update_view(viewport)
+#	_painting_layer.texture = yield(get_selection_utils().add_selection(
+#			type, position, result_size,
+#			_painting_layer.texture), "completed")
+#	_painting_layer.mark_dirty()
+## warning-ignore:unsafe_property_access
+#	_painting_layer.get_layer_texture_in().parent.get_layer_material_in().update()
+	pass
 
 
 # Perform a paintstroke from `from` to `to` using the `painter`.
@@ -209,16 +214,19 @@ func paint(from : Vector2, to : Vector2) -> void:
 		yield(painter.update_view(viewport), "completed")
 	_cached_camera_transform = camera_transform
 	painter.paint(from / rect_size, to / rect_size)
-	_painting_layer.texture = painter.result
+	var channel := 0
+	for map in _painting_layer.enabled_maps:
+		_painting_layer.paint_textures[map] = painter.get_result(channel)
+		channel += 1
 	_painting_layer.mark_dirty()
-# warning-ignore:unsafe_property_access
-	_painting_layer.get_layer_texture_in().parent.get_layer_material_in()\
+# warning-ignore:unsafe_method_access
+	_painting_layer.parent.get_layer_material_in()\
 			.update()
 
 
 func _on_visibility_changed() -> void:
 	if (get_parent() as CanvasItem).visible:
-		_load_bitmap_layer()
+		_load_paint_layer()
 
 
 func get_painter() -> Painter:

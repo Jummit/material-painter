@@ -17,7 +17,7 @@ var mesh_instance : MeshInstance setget set_mesh_instance
 var surface := 0
 # The brush to use when painting. It specifies the parameters of the painting
 # shader.
-var brush : Brush setget set_brush
+var brushes : Array setget set_brushes
 # If backfaces should be painted. This does'n paint both sides, and is only
 # used to avoid having correct facing mesh and make the shader simpler.
 var paint_through := false setget set_paint_through
@@ -34,13 +34,12 @@ var _next_position : Vector2
 var _viewport_size : Vector2
 # Cache of images loaded using `Image.load`.
 var _cached_images : Dictionary = {}
+var _paint_viewports : Array
 
 const Brush = preload("res://addons/painter/brush.gd")
 const MeshUtils = preload("res://addons/third_party/mesh_utils/mesh_utils.gd")
+const PaintViewport = preload("paint_viewport.gd")
 
-onready var paint_rect : ColorRect = $PaintViewport/PaintRect
-onready var paint_material : ShaderMaterial = paint_rect.material
-onready var paint_viewport : Viewport = $PaintViewport
 onready var initial_texture_rect : TextureRect = $PaintViewport/InitialTextureRect
 onready var view_to_texture_viewport : Viewport = $ViewToTextureViewport
 onready var texture_to_view_viewport : Viewport = $TextureToViewViewport
@@ -53,15 +52,12 @@ onready var seams_rect_material : ShaderMaterial = seams_rect.material
 
 # The texture of the `Viewport` that generates the result.
 # warning-ignore:unused_class_variable
-onready var result : ViewportTexture = paint_viewport.get_texture()
+var results : Array
 
 func _ready() -> void:
 	# Do this in code because it seems to not work when done in the editor.
 	# Maybe related to https://github.com/godotengine/godot/pull/48794.
 	seams_rect_material.set_shader_param("texture_to_view",
-			texture_to_view_viewport.get_texture())
-	paint_material.set_shader_param("seams", seams_viewport.get_texture())
-	paint_material.set_shader_param("texture_to_view",
 			texture_to_view_viewport.get_texture())
 	(texture_to_view_mesh_instance.material_override as ShaderMaterial).\
 			set_shader_param("view_to_texture",
@@ -69,8 +65,9 @@ func _ready() -> void:
 
 
 # Sets the base texture that will be painted ontop of.
-func set_initial_texture(texture : Texture) -> void:
+func set_initial_texture(channel : int, texture : Texture) -> void:
 	initial_texture_rect.texture = texture
+	var paint_viewport : Viewport = _paint_viewports[channel]
 	paint_viewport.render_target_clear_mode = Viewport.CLEAR_MODE_ALWAYS
 	paint_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 	yield(VisualServer, "frame_post_draw")
@@ -93,16 +90,22 @@ func update_view(viewport : Viewport) -> void:
 	
 	yield(VisualServer, "frame_post_draw")
 	
-	var texture_to_view_material : ShaderMaterial = texture_to_view_mesh_instance.material_override
-	texture_to_view_material.set_shader_param("model_transform", camera.global_transform.affine_inverse() * mesh_instance.global_transform)
+	var texture_to_view_material : ShaderMaterial =\
+			texture_to_view_mesh_instance.material_override
+	texture_to_view_material.set_shader_param("model_transform",
+			camera.global_transform.affine_inverse() *\
+			mesh_instance.global_transform)
 	texture_to_view_material.set_shader_param("fovy_degrees", camera.fov)
 	texture_to_view_material.set_shader_param("z_near", camera.near)
 	texture_to_view_material.set_shader_param("z_far", camera.far)
-	texture_to_view_material.set_shader_param("aspect", viewport.size.x / viewport.size.y)
+	texture_to_view_material.set_shader_param("aspect",
+			viewport.size.x / viewport.size.y)
 	texture_to_view_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 	
-	if brush:
-		paint_material.set_shader_param("brush_size", Vector2.ONE * brush.size / viewport.size)
+	for channel in brushes.size():
+		_paint_viewports[channel].paint_rect.material.set_shader_param(
+				"brush_size",
+				Vector2.ONE * brushes[channel].size / viewport.size)
 	
 	yield(VisualServer, "frame_post_draw")
 
@@ -114,9 +117,12 @@ func paint(from : Vector2, to : Vector2) -> void:
 	if _painting:
 		_next_position = from
 	_painting = true
-	paint_material.set_shader_param("brush_pos", from)
-	paint_material.set_shader_param("brush_ppos", to)
-	paint_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
+	for channel in brushes.size():
+		var paint_material : ShaderMaterial =\
+				_paint_viewports[channel].paint_rect.material
+		paint_material.set_shader_param("brush_pos", from)
+		paint_material.set_shader_param("brush_ppos", to)
+		_paint_viewports[channel].render_target_update_mode = Viewport.UPDATE_ONCE
 	yield(VisualServer, "frame_post_draw")
 	_painting = false
 	if _next_position != Vector2.ZERO:
@@ -124,12 +130,17 @@ func paint(from : Vector2, to : Vector2) -> void:
 		yield(paint(to, _next_position), "completed")
 
 
-# Clear the result.
+func get_result(channel : int) -> ViewportTexture:
+	return _paint_viewports[channel].get_texture()
+
+
+# Completely reset the painter.
 func clear() -> void:
-	paint_viewport.render_target_clear_mode = Viewport.CLEAR_MODE_ALWAYS
-	paint_viewport.render_target_clear_mode = Viewport.UPDATE_ALWAYS
-	yield(VisualServer, "frame_post_draw")
-	paint_viewport.render_target_clear_mode = Viewport.CLEAR_MODE_NEVER
+	for node in _paint_viewports:
+		node.queue_free()
+	mesh_instance = null
+	brushes.clear()
+	_paint_viewports.clear()
 
 
 func set_mesh_instance(to : MeshInstance) -> void:
@@ -143,36 +154,48 @@ func set_mesh_instance(to : MeshInstance) -> void:
 	yield(VisualServer, "frame_post_draw")
 
 
-func set_brush(to : Brush) -> void:
-	brush = to
-	
-	var brush_texture : Texture
-	var texture_mask : Texture
-	
-	if brush.texture:
-		brush_texture = _load_image_texture(brush.texture)
-	if brush.texture_mask:
-		texture_mask = _load_image_texture(brush.texture_mask)
-	
-	paint_material.set_shader_param("brush_size",
-			Vector2.ONE * brush.size / _viewport_size)
-	paint_material.set_shader_param("brush_strength", brush.strength)
-	paint_material.set_shader_param("brush_texture", brush_texture)
-	paint_material.set_shader_param("brush_color", brush.color)
-	paint_material.set_shader_param("pattern_scale", brush.pattern_scale)
-	paint_material.set_shader_param("texture_angle", brush.texture_angle)
-	paint_material.set_shader_param("stamp_mode", brush.stamp_mode)
-	paint_material.set_shader_param("texture_mask", texture_mask)
+func set_brushes(to : Array) -> void:
+	brushes = to
+	clear()
+	for brush in brushes:
+		var viewport : PaintViewport = preload("paint_viewport.tscn").instance()
+		viewport.size = result_size
+		_paint_viewports.append(viewport)
+		
+		var brush_texture : Texture
+		var texture_mask : Texture
+		if brush.texture:
+			brush_texture = _load_image_texture(brush.texture)
+		if brush.texture_mask:
+			texture_mask = _load_image_texture(brush.texture_mask)
+		
+		var material : ShaderMaterial = viewport.paint_rect.material
+		material.set_shader_param("brush_size",
+				Vector2.ONE * brush.size / _viewport_size)
+		material.set_shader_param("brush_strength", brush.strength)
+		material.set_shader_param("brush_texture", brush_texture)
+		material.set_shader_param("brush_color", brush.color)
+		material.set_shader_param("pattern_scale", brush.pattern_scale)
+		material.set_shader_param("texture_angle", brush.texture_angle)
+		material.set_shader_param("stamp_mode", brush.stamp_mode)
+		material.set_shader_param("texture_mask", texture_mask)
+		material.set_shader_param("paint_through", paint_through)
+		material.set_shader_param("seams", seams_viewport.get_texture())
+		material.set_shader_param("texture_to_view",
+				texture_to_view_viewport.get_texture())
 
 
 func set_result_size(to : Vector2) -> void:
 	result_size = to
-	paint_viewport.size = to
+	for viewport in _paint_viewports:
+		viewport.size = to
 
 
 func set_paint_through(to : bool) -> void:
 	paint_through = to
-	paint_material.set_shader_param("paint_through", paint_through)
+	for channel in brushes.size():
+		_paint_viewports[channel].paint_rect.material.set_shader_param(
+				"paint_through", paint_through)
 
 
 func _load_image_texture(path : String) -> ImageTexture:

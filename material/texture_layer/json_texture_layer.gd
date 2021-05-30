@@ -1,4 +1,4 @@
-extends "res://data/texture/texture_layer.gd"
+extends "texture_layer.gd"
 
 """
 A `TextureLayer` that uses a json file to configure the parameters and the shader
@@ -108,7 +108,8 @@ func get_properties() -> Array:
 	return list
 
 
-func _get_as_shader_layer(_context : MaterialGenerationContext) -> Layer:
+func get_blending_layer(_context : MaterialGenerationContext,
+		_map : String) -> Layer:
 	var layer : Layer
 	if "blends" in layer_data:
 		layer = BlendingLayer.new(layer_data.shader, settings.blend_mode,

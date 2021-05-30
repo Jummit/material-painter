@@ -6,7 +6,7 @@ var hdri := preload("res://viewport/cannon.hdr").get_data()
 
 var cached_skys := {}
 
-const HdriAsset = preload("res://asset/hdri_asset.gd")
+const HdriAsset = preload("res://asset/assets/hdri_asset.gd")
 
 onready var texture_rect : TextureRect = $Viewport/SkyViewport/TextureRect
 onready var sky_viewport : Viewport = $Viewport/SkyViewport

@@ -12,32 +12,23 @@ var painting := false
 signal brush_changed(brush)
 
 const Properties = preload("res://addons/property_panel/properties.gd")
-const BitmapTextureLayer = preload("res://data/texture/bitmap_texture_layer.gd")
-const Asset = preload("res://asset/asset.gd")
-const BrushAsset = preload("res://asset/brush_asset.gd")
-const TextureAsset = preload("res://asset/texture_asset.gd")
-const Brush = preload("res://addons/painter/brush.gd")
-
-class TextureAssetProperty extends Properties.FilePathProperty:
-	func _init(_name : String).(_name):
-		pass
-	
-	func _can_drop_data(_control : Control, data) -> bool:
-		return data is TextureAsset
-	
-	func _drop_data(control : Control, data) -> void:
-		_set_value(control, data.data)
+const Asset = preload("res://asset/assets/asset.gd")
+const BrushAsset = preload("res://asset/assets/brush_asset.gd")
+const Brush = preload("res://main/brush.gd")
+const PaintTextureLayer = preload("res://material/texture_layer/paint_texture_layer.gd")
+const AssetProperty = preload("res://asset/asset_property/property_panel_property.gd")
+const TextureAsset = preload("res://asset/assets/texture_asset.gd")
 
 func _ready() -> void:
 	set_properties([
 		Properties.FloatProperty.new("size", 2, 100),
 		Properties.FloatProperty.new("strength", 0.0, 1.0),
 		Properties.ColorProperty.new("color"),
-		TextureAssetProperty.new("texture"),
+		AssetProperty.new("texture", [TextureAsset]),
 		Properties.FloatProperty.new("pattern_scale", 0.0, 4.0),
 		Properties.FloatProperty.new("texture_angle", 0.0, 1.0),
 		Properties.BoolProperty.new("stamp_mode"),
-		TextureAssetProperty.new("texture_mask"),
+		AssetProperty.new("texture_mask", [TextureAsset]),
 	])
 	load_values(Brush.new())
 
@@ -59,7 +50,7 @@ func _on_AssetBrowser_asset_activated(asset : Asset) -> void:
 
 
 func _on_LayerTree_layer_selected(layer) -> void:
-	painting = layer is BitmapTextureLayer
+	painting = layer is PaintTextureLayer
 	_update_visibility()
 
 

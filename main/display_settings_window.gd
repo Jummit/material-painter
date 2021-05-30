@@ -13,5 +13,6 @@ func _ready() -> void:
 		Properties.FloatProperty.new("blur", 1, 100),
 		Properties.EnumProperty.new("camera_mode", ["Perspective", "Orthogonal"]),
 		Properties.BoolProperty.new("shadows"),
+		Properties.BoolProperty.new("show_environment"),
 		Properties.StringProperty.new("hdri"),
 	])

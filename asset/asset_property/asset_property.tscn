@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://asset/asset_property/asset_property.gd" type="Script" id=1]
+
+[node name="AssetProperty" type="Button"]
+margin_right = 12.0
+margin_bottom = 20.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

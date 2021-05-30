@@ -1,6 +1,6 @@
 extends "asset.gd"
 
-const MaterialLayer = preload("res://data/material/material_layer.gd")
+const MaterialLayer = preload("res://material/material_layer.gd")
 
 func _init(_path).(_path) -> void:
 	pass

@@ -10,7 +10,7 @@ Stored assets are sorted in folders by their type. They can be loaded from the
 global asset library located in the user directory or from the asset library
 local to the project.
 
-Built-in effect assets are loaded from res://data/texture/json.
+Built-in effect assets are loaded from res://material/texture_layer/json.
 
 A list of tags can be modified by the user.
 Assets are automatically tagged using their name and type. The user can
@@ -28,9 +28,9 @@ var _progress_dialog
 var _modifying_assets : Array
 var _adding_tags : bool
 
-const TextureAsset = preload("res://asset/texture_asset.gd")
-const AssetStore = preload("res://asset/asset_store.gd")
-const LayerAsset = preload("res://asset/layer_asset.gd")
+const TextureAsset = preload("assets/texture_asset.gd")
+const LayerAsset = preload("assets/layer_asset.gd")
+const AssetStore = preload("asset_store.gd")
 
 onready var asset_store : AssetStore = $"../../../../../../../AssetStore"
 onready var tag_name_edit : LineEdit = $VBoxContainer/HBoxContainer/TagNameEdit

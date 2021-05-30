@@ -9,11 +9,10 @@ var editing_layer : Reference
 # warning-ignore:unsafe_property_access
 onready var undo_redo : UndoRedo = find_parent("Main").undo_redo
 
-const LayerTexture = preload("res://data/texture/layer_texture.gd")
-const TextureLayer = preload("res://data/texture/texture_layer.gd")
-const MaterialLayer = preload("res://data/material/material_layer.gd")
+const TextureLayer = preload("res://material/texture_layer/texture_layer.gd")
+const MaterialLayer = preload("res://material/material_layer.gd")
 const Properties = preload("res://addons/property_panel/properties.gd")
-const JSONTextureLayer = preload("res://data/texture/json_texture_layer.gd")
+const JSONTextureLayer = preload("res://material/texture_layer/json_texture_layer.gd")
 
 func _on_LayerTree_layer_selected(layer) -> void:
 	editing_layer = layer

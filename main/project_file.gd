@@ -10,7 +10,7 @@ var path : String
 var model_path : String
 var result_size := Vector2(1024, 1024)
 
-const LayerMaterial = preload("res://data/material/layer_material.gd")
+const LayerMaterial = preload("res://material/layer_material.gd")
 
 func _init(data := {}) -> void:
 	model_path = data.get("model_path", "")

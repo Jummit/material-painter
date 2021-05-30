@@ -10,15 +10,15 @@ var assets : Array
 var assets_by_tags : Dictionary
 var asset_tags : Dictionary
 var asset_types := [
-	preload("brush_asset.gd"),
-	preload("hdri_asset.gd"),
-	preload("layer_asset.gd"),
-	preload("material_asset.gd"),
-	preload("smart_material_asset.gd"),
-	preload("texture_asset.gd"),
+	preload("assets/brush_asset.gd"),
+	preload("assets/hdri_asset.gd"),
+	preload("assets/layer_asset.gd"),
+	preload("assets/material_asset.gd"),
+	preload("assets/smart_material_asset.gd"),
+	preload("assets/texture_asset.gd"),
 ]
 
-const Asset = preload("asset.gd")
+const Asset = preload("assets/asset.gd")
 
 onready var thumbnail_renderer : Node = $ThumbnailRenderer
 

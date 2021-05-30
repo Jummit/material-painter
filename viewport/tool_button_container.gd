@@ -9,7 +9,7 @@ Only shows when a `BitmapTextureLayer` is selected.
 
 signal tool_selected(selected)
 
-const BitmapTextureLayer = preload("res://data/texture/bitmap_texture_layer.gd")
+const PaintTextureLayer = preload("res://material/texture_layer/paint_texture_layer.gd")
 
 func _ready() -> void:
 	for tool_name in Constants.Tools:
@@ -26,7 +26,7 @@ func _on_ToolButton_pressed(tool_id : int) -> void:
 
 
 func _on_LayerTree_layer_selected(layer) -> void:
-	(get_parent() as CanvasItem).visible = layer is BitmapTextureLayer
+	(get_parent() as CanvasItem).visible = layer is PaintTextureLayer
 
 
 func _on_resized() -> void:

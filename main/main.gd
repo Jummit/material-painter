@@ -55,21 +55,20 @@ enum FILE_MENU_ITEMS {
 
 const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
 const SaveFile = preload("res://main/project_file.gd")
-const MaterialLayer = preload("res://data/material/material_layer.gd")
-const LayerMaterial = preload("res://data/material/layer_material.gd")
-const LayerTexture = preload("res://data/texture/layer_texture.gd")
-const TextureLayer = preload("res://data/texture/texture_layer.gd")
-const TextureFolder = preload("res://data/texture/texture_folder.gd")
+const MaterialLayer = preload("res://material/material_layer.gd")
+const LayerMaterial = preload("res://material/layer_material.gd")
+const TextureLayer = preload("res://material/texture_layer/texture_layer.gd")
 const Brush = preload("res://addons/painter/brush.gd")
 const LayoutUtils = preload("res://addons/third_party/customizable_ui/layout_utils.gd")
 const ObjParser = preload("res://addons/third_party/obj_parser/obj_parser.gd")
 const MaterialGenerationContext = preload("res://main/material_generation_context.gd")
 const AssetStore = preload("res://asset/asset_store.gd")
 const LayerTree = preload("res://layer_panel/layer_tree.gd")
-const TextureAsset = preload("res://asset/texture_asset.gd")
+const TextureAsset = preload("res://asset/assets/texture_asset.gd")
 const AssetBrowser = preload("res://asset/asset_browser.gd")
 const ViewMenuButton = preload("res://main/view_menu_button.gd")
-const SmartMaterialAsset = preload("res://asset/smart_material_asset.gd")
+const SmartMaterialAsset = preload("res://asset/assets/smart_material_asset.gd")
+const LayerTexture = preload("res://material/layer_texture.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/FileMenuButton
 onready var about_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/AboutMenuButton
@@ -147,7 +146,8 @@ func _on_FileDialog_file_selected(path : String) -> void:
 
 func _on_AddButton_pressed() -> void:
 	var onto
-	if layer_tree.is_folder(layer_tree.get_selected_layer()):
+	if layer_tree.get_selected_layer() is MaterialLayer and\
+			layer_tree.get_selected_layer().is_folder:
 		onto = layer_tree.get_selected_layer()
 	else:
 		onto = current_layer_material
@@ -165,9 +165,11 @@ func _on_AddButton_pressed() -> void:
 
 func _on_AddFolderButton_pressed() -> void:
 	undo_redo.create_action("Add Folder Layer")
-	var onto
-	var selected_layer = layer_tree.get_selected_layer()
-	if layer_tree.is_folder(layer_tree.get_selected_layer()):
+	var onto : Reference
+	var selected_layer : Reference = layer_tree.get_selected_layer()
+# warning-ignore:unsafe_property_access
+	if selected_layer is MaterialLayer and\
+			selected_layer.is_folder:
 		onto = selected_layer
 	elif selected_layer is MaterialLayer and\
 			layer_tree.get_selected_layer_texture(selected_layer):
@@ -175,14 +177,9 @@ func _on_AddFolderButton_pressed() -> void:
 	else:
 		onto = current_layer_material
 	
-	var new_layer
-	if onto is LayerMaterial:
-		new_layer = MaterialLayer.new()
-		new_layer.name = "Untitled Folder"
-		new_layer.is_folder = true
-	else:
-		new_layer = TextureFolder.new()
-		new_layer.name = "Untitled Folder"
+	var new_layer := MaterialLayer.new()
+	new_layer.name = "Untitled Folder"
+	new_layer.is_folder = true
 	
 	undo_redo.add_do_method(current_layer_material, "add_layer",
 			new_layer, onto)
@@ -218,8 +215,6 @@ func _on_AddLayerPopupMenu_layer_selected(layer : Reference) -> void:
 	var selected_layer = layer_tree.get_selected_layer()
 	if selected_layer is MaterialLayer:
 		onto = layer_tree.get_selected_layer_texture(selected_layer)
-	elif selected_layer is TextureFolder:
-		onto = selected_layer
 	else:
 		onto = selected_layer.parent
 	undo_redo.add_do_method(current_layer_material, "add_layer",

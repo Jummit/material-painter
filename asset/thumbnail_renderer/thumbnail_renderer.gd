@@ -12,12 +12,11 @@ mesh maps used in the material work.
 var mesh : Mesh
 
 const TextureUtils = preload("res://utils/texture_utils.gd")
-const Brush = preload("res://addons/painter/brush.gd")
-const FileTextureLayer = preload("res://data/texture/file_texture_layer.gd")
-const LayerMaterial = preload("res://data/material/layer_material.gd")
+const Brush = preload("res://main/brush.gd")
+const LayerMaterial = preload("res://material/layer_material.gd")
 const MaterialGenerationContext = preload("res://main/material_generation_context.gd")
 const Painter = preload("res://addons/painter/painter.gd")
-const MaterialLayer = preload("res://data/material/material_layer.gd")
+const MaterialLayer = preload("res://material/material_layer.gd")
 const LayerBlendViewportManager = preload("res://addons/layer_blending_viewport/layer_blend_viewport_manager.gd")
 const TriplanarTextureGenerator = preload("res://addons/triplanar_texture_generator/triplanar_texture_generator.gd")
 const NormalMapGenerationViewport = preload("res://addons/normal_map_generation_viewport/normal_map_generation_viewport.gd")
@@ -61,14 +60,17 @@ func get_thumbnail_for_brush(brush : Brush, result_size : Vector2) -> ImageTextu
 		yield(painter.set_mesh_instance(mesh_instance), "completed")
 		yield(painter.update_view(brush_viewport), "completed")
 	
-	painter.brush = brush
+	var brushes := []
+	for map in Constants.TEXTURE_MAP_TYPES:
+		brushes.append(brush.get_brush(map))
+	painter.brushes = brushes
 	yield(painter.clear(), "completed")
 	var last_point := paint_line.points[0]
 	for point_num in range(1, paint_line.points.size()):
 		var point = paint_line.points[point_num]
 		yield(painter.paint(last_point, point), "completed")
 		last_point = point
-	return TextureUtils.viewport_to_image(painter.result)
+	return TextureUtils.viewport_to_image(painter.get_result(0))
 
 
 func get_thumbnail_for_hdri(hdri : Image, result_size : Vector2) -> Texture:

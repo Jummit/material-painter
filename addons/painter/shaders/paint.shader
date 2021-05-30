@@ -27,17 +27,17 @@ vec4 pattern_color(vec2 uv) {
 }
 
 void fragment() {
-	// Get UV from seams texture
+	// Get UV from seams texture.
 	vec2 uv = UV + (texture(seams, UV).xy - vec2(0.5)) / 64.0;
-	// Get View position
+	// Get View position.
 	vec4 tex2view = texture(texture_to_view, uv);
 	vec2 xy = tex2view.xy;
-	// Get distance to brush center
+	// Get distance to brush center.
 	vec2 b = brush_pos / brush_size;
 	vec2 bv = (brush_ppos - brush_pos) / brush_size;
 	vec2 p = xy / brush_size;
 	float x = clamp(dot(p - b, bv) / dot(bv, bv), 0.0, 1.0);
-	// Get position in brush
+	// Get position in brush.
 	vec2 local_uv = p - (b + x * bv);
 	float a;
 	vec4 color;
