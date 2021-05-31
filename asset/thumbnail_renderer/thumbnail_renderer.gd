@@ -43,7 +43,7 @@ func get_thumbnail_for_smart_material(material : MaterialLayer,
 			normal_map_generation_viewport, triplanar_texture_generator)
 	layer_mat.context.mesh = mesh
 	layer_mat.add_layer(material, layer_mat, -1, false)
-	var result = layer_mat.update(true)
+	var result = layer_mat.update()
 	if result is GDScriptFunctionState:
 		yield(result, "completed")
 	model.material_override = layer_mat.get_material()

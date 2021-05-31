@@ -13,6 +13,7 @@ signal layer_materials_changed(to)
 signal current_layer_material_changed(to, id)
 signal selected_tool_changed(to)
 signal mesh_changed(to)
+signal context_changed(to)
 
 # The current project file.
 var current_file : SaveFile setget set_current_file
@@ -139,7 +140,6 @@ func _on_FileDialog_file_selected(path : String) -> void:
 					file.close()
 					project.path = path
 					set_current_file(project)
-					load_mesh(current_file.model_path)
 				"obj":
 					load_mesh(path)
 
@@ -314,7 +314,7 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 
 func _on_EditMenuButton_size_selected(size) -> void:
 	context.result_size = size
-	current_layer_material.update(true)
+	current_layer_material.update()
 
 
 func _on_LayoutNameEdit_text_entered(new_text : String) -> void:
@@ -455,16 +455,25 @@ func load_mesh(path : String) -> void:
 		yield(get_tree(), "idle_frame")
 		for i in 20000:
 			var new_mesh = interactive_loader.poll()
-			if new_mesh:
-				progress_dialog.complete_task()
-				set_mesh(new_mesh)
-				return
+			if not new_mesh:
+				continue
+			progress_dialog.complete_task()
+			context.mesh = new_mesh
+			current_file.model_path = path
+			for surface in context.mesh.get_surface_count():
+				if current_file.layer_materials.size() <= surface:
+					current_file.layer_materials.append(LayerMaterial.new())
+			current_file.layer_materials.front().update()
+			emit_signal("mesh_changed", context.mesh)
+			emit_signal("layer_materials_changed", current_file.layer_materials)
+			set_current_layer_material(current_file.layer_materials.front())
+			return
 
 
 func start_empty_project() -> void:
-	set_current_file(SaveFile.new())
-	set_mesh(preload("res://misc/cube.obj"))
-	emit_signal("current_file_changed", current_file)
+	set_current_file(SaveFile.new({
+		model_path = "res://misc/cube.obj"
+	}))
 
 
 func open_save_project_dialog() -> void:
@@ -499,17 +508,20 @@ func initialise_layouts() -> void:
 	view_menu_button.update_layout_options()
 
 
-func set_mesh(to) -> void:
-	context.mesh = to
-	current_file.model_path = to.resource_path
-	current_file.layer_materials.resize(context.mesh.get_surface_count())
-	for surface in context.mesh.get_surface_count():
-		if not current_file.layer_materials[surface]:
-			current_file.layer_materials[surface] = LayerMaterial.new()
-	current_file.layer_materials.front().update(true)
-	emit_signal("mesh_changed", context.mesh)
-	emit_signal("layer_materials_changed", current_file.layer_materials)
+func set_current_file(save_file : SaveFile) -> void:
+	current_file = save_file
+	context.result_size = current_file.result_size
+	for layer_material in current_file.layer_materials:
+		layer_material.context = context
+		var result = layer_material.update()
+		if result is GDScriptFunctionState:
+			yield(result, "completed")
+	var result = load_mesh(current_file.model_path)
+	if result is GDScriptFunctionState:
+		yield(result, "completed")
 	set_current_layer_material(current_file.layer_materials.front())
+	emit_signal("context_changed", context)
+	emit_signal("current_file_changed", current_file)
 
 
 func set_current_layer_material(to) -> void:
@@ -517,17 +529,6 @@ func set_current_layer_material(to) -> void:
 	current_layer_material.context = context
 	emit_signal("current_layer_material_changed", to,
 			current_file.layer_materials.find(current_layer_material))
-
-
-func set_current_file(save_file : SaveFile) -> void:
-	current_file = save_file
-	context.result_size = current_file.result_size
-	for layer_material in current_file.layer_materials:
-		layer_material.context = context
-		var result = layer_material.update(true)
-		if result is GDScriptFunctionState:
-			yield(result, "completed")
-	emit_signal("current_file_changed", current_file)
 
 
 func _on_ToolButtonContainer_tool_selected(selected : int) -> void:

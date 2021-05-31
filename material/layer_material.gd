@@ -66,14 +66,14 @@ func mark_dirty(shader_too := false) -> void:
 		shader_dirty = true
 
 
-func update(force_all := false) -> void:
+func update() -> void:
 	if busy or not dirty:
 		return
 	
 	busy = true
 	
 	for layer in layers:
-		var result = layer.update(context, force_all)
+		var result = layer.update(context)
 		if result is GDScriptFunctionState:
 			result = yield(result, "completed")
 	
@@ -81,14 +81,13 @@ func update(force_all := false) -> void:
 	for map in Constants.TEXTURE_MAP_TYPES:
 		var blending_layers := []
 		for layer in layers:
-			var map_result : Texture = layer.get_map_result(map)
-			if not map_result or not layer.visible:
+			if not map in layer.main.results or not layer.visible:
 				continue
-			
+			var map_result : Texture = layer.main.results[map]
 			var blending_layer : BlendingLayer
 			var mask
 			if layer.mask:
-				mask = layer.mask.result
+				mask = layer.mask.results[0]
 			blending_layer = BlendingLayer.new(
 				"texture({layer_result}, uv)",
 				layer.get_blend_mode(map), layer.get_opacity(map), mask)
@@ -104,8 +103,8 @@ func update(force_all := false) -> void:
 		var result : Texture = yield(context.blending_viewport_manager.blend(
 				blending_layers, context.result_size,
 				get_instance_id() + map.hash(), shader_dirty), "completed")
-		
-#		result.get_data().save_png("res://test.png")
+		# TODO: use weakrefs instead of instance hashes to remove viewports
+		# when the material gets garbage collected.
 		
 		if map == "height":
 			result = yield(context.normal_map_generator.get_normal_map(result),

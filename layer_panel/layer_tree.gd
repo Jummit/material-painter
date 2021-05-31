@@ -31,7 +31,6 @@ enum Buttons {
 	MASK,
 	RESULT,
 	ICON,
-	MAP_DROPDOWN,
 	VISIBILITY,
 }
 
@@ -55,7 +54,6 @@ const LayerTexture = preload("res://material/layer_texture.gd")
 const MaterialGenerationContext = preload("res://main/material_generation_context.gd")
 
 onready var layer_popup_menu : LayerPopupMenu = $LayerPopupMenu
-onready var map_type_popup_menu : PopupMenu = $MapTypePopupMenu
 
 func _ready() -> void:
 	set_column_expand(0, false)
@@ -109,11 +107,6 @@ func _on_cell_selected() -> void:
 func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 	var layer = item.get_meta("layer")
 	match id:
-		Buttons.MAP_DROPDOWN:
-			map_type_popup_menu.set_meta("layer", layer)
-			map_type_popup_menu.rect_global_position =\
-				get_global_transform().xform(get_item_area_rect(item).position)
-			map_type_popup_menu.popup()
 		Buttons.RESULT:
 			if layer is MaterialLayer:
 				if layer in _layer_states and\
@@ -311,7 +304,6 @@ func _emit_select_signal(layer : Reference) -> void:
 
 func _get_layers_of_drop_data(data, _position : Vector2) -> Dictionary:
 	var layers : Array
-	var layer_type : int
 	if data is LayerAsset:
 		layers = [data.data.duplicate()]
 	elif data is SmartMaterialAsset:
@@ -328,12 +320,10 @@ func _get_layers_of_drop_data(data, _position : Vector2) -> Dictionary:
 		layers = [material_layer]
 	elif data is Dictionary and "type" in data and data.type == "layers":
 		layers = data.layers
-		layer_type = data.layer_type
 	else:
 		return {}
 	return {
 		layers = layers,
-		type = layer_type
 	}
 
 
@@ -360,6 +350,9 @@ func _setup_material_layer_item(layer : MaterialLayer, parent_item : TreeItem,
 	item.set_custom_draw(0, self, "_draw_layer_item")
 	item.set_cell_mode(0, TreeItem.CELL_MODE_CUSTOM)
 	
+	if not layer in _layer_states:
+		_layer_states[layer] = LayerState.CLOSED
+	
 	var state : int = _layer_states[layer]
 	
 	if layer.mask:
@@ -371,9 +364,9 @@ func _setup_material_layer_item(layer : MaterialLayer, parent_item : TreeItem,
 		if icon is Texture:
 			item.add_button(0, icon, Buttons.MASK)
 	
-	if state != LayerState.CLOSED:
+	if state in [LayerState.MAP_EXPANDED, LayerState.MASK_EXPANDED]:
 		for texture_layer in layer.main.layers if state ==\
-				LayerState.MASK_EXPANDED else layer.mask.layers:
+				LayerState.MAP_EXPANDED else layer.mask.layers:
 			_setup_texture_layer_item(texture_layer, item, selected_layer)
 	if layer.is_folder:
 		var icon := preload("res://icons/large_folder.svg")
@@ -471,3 +464,7 @@ func _on_Main_current_file_changed(to : ProjectFile) -> void:
 func _on_Main_current_layer_material_changed(to : LayerMaterial,
 		_id : int) -> void:
 	set_layer_material(to)
+
+
+func _on_Main_context_changed(to : MaterialGenerationContext) -> void:
+	context = to

@@ -50,7 +50,10 @@ func update(context : MaterialGenerationContext,
 	if not dirty:
 		return
 	for map in maps:
-		results[map] = get_result(context, map)
+		var result = get_result(context, map)
+		if result is GDScriptFunctionState:
+			result = yield(result, "completed")
+		results[map] = result
 	dirty = false
 
 

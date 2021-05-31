@@ -40,7 +40,6 @@ const Brush = preload("res://addons/painter/brush.gd")
 const MeshUtils = preload("res://addons/third_party/mesh_utils/mesh_utils.gd")
 const PaintViewport = preload("paint_viewport.gd")
 
-onready var initial_texture_rect : TextureRect = $PaintViewport/InitialTextureRect
 onready var view_to_texture_viewport : Viewport = $ViewToTextureViewport
 onready var texture_to_view_viewport : Viewport = $TextureToViewViewport
 onready var seams_viewport : Viewport = $SeamsViewport
@@ -66,13 +65,13 @@ func _ready() -> void:
 
 # Sets the base texture that will be painted ontop of.
 func set_initial_texture(channel : int, texture : Texture) -> void:
-	initial_texture_rect.texture = texture
+	_paint_viewports[channel].initial_texture_rect.texture = texture
 	var paint_viewport : Viewport = _paint_viewports[channel]
 	paint_viewport.render_target_clear_mode = Viewport.CLEAR_MODE_ALWAYS
 	paint_viewport.render_target_update_mode = Viewport.UPDATE_ONCE
 	yield(VisualServer, "frame_post_draw")
 	paint_viewport.render_target_clear_mode = Viewport.CLEAR_MODE_NEVER
-	initial_texture_rect.texture = null
+	_paint_viewports[channel].initial_texture_rect.texture = null
 
 
 # Update the viewport if the size or camera changed.

@@ -81,11 +81,14 @@ func get_blend_mode(map : String) -> float:
 func update(context : MaterialGenerationContext) -> void:
 	if not dirty:
 		return
-	mask.update(context)
-	main.update(context)
+	if mask:
+		yield(mask.update(context), "completed")
+	var result = main.update(context)
+	if result is GDScriptFunctionState:
+		yield(result, "completed")
 	if is_folder:
 		for layer in layers:
-			var result = layer.update(context)
+			result = layer.update(context)
 			if result is GDScriptFunctionState:
 				result = yield(result, "completed")
 		
@@ -101,7 +104,7 @@ func update(context : MaterialGenerationContext) -> void:
 				folder_results.erase(map)
 				continue
 			
-			var result : Texture = yield(context.blending_viewport_manager.blend(
+			result = yield(context.blending_viewport_manager.blend(
 					blending_layers, context.result_size,
 					get_instance_id() + map.hash()), "completed")
 			
