@@ -89,11 +89,9 @@ func update() -> void:
 			if layer.mask:
 				mask = layer.mask.results[0]
 			blending_layer = BlendingLayer.new(
-				"texture({layer_result}, uv)",
+				"texture({result}, uv)",
 				layer.get_blend_mode(map), layer.get_opacity(map), mask)
-			blending_layer.uniform_types.append("sampler2D")
-			blending_layer.uniform_names.append("layer_result")
-			blending_layer.uniform_values.append(map_result)
+			blending_layer.uniforms.result = map_result
 			blending_layers.append(blending_layer)
 		
 		if blending_layers.empty():

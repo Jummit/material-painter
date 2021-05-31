@@ -210,7 +210,7 @@ func _on_DeleteButton_pressed() -> void:
 func _on_AddLayerPopupMenu_layer_selected(layer : Reference) -> void:
 	undo_redo.create_action("Add Texture Layer")
 # warning-ignore:unsafe_method_access
-	var new_layer = layer.duplicate()
+	var new_layer : Reference = layer.duplicate()
 	var onto
 	var selected_layer = layer_tree.get_selected_layer()
 	if selected_layer is MaterialLayer:

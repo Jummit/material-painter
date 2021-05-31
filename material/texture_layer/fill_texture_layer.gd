@@ -1,10 +1,17 @@
 extends "texture_layer.gd"
 
 var map_textures : Dictionary
+var map_settings := {
+	albedo = Color.white,
+	emission = Color.white,
+	height = 0.0,
+	roughness = 1.0,
+	metallic = 0.0,
+	ao = 1.0,
+}
 
 var map_properties := {
 	albedo = Properties.ColorProperty,
-	normal = Properties.ColorProperty,
 	emission = Properties.ColorProperty,
 	height = Properties.FloatProperty,
 	roughness = Properties.FloatProperty,
@@ -12,9 +19,40 @@ var map_properties := {
 	ao = Properties.FloatProperty,
 }
 
+const SHADERS := {
+	TYPE_COLOR : "{value}",
+	TYPE_REAL : "vec3({value})",
+	TYPE_OBJECT : "texture({value}, uv)",
+}
+
 const Properties = preload("res://addons/property_panel/properties.gd")
 const AssetProperty = preload("res://asset/asset_property/property_panel_property.gd")
 const TextureAsset = preload("res://asset/assets/texture_asset.gd")
+const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
+
+func _init(data := {}).(data) -> void:
+	pass
+
+
+func serialize() -> Dictionary:
+	var data := .serialize()
+	return data
+
+
+func get_type() -> String:
+	return "fill"
+
+
+func get_blending_layer(_context : MaterialGenerationContext,
+		map : String) -> Layer:
+	var value = map_settings[map]
+	if map in map_textures:
+		value = map_textures[map]
+	var layer := BlendingLayer.new(SHADERS[typeof(value)], blend_mode,
+			opacity)
+	layer.uniforms.value = value
+	return layer
+
 
 func get_properties() -> Array:
 	var properties := []

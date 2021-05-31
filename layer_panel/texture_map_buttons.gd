@@ -8,9 +8,6 @@ var buttons : Dictionary
 # warning-ignore:unsafe_property_access
 onready var undo_redo : UndoRedo = find_parent("Main").undo_redo
 
-# warning-ignore:unused_signal
-signal changed(map, enabled)
-
 const LayerTexture = preload("res://material/layer_texture.gd")
 const MaterialLayer = preload("res://material/material_layer.gd")
 const LayerPropertyPanel = preload("res://layer_panel/layer_property_panel.gd")
@@ -39,36 +36,33 @@ func _on_LayerTree_layer_selected(layer) -> void:
 
 
 func _on_Button_toggled(button_pressed : bool, map : String) -> void:
-	var maps := (layer_property_panel.editing_layer as MaterialLayer).maps
+	var layer := layer_property_panel.editing_layer
 	if button_pressed:
-		if not map in maps:
-			undo_redo.create_action("Enable Texture Map")
-			undo_redo.add_do_method(self, "_set_map_enabled", layer_property_panel.editing_layer, map, true)
-			undo_redo.add_undo_method(self, "_set_map_enabled", layer_property_panel.editing_layer, map, false)
-			undo_redo.commit_action()
+		undo_redo.create_action("Enable Texture Map")
+		undo_redo.add_do_method(self, "_set_map_enabled", layer, map, true)
+		undo_redo.add_undo_method(self, "_set_map_enabled", layer, map, false)
+		undo_redo.commit_action()
 	else:
 		undo_redo.create_action("Disable Texture Map")
-		undo_redo.add_do_method(self, "_set_map_enabled", layer_property_panel.editing_layer, map, false)
-		undo_redo.add_undo_method(self, "_set_map_enabled", layer_property_panel.editing_layer, map, true)
+		undo_redo.add_do_method(self, "_set_map_enabled", layer, map, false)
+		undo_redo.add_undo_method(self, "_set_map_enabled", layer, map, true)
 		undo_redo.commit_action()
 
 
-# Block `toggled` signals to avoid emitting the `changed` signal.
+# Block `toggled` signals.
 func _silently_set_button_pressed(button : Button, pressed : bool) -> void:
 	button.set_block_signals(true)
 	button.pressed = pressed
 	button.set_block_signals(false)
 
 
-func _set_map_enabled(on_layer : MaterialLayer, map : String, enabled : bool) -> void:
+func _set_map_enabled(on_layer : MaterialLayer, map : String,
+		enabled : bool) -> void:
 	if enabled:
-		var new_layer := LayerTexture.new()
-		new_layer.parent = on_layer
-		on_layer.maps[map] = new_layer
+		on_layer.maps[map] = true
 	else:
 		on_layer.maps.erase(map)
 	
 	_silently_set_button_pressed(buttons[map], true)
 	on_layer.mark_dirty(true)
 	(on_layer.get_layer_material_in() as LayerMaterial).update()
-	emit_signal("changed", map, enabled)

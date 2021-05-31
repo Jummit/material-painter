@@ -12,14 +12,18 @@ applied to a `ColorRect` and then rendered using `render_texture`.
 
 var shader : Shader
 
+const SHADER_TYPES := {
+	TYPE_REAL: "float",
+	TYPE_COLOR: "vec4",
+	TYPE_OBJECT: "sampler2D",
+}
+
 const Constants = preload("constants.gd")
 
 class Layer:
 # warning-ignore-all:unused_class_variable
 	var code : String
-	var uniform_types : Array
-	var uniform_names : Array
-	var uniform_values : Array
+	var uniforms : Dictionary
 
 class BlendingLayer extends Layer:
 	func _init(shader_code : String, blend_mode := "normal", opacity := 1.0,
@@ -29,13 +33,9 @@ class BlendingLayer extends Layer:
 				mode = blend_mode,
 				code = shader_code,
 			})
-			uniform_types.append("sampler2D")
-			uniform_names.append("mask")
-			uniform_values.append(mask)
+			uniforms.mask = mask
 		else:
-			uniform_types.append("float")
-			uniform_names.append("opacity")
-			uniform_values.append(opacity)
+			uniforms.opacity = opacity
 			code = "return blend{mode}({previous}(uv), {code}, {opacity});".format({
 				mode = blend_mode,
 				code = shader_code,
@@ -74,19 +74,18 @@ static func _generate_blending_shader(layers : Array) -> String:
 	var uniform_count := 0
 	
 	for layer_num in layers.size():
-		var layer = layers[layer_num]
+		var layer : Layer = layers[layer_num]
 		if layer is Layer:
 			var generator_function := Constants.GENERATOR_FUNCTION_TEMPLATE.format({
 				name = _function_name(layer_num),
 				code = layer.code,
 			})
 			
-			for uniform in layer.uniform_types.size():
-				uniform_declaration += "uniform %s %s;\n" % [
-						layer.uniform_types[uniform],
+			for uniform in layer.uniforms:
+				uniform_declaration += "uniform %s %s;\n" % [SHADER_TYPES[\
+						typeof(layer.uniforms[uniform])],
 						_uniform_var(uniform_count)]
-				generator_function = generator_function.replace(
-						"{%s}" % layer.uniform_names[uniform],
+				generator_function = generator_function.replace("{%s}" % uniform,
 						_uniform_var(uniform_count))
 				uniform_count += 1
 			generator_function = generator_function.replace(
@@ -109,10 +108,9 @@ static func _setup_shader_vars(material : ShaderMaterial, layers : Array) -> voi
 	var uniform_count := 0
 	for layer_num in layers.size():
 		var layer : Layer = layers[layer_num]
-		for uniform in layer.uniform_values.size():
-			material.set_shader_param(
-					_uniform_var(uniform_count),
-					layer.uniform_values[uniform])
+		for uniform in layer.uniforms:
+			material.set_shader_param(_uniform_var(uniform_count),
+					layer.uniforms[uniform])
 			uniform_count += 1
 
 

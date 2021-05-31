@@ -346,13 +346,11 @@ func _setup_material_layer_item(layer : MaterialLayer, parent_item : TreeItem,
 	item.set_text(1, layer.name)
 	item.add_button(1, _get_visibility_icon(layer.visible),
 		Buttons.VISIBILITY)
-	
 	item.set_custom_draw(0, self, "_draw_layer_item")
 	item.set_cell_mode(0, TreeItem.CELL_MODE_CUSTOM)
 	
 	if not layer in _layer_states:
 		_layer_states[layer] = LayerState.CLOSED
-	
 	var state : int = _layer_states[layer]
 	
 	if layer.mask:
@@ -363,7 +361,6 @@ func _setup_material_layer_item(layer : MaterialLayer, parent_item : TreeItem,
 			return
 		if icon is Texture:
 			item.add_button(0, icon, Buttons.MASK)
-	
 	if state in [LayerState.MAP_EXPANDED, LayerState.MASK_EXPANDED]:
 		for texture_layer in layer.main.layers if state ==\
 				LayerState.MAP_EXPANDED else layer.mask.layers:
@@ -378,20 +375,19 @@ func _setup_material_layer_item(layer : MaterialLayer, parent_item : TreeItem,
 		item.set_tooltip(1, "%s (contains %s layers)" % [layer.name,
 				layer.layers.size()])
 	else:
-		var icon = _get_layer_texture_icon(layer.main)
-		if icon is GDScriptFunctionState:
-			icon = yield(icon, "completed")
-		if not is_instance_valid(item):
-			return
-		if icon is Texture:
-			item.add_button(0, icon, Buttons.RESULT)
+#		var icon = _get_layer_texture_icon(layer.main)
+#		if icon is GDScriptFunctionState:
+#			icon = yield(icon, "completed")
+#		if not is_instance_valid(item):
+#			return
+#		if icon is Texture:
+#			item.add_button(0, icon, Buttons.RESULT)
+		item.add_button(0, preload("res://icons/folder.svg"), Buttons.RESULT)
 
 
 func get_selected_layer_texture(layer : MaterialLayer) -> LayerTexture:
-	if _layer_states[layer] == LayerState.CLOSED:
-		return null
-	return layer.main if _layer_states[layer] ==\
-			LayerState.MASK_EXPANDED else layer.mask
+	return layer.mask if _layer_states[layer] ==\
+			LayerState.MASK_EXPANDED else layer.main
 
 
 func _setup_texture_layer_item(layer : TextureLayer, parent_item : TreeItem,

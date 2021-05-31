@@ -19,10 +19,6 @@ const DEFAULTS := {
 	bool = true,
 }
 
-const SHADER_TYPES := {
-	color = "vec4"
-}
-
 const Properties = preload("res://addons/property_panel/properties.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 
@@ -123,8 +119,5 @@ func get_blending_layer(_context : MaterialGenerationContext,
 				layer.code = layer.code.format(
 						{property.name: settings[property.name]})
 			else:
-				layer.uniform_types.append(property.type if not property.type\
-						in SHADER_TYPES else SHADER_TYPES[property.type])
-				layer.uniform_names.append(property.name)
-				layer.uniform_values.append(settings[property.name])
+				layer.uniforms[property.name] = settings[property.name]
 	return layer

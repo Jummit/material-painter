@@ -11,10 +11,13 @@ to retrieve a list of `Properties` for the `LayerPropertyPanel`.
 var name : String
 var visible : bool
 var enabled_maps : Dictionary
+var opacity := 1.0
+var blend_mode := "normal"
 
 var parent : Reference
 var dirty := true
 var shader_dirty := true
+var icon_dirty := true
 
 var icon : Texture
 
@@ -40,6 +43,7 @@ func serialize() -> Dictionary:
 func mark_dirty(shader_too := false) -> void:
 	dirty = true
 	icon = null
+	icon_dirty = true
 	shader_dirty = shader_dirty or shader_too
 
 
@@ -48,9 +52,10 @@ func get_type() -> String:
 
 
 func get_icon(map : String, context : MaterialGenerationContext) -> Texture:
-	if not icon:
+	if not icon or icon_dirty:
 		context.blending_viewport_manager.blend([get_blending_layer(context,
 				map)], context.icon_size)
+		icon_dirty = false
 	return icon
 
 
