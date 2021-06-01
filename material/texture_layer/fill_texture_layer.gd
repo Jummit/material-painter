@@ -1,19 +1,10 @@
 extends "texture_layer.gd"
 
-var map_textures : Dictionary
-var map_settings := {
-	albedo = Color.white,
-	emission = Color.white,
-	height = 0.0,
-	roughness = 1.0,
-	metallic = 0.0,
-	ao = 1.0,
-}
-
 var map_properties := {
 	albedo = Properties.ColorProperty,
 	emission = Properties.ColorProperty,
 	height = Properties.FloatProperty,
+	normal = Properties.ColorProperty,
 	roughness = Properties.FloatProperty,
 	metallic = Properties.FloatProperty,
 	ao = Properties.FloatProperty,
@@ -21,7 +12,7 @@ var map_properties := {
 
 const SHADERS := {
 	TYPE_COLOR : "{value}",
-	TYPE_REAL : "vec3({value})",
+	TYPE_REAL : "vec4({value})",
 	TYPE_OBJECT : "texture({value}, uv)",
 }
 
@@ -31,7 +22,16 @@ const TextureAsset = preload("res://asset/assets/texture_asset.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 
 func _init(data := {}).(data) -> void:
-	pass
+	if settings.empty():
+		settings = {
+			albedo = Color.white,
+			emission = Color.white,
+			normal = Color.white,
+			height = 0.0,
+			roughness = 1.0,
+			metallic = 0.0,
+			ao = 1.0,
+		}
 
 
 func serialize() -> Dictionary:
@@ -45,11 +45,11 @@ func get_type() -> String:
 
 func get_blending_layer(_context : MaterialGenerationContext,
 		map : String) -> Layer:
-	var value = map_settings[map]
-	if map in map_textures:
-		value = map_textures[map]
-	var layer := BlendingLayer.new(SHADERS[typeof(value)], blend_mode,
-			opacity)
+	var value = settings[map]
+	if settings.get(map + "_texture"):
+		value = settings[map + "_texture"]
+	var layer := BlendingLayer.new(SHADERS[typeof(value)],
+			blend_modes.get(map, "normal"), opacities.get(map, 1.0))
 	layer.uniforms.value = value
 	return layer
 
@@ -57,7 +57,7 @@ func get_blending_layer(_context : MaterialGenerationContext,
 func get_properties() -> Array:
 	var properties := []
 	for map in enabled_maps:
-		if not map in map_textures:
+		if not map + "_texture" in settings:
 			# Show the grayscale/color property when no map is set.
 			var property = map_properties[map]
 			if property == Properties.FloatProperty:
@@ -65,6 +65,6 @@ func get_properties() -> Array:
 			else:
 				properties.append(property.new(map))
 		# Always show the texture property even if it isn't set.
-		var asset_property := AssetProperty.new(map, [TextureAsset])
+		var asset_property := AssetProperty.new(map + "_texture", [TextureAsset])
 		properties.append(asset_property)
 	return properties

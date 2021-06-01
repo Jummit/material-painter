@@ -38,8 +38,10 @@ func get_result(context : MaterialGenerationContext, map : String,
 		var blending_layer = layer.get_blending_layer(context, map)
 		if blending_layer is GDScriptFunctionState:
 			blending_layer = yield(blending_layer, "completed")
-		blending_layers.append(blending_layer)
-	
+		if blending_layer:
+			blending_layers.append(blending_layer)
+	if blending_layers.empty():
+		return null
 	return yield(context.blending_viewport_manager.blend(
 			blending_layers, context.icon_size if icon else context.result_size,
 			get_instance_id() + map.hash()), "completed")

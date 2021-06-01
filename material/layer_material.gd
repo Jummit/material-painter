@@ -81,7 +81,8 @@ func update() -> void:
 	for map in Constants.TEXTURE_MAP_TYPES:
 		var blending_layers := []
 		for layer in layers:
-			if not map in layer.main.results or not layer.visible:
+			if not map in layer.main.results or not layer.main.results[map] or\
+					not layer.visible:
 				continue
 			var map_result : Texture = layer.main.results[map]
 			var blending_layer : BlendingLayer
@@ -113,6 +114,7 @@ func update() -> void:
 	dirty = false
 	shader_dirty = false
 	busy = false
+#	results.albedo.get_data().save_png("res://albedo.png")
 	emit_signal("results_changed")
 
 

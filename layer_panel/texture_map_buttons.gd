@@ -12,6 +12,7 @@ const LayerTexture = preload("res://material/layer_texture.gd")
 const MaterialLayer = preload("res://material/material_layer.gd")
 const LayerPropertyPanel = preload("res://layer_panel/layer_property_panel.gd")
 const LayerMaterial = preload("res://material/layer_material.gd")
+const TextureLayer = preload("res://material/texture_layer/texture_layer.gd")
 
 onready var layer_property_panel : LayerPropertyPanel = $"../LayerPropertyPanel"
 
@@ -26,10 +27,17 @@ func _ready() -> void:
 		add_child(new_button)
 
 
-func _on_LayerTree_layer_selected(layer) -> void:
-	if layer is MaterialLayer:
+func _on_LayerTree_layer_selected(layer : Reference) -> void:
+	var tex_layer := layer as TextureLayer
+	var mat_layer := layer as MaterialLayer
+	if tex_layer or mat_layer:
 		for button in get_children():
-			_silently_set_button_pressed(button, button.name in layer.maps)
+			var enabled : bool
+			if tex_layer:
+				enabled = button.name in tex_layer.enabled_maps
+			else:
+				enabled = button.name in mat_layer.enabled_maps
+			_silently_set_button_pressed(button, enabled)
 		show()
 	else:
 		hide()
@@ -56,13 +64,17 @@ func _silently_set_button_pressed(button : Button, pressed : bool) -> void:
 	button.set_block_signals(false)
 
 
-func _set_map_enabled(on_layer : MaterialLayer, map : String,
-		enabled : bool) -> void:
-	if enabled:
-		on_layer.maps[map] = true
-	else:
-		on_layer.maps.erase(map)
+func _set_map_enabled(layer : Reference, map : String, enabled : bool) -> void:
+	var tex_layer := layer as TextureLayer
+	var mat_layer := layer as MaterialLayer
+	if tex_layer:
+		tex_layer.enabled_maps[map] = enabled
+		tex_layer.mark_dirty(true)
+		(((tex_layer.parent as LayerTexture).parent as MaterialLayer).\
+				get_layer_material_in() as LayerMaterial).update()
+	elif mat_layer:
+		mat_layer.enabled_maps[map] = enabled
+		mat_layer.mark_dirty(true)
+		(mat_layer.get_layer_material_in() as LayerMaterial).update()
 	
 	_silently_set_button_pressed(buttons[map], true)
-	on_layer.mark_dirty(true)
-	(on_layer.get_layer_material_in() as LayerMaterial).update()

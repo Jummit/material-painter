@@ -11,8 +11,9 @@ to retrieve a list of `Properties` for the `LayerPropertyPanel`.
 var name : String
 var visible : bool
 var enabled_maps : Dictionary
-var opacity := 1.0
-var blend_mode := "normal"
+var opacities : Dictionary
+var blend_modes : Dictionary
+var settings := {}
 
 var parent : Reference
 var dirty := true
@@ -26,6 +27,7 @@ const MaterialGenerationContext = preload("res://main/material_generation_contex
 
 func _init(data := {}) -> void:
 	name = data.get("name", "")
+	settings = data.get("settings", {})
 	if not name:
 		name = get_name()
 	visible = data.get("visible", true)
@@ -35,6 +37,7 @@ func serialize() -> Dictionary:
 	var data := {
 		name = name,
 		visible = visible,
+		settings = settings,
 		type = get_type(),
 	}
 	return data
@@ -42,8 +45,9 @@ func serialize() -> Dictionary:
 
 func mark_dirty(shader_too := false) -> void:
 	dirty = true
-	icon = null
 	icon_dirty = true
+# warning-ignore:unsafe_method_access
+	parent.mark_dirty(shader_too)
 	shader_dirty = shader_dirty or shader_too
 
 
@@ -53,8 +57,11 @@ func get_type() -> String:
 
 func get_icon(map : String, context : MaterialGenerationContext) -> Texture:
 	if not icon or icon_dirty:
-		context.blending_viewport_manager.blend([get_blending_layer(context,
-				map)], context.icon_size)
+		# Layer could be null.
+		var layer := get_blending_layer(context, map)
+		if not layer:
+			return null
+		context.blending_viewport_manager.blend([layer], context.icon_size)
 		icon_dirty = false
 	return icon
 

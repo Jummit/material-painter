@@ -6,7 +6,6 @@ A `TextureLayer` that uses a json file to configure the parameters and the shade
 It is used in the `EffectAssetType` in the `AssetBrowser`.
 """
 
-var settings : Dictionary
 var file : String setget set_file
 
 var layer_data : Dictionary
@@ -24,7 +23,6 @@ const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blendi
 
 func _init(data := {}).(data) -> void:
 	name = data.get("name", "")
-	settings = {}
 	var settings_data : Dictionary = data.get("settings", {})
 	for setting in settings_data:
 		settings[setting] = str2var(settings_data[setting])
@@ -39,9 +37,6 @@ func set_file(to):
 	read_file.open(file, File.READ)
 	layer_data = parse_json(read_file.get_as_text())
 	read_file.close()
-	if "blends" in layer_data:
-		settings.blend_mode = "normal"
-		settings.opacity = 1.0
 	for property in layer_data.get("properties", []):
 		if property.name in settings:
 			continue
@@ -80,10 +75,6 @@ func get_name() -> String:
 
 func get_properties() -> Array:
 	var list := []
-	if "blends" in layer_data:
-		list.append(Properties.FloatProperty.new("opacity", 0.0, 1.0, 1.0))
-		list.append(Properties.EnumProperty.new("blend_mode",
-				Constants.BLEND_MODES))
 	if not "properties" in layer_data:
 		return list
 	for property in layer_data.properties:
@@ -105,11 +96,12 @@ func get_properties() -> Array:
 
 
 func get_blending_layer(_context : MaterialGenerationContext,
-		_map : String) -> Layer:
+		map : String) -> Layer:
 	var layer : Layer
 	if "blends" in layer_data:
-		layer = BlendingLayer.new(layer_data.shader, settings.blend_mode,
-				settings.opacity)
+		layer = BlendingLayer.new(layer_data.shader,
+				blend_modes.get(map, "normal"),
+				opacities.get(map, 1.0))
 	else:
 		layer = Layer.new()
 		layer.code = layer_data.shader

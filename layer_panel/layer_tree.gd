@@ -155,18 +155,16 @@ func _on_item_edited() -> void:
 
 
 func _draw_layer_item(item : TreeItem, item_rect : Rect2) -> void:
-	var layer = item.get_meta("layer")
+	var layer : Reference = item.get_meta("layer")
 	if not layer in _layer_states:
 		return
 	var state : int = _layer_states[layer]
 	if not state in [LayerState.MAP_EXPANDED, LayerState.MASK_EXPANDED]:
 		return
 	var icon_rect := Rect2(Vector2(64, item_rect.position.y), Vector2(32, 32))
-	if layer.mask and (layer.is_folder or layer.maps.size()) and\
-			state == LayerState.MASK_EXPANDED:
+	var mat_layer := layer as MaterialLayer
+	if mat_layer and mat_layer.mask and state == LayerState.MASK_EXPANDED:
 		icon_rect.position.x -= 46
-	if layer is MaterialLayer and layer.maps.size() > 1:
-		icon_rect.position.x -= 28
 	draw_rect(icon_rect, Color.dodgerblue, false, 2.0)
 
 

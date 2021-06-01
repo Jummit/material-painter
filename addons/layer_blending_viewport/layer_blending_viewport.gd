@@ -88,8 +88,7 @@ static func _generate_blending_shader(layers : Array) -> String:
 				generator_function = generator_function.replace("{%s}" % uniform,
 						_uniform_var(uniform_count))
 				uniform_count += 1
-			generator_function = generator_function.replace(
-					"{previous}",
+			generator_function = generator_function.replace("{previous}",
 					_function_name(layer_num - 1))
 			
 			generator_functions += generator_function + "\n"
@@ -106,8 +105,7 @@ static func _generate_blending_shader(layers : Array) -> String:
 
 static func _setup_shader_vars(material : ShaderMaterial, layers : Array) -> void:
 	var uniform_count := 0
-	for layer_num in layers.size():
-		var layer : Layer = layers[layer_num]
+	for layer in layers:
 		for uniform in layer.uniforms:
 			material.set_shader_param(_uniform_var(uniform_count),
 					layer.uniforms[uniform])

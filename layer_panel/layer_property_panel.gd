@@ -13,38 +13,38 @@ const TextureLayer = preload("res://material/texture_layer/texture_layer.gd")
 const MaterialLayer = preload("res://material/material_layer.gd")
 const Properties = preload("res://addons/property_panel/properties.gd")
 const JSONTextureLayer = preload("res://material/texture_layer/json_texture_layer.gd")
+const LayerMaterial = preload("res://material/layer_material.gd")
+const LayerTexture = preload("res://material/layer_texture.gd")
 
-func _on_LayerTree_layer_selected(layer) -> void:
+func _on_LayerTree_layer_selected(layer : Reference) -> void:
 	editing_layer = layer
-	if layer is MaterialLayer:
-		properties = []
-		
-		for type in Constants.TEXTURE_MAP_TYPES if layer.is_folder else layer.maps:
-			properties += [
-				Properties.EnumProperty.new(type + "/blend_modes",
-						Constants.BLEND_MODES, layer.get_blend_mode(type)),
-				Properties.FloatProperty.new(type + "/opacities", 0.0, 1.0,
-						layer.get_opacity(type)),
-			]
-		
-		set_properties(properties)
-		load_values(layer)
-	elif layer is TextureLayer:
-		set_properties(layer.get_properties())
-		if layer is JSONTextureLayer:
-			load_values(layer.settings)
-		else:
-			load_values(layer)
+	var mat_layer := layer as MaterialLayer
+	var tex_layer := layer as TextureLayer
+	if mat_layer:
+		set_properties(mat_layer.get_properties())
+		load_values(mat_layer.settings)
+	elif tex_layer:
+		set_properties(tex_layer.get_properties())
+		load_values(tex_layer.settings)
 	else:
 		clear()
 
 
-func _on_property_changed(property, value) -> void:
-	var update_shader = property == "blend_mode"
-	var layer = editing_layer
+func _on_property_changed(property : String, value) -> void:
+	var update_shader : bool = property == "blend_mode"
+	var layer := editing_layer
 	# don't update the shader if the changed value is a shader parameter
-	if layer is JSONTextureLayer:
-		for property_data in layer.layer_data.properties:
+	var json_layer := layer as JSONTextureLayer
+	var mat_layer := layer as MaterialLayer
+	var tex_layer := layer as TextureLayer
+	var root : LayerMaterial
+	if mat_layer:
+		root = mat_layer.get_layer_material_in()
+	elif tex_layer:
+		root = ((tex_layer.parent as LayerTexture).parent as MaterialLayer)\
+				.get_layer_material_in()
+	if json_layer:
+		for property_data in json_layer.layer_data.properties:
 			if property_data.name == property:
 				if "shader_param" in property_data:
 					update_shader = not property_data.shader_param
@@ -52,19 +52,18 @@ func _on_property_changed(property, value) -> void:
 	undo_redo.create_action("Set Layer Property")
 	undo_redo.add_do_method(self, "set_value_on_layer", layer, property, value)
 	undo_redo.add_do_method(layer, "mark_dirty", update_shader)
-	undo_redo.add_do_method(layer.get_layer_material_in(), "update")
+	undo_redo.add_do_method(root, "update")
 	undo_redo.add_undo_method(self, "set_value_on_layer", layer, property,
 			layer.get(property))
 	undo_redo.add_undo_method(layer, "mark_dirty", update_shader)
-	undo_redo.add_undo_method(layer.get_layer_material_in(), "update")
+	undo_redo.add_undo_method(root, "update")
 	undo_redo.commit_action()
 
 
-func set_value_on_layer(layer, property : String, value) -> void:
-	if "/" in property:
-		layer[property.split("/")[1]][property.split("/")[0]] = value
-		layer.mark_dirty("blend_mode" in property)
-	elif layer is JSONTextureLayer:
-		layer.settings[property] = value
-	else:
-		layer[property] = value
+func set_value_on_layer(layer : Reference, property : String, value) -> void:
+	var mat_layer := layer as MaterialLayer
+	var tex_layer := layer as TextureLayer
+	if mat_layer:
+		mat_layer.settings[property] = value
+	elif tex_layer:
+		tex_layer.settings[property] = value

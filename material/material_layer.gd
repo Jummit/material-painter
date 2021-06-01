@@ -19,12 +19,14 @@ var visible := true
 var is_folder := false
 var folder_results : Dictionary
 var layers : Array
-var maps : Dictionary
+var enabled_maps : Dictionary
 var opacities : Dictionary
 var blend_modes : Dictionary
 # warning-ignore:unused_class_variable
 var mask : LayerTexture
 var main : LayerTexture
+
+var settings : Dictionary
 
 var parent : Reference
 var dirty := true
@@ -38,12 +40,14 @@ func _init(data := {}) -> void:
 	name = data.get("name", "")
 	visible = data.get("visible", true)
 	opacities = data.get("opacities", {})
-	maps = data.get("maps", {})
+	enabled_maps = data.get("enabled_maps", {})
 	blend_modes = data.get("blend_modes", {})
 	is_folder = data.get("folder", false)
 	main = LayerTexture.new(data.get("main", {}))
+	main.parent = self
 	if "mask" in data:
 		mask = LayerTexture.new(data.get("mask"))
+		mask.parent = self
 	name = "Untitled Folder" if is_folder else "Untitled Layer"
 	for layer in data.get("layers", []):
 		add_layer(get_script().new(layer))
@@ -54,7 +58,7 @@ func serialize() -> Dictionary:
 		mask = mask.serialize(),
 		main = main.serialize(),
 		name = name,
-		maps = maps,
+		enabled_maps = enabled_maps,
 		opacities = opacities,
 		blend_modes = blend_modes,
 		visible = visible,
@@ -63,6 +67,11 @@ func serialize() -> Dictionary:
 	for layer in layers:
 		data.layers.append(layer.serialize())
 	return data
+
+
+func get_properties() -> Array:
+	var properties := []
+	return properties
 
 
 func add_layer(layer) -> void:
@@ -92,7 +101,7 @@ func update(context : MaterialGenerationContext) -> void:
 			if result is GDScriptFunctionState:
 				result = yield(result, "completed")
 		
-		for map in maps:
+		for map in enabled_maps:
 			var blending_layers := []
 			for layer in layers:
 				var blending_layer = layer.get_blending_layer(context)
