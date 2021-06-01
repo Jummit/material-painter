@@ -38,9 +38,12 @@ func _on_property_changed(property : String, value) -> void:
 	var mat_layer := layer as MaterialLayer
 	var tex_layer := layer as TextureLayer
 	var root : LayerMaterial
+	var settings : Dictionary
 	if mat_layer:
+		settings = mat_layer.settings
 		root = mat_layer.get_layer_material_in()
 	elif tex_layer:
+		settings = tex_layer.settings
 		root = ((tex_layer.parent as LayerTexture).parent as MaterialLayer)\
 				.get_layer_material_in()
 	if json_layer:
@@ -54,7 +57,7 @@ func _on_property_changed(property : String, value) -> void:
 	undo_redo.add_do_method(layer, "mark_dirty", update_shader)
 	undo_redo.add_do_method(root, "update")
 	undo_redo.add_undo_method(self, "set_value_on_layer", layer, property,
-			layer.get(property))
+			settings.get(property))
 	undo_redo.add_undo_method(layer, "mark_dirty", update_shader)
 	undo_redo.add_undo_method(root, "update")
 	undo_redo.commit_action()

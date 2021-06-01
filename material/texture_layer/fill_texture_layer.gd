@@ -22,17 +22,7 @@ const TextureAsset = preload("res://asset/assets/texture_asset.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 
 func _init(data := {}).(data) -> void:
-	if settings.empty():
-		settings = {
-			albedo = Color.white,
-			emission = Color.white,
-			normal = Color.white,
-			height = 0.0,
-			roughness = 1.0,
-			metallic = 0.0,
-			ao = 1.0,
-		}
-
+	pass
 
 func serialize() -> Dictionary:
 	var data := .serialize()
@@ -45,9 +35,11 @@ func get_type() -> String:
 
 func get_blending_layer(_context : MaterialGenerationContext,
 		map : String) -> Layer:
-	var value = settings[map]
+	var value = settings.get(map)
 	if settings.get(map + "_texture"):
-		value = settings[map + "_texture"]
+		value = settings[map + "_texture"].texture
+	if not value:
+		return null
 	var layer := BlendingLayer.new(SHADERS[typeof(value)],
 			blend_modes.get(map, "normal"), opacities.get(map, 1.0))
 	layer.uniforms.value = value

@@ -2,16 +2,12 @@ extends Button
 
 signal changed
 
-var accepted_assets : Array
-
-var value
+var value : Asset setget set_value
 
 const Asset = preload("res://asset/assets/asset.gd")
 
-func can_drop_data(_position : Vector2, data) -> bool:
-	return data is Asset and data.get_type() in accepted_assets
-
-
-func drop_data(_position : Vector2, data) -> void:
-	value = data
-	emit_signal("changed")
+func set_value(to : Asset) -> void:
+	if value != to:
+		emit_signal("changed")
+	value = to
+	text = "None Selected" if not to else to.name

@@ -13,5 +13,15 @@ func _get_control() -> Control:
 	var texture_property : AssetProperty = preload(\
 			"asset_property.tscn").instance()
 	texture_property.text = name
-	texture_property.accepted_assets = accepted_assets
 	return texture_property
+
+
+func _can_drop_data(_control : Control, data) -> bool:
+	for type in accepted_assets:
+		if data is type:
+			return true
+	return false
+
+
+func _drop_data(control : Control, data) -> void:
+	_set_value(control, data)
