@@ -34,14 +34,14 @@ var NO_MASK := LayerTexture.new()
 
 const LAYOUTS_FOLDER := "user://layouts"
 
-var file_menu_shortcuts := [
-	ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_N),
-	ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_O),
-	ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_S),
-	ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_MASK_SHIFT + KEY_S),
-	ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_E),
-	ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_M),
-	ShortcutUtils.shortcut(KEY_MASK_CTRL + KEY_Q),
+var file_menu_actions := [
+	"new_file",
+	"open_file",
+	"save_file",
+	"save_as",
+	"export",
+	"load_mesh",
+	"quit",
 ]
 
 enum FILE_MENU_ITEMS {
@@ -102,12 +102,9 @@ func _ready() -> void:
 	ProgressDialogManager.theme = theme
 	
 	undo_redo.connect("version_changed", self, "_on_UndoRedo_version_changed")
-	var popup := file_menu_button.get_popup()
-	popup.connect("id_pressed", self, "_on_FileMenu_id_pressed")
+	file_menu_button.get_popup().connect("id_pressed", self, "_on_FileMenu_id_pressed")
 	about_menu_button.get_popup().connect("id_pressed", self,
 			"_on_AboutMenuButton_id_pressed")
-	for id in file_menu_shortcuts.size():
-		popup.set_item_shortcut(id, file_menu_shortcuts[id])
 	
 	initialise_layouts()
 	start_empty_project()
@@ -534,3 +531,11 @@ func set_current_layer_material(to) -> void:
 func _on_ToolButtonContainer_tool_selected(selected : int) -> void:
 	selected_tool = selected
 	emit_signal("selected_tool_changed", selected)
+
+
+func _on_KeymapScreen_keymap_changed() -> void:
+	var popup := file_menu_button.get_popup()
+	for id in file_menu_actions.size():
+		var actions := InputMap.get_action_list(file_menu_actions[id])
+		if actions.size():
+			popup.set_item_shortcut(id, actions.front())

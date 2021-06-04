@@ -4,6 +4,8 @@ extends GridContainer
 Buttons used to specify the enabled maps of the selected `MaterialLayer`
 """
 
+signal maps_changed
+
 var buttons : Dictionary
 # warning-ignore:unsafe_property_access
 onready var undo_redo : UndoRedo = find_parent("Main").undo_redo
@@ -29,14 +31,10 @@ func _ready() -> void:
 
 func _on_LayerTree_layer_selected(layer : Reference) -> void:
 	var tex_layer := layer as TextureLayer
-	var mat_layer := layer as MaterialLayer
-	if tex_layer or mat_layer:
+	if tex_layer:
 		for button in get_children():
 			var enabled : bool
-			if tex_layer:
-				enabled = button.name in tex_layer.enabled_maps
-			else:
-				enabled = button.name in mat_layer.enabled_maps
+			enabled = button.name in tex_layer.enabled_maps
 			_silently_set_button_pressed(button, enabled)
 		show()
 	else:
@@ -66,15 +64,13 @@ func _silently_set_button_pressed(button : Button, pressed : bool) -> void:
 
 func _set_map_enabled(layer : Reference, map : String, enabled : bool) -> void:
 	var tex_layer := layer as TextureLayer
-	var mat_layer := layer as MaterialLayer
-	if tex_layer:
-		tex_layer.enabled_maps[map] = enabled
-		tex_layer.mark_dirty(true)
-		(((tex_layer.parent as LayerTexture).parent as MaterialLayer).\
-				get_layer_material_in() as LayerMaterial).update()
-	elif mat_layer:
-		mat_layer.enabled_maps[map] = enabled
-		mat_layer.mark_dirty(true)
-		(mat_layer.get_layer_material_in() as LayerMaterial).update()
+	if not enabled and map in tex_layer.enabled_maps:
+		tex_layer.enabled_maps.erase(map)
+	elif enabled:
+		tex_layer.enabled_maps[map] = true
+	tex_layer.mark_dirty(true)
+	(((tex_layer.parent as LayerTexture).parent as MaterialLayer).\
+			get_layer_material_in() as LayerMaterial).update()
 	
-	_silently_set_button_pressed(buttons[map], true)
+	_silently_set_button_pressed(buttons[map], enabled)
+	emit_signal("maps_changed")

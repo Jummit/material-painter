@@ -10,7 +10,7 @@ to retrieve a list of `Properties` for the `LayerPropertyPanel`.
 # warning-ignore-all:unused_class_variable
 var name : String
 var visible : bool
-var enabled_maps : Dictionary
+var enabled_maps : Dictionary setget set_enabled_maps
 var opacities : Dictionary
 var blend_modes : Dictionary
 var settings := {}
@@ -31,6 +31,11 @@ func _init(data := {}) -> void:
 	if not name:
 		name = get_name()
 	visible = data.get("visible", true)
+
+
+func set_enabled_maps(to):
+	print(to)
+	enabled_maps = to
 
 
 func serialize() -> Dictionary:

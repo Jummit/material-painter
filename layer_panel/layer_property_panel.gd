@@ -4,7 +4,7 @@ extends "res://addons/property_panel/property_panel.gd"
 The `PropertyPanel` that shows the properties of the selected layer
 """
 
-var editing_layer : Reference
+var editing_layer : Reference setget set_editing_layer
 
 # warning-ignore:unsafe_property_access
 onready var undo_redo : UndoRedo = find_parent("Main").undo_redo
@@ -17,6 +17,10 @@ const LayerMaterial = preload("res://material/layer_material.gd")
 const LayerTexture = preload("res://material/layer_texture.gd")
 
 func _on_LayerTree_layer_selected(layer : Reference) -> void:
+	set_editing_layer(layer)
+
+
+func set_editing_layer(layer : Reference) -> void:
 	editing_layer = layer
 	var mat_layer := layer as MaterialLayer
 	var tex_layer := layer as TextureLayer
@@ -70,3 +74,7 @@ func set_value_on_layer(layer : Reference, property : String, value) -> void:
 		mat_layer.settings[property] = value
 	elif tex_layer:
 		tex_layer.settings[property] = value
+
+
+func _on_TextureMapButtons_maps_changed() -> void:
+	set_editing_layer(editing_layer)

@@ -22,10 +22,26 @@ const TextureAsset = preload("res://asset/assets/texture_asset.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 
 func _init(data := {}).(data) -> void:
-	pass
+	for map in enabled_maps:
+		if settings.get(map + "_texture"):
+			var image := load_png(settings[map + "_texture"])
+			settings[map + "_texture"] = image
+
+
+func load_png(path : String) -> ImageTexture:
+	var image := Image.new()
+	image.load(path)
+	var texture := ImageTexture.new()
+	texture.create_from_image(image)
+	return texture
+
 
 func serialize() -> Dictionary:
 	var data := .serialize()
+	for map in enabled_maps:
+		if settings.get(map + "_texture"):
+			var path : String = settings[map + "_texture"].path
+			settings[map + "_texture"] = path
 	return data
 
 

@@ -55,7 +55,6 @@ func _init(data := {}) -> void:
 
 func serialize() -> Dictionary:
 	var data := {
-		mask = mask.serialize(),
 		main = main.serialize(),
 		name = name,
 		enabled_maps = enabled_maps,
@@ -64,6 +63,8 @@ func serialize() -> Dictionary:
 		visible = visible,
 		is_folder = is_folder,
 	}
+	if mask:
+		data.mask = mask.serialize()
 	for layer in layers:
 		data.layers.append(layer.serialize())
 	return data

@@ -1,12 +1,37 @@
 extends ConfirmationDialog
 
 const PropertyPanel = preload("res://addons/property_panel/property_panel.gd")
+const KeymapScreen = preload("res://addons/third_party/keymap_screen/keymap_screen.gd")
 
 onready var settings_properties : PropertyPanel = $SettingsProperties
+onready var keymap_screen : KeymapScreen = $KeymapScreen
 
 func _ready() -> void:
 # warning-ignore:unsafe_property_access
 	settings_properties.properties = Settings.settings
+	keymap_screen.keymap = {
+		File = {
+			"New File": "new_file",
+			"Open File": "open_file",
+			"Save File": "save_file",
+			"Save As": "save_as",
+		},
+		Project = {
+			"Export": "export",
+			"Load Mesh": "load_mesh",
+			"Bake Mesh Maps": "bake_mesh_maps",
+		},
+		Edit = {
+			"Undo": "undo",
+			"Redo": "redo",
+		},
+		Application = {
+			"Quit": "quit",
+			"Fullscreen": "fullscreen",
+			"View Results": "view_results",
+			"Settings": "settings",
+		}
+	}
 
 
 func _on_EditMenuButton_settings_pressed() -> void:
