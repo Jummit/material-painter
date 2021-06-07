@@ -359,6 +359,7 @@ __meta__ = {
 [node name="MaterialOptionButton" type="OptionButton" parent="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/TabContainer/LayersWindow/LayerTreeToolbar"]
 margin_right = 189.0
 margin_bottom = 29.0
+hint_tooltip = "Select the layer material to edit"
 size_flags_horizontal = 3
 size_flags_vertical = 3
 disabled = true
@@ -368,6 +369,7 @@ script = ExtResource( 24 )
 margin_left = 193.0
 margin_right = 212.0
 margin_bottom = 29.0
+hint_tooltip = "Add a new material layer to the selected folder or the current layer material"
 disabled = true
 text = "+"
 
@@ -375,6 +377,7 @@ text = "+"
 margin_left = 216.0
 margin_right = 242.0
 margin_bottom = 29.0
+hint_tooltip = "Create a new material folder"
 disabled = true
 icon = ExtResource( 14 )
 
@@ -382,6 +385,7 @@ icon = ExtResource( 14 )
 margin_left = 246.0
 margin_right = 262.0
 margin_bottom = 29.0
+hint_tooltip = "Delete the selected material or texture layer"
 disabled = true
 text = "-"
 
