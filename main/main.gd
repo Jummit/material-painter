@@ -34,16 +34,6 @@ var NO_MASK := LayerTexture.new()
 
 const LAYOUTS_FOLDER := "user://layouts"
 
-var file_menu_actions := [
-	"new_file",
-	"open_file",
-	"save_file",
-	"save_as",
-	"export",
-	"load_mesh",
-	"quit",
-]
-
 enum FILE_MENU_ITEMS {
 	NEW,
 	OPEN,
@@ -54,7 +44,6 @@ enum FILE_MENU_ITEMS {
 	QUIT,
 }
 
-const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
 const SaveFile = preload("res://main/project_file.gd")
 const MaterialLayer = preload("res://material/material_layer.gd")
 const LayerMaterial = preload("res://material/layer_material.gd")
@@ -70,8 +59,10 @@ const AssetBrowser = preload("res://asset/asset_browser.gd")
 const ViewMenuButton = preload("res://main/view_menu_button.gd")
 const SmartMaterialAsset = preload("res://asset/assets/smart_material_asset.gd")
 const LayerTexture = preload("res://material/layer_texture.gd")
+const KeymapScreen = preload("res://addons/third_party/keymap_screen/keymap_screen.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/FileMenuButton
+onready var edit_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/EditMenuButton
 onready var about_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/AboutMenuButton
 onready var view_menu_button : ViewMenuButton = $VBoxContainer/Panel/TopButtons/ViewMenuButton
 onready var file_dialog : FileDialog = $FileDialog
@@ -91,6 +82,9 @@ onready var triplanar_texture_generator : Viewport = $TriplanarTextureGenerator
 onready var normal_map_generation_viewport : Viewport = $NormalMapGenerationViewport
 onready var layer_blend_viewport_manager : Node = $LayerBlendViewportManager
 onready var asset_store : AssetStore = $AssetStore
+onready var keymap_screen : KeymapScreen = $SettingsDialog/TabContainer/KeymapScreen
+
+const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
 
 func _ready() -> void:
 	context = MaterialGenerationContext.new(layer_blend_viewport_manager,
@@ -106,6 +100,7 @@ func _ready() -> void:
 	about_menu_button.get_popup().connect("id_pressed", self,
 			"_on_AboutMenuButton_id_pressed")
 	
+	keymap_screen.load_keymap("user://keymap.json")
 	initialise_layouts()
 	start_empty_project()
 
@@ -336,13 +331,18 @@ func _on_ViewMenuButton_save_layout_selected() -> void:
 
 
 func _on_QuitConfirmationDialog_custom_action(_action : String) -> void:
-	get_tree().quit()
+	do_quit()
 
 
 func _on_QuitConfirmationDialog_confirmed() -> void:
 	var result = request_save_file()
 	if result is GDScriptFunctionState:
 		yield(result, "completed")
+	do_quit()
+
+
+func do_quit():
+	keymap_screen.save_keymap("user://keymap.json")
 	get_tree().quit()
 
 
@@ -534,8 +534,38 @@ func _on_ToolButtonContainer_tool_selected(selected : int) -> void:
 
 
 func _on_KeymapScreen_keymap_changed() -> void:
-	var popup := file_menu_button.get_popup()
-	for id in file_menu_actions.size():
-		var actions := InputMap.get_action_list(file_menu_actions[id])
-		if actions.size():
-			popup.set_item_shortcut(id, actions.front())
+	var shortcuts := {
+		file_menu_button : [
+			"new_file",
+			"open_file",
+			"save_file",
+			"save_as",
+			"export",
+			"load_mesh",
+			"quit",
+		],
+		edit_menu_button : [
+			"bake_mesh_maps",
+			"settings",
+		],
+		view_menu_button : [
+			"view_results",
+			"fullscreen",
+			"update_icons"
+		],
+		about_menu_button : [
+			"about",
+			"github",
+			"docs",
+			"licenses",
+			"issues"
+		]
+	}
+	for menu in shortcuts:
+		var popup : PopupMenu = menu.get_popup()
+		for id in shortcuts[menu].size():
+			var actions := InputMap.get_action_list(shortcuts[menu][id])
+			if actions.size():
+				var shortcut := ShortCut.new()
+				shortcut.shortcut = actions.front()
+				popup.set_item_shortcut(id, shortcut)

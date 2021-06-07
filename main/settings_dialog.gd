@@ -3,12 +3,15 @@ extends ConfirmationDialog
 const PropertyPanel = preload("res://addons/property_panel/property_panel.gd")
 const KeymapScreen = preload("res://addons/third_party/keymap_screen/keymap_screen.gd")
 
-onready var settings_properties : PropertyPanel = $SettingsProperties
-onready var keymap_screen : KeymapScreen = $KeymapScreen
+onready var settings_properties : PropertyPanel = $TabContainer/SettingsProperties
+onready var keymap_screen : KeymapScreen = $TabContainer/KeymapScreen
+onready var tab_container : TabContainer = $TabContainer
 
 func _ready() -> void:
 # warning-ignore:unsafe_property_access
 	settings_properties.properties = Settings.settings
+	tab_container.set_tab_title(0, "Settings")
+	tab_container.set_tab_title(1, "Shortcuts")
 	keymap_screen.keymap = {
 		File = {
 			"New File": "new_file",
@@ -30,6 +33,13 @@ func _ready() -> void:
 			"Fullscreen": "fullscreen",
 			"View Results": "view_results",
 			"Settings": "settings",
+		},
+		About = {
+			"About" : "about",
+			"Github" : "github",
+			"Open Documentation" : "docs",
+			"View Licenses" : "licenses",
+			"Report Issue" : "issues",
 		}
 	}
 

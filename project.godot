@@ -124,6 +124,30 @@ settings={
 "deadzone": 0.5,
 "events": [  ]
 }
+update_icons={
+"deadzone": 0.5,
+"events": [  ]
+}
+about={
+"deadzone": 0.5,
+"events": [  ]
+}
+github={
+"deadzone": 0.5,
+"events": [  ]
+}
+docs={
+"deadzone": 0.5,
+"events": [  ]
+}
+licenses={
+"deadzone": 0.5,
+"events": [  ]
+}
+issues={
+"deadzone": 0.5,
+"events": [  ]
+}
 
 [logging]
 
