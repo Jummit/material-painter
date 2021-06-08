@@ -33,9 +33,7 @@ func add_layer(layer) -> void:
 
 func get_result(context : MaterialGenerationContext, map : String,
 		icon := false) -> Texture:
-	var blending_layers := [
-		BlendingLayer.new("vec4(1.0)")
-	]
+	var blending_layers := []
 	for layer in layers:
 		var blending_layer = layer.get_blending_layer(context, map)
 		if blending_layer is GDScriptFunctionState:

@@ -440,6 +440,8 @@ func _get_layer_texture_icon(layer : LayerTexture) -> Texture:
 		var result = layer.get_icon(_selected_map, context)
 		while result is GDScriptFunctionState:
 			result = yield(result, "completed")
+		if not result:
+			return preload("res://main/empty_layer_icon.png")
 		return result
 	return layer.icons.get(_selected_map)
 
@@ -450,6 +452,8 @@ func _get_texture_layer_icon(layer : TextureLayer) -> Texture:
 		result = layer.get_icon(_selected_map, context)
 		if result is GDScriptFunctionState:
 			yield(result, "completed")
+		if not result:
+			return preload("res://main/empty_layer_icon.png")
 		return result
 	return layer.icons[_selected_map]
 
