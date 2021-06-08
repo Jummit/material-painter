@@ -101,6 +101,14 @@ func get_selected_layer():
 	return get_selected().get_meta("layer")
 
 
+func expand_layer(layer):
+	_layer_states[layer] = LayerState.MAP_EXPANDED
+
+
+func collapse_layer(layer):
+	_layer_states[layer] = LayerState.CLOSED
+
+
 func _on_cell_selected() -> void:
 	_emit_select_signal(get_selected().get_meta("layer"))
 

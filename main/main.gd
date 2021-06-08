@@ -238,9 +238,11 @@ func _on_AddLayerPopupMenu_layer_selected(layer : Reference) -> void:
 		onto = selected_layer.parent
 	undo_redo.add_do_method(current_layer_material, "add_layer",
 			new_layer, onto)
-	undo_redo.add_do_method(layer_tree, "reload")
 	undo_redo.add_undo_method(current_layer_material, "delete_layer",
 			new_layer)
+	undo_redo.add_do_method(layer_tree, "expand_layer", selected_layer)
+	undo_redo.add_undo_method(layer_tree, "collapse_layer", selected_layer)
+	undo_redo.add_do_method(layer_tree, "reload")
 	undo_redo.add_undo_method(layer_tree, "reload")
 	undo_redo.commit_action()
 
