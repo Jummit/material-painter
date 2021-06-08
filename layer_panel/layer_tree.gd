@@ -19,6 +19,7 @@ var project : ProjectFile
 var update_icons := true
 var context : MaterialGenerationContext
 
+var _selected_map := "albedo"
 var _root : TreeItem
 var _lastly_edited_layer : TreeItem
 var _layer_states : Dictionary
@@ -373,14 +374,13 @@ func _setup_material_layer_item(layer : MaterialLayer, parent_item : TreeItem,
 		item.set_tooltip(1, "%s (contains %s layers)" % [layer.name,
 				layer.layers.size()])
 	else:
-#		var icon = _get_layer_texture_icon(layer.main)
-#		if icon is GDScriptFunctionState:
-#			icon = yield(icon, "completed")
-#		if not is_instance_valid(item):
-#			return
-#		if icon is Texture:
-#			item.add_button(0, icon, Buttons.RESULT)
-		item.add_button(0, preload("res://icons/folder.svg"), Buttons.RESULT)
+		var icon = _get_layer_texture_icon(layer.main)
+		while icon is GDScriptFunctionState:
+			icon = yield(icon, "completed")
+		if not is_instance_valid(item):
+			return
+		if icon is Texture:
+			item.add_button(0, icon, Buttons.RESULT)
 
 
 func get_selected_layer_texture(layer : MaterialLayer) -> LayerTexture:
@@ -429,18 +429,17 @@ func _select_item(item : TreeItem) -> void:
 
 func _get_layer_texture_icon(layer : LayerTexture) -> Texture:
 	if update_icons and not _painting:
-		var result
-		result = layer.get_icon("albedo", context)
-		if result is GDScriptFunctionState:
-			yield(result, "completed")
+		var result = layer.get_icon(_selected_map, context)
+		while result is GDScriptFunctionState:
+			result = yield(result, "completed")
 		return result
-	return layer.icons.get("albedo")
+	return layer.icons.get(_selected_map)
 
 
 func _get_texture_layer_icon(layer : TextureLayer) -> Texture:
 	if update_icons and not _painting:
 		var result
-		result = layer.get_icon("albedo", context)
+		result = layer.get_icon(_selected_map, context)
 		if result is GDScriptFunctionState:
 			yield(result, "completed")
 		return result
@@ -462,3 +461,8 @@ func _on_Main_current_layer_material_changed(to : LayerMaterial,
 
 func _on_Main_context_changed(to : MaterialGenerationContext) -> void:
 	context = to
+
+
+func _on_MapOptionButton_map_selected(map : String) -> void:
+	_selected_map = map
+	reload()

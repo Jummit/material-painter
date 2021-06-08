@@ -2,8 +2,8 @@ extends HBoxContainer
 
 const KeymapScreen = preload("res://addons/third_party/keymap_screen/keymap_screen.gd")
 
-onready var keymap_screen : KeymapScreen = $"../../../../../../../../SettingsDialog/TabContainer/KeymapScreen"
-onready var material_option_button : OptionButton = $MaterialOptionButton
+onready var keymap_screen : KeymapScreen = $"../../../../../../../../../SettingsDialog/TabContainer/KeymapScreen"
+onready var material_option_button : OptionButton = $"../MaterialOptionButton"
 onready var add_folder_button : Button = $AddFolderButton
 onready var add_layer_button : Button = $AddLayerButton
 

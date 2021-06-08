@@ -1,6 +1,5 @@
 extends Reference
 
-# warning-ignore:unused_class_variable
 var layers : Array
 
 var results : Dictionary
@@ -33,7 +32,9 @@ func add_layer(layer) -> void:
 
 func get_result(context : MaterialGenerationContext, map : String,
 		icon := false) -> Texture:
-	var blending_layers := []
+	var blending_layers := [
+		BlendingLayer.new("vec4(1.0)")
+	]
 	for layer in layers:
 		var blending_layer = layer.get_blending_layer(context, map)
 		if blending_layer is GDScriptFunctionState:
@@ -67,7 +68,10 @@ func mark_dirty(shader_dirty := false) -> void:
 
 func get_icon(map : String, context : MaterialGenerationContext) -> Texture:
 	if not map in icons:
-		icons[map] = get_result(context, map, true)
+		var result = get_result(context, map, true)
+		while result is GDScriptFunctionState:
+			result = yield(result, "completed")
+		icons[map] = result
 	return icons[map]
 
 
