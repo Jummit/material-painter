@@ -27,12 +27,15 @@ func _ready() -> void:
 		Edit = {
 			"Undo": "undo",
 			"Redo": "redo",
+			"Add Layer": "add_layer",
+			"Add Folder": "add_folder",
 		},
 		Application = {
 			"Quit": "quit",
 			"Fullscreen": "fullscreen",
 			"View Results": "view_results",
 			"Settings": "settings",
+			"Select Layer Material": "select_material",
 		},
 		About = {
 			"About" : "about",

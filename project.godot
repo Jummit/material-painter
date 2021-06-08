@@ -148,6 +148,22 @@ issues={
 "deadzone": 0.5,
 "events": [  ]
 }
+half_res={
+"deadzone": 0.5,
+"events": [  ]
+}
+select_material={
+"deadzone": 0.5,
+"events": [  ]
+}
+add_layer={
+"deadzone": 0.5,
+"events": [  ]
+}
+add_folder={
+"deadzone": 0.5,
+"events": [  ]
+}
 
 [logging]
 

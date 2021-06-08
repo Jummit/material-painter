@@ -677,6 +677,10 @@ __meta__ = {
 [node name="TabContainer" type="TabContainer" parent="SettingsDialog"]
 anchor_right = 1.0
 anchor_bottom = 1.0
+margin_left = 8.0
+margin_top = 8.0
+margin_right = -8.0
+margin_bottom = -45.0
 __meta__ = {
 "_edit_use_anchors_": false
 }
@@ -684,17 +688,13 @@ __meta__ = {
 [node name="SettingsProperties" parent="SettingsDialog/TabContainer" instance=ExtResource( 17 )]
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 8.0
-margin_top = 8.0
-margin_right = 8.0
-margin_bottom = -14.0
+margin_top = 22.0
+margin_right = 0.0
+margin_bottom = 0.0
 
 [node name="KeymapScreen" parent="SettingsDialog/TabContainer" instance=ExtResource( 32 )]
 visible = false
-margin_left = 6.0
-margin_top = 9.0
-margin_right = 6.0
-margin_bottom = -13.0
+margin_top = 22.0
 
 [node name="MeshMapsGenerator" parent="." instance=ExtResource( 9 )]
 
@@ -782,6 +782,5 @@ script = ExtResource( 30 )
 [connection signal="custom_action" from="QuitConfirmationDialog" to="." method="_on_QuitConfirmationDialog_custom_action"]
 [connection signal="about_to_show" from="SettingsDialog" to="SettingsDialog" method="_on_about_to_show"]
 [connection signal="confirmed" from="SettingsDialog" to="SettingsDialog" method="_on_confirmed"]
-[connection signal="keymap_changed" from="SettingsDialog/TabContainer/KeymapScreen" to="." method="_on_KeymapScreen_keymap_changed"]
 [connection signal="asset_loaded" from="AssetStore" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/TabContainer/LayersWindow/LayerTree/LayerPopupMenu" method="_on_AssetStore_asset_loaded"]
 [connection signal="asset_unloaded" from="AssetStore" to="VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/TabContainer/LayersWindow/LayerTree/LayerPopupMenu" method="_on_AssetStore_asset_unloaded"]

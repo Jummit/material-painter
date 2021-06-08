@@ -100,6 +100,33 @@ func _ready() -> void:
 	about_menu_button.get_popup().connect("id_pressed", self,
 			"_on_AboutMenuButton_id_pressed")
 	
+	keymap_screen.register_listeners({
+		file_menu_button : [
+			"new_file",
+			"open_file",
+			"save_file",
+			"save_as",
+			"export",
+			"load_mesh",
+			"quit",
+		],
+		edit_menu_button : [
+			"bake_mesh_maps",
+			"settings",
+		],
+		view_menu_button : [
+			"view_results",
+			"fullscreen",
+			"update_icons"
+		],
+		about_menu_button : [
+			"about",
+			"github",
+			"docs",
+			"licenses",
+			"issues"
+		]
+	})
 	keymap_screen.load_keymap("user://keymap.json")
 	initialise_layouts()
 	start_empty_project()
@@ -531,41 +558,3 @@ func set_current_layer_material(to) -> void:
 func _on_ToolButtonContainer_tool_selected(selected : int) -> void:
 	selected_tool = selected
 	emit_signal("selected_tool_changed", selected)
-
-
-func _on_KeymapScreen_keymap_changed() -> void:
-	var shortcuts := {
-		file_menu_button : [
-			"new_file",
-			"open_file",
-			"save_file",
-			"save_as",
-			"export",
-			"load_mesh",
-			"quit",
-		],
-		edit_menu_button : [
-			"bake_mesh_maps",
-			"settings",
-		],
-		view_menu_button : [
-			"view_results",
-			"fullscreen",
-			"update_icons"
-		],
-		about_menu_button : [
-			"about",
-			"github",
-			"docs",
-			"licenses",
-			"issues"
-		]
-	}
-	for menu in shortcuts:
-		var popup : PopupMenu = menu.get_popup()
-		for id in shortcuts[menu].size():
-			var actions := InputMap.get_action_list(shortcuts[menu][id])
-			if actions.size():
-				var shortcut := ShortCut.new()
-				shortcut.shortcut = actions.front()
-				popup.set_item_shortcut(id, shortcut)
