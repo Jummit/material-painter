@@ -443,7 +443,7 @@ func _get_texture_layer_icon(layer : TextureLayer) -> Texture:
 		if result is GDScriptFunctionState:
 			yield(result, "completed")
 		return result
-	return layer.icon
+	return layer.icons[_selected_map]
 
 
 func _on_ViewMenuButton_update_icons_toggled() -> void:

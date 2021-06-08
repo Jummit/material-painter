@@ -18,9 +18,9 @@ var settings := {}
 var parent : Reference
 var dirty := true
 var shader_dirty := true
-var icon_dirty := true
+var icons_dirty := true
 
-var icon : Texture
+var icons : Dictionary
 
 const Layer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").Layer
 const MaterialGenerationContext = preload("res://main/material_generation_context.gd")
@@ -34,7 +34,6 @@ func _init(data := {}) -> void:
 
 
 func set_enabled_maps(to):
-	print(to)
 	enabled_maps = to
 
 
@@ -50,7 +49,7 @@ func serialize() -> Dictionary:
 
 func mark_dirty(shader_too := false) -> void:
 	dirty = true
-	icon_dirty = true
+	icons_dirty = true
 # warning-ignore:unsafe_method_access
 	parent.mark_dirty(shader_too)
 	shader_dirty = shader_dirty or shader_too
@@ -61,14 +60,18 @@ func get_type() -> String:
 
 
 func get_icon(map : String, context : MaterialGenerationContext) -> Texture:
-	if not icon or icon_dirty:
+	if not map in icons or icons_dirty:
 		# Layer could be null.
 		var layer := get_blending_layer(context, map)
 		if not layer:
 			return null
-		context.blending_viewport_manager.blend([layer], context.icon_size)
-		icon_dirty = false
-	return icon
+		var result = context.blending_viewport_manager.blend([layer],
+				context.icon_size)
+		while result is GDScriptFunctionState:
+			result = yield(result, "completed")
+		icons[map] = result
+		icons_dirty = false
+	return icons[map]
 
 
 func get_name() -> String:
