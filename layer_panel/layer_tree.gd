@@ -170,10 +170,10 @@ func _draw_layer_item(item : TreeItem, item_rect : Rect2) -> void:
 	var state : int = _layer_states[layer]
 	if not state in [LayerState.MAP_EXPANDED, LayerState.MASK_EXPANDED]:
 		return
-	var icon_rect := Rect2(Vector2(64, item_rect.position.y), Vector2(32, 32))
+	var icon_rect := Rect2(Vector2(66, item_rect.position.y), Vector2(32, 32))
 	var mat_layer := layer as MaterialLayer
 	if mat_layer and mat_layer.mask and state == LayerState.MASK_EXPANDED:
-		icon_rect.position.x -= 46
+		icon_rect.position.x -= 36
 	draw_rect(icon_rect, Color.dodgerblue, false, 2.0)
 
 
@@ -448,14 +448,13 @@ func _get_layer_texture_icon(layer : LayerTexture) -> Texture:
 
 func _get_texture_layer_icon(layer : TextureLayer) -> Texture:
 	if update_icons and not _painting:
-		var result
-		result = layer.get_icon(_selected_map, context)
+		var result = layer.get_icon(_selected_map, context)
 		if result is GDScriptFunctionState:
 			yield(result, "completed")
 		if not result:
 			return preload("res://main/empty_layer_icon.png")
 		return result
-	return layer.icons[_selected_map]
+	return layer.icons.get(_selected_map)
 
 
 func _on_ViewMenuButton_update_icons_toggled() -> void:

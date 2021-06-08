@@ -92,9 +92,11 @@ func update(context : MaterialGenerationContext) -> void:
 	if not dirty:
 		return
 	if mask:
-		yield(mask.update(context), "completed")
+		var result = mask.update(context)
+		while result is GDScriptFunctionState:
+			result = yield(result, "completed")
 	var result = main.update(context)
-	if result is GDScriptFunctionState:
+	while result is GDScriptFunctionState:
 		yield(result, "completed")
 	if is_folder:
 		for layer in layers:

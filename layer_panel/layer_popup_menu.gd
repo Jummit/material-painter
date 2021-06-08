@@ -66,11 +66,11 @@ func _on_id_pressed(id : int) -> void:
 		Items.SAVE_TO_LIBRARY:
 			emit_signal("layer_saved")
 		Items.ADD_EMPTY_MASK:
-			emit_signal("mask_added", [])
+			emit_signal("mask_added", LayerTexture.new())
 		Items.ADD_BLACK_MASK:
-			emit_signal("mask_added", [PaintTextureLayer.new()])
+			emit_signal("mask_added", LayerTexture.new())
 		Items.ADD_WHITE_MASK:
-			emit_signal("mask_added", [PaintTextureLayer.new()])
+			emit_signal("mask_added", LayerTexture.new())
 		Items.REMOVE_MASK:
 			emit_signal("mask_removed")
 		Items.COPY_MASK:
