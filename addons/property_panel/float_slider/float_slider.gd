@@ -27,6 +27,8 @@ var _clicked := false
 var _text_editing := false
 
 func _input(event : InputEvent) -> void:
+	if not is_visible_in_tree():
+		return
 	if event is InputEventMouseMotion:
 		update()
 	var button_ev := event as InputEventMouseButton
