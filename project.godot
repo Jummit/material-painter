@@ -164,6 +164,10 @@ add_folder={
 "deadzone": 0.5,
 "events": [  ]
 }
+select_map={
+"deadzone": 0.5,
+"events": [  ]
+}
 
 [logging]
 

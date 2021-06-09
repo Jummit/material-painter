@@ -36,6 +36,7 @@ func _ready() -> void:
 			"View Results": "view_results",
 			"Settings": "settings",
 			"Select Layer Material": "select_material",
+			"Select Texture Map": "select_map",
 		},
 		About = {
 			"About" : "about",
