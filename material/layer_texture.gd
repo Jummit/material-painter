@@ -78,4 +78,4 @@ func get_icon(map : String, context : MaterialGenerationContext) -> Texture:
 
 
 func duplicate() -> Object:
-	return get_script().new(serialize())
+	return get_script().new(serialize().duplicate(true))

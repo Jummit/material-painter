@@ -150,4 +150,4 @@ func set_layers(to):
 
 
 func duplicate() -> Object:
-	return get_script().new(serialize())
+	return get_script().new(serialize().duplicate(true))
