@@ -69,8 +69,8 @@ func _gui_input(event : InputEvent) -> void:
 		var layer = _get_layer_at_position(button_ev.position)
 		layer_popup_menu.rect_global_position = button_ev.global_position
 		layer_popup_menu.texture_layer = layer
-		if get_selected_layer() is MaterialLayer:
-			layer_popup_menu.material_layer = get_selected_layer()
+		if layer is MaterialLayer:
+			layer_popup_menu.material_layer = layer
 		layer_popup_menu.popup()
 	elif button_ev and button_ev.button_index == BUTTON_LEFT and\
 			button_ev.pressed:
