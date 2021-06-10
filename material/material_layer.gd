@@ -97,7 +97,7 @@ func update(context : MaterialGenerationContext) -> void:
 			result = yield(result, "completed")
 	var result = main.update(context)
 	while result is GDScriptFunctionState:
-		yield(result, "completed")
+		result = yield(result, "completed")
 	if is_folder:
 		for layer in layers:
 			result = layer.update(context)

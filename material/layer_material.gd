@@ -74,7 +74,7 @@ func update() -> void:
 	
 	for layer in layers:
 		var result = layer.update(context)
-		if result is GDScriptFunctionState:
+		while result is GDScriptFunctionState:
 			result = yield(result, "completed")
 	
 	var generated_height := false
@@ -99,9 +99,11 @@ func update() -> void:
 			if map != "normal" or not generated_height:
 				results.erase(map)
 			continue
-		var result : Texture = yield(context.blending_viewport_manager.blend(
+		var result = yield(context.blending_viewport_manager.blend(
 				blending_layers, context.result_size,
 				get_instance_id() + map.hash(), shader_dirty), "completed")
+		while result is GDScriptFunctionState:
+			result = yield(result, "completed")
 		# TODO: use weakrefs instead of instance hashes to remove viewports
 		# when the material gets garbage collected.
 		
