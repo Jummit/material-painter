@@ -336,11 +336,19 @@ func _get_layers_of_drop_data(data, _position : Vector2) -> Dictionary:
 
 func set_layer_material(to : LayerMaterial) -> void:
 	layer_material = to
+	if not layer_material.is_connected("results_changed", self,
+			"_on_LayerMaterial_results_changed"):
+		layer_material.connect("results_changed", self,
+				"_on_LayerMaterial_results_changed")
 	var selected_layer = get_selected_layer()
 	clear()
 	_root = create_item()
 	for material_layer in layer_material.layers:
 		_setup_material_layer_item(material_layer, _root, selected_layer)
+
+
+func _on_LayerMaterial_results_changed():
+	reload()
 
 
 func _setup_material_layer_item(layer : MaterialLayer, parent_item : TreeItem,
@@ -412,7 +420,7 @@ func _setup_texture_layer_item(layer : TextureLayer, parent_item : TreeItem,
 	item.add_button(1, _get_visibility_icon(layer_visible), Buttons.VISIBILITY)
 	
 	var icon = _get_texture_layer_icon(layer)
-	if icon is GDScriptFunctionState:
+	while icon is GDScriptFunctionState:
 		icon = yield(icon, "completed")
 	if not is_instance_valid(item):
 		return
@@ -449,8 +457,8 @@ func _get_layer_texture_icon(layer : LayerTexture) -> Texture:
 func _get_texture_layer_icon(layer : TextureLayer) -> Texture:
 	if update_icons and not _painting:
 		var result = layer.get_icon(_selected_map, context)
-		if result is GDScriptFunctionState:
-			yield(result, "completed")
+		while result is GDScriptFunctionState:
+			result = yield(result, "completed")
 		if not result:
 			return preload("res://main/empty_layer_icon.png")
 		return result
