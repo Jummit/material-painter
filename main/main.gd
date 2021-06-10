@@ -83,6 +83,7 @@ onready var normal_map_generation_viewport : Viewport = $NormalMapGenerationView
 onready var layer_blend_viewport_manager : Node = $LayerBlendViewportManager
 onready var asset_store : AssetStore = $AssetStore
 onready var keymap_screen : KeymapScreen = $SettingsDialog/TabContainer/KeymapScreen
+onready var load_file_error_dialog : AcceptDialog = $LoadFileErrorDialog
 
 const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
 
@@ -154,8 +155,14 @@ func _on_FileDialog_file_selected(path : String) -> void:
 			match path.get_extension():
 				"mproject":
 					var file := File.new()
-					file.open(path, File.READ)
-					var project := SaveFile.new(parse_json(file.get_as_text()))
+					if file.open(path, File.READ) != OK:
+						return
+					var result = JSON.parse(file.get_as_text())
+					if result.error:
+						load_file_error_dialog.dialog_text = "Can't parse json: Content is corrupted.\n At line %s:\n%s" % [result.error_line, result.error_string]
+						load_file_error_dialog.popup_centered()
+						return
+					var project := SaveFile.new(result.result)
 					file.close()
 					project.path = path
 					set_current_file(project)

@@ -638,6 +638,20 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
+[node name="LoadFileErrorDialog" type="AcceptDialog" parent="."]
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -149.0
+margin_top = -37.0
+margin_right = 149.0
+margin_bottom = 37.0
+window_title = "Error Loading File"
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
 [node name="BakeErrorDialog" type="AcceptDialog" parent="."]
 anchor_left = 0.5
 anchor_top = 0.5
