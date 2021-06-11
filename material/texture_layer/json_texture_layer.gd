@@ -34,7 +34,6 @@ func set_file(to):
 	if not file:
 		return
 	var read_file := File.new()
-	print(file)
 	read_file.open(file, File.READ)
 	layer_data = parse_json(read_file.get_as_text())
 	read_file.close()
