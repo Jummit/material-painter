@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 env:
-  GODOT_VERSION: 3.2.3
+  GODOT_VERSION: 3.3.2
   NAME: material_painter
   BUTLER_API_KEY: ${{ secrets.BUTLER_API_KEY }}
   ITCHIO_GAME: material-painter
@@ -19,7 +19,7 @@ jobs:
     name: Generate Releases
     runs-on: ubuntu-latest
     container:
-      image: docker://barichello/godot-ci:3.2.3
+      image: docker://barichello/godot-ci:3.3.2
     steps:
       - name: Checkout
         uses: actions/checkout@v1
