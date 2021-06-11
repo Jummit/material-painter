@@ -1,6 +1,5 @@
-[gd_scene load_steps=7 format=2]
+[gd_scene load_steps=6 format=2]
 
-[ext_resource path="res://misc/cube.obj" type="ArrayMesh" id=1]
 [ext_resource path="res://addons/painter/shaders/seams.shader" type="Shader" id=3]
 [ext_resource path="res://addons/painter/painter.gd" type="Script" id=4]
 [ext_resource path="res://addons/painter/shaders/view_to_texture.material" type="Material" id=5]
@@ -42,8 +41,6 @@ current = true
 
 [node name="MeshInstance" type="MeshInstance" parent="TextureToViewViewport"]
 material_override = ExtResource( 6 )
-mesh = ExtResource( 1 )
-material/0 = null
 
 [node name="SeamsViewport" type="Viewport" parent="."]
 size = Vector2( 1024, 1024 )
