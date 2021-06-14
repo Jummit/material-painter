@@ -44,8 +44,8 @@ func get_thumbnail_for_smart_material(material : MaterialLayer,
 	layer_mat.context.mesh = mesh
 	layer_mat.add_layer(material, layer_mat, -1, false)
 	var result = layer_mat.update()
-	if result is GDScriptFunctionState:
-		yield(result, "completed")
+	while result is GDScriptFunctionState:
+		result = yield(result, "completed")
 	model.material_override = layer_mat.get_material()
 	material_viewport.size = result_size
 	material_viewport.render_target_update_mode = Viewport.UPDATE_ONCE

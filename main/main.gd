@@ -372,8 +372,8 @@ func _on_QuitConfirmationDialog_custom_action(_action : String) -> void:
 
 func _on_QuitConfirmationDialog_confirmed() -> void:
 	var result = request_save_file()
-	if result is GDScriptFunctionState:
-		yield(result, "completed")
+	while result is GDScriptFunctionState:
+		result = yield(result, "completed")
 	do_quit()
 
 
@@ -547,11 +547,11 @@ func set_current_file(save_file : SaveFile) -> void:
 	for layer_material in current_file.layer_materials:
 		layer_material.context = context
 		var result = layer_material.update()
-		if result is GDScriptFunctionState:
-			yield(result, "completed")
+		while result is GDScriptFunctionState:
+			result = yield(result, "completed")
 	var result = load_mesh(current_file.model_path)
-	if result is GDScriptFunctionState:
-		yield(result, "completed")
+	while result is GDScriptFunctionState:
+		result = yield(result, "completed")
 	set_current_layer_material(current_file.layer_materials.front())
 	emit_signal("context_changed", context)
 	emit_signal("current_file_changed", current_file)

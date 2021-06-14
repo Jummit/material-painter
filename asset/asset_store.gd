@@ -88,8 +88,8 @@ func load_asset(path : String, type : GDScript) -> void:
 		var result = thumbnail_renderer.call(
 				"get_thumbnail_for_" + asset.get_type(), asset.data,
 				Vector2(128, 128))
-		if result is GDScriptFunctionState:
-			yield(result, "completed")
+		while result is GDScriptFunctionState:
+			result = yield(result, "completed")
 		thumbnail = result
 		thumbnail.get_data().save_png(thumbnail_path)
 	thumbnails[path] = thumbnail

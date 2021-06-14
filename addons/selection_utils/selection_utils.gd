@@ -42,7 +42,7 @@ onready var screen_viewport_texture : TextureRect = $PixelSampleViewport/ScreenV
 func set_mesh(to : Mesh, surface : int) -> void:
 	for selection_type in _selection_types:
 		var result = _selection_types[selection_type].prepare_mesh(to, surface)
-		if result is GDScriptFunctionState:
+		while result is GDScriptFunctionState:
 			result = yield(result, "completed")
 		_prepared_meshes[selection_type] = result
 
