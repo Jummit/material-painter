@@ -72,23 +72,23 @@ func update() -> void:
 	
 	busy = true
 	
-	for layer in layers:
-		var result = layer.update(context)
-		while result is GDScriptFunctionState:
-			result = yield(result, "completed")
-	
 	var generated_height := false
 	for map in Constants.TEXTURE_MAP_TYPES:
 		var blending_layers := []
 		for layer in layers:
-			if not map in layer.main.results or not layer.main.results[map] or\
-					not layer.visible:
+			if not layer.visible:
 				continue
-			var map_result : Texture = layer.main.results[map]
+			var map_result = layer.get_result(map, context)
+			while map_result is GDScriptFunctionState:
+				map_result = yield(map_result, "completed")
+			if not map_result:
+				continue
 			var blending_layer : BlendingLayer
 			var mask
 			if layer.mask:
-				mask = layer.mask.results[0]
+				mask = layer.mask.get_result(context, "albedo")
+				while mask is GDScriptFunctionState:
+					mask = yield(mask, "completed")
 			blending_layer = BlendingLayer.new(
 				"texture({result}, uv)",
 				layer.get_blend_mode(map), layer.get_opacity(map), mask)

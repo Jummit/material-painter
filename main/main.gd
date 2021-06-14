@@ -194,12 +194,8 @@ func _on_AddFolderButton_pressed() -> void:
 	var onto : Reference
 	var selected_layer : Reference = layer_tree.get_selected_layer()
 # warning-ignore:unsafe_property_access
-	if selected_layer is MaterialLayer and\
-			selected_layer.is_folder:
+	if selected_layer is MaterialLayer and selected_layer.is_folder:
 		onto = selected_layer
-	elif selected_layer is MaterialLayer and\
-			layer_tree.get_selected_layer_texture(selected_layer):
-		onto = layer_tree.get_selected_layer_texture(selected_layer)
 	else:
 		onto = current_layer_material
 	

@@ -70,6 +70,52 @@ func serialize() -> Dictionary:
 	return data
 
 
+func get_result(map : String, context : MaterialGenerationContext) -> Texture:
+	if is_folder:
+		if not dirty and map in folder_results:
+			return folder_results[map]
+		for map in Constants.TEXTURE_MAP_TYPES:
+			var blending_layers := []
+			for layer in layers:
+				if not layer.visible:
+					continue
+				var map_result = layer.get_result(map, context)
+				while map_result is GDScriptFunctionState:
+					map_result = yield(map_result, "completed")
+				if not map_result:
+					continue
+				var blending_layer : BlendingLayer
+				var layer_mask
+				if layer.mask:
+					layer_mask = layer.mask.get_result(context, "albedo")
+					while layer_mask is GDScriptFunctionState:
+						layer_mask = yield(layer_mask, "completed")
+				blending_layer = BlendingLayer.new(
+					"texture({result}, uv)",
+					layer.get_blend_mode(map), layer.get_opacity(map), layer_mask)
+				blending_layer.uniforms.result = map_result
+				blending_layers.append(blending_layer)
+			
+			if blending_layers.empty():
+				folder_results.erase(map)
+				continue
+			
+			var result = context.blending_viewport_manager.blend(
+					blending_layers, context.result_size,
+					get_instance_id() + map.hash())
+			while result is GDScriptFunctionState:
+				result = yield(result, "completed")
+			
+			folder_results[map] = result
+		dirty = false
+		return folder_results.get(map)
+	else:
+		var result = main.get_result(context, map)
+		while result is GDScriptFunctionState:
+			result = yield(result, "completed")
+		return result
+
+
 func get_properties() -> Array:
 	var properties := []
 	return properties
@@ -86,42 +132,6 @@ func get_opacity(map : String) -> float:
 
 func get_blend_mode(map : String) -> float:
 	return blend_modes.get(map, "normal")
-
-
-func update(context : MaterialGenerationContext) -> void:
-	if not dirty:
-		return
-	if mask:
-		var result = mask.update(context)
-		while result is GDScriptFunctionState:
-			result = yield(result, "completed")
-	var result = main.update(context)
-	while result is GDScriptFunctionState:
-		result = yield(result, "completed")
-	if is_folder:
-		for layer in layers:
-			result = layer.update(context)
-			if result is GDScriptFunctionState:
-				result = yield(result, "completed")
-		
-		for map in enabled_maps:
-			var blending_layers := []
-			for layer in layers:
-				var blending_layer = layer.get_blending_layer(context)
-				if blending_layer is GDScriptFunctionState:
-					blending_layer = yield(blending_layer, "completed")
-				blending_layers.append(blending_layer)
-			
-			if blending_layers.empty():
-				folder_results.erase(map)
-				continue
-			
-			result = yield(context.blending_viewport_manager.blend(
-					blending_layers, context.result_size,
-					get_instance_id() + map.hash()), "completed")
-			
-			folder_results[map] = result
-	dirty = false
 
 
 func get_layer_material_in() -> Reference:

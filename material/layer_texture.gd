@@ -33,30 +33,25 @@ func add_layer(layer) -> void:
 
 func get_result(context : MaterialGenerationContext, map : String,
 		icon := false) -> Texture:
+	if not dirty and not icon and map in results:
+		return results[map]
 	var blending_layers := []
 	for layer in layers:
+		if not layer.visible:
+			continue
 		var blending_layer = layer.get_blending_layer(context, map)
 		if blending_layer is GDScriptFunctionState:
 			blending_layer = yield(blending_layer, "completed")
 		if blending_layer:
 			blending_layers.append(blending_layer)
 	if blending_layers.empty():
+		results.erase(map)
 		return null
-	return yield(context.blending_viewport_manager.blend(
+	results[map] = yield(context.blending_viewport_manager.blend(
 			blending_layers, context.icon_size if icon else context.result_size,
 			-1 if icon else get_instance_id() + map.hash()), "completed")
-
-
-func update(context : MaterialGenerationContext,
-		maps := Constants.TEXTURE_MAP_TYPES) -> void:
-	if not dirty:
-		return
-	for map in maps:
-		var result = get_result(context, map)
-		if result is GDScriptFunctionState:
-			result = yield(result, "completed")
-		results[map] = result
 	dirty = false
+	return results[map]
 
 
 func mark_dirty(shader_dirty := false) -> void:
