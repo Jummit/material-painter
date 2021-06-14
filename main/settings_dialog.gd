@@ -28,6 +28,8 @@ func _ready() -> void:
 			"Undo": "undo",
 			"Redo": "redo",
 			"Add Layer": "add_layer",
+			"Add Paint Layer" : "add_paint",
+			"Add Fill Layer" : "add_fill",
 			"Add Folder": "add_folder",
 		},
 		Application = {

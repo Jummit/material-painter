@@ -19,17 +19,18 @@ const TextureLayerStack = preload("res://material/texture_layer_stack.gd")
 const NULL_VALUE := 10101010101010
 
 func _on_LayerTree_layer_selected(layer : Reference) -> void:
-	set_editing_layer(layer)
+	var mat_layer := layer as MaterialLayer
+	var tex_layer := layer as TextureLayer
+	if mat_layer and mat_layer.base_texture_layer:
+		set_editing_layer(mat_layer.base_texture_layer)
+	elif tex_layer:
+		set_editing_layer(layer)
 
 
 func set_editing_layer(layer : Reference) -> void:
 	editing_layer = layer
-	var mat_layer := layer as MaterialLayer
 	var tex_layer := layer as TextureLayer
-	if mat_layer:
-		set_properties(mat_layer.get_properties())
-		load_values(mat_layer.settings)
-	elif tex_layer:
+	if tex_layer:
 		set_properties(tex_layer.get_properties())
 		load_values(tex_layer.settings)
 	else:

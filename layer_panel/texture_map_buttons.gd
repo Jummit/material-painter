@@ -30,7 +30,7 @@ func _ready() -> void:
 
 
 func _on_LayerTree_layer_selected(layer : Reference) -> void:
-	var tex_layer := layer as TextureLayer
+	var tex_layer := get_texture_layer(layer)
 	if tex_layer:
 		for button in get_children():
 			var enabled : bool
@@ -63,14 +63,19 @@ func _silently_set_button_pressed(button : Button, pressed : bool) -> void:
 
 
 func _set_map_enabled(layer : Reference, map : String, enabled : bool) -> void:
-	var tex_layer := layer as TextureLayer
+	var tex_layer := get_texture_layer(layer)
 	if not enabled and map in tex_layer.enabled_maps:
 		tex_layer.enabled_maps.erase(map)
 	elif enabled:
 		tex_layer.enabled_maps[map] = true
 	tex_layer.mark_dirty(true)
-	(((tex_layer.parent as TextureLayerStack).parent as MaterialLayer).\
-			get_layer_material_in() as MaterialLayerStack).update()
 	
 	_silently_set_button_pressed(buttons[map], enabled)
 	emit_signal("maps_changed")
+
+
+func get_texture_layer(layer : Reference) -> TextureLayer:
+	var mat_layer := layer as MaterialLayer
+	if mat_layer:
+		return mat_layer.base_texture_layer
+	return layer as TextureLayer

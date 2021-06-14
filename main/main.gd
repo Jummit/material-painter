@@ -196,8 +196,9 @@ func _on_AddFolderLayerButton2_pressed() -> void:
 
 func do_add_layer(layer : MaterialLayer) -> void:
 	var onto
-	if layer_tree.get_selected_layer() is MaterialLayer:
-		onto = layer_tree.get_selected_layer()
+	var selected_mat : MaterialLayer = layer_tree.get_selected_layer() as MaterialLayer
+	if selected_mat and selected_mat.is_folder:
+		onto = selected_mat
 	else:
 		onto = current_layer_material
 	undo_redo.create_action("Add Material Layer")
@@ -275,6 +276,7 @@ func _on_MaterialLayerPopupMenu_mask_pasted(mask : TextureLayerStack) -> void:
 
 func _on_MaterialLayerPopupMenu_duplicated() -> void:
 	undo_redo.create_action("Duplicate Layer")
+# warning-ignore:unsafe_method_access
 	var new_layer = layer_tree.get_selected_layer().duplicate()
 	undo_redo.add_do_method(current_layer_material, "add_layer",
 			new_layer, current_layer_material)
@@ -414,6 +416,11 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 			request_save_file()
 		FILE_MENU_ITEMS.SAVE_AS:
 			open_save_project_dialog()
+			yield(file_dialog, "file_selected")
+			var file := File.new()
+			file.open(current_file.path, File.WRITE)
+			file.store_string(to_json(current_file.serialize()))
+			file.close()
 		FILE_MENU_ITEMS.EXPORT:
 			if current_file.path:
 				export_materials()
@@ -560,3 +567,7 @@ func set_current_layer_material(to) -> void:
 func _on_ToolButtonContainer_tool_selected(selected : int) -> void:
 	selected_tool = selected
 	emit_signal("selected_tool_changed", selected)
+
+
+func _on_TextureMapButtons_maps_changed() -> void:
+	current_layer_material.update()

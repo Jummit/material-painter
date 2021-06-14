@@ -53,6 +53,7 @@ config/use_custom_user_dir=true
 config/custom_user_dir_name="material_painter"
 run/low_processor_mode=true
 config/icon="res://icon.svg"
+config/version="1.0"
 
 [autoload]
 
@@ -164,7 +165,8 @@ github={
 }
 docs={
 "deadzone": 0.5,
-"events": [  ]
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":false,"meta":false,"command":false,"pressed":false,"scancode":16777244,"unicode":0,"echo":false,"script":null)
+ ]
 }
 licenses={
 "deadzone": 0.5,
@@ -183,6 +185,15 @@ select_material={
 "events": [  ]
 }
 add_layer={
+"deadzone": 0.5,
+"events": [  ]
+}
+add_fill={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt":false,"shift":false,"control":true,"meta":false,"command":true,"pressed":false,"scancode":65,"unicode":0,"echo":false,"script":null)
+ ]
+}
+add_paint={
 "deadzone": 0.5,
 "events": [  ]
 }

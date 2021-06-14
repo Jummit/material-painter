@@ -26,6 +26,10 @@ func _init(data := {}).(data) -> void:
 		if settings.get(map + "_texture"):
 			var image := load_png(settings[map + "_texture"])
 			settings[map + "_texture"] = image
+	for setting in settings:
+		var value = settings[setting]
+		if value is String:
+			settings[setting] = str2var(value)
 
 
 func load_png(path : String) -> ImageTexture:
@@ -54,7 +58,7 @@ func get_blending_layer(_context : MaterialGenerationContext,
 	var value = settings.get(map)
 	if settings.get(map + "_texture"):
 		value = settings[map + "_texture"].texture
-	if not value:
+	if value == null:
 		return null
 	var layer := BlendingLayer.new(SHADERS[typeof(value)],
 			blend_modes.get(map, "normal"), opacities.get(map, 1.0))

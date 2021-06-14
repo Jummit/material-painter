@@ -39,6 +39,12 @@ enum LayerState {
 	CLOSED,
 	MAP_EXPANDED,
 	MASK_EXPANDED,
+	FOLDER_EXPANDED,
+}
+
+enum Column {
+	ICONS,
+	NAME,
 }
 
 const MaterialLayerStack = preload("res://material/material_layer_stack.gd")
@@ -56,8 +62,8 @@ const MaterialGenerationContext = preload("res://material/material_generation_co
 onready var layer_popup_menu : LayerPopupMenu = $LayerPopupMenu
 
 func _ready() -> void:
-	set_column_expand(0, false)
-	set_column_min_width(0, 100)
+	set_column_expand(Column.NAME, false)
+	set_column_min_width(Column.NAME, 100)
 
 
 func _gui_input(event : InputEvent) -> void:
@@ -82,19 +88,23 @@ func _gui_input(event : InputEvent) -> void:
 				_lastly_edited_layer.set_editable(1, false)
 			_lastly_edited_layer = get_selected()
 	elif key_ev and key_ev.pressed and key_ev.scancode == KEY_DELETE:
-		var layer = get_selected_layer()
+		var layer : Reference = get_selected_layer()
+		if not layer:
+			return
 		undo_redo.create_action("Delete Layer")
 		undo_redo.add_do_method(layer_material, "delete_layer",
 			layer)
 		undo_redo.add_do_method(self, "reload")
 		undo_redo.add_undo_method(layer_material, "add_layer",
+# warning-ignore:unsafe_property_access
+# warning-ignore:unsafe_property_access
 			layer, layer.parent)
 		undo_redo.add_undo_method(self, "_emit_select_signal", layer)
 		undo_redo.add_undo_method(self, "reload")
 		undo_redo.commit_action()
 
 
-func get_selected_layer():
+func get_selected_layer() -> Reference:
 	if not get_selected():
 		return null
 	return get_selected().get_meta("layer")
@@ -141,6 +151,13 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 			undo_redo.add_undo_method(layer_material, "update")
 			undo_redo.add_undo_method(self, "reload")
 			undo_redo.commit_action()
+		Buttons.ICON:
+			if layer in _layer_states and\
+					_layer_states[layer] == LayerState.FOLDER_EXPANDED:
+				_layer_states.erase(layer)
+			else:
+				_layer_states[layer] = LayerState.FOLDER_EXPANDED
+			reload()
 
 
 func _on_item_edited() -> void:
@@ -162,10 +179,10 @@ func _draw_layer_item(item : TreeItem, item_rect : Rect2) -> void:
 	var state : int = _layer_states[layer]
 	if not state in [LayerState.MAP_EXPANDED, LayerState.MASK_EXPANDED]:
 		return
-	var icon_rect := Rect2(Vector2(66, item_rect.position.y), Vector2(32, 32))
+	var icon_rect := Rect2(Vector2(129, item_rect.position.y), Vector2(32, 32))
 	var mat_layer := layer as MaterialLayer
 	if mat_layer and mat_layer.mask and state == LayerState.MASK_EXPANDED:
-		icon_rect.position.x -= 36
+		icon_rect.position.x -= 38
 	draw_rect(icon_rect, Color.dodgerblue, false, 2.0)
 
 
@@ -339,11 +356,12 @@ func _setup_material_layer_item(layer : MaterialLayer, parent_item : TreeItem,
 		_select_item(item)
 	item.custom_minimum_height = 32
 	item.set_meta("layer", layer)
-	item.set_text(1, layer.name)
-	item.add_button(1, _get_visibility_icon(layer.visible),
+	item.set_text(Column.NAME, layer.name)
+	item.add_button(Column.ICONS, _get_visibility_icon(layer.visible),
 		Buttons.VISIBILITY)
-	item.set_custom_draw(0, self, "_draw_layer_item")
-	item.set_cell_mode(0, TreeItem.CELL_MODE_CUSTOM)
+	item.set_custom_draw(Column.ICONS, self, "_draw_layer_item")
+	item.set_cell_mode(Column.ICONS, TreeItem.CELL_MODE_CUSTOM)
+	item.set_text_align(0, TreeItem.ALIGN_LEFT)
 	
 	if not layer in _layer_states:
 		_layer_states[layer] = LayerState.CLOSED
@@ -356,11 +374,30 @@ func _setup_material_layer_item(layer : MaterialLayer, parent_item : TreeItem,
 		if not is_instance_valid(item):
 			return
 		if icon is Texture:
-			item.add_button(0, icon, Buttons.MASK)
+			item.add_button(Column.ICONS, icon, Buttons.MASK)
+	elif state == LayerState.MASK_EXPANDED:
+		_layer_states[layer] = LayerState.CLOSED
 	if state in [LayerState.MAP_EXPANDED, LayerState.MASK_EXPANDED]:
 		for texture_layer in layer.main.layers if state ==\
 				LayerState.MAP_EXPANDED else layer.mask.layers:
 			_setup_texture_layer_item(texture_layer, item, selected_layer)
+	if layer.is_folder:
+		var icon := preload("res://icons/large_folder.svg")
+		if state == LayerState.FOLDER_EXPANDED:
+			icon = preload("res://icons/large_open_folder.svg")
+			for sub_layer in layer.layers:
+				_setup_material_layer_item(sub_layer, item, selected_layer)
+		item.add_button(Column.ICONS, icon, Buttons.ICON)
+		item.set_tooltip(Column.NAME, "%s (contains %s layers)" % [layer.name,
+				layer.layers.size()])
+	else:
+		var icon = _get_layer_texture_icon(layer.main)
+		while icon is GDScriptFunctionState:
+			icon = yield(icon, "completed")
+		if not is_instance_valid(item):
+			return
+		if icon is Texture:
+			item.add_button(Column.ICONS, icon, Buttons.RESULT)
 
 
 func get_selected_layer_texture(layer : MaterialLayer) -> TextureLayerStack:
@@ -380,8 +417,11 @@ func _setup_texture_layer_item(layer : TextureLayer, parent_item : TreeItem,
 	var layer_visible : bool
 	layer_name = layer.name
 	layer_visible = layer.visible
-	item.set_text(1, layer_name)
-	item.add_button(1, _get_visibility_icon(layer_visible), Buttons.VISIBILITY)
+	item.set_text(Column.NAME, layer_name)
+	item.set_tooltip(Column.NAME, "%s (%s Layer)" % [layer.name,
+			layer.get_name()])
+	item.add_button(Column.ICONS, _get_visibility_icon(layer_visible),
+			Buttons.VISIBILITY)
 	
 	var icon = _get_texture_layer_icon(layer)
 	while icon is GDScriptFunctionState:
@@ -389,8 +429,7 @@ func _setup_texture_layer_item(layer : TextureLayer, parent_item : TreeItem,
 	if not is_instance_valid(item):
 		return
 	if icon is Texture:
-		item.add_button(0, icon, Buttons.RESULT)
-	item.set_tooltip(1, "%s (%s Layer)" % [layer.name, layer.get_name()])
+		item.add_button(Column.ICONS, icon, Buttons.RESULT)
 
 
 func _get_visibility_icon(is_visible : bool) -> Texture:
