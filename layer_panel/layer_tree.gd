@@ -39,7 +39,6 @@ enum LayerState {
 	CLOSED,
 	MAP_EXPANDED,
 	MASK_EXPANDED,
-	FOLDER_EXPANDED,
 }
 
 const MaterialLayerStack = preload("res://material/material_layer_stack.gd")
@@ -142,13 +141,6 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 			undo_redo.add_undo_method(layer_material, "update")
 			undo_redo.add_undo_method(self, "reload")
 			undo_redo.commit_action()
-		Buttons.ICON:
-			if layer in _layer_states and\
-					_layer_states[layer] == LayerState.FOLDER_EXPANDED:
-				_layer_states.erase(layer)
-			else:
-				_layer_states[layer] = LayerState.FOLDER_EXPANDED
-			reload()
 
 
 func _on_item_edited() -> void:
@@ -213,10 +205,9 @@ func can_drop_data(position : Vector2, data) -> bool:
 					return false
 			if get_drop_section_at_position(position) == 0:
 				# Allow dropping texture layers onto material layers and
-				# material layers onto folders.
+				# material layers onto material layers.
 				return (to_drop is TextureLayer and onto is MaterialLayer) or\
-						(to_drop is MaterialLayer and onto is MaterialLayer and\
-						(onto as MaterialLayer).is_folder)
+						(to_drop is MaterialLayer and onto is MaterialLayer)
 			else:
 				# Every layer type can be reordered, texture layers can be
 				# dropped under material layers.
@@ -314,17 +305,7 @@ func _get_layers_of_drop_data(data, _position : Vector2) -> Dictionary:
 	if data is LayerAsset:
 		layers = [data.data.duplicate()]
 	elif data is SmartMaterialAsset:
-		var material_layer : MaterialLayer = data.data.duplicate()
-		var mat_layers := []
-		if material_layer.is_folder:
-			mat_layers = material_layer.layers
-		else:
-			mat_layers = [material_layer]
-		while mat_layers.size():
-			var mat_layer : MaterialLayer = mat_layers.pop_back()
-			if mat_layer.is_folder:
-				mat_layers += mat_layer.layers
-		layers = [material_layer]
+		layers = [data.data.duplicate()]
 	elif data is Dictionary and "type" in data and data.type == "layers":
 		layers = data.layers
 	else:
@@ -380,23 +361,6 @@ func _setup_material_layer_item(layer : MaterialLayer, parent_item : TreeItem,
 		for texture_layer in layer.main.layers if state ==\
 				LayerState.MAP_EXPANDED else layer.mask.layers:
 			_setup_texture_layer_item(texture_layer, item, selected_layer)
-	if layer.is_folder:
-		var icon := preload("res://icons/large_folder.svg")
-		if state == LayerState.FOLDER_EXPANDED:
-			icon = preload("res://icons/large_open_folder.svg")
-			for sub_layer in layer.layers:
-				_setup_material_layer_item(sub_layer, item, selected_layer)
-		item.add_button(0, icon, Buttons.ICON)
-		item.set_tooltip(1, "%s (contains %s layers)" % [layer.name,
-				layer.layers.size()])
-	else:
-		var icon = _get_layer_texture_icon(layer.main)
-		while icon is GDScriptFunctionState:
-			icon = yield(icon, "completed")
-		if not is_instance_valid(item):
-			return
-		if icon is Texture:
-			item.add_button(0, icon, Buttons.RESULT)
 
 
 func get_selected_layer_texture(layer : MaterialLayer) -> TextureLayerStack:

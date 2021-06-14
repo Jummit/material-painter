@@ -9,12 +9,13 @@ var dirty_icons : Array
 var icons : Dictionary
 
 const TextureLayer = preload("texture_layer.gd")
+const TextureLayerLoader = preload("texture_layer_loader.gd")
 const MaterialGenerationContext = preload("material_generation_context.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 
 func _init(data := {}) -> void:
 	for layer in data.get("layers", []):
-		add_layer(get_script().new(layer))
+		add_layer(TextureLayerLoader.load_layer(layer))
 
 
 func serialize() -> Dictionary:

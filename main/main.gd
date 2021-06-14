@@ -60,6 +60,8 @@ const ViewMenuButton = preload("res://main/view_menu_button.gd")
 const SmartMaterialAsset = preload("res://asset/assets/smart_material_asset.gd")
 const TextureLayerStack = preload("res://material/texture_layer_stack.gd")
 const KeymapScreen = preload("res://addons/third_party/keymap_screen/keymap_screen.gd")
+const FillTextureLayer = preload("res://material/fill_texture_layer.gd")
+const PaintTextureLayer = preload("res://material/paint_texture_layer.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/FileMenuButton
 onready var edit_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/EditMenuButton
@@ -171,43 +173,38 @@ func _on_FileDialog_file_selected(path : String) -> void:
 
 
 func _on_AddButton_pressed() -> void:
+	do_add_layer(MaterialLayer.new())
+
+
+func _on_AddPaintLayerButton_pressed() -> void:
+	var new_layer := MaterialLayer.new()
+	new_layer.base_texture_layer = PaintTextureLayer.new()
+	do_add_layer(new_layer)
+
+
+func _on_AddFillLayerButton_pressed() -> void:
+	var new_layer := MaterialLayer.new()
+	new_layer.base_texture_layer = FillTextureLayer.new()
+	do_add_layer(new_layer)
+
+
+func _on_AddFolderLayerButton2_pressed() -> void:
+	var new_layer := MaterialLayer.new()
+	new_layer.is_folder = true
+	do_add_layer(new_layer)
+
+
+func do_add_layer(layer : MaterialLayer) -> void:
 	var onto
-	if layer_tree.get_selected_layer() is MaterialLayer and\
-			layer_tree.get_selected_layer().is_folder:
+	if layer_tree.get_selected_layer() is MaterialLayer:
 		onto = layer_tree.get_selected_layer()
 	else:
 		onto = current_layer_material
 	undo_redo.create_action("Add Material Layer")
-	var new_layer := MaterialLayer.new()
-	new_layer.parent = onto
-	undo_redo.add_do_method(current_layer_material, "add_layer",
-			new_layer, onto)
+	undo_redo.add_do_method(current_layer_material, "add_layer", layer, onto)
 	undo_redo.add_do_method(layer_tree, "reload")
 	undo_redo.add_undo_method(current_layer_material, "delete_layer",
-			new_layer)
-	undo_redo.add_undo_method(layer_tree, "reload")
-	undo_redo.commit_action()
-
-
-func _on_AddFolderButton_pressed() -> void:
-	undo_redo.create_action("Add Folder Layer")
-	var onto : Reference
-	var selected_layer : Reference = layer_tree.get_selected_layer()
-# warning-ignore:unsafe_property_access
-	if selected_layer is MaterialLayer and selected_layer.is_folder:
-		onto = selected_layer
-	else:
-		onto = current_layer_material
-	
-	var new_layer := MaterialLayer.new()
-	new_layer.name = "Untitled Folder"
-	new_layer.is_folder = true
-	
-	undo_redo.add_do_method(current_layer_material, "add_layer",
-			new_layer, onto)
-	undo_redo.add_do_method(layer_tree, "reload")
-	undo_redo.add_undo_method(current_layer_material, "delete_layer",
-			new_layer)
+			layer)
 	undo_redo.add_undo_method(layer_tree, "reload")
 	undo_redo.commit_action()
 
