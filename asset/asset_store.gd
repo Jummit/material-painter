@@ -2,6 +2,8 @@ extends Node
 
 signal asset_loaded(asset)
 signal asset_unloaded(asset)
+signal dir_loaded
+signal dir_unloaded
 
 const TAG_PATH := "user://tags.json"
 
@@ -43,12 +45,14 @@ func load_dir(path : String) -> void:
 			file_name = dir.get_next()
 		dir.list_dir_end()
 	save_asset_tags()
+	emit_signal("dir_loaded")
 
 
 func unload_dir(path : String) -> void:
 	for asset in assets:
 		if asset.path.begins_with(path):
 			unload_asset(asset)
+	emit_signal("dir_unloaded")
 
 
 func load_asset(path : String, type : GDScript) -> void:

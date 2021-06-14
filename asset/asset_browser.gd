@@ -224,3 +224,11 @@ func _on_layout_changed(meta) -> void:
 
 func _on_Main_current_file_changed(_to) -> void:
 	pass
+
+
+func _on_AssetStore_dir_loaded() -> void:
+	update_asset_list()
+
+
+func _on_AssetStore_dir_unloaded() -> void:
+	update_asset_list()
