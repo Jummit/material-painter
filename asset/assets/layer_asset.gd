@@ -1,6 +1,6 @@
 extends "asset.gd"
 
-const JsonTextureLayer = preload("res://material/texture_layer/json_texture_layer.gd")
+const JsonTextureLayer = preload("res://material/json_texture_layer.gd")
 
 func _init(_path).(_path) -> void:
 	pass

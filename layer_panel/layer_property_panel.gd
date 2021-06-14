@@ -9,12 +9,12 @@ var editing_layer : Reference setget set_editing_layer
 # warning-ignore:unsafe_property_access
 onready var undo_redo : UndoRedo = find_parent("Main").undo_redo
 
-const TextureLayer = preload("res://material/texture_layer/texture_layer.gd")
+const TextureLayer = preload("res://material/texture_layer.gd")
 const MaterialLayer = preload("res://material/material_layer.gd")
 const Properties = preload("res://addons/property_panel/properties.gd")
-const JSONTextureLayer = preload("res://material/texture_layer/json_texture_layer.gd")
-const LayerMaterial = preload("res://material/layer_material.gd")
-const LayerTexture = preload("res://material/layer_texture.gd")
+const JSONTextureLayer = preload("res://material/json_texture_layer.gd")
+const MaterialLayerStack = preload("res://material/material_layer_stack.gd")
+const TextureLayerStack = preload("res://material/texture_layer_stack.gd")
 
 const NULL_VALUE := 10101010101010
 
@@ -43,14 +43,14 @@ func _on_property_changed(property : String, value) -> void:
 	var json_layer := layer as JSONTextureLayer
 	var mat_layer := layer as MaterialLayer
 	var tex_layer := layer as TextureLayer
-	var root : LayerMaterial
+	var root : MaterialLayerStack
 	var settings : Dictionary
 	if mat_layer:
 		settings = mat_layer.settings
 		root = mat_layer.get_layer_material_in()
 	elif tex_layer:
 		settings = tex_layer.settings
-		root = ((tex_layer.parent as LayerTexture).parent as MaterialLayer)\
+		root = ((tex_layer.parent as TextureLayerStack).parent as MaterialLayer)\
 				.get_layer_material_in()
 	if json_layer:
 		for property_data in json_layer.layer_data.properties:

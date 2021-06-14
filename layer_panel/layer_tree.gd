@@ -1,20 +1,20 @@
 extends Tree
 
 """
-An interactive representation of a `LayerMaterial` as a tree
+An interactive representation of a `MaterialLayerStack` as a tree
 
 The tree consists of a list of `MaterialLayer`s with the `TextureLayer`s
-of the selected `LayerTexture` below. The selected `TextureLayer`,
+of the selected `TextureLayerStack` below. The selected `TextureLayer`,
 which could be a map or a mask, is stored in `_selected_layer_textures`.
 Shows previews of maps and masks as buttons, which can be clicked to select the
-`LayerTexture`.
+`TextureLayerStack`.
 When a `MaterialLayer` has multiple maps enabled, the current map can be selected
 with a dropdown. The selected maps are stored in `_selected_maps`.
 """
 
 signal layer_selected(layer)
 
-var layer_material : LayerMaterial setget set_layer_material
+var layer_material : MaterialLayerStack setget set_layer_material
 var project : ProjectFile
 var update_icons := true
 var context : MaterialGenerationContext
@@ -42,17 +42,17 @@ enum LayerState {
 	FOLDER_EXPANDED,
 }
 
-const LayerMaterial = preload("res://material/layer_material.gd")
+const MaterialLayerStack = preload("res://material/material_layer_stack.gd")
 const MaterialLayer = preload("res://material/material_layer.gd")
-const TextureLayer = preload("res://material/texture_layer/texture_layer.gd")
+const TextureLayer = preload("res://material/texture_layer.gd")
 const TextureAsset = preload("res://asset/assets/texture_asset.gd")
 const SmartMaterialAsset = preload("res://asset/assets/smart_material_asset.gd")
 const LayerAsset = preload("res://asset/assets/layer_asset.gd")
 const ProjectFile = preload("res://main/project_file.gd")
 const LayerPopupMenu = preload("res://layer_panel/layer_popup_menu.gd")
-const PaintTextureLayer = preload("res://material/texture_layer/paint_texture_layer.gd")
-const LayerTexture = preload("res://material/layer_texture.gd")
-const MaterialGenerationContext = preload("res://main/material_generation_context.gd")
+const PaintTextureLayer = preload("res://material/paint_texture_layer.gd")
+const TextureLayerStack = preload("res://material/texture_layer_stack.gd")
+const MaterialGenerationContext = preload("res://material/material_generation_context.gd")
 
 onready var layer_popup_menu : LayerPopupMenu = $LayerPopupMenu
 
@@ -334,12 +334,12 @@ func _get_layers_of_drop_data(data, _position : Vector2) -> Dictionary:
 	}
 
 
-func set_layer_material(to : LayerMaterial) -> void:
+func set_layer_material(to : MaterialLayerStack) -> void:
 	layer_material = to
 	if not layer_material.is_connected("results_changed", self,
-			"_on_LayerMaterial_results_changed"):
+			"_on_MaterialLayerStack_results_changed"):
 		layer_material.connect("results_changed", self,
-				"_on_LayerMaterial_results_changed")
+				"_on_MaterialLayerStack_results_changed")
 	var selected_layer = get_selected_layer()
 	clear()
 	_root = create_item()
@@ -347,7 +347,7 @@ func set_layer_material(to : LayerMaterial) -> void:
 		_setup_material_layer_item(material_layer, _root, selected_layer)
 
 
-func _on_LayerMaterial_results_changed():
+func _on_MaterialLayerStack_results_changed():
 	reload()
 
 
@@ -399,7 +399,7 @@ func _setup_material_layer_item(layer : MaterialLayer, parent_item : TreeItem,
 			item.add_button(0, icon, Buttons.RESULT)
 
 
-func get_selected_layer_texture(layer : MaterialLayer) -> LayerTexture:
+func get_selected_layer_texture(layer : MaterialLayer) -> TextureLayerStack:
 	return layer.mask if _layer_states[layer] ==\
 			LayerState.MASK_EXPANDED else layer.main
 
@@ -443,7 +443,7 @@ func _select_item(item : TreeItem) -> void:
 	set_block_signals(false)
 
 
-func _get_layer_texture_icon(layer : LayerTexture) -> Texture:
+func _get_layer_texture_icon(layer : TextureLayerStack) -> Texture:
 	if update_icons and not _painting:
 		var result = layer.get_icon(_selected_map, context)
 		while result is GDScriptFunctionState:
@@ -473,7 +473,7 @@ func _on_Main_current_file_changed(to : ProjectFile) -> void:
 	project = to
 
 
-func _on_Main_current_layer_material_changed(to : LayerMaterial,
+func _on_Main_current_layer_material_changed(to : MaterialLayerStack,
 		_id : int) -> void:
 	set_layer_material(to)
 

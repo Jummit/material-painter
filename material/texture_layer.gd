@@ -1,7 +1,7 @@
 extends Reference
 
 """
-A layer of a `LayerTexture`
+A layer of a `TextureLayerStack`
 
 For making the layer editable, `get_properties` is used
 to retrieve a list of `Properties` for the `LayerPropertyPanel`.
@@ -23,7 +23,7 @@ var icons_dirty := true
 var icons : Dictionary
 
 const Layer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").Layer
-const MaterialGenerationContext = preload("res://main/material_generation_context.gd")
+const MaterialGenerationContext = preload("material_generation_context.gd")
 
 func _init(data := {}) -> void:
 	name = data.get("name", "")

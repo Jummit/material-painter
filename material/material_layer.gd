@@ -1,17 +1,17 @@
 extends Reference
 
 """
-A layer of a `LayerMaterial`
+A layer of a `MaterialLayerStack`
 
 `mask` is used when blending the layers.
-`maps` is a dictionary which can hold a `LayerTexture` for each map, for example
+`maps` is a dictionary which can hold a `TextureLayerStack` for each map, for example
 albedo, metallic or height.
 
 `MaterialLayer`s can be hidden, which excludes them from the result of the
-`LayerMaterial`.
+`MaterialLayerStack`.
 
-It is marked dirty when the child `LayerTexture`s change, which will mark the
-parent `LayerMaterial` dirty.
+It is marked dirty when the child `TextureLayerStack`s change, which will mark the
+parent `MaterialLayerStack` dirty.
 """
 
 var name : String
@@ -23,18 +23,18 @@ var enabled_maps : Dictionary
 var opacities : Dictionary
 var blend_modes : Dictionary
 # warning-ignore:unused_class_variable
-var mask : LayerTexture
-var main : LayerTexture
+var mask : TextureLayerStack
+var main : TextureLayerStack
 
 var settings : Dictionary
 
 var parent : Reference
 var dirty := true
 
-const TextureLayer = preload("texture_layer/texture_layer.gd")
-const MaterialGenerationContext = preload("res://main/material_generation_context.gd")
+const TextureLayer = preload("texture_layer.gd")
+const MaterialGenerationContext = preload("material_generation_context.gd")
+const TextureLayerStack = preload("texture_layer_stack.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
-const LayerTexture = preload("res://material/layer_texture.gd")
 
 func _init(data := {}) -> void:
 	name = data.get("name", "")
@@ -43,10 +43,10 @@ func _init(data := {}) -> void:
 	enabled_maps = data.get("enabled_maps", {})
 	blend_modes = data.get("blend_modes", {})
 	is_folder = data.get("folder", false)
-	main = LayerTexture.new(data.get("main", {}))
+	main = TextureLayerStack.new(data.get("main", {}))
 	main.parent = self
 	if "mask" in data:
-		mask = LayerTexture.new(data.get("mask"))
+		mask = TextureLayerStack.new(data.get("mask"))
 		mask.parent = self
 	name = "Untitled Folder" if is_folder else "Untitled Layer"
 	for layer in data.get("layers", []):

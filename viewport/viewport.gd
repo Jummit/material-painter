@@ -30,7 +30,7 @@ const Painter = preload("res://addons/painter/painter.gd")
 const BrushAsset = preload("res://asset/assets/brush_asset.gd")
 const Asset = preload("res://asset/assets/asset.gd")
 const Model = preload("res://viewport/model.gd")
-const PaintTextureLayer = preload("res://material/texture_layer/paint_texture_layer.gd")
+const PaintTextureLayer = preload("res://material/paint_texture_layer.gd")
 
 onready var model : Model = $Viewport/Model
 onready var world_environment : WorldEnvironment = $Viewport/WorldEnvironment

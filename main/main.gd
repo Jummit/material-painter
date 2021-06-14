@@ -17,8 +17,8 @@ signal context_changed(to)
 
 # The current project file.
 var current_file : SaveFile setget set_current_file
-# The currently editing `LayerMaterial`.
-var current_layer_material : LayerMaterial setget set_current_layer_material
+# The currently editing `MaterialLayerStack`.
+var current_layer_material : MaterialLayerStack setget set_current_layer_material
 # The currently selected painting/selection tool.
 var selected_tool : int = Constants.Tools.PAINT
 var undo_redo := UndoRedo.new()
@@ -30,7 +30,7 @@ onready var mesh_maps_generator : MeshMapsGenerator = $MeshMapsGenerator
 
 # To avoid https://github.com/godotengine/godot/issues/36895, this is passed to
 # `add_do_action` instead of null.
-var NO_MASK := LayerTexture.new()
+var NO_MASK := TextureLayerStack.new()
 
 const LAYOUTS_FOLDER := "user://layouts"
 
@@ -46,19 +46,19 @@ enum FILE_MENU_ITEMS {
 
 const SaveFile = preload("res://main/project_file.gd")
 const MaterialLayer = preload("res://material/material_layer.gd")
-const LayerMaterial = preload("res://material/layer_material.gd")
-const TextureLayer = preload("res://material/texture_layer/texture_layer.gd")
+const MaterialLayerStack = preload("res://material/material_layer_stack.gd")
+const TextureLayer = preload("res://material/texture_layer.gd")
 const Brush = preload("res://addons/painter/brush.gd")
 const LayoutUtils = preload("res://addons/third_party/customizable_ui/layout_utils.gd")
 const ObjParser = preload("res://addons/third_party/obj_parser/obj_parser.gd")
-const MaterialGenerationContext = preload("res://main/material_generation_context.gd")
+const MaterialGenerationContext = preload("res://material/material_generation_context.gd")
 const AssetStore = preload("res://asset/asset_store.gd")
 const LayerTree = preload("res://layer_panel/layer_tree.gd")
 const TextureAsset = preload("res://asset/assets/texture_asset.gd")
 const AssetBrowser = preload("res://asset/asset_browser.gd")
 const ViewMenuButton = preload("res://main/view_menu_button.gd")
 const SmartMaterialAsset = preload("res://asset/assets/smart_material_asset.gd")
-const LayerTexture = preload("res://material/layer_texture.gd")
+const TextureLayerStack = preload("res://material/texture_layer_stack.gd")
 const KeymapScreen = preload("res://addons/third_party/keymap_screen/keymap_screen.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/FileMenuButton
@@ -263,7 +263,7 @@ func _on_MaterialLayerPopupMenu_layer_saved() -> void:
 	asset_browser.update_asset_list()
 
 
-func _on_MaterialLayerPopupMenu_mask_added(mask : LayerTexture) -> void:
+func _on_MaterialLayerPopupMenu_mask_added(mask : TextureLayerStack) -> void:
 	do_change_mask_action("Add Mask", layer_tree.get_selected_layer(), mask)
 
 
@@ -272,7 +272,7 @@ func _on_MaterialLayerPopupMenu_mask_removed() -> void:
 			NO_MASK)
 
 
-func _on_MaterialLayerPopupMenu_mask_pasted(mask : LayerTexture) -> void:
+func _on_MaterialLayerPopupMenu_mask_pasted(mask : TextureLayerStack) -> void:
 	do_change_mask_action("Paste Mask", layer_tree.get_selected_layer(), mask)
 
 
@@ -461,7 +461,7 @@ func export_materials() -> void:
 	progress_dialog.complete_task()
 
 
-func set_mask(layer, mask : LayerTexture) -> void:
+func set_mask(layer, mask : TextureLayerStack) -> void:
 	if mask == NO_MASK:
 		layer.mask = null
 	else:
@@ -491,7 +491,7 @@ func load_mesh(path : String) -> void:
 			current_file.model_path = path
 			for surface in context.mesh.get_surface_count():
 				if current_file.layer_materials.size() <= surface:
-					current_file.layer_materials.append(LayerMaterial.new())
+					current_file.layer_materials.append(MaterialLayerStack.new())
 			current_file.layer_materials.front().update()
 			emit_signal("mesh_changed", context.mesh)
 			emit_signal("layer_materials_changed", current_file.layer_materials)
@@ -515,7 +515,7 @@ func open_save_project_dialog() -> void:
 	file_dialog.popup_centered()
 
 
-func do_change_mask_action(action_name : String, layer, mask : LayerTexture) -> void:
+func do_change_mask_action(action_name : String, layer, mask : TextureLayerStack) -> void:
 	undo_redo.create_action(action_name)
 	undo_redo.add_do_method(self, "set_mask", layer, mask)
 	undo_redo.add_do_method(layer_tree, "reload")

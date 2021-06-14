@@ -5,9 +5,9 @@ var strength : float
 var pattern_scale : float
 var texture_angle : float
 var stamp_mode : bool
-var material : LayerMaterial
+var material : MaterialLayerStack
 
-const LayerMaterial = preload("res://material/layer_material.gd")
+const MaterialLayerStack = preload("res://material/material_layer_stack.gd")
 const Brush = preload("res://addons/painter/brush.gd")
 
 func _init(data := {}) -> void:
@@ -16,7 +16,7 @@ func _init(data := {}) -> void:
 	pattern_scale = data.get("pattern_scale", 1.0)
 	texture_angle = data.get("texture_angle", 0.0)
 	stamp_mode = data.get("stamp_mode", false)
-	material = LayerMaterial.new(data.get("material", []))
+	material = MaterialLayerStack.new(data.get("material", []))
 
 
 func serialize() -> Dictionary:

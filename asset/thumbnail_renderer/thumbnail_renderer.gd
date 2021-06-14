@@ -13,8 +13,8 @@ var mesh : Mesh
 
 const TextureUtils = preload("res://utils/texture_utils.gd")
 const Brush = preload("res://main/brush.gd")
-const LayerMaterial = preload("res://material/layer_material.gd")
-const MaterialGenerationContext = preload("res://main/material_generation_context.gd")
+const MaterialLayerStack = preload("res://material/material_layer_stack.gd")
+const MaterialGenerationContext = preload("res://material/material_generation_context.gd")
 const Painter = preload("res://addons/painter/painter.gd")
 const MaterialLayer = preload("res://material/material_layer.gd")
 const LayerBlendViewportManager = preload("res://addons/layer_blending_viewport/layer_blend_viewport_manager.gd")
@@ -38,7 +38,7 @@ onready var triplanar_texture_generator : TriplanarTextureGenerator = $Triplanar
 
 func get_thumbnail_for_smart_material(material : MaterialLayer,
 		result_size : Vector2) -> ImageTexture:
-	var layer_mat := LayerMaterial.new()
+	var layer_mat := MaterialLayerStack.new()
 	layer_mat.context = MaterialGenerationContext.new(layer_blending_viewport,
 			normal_map_generation_viewport, triplanar_texture_generator)
 	layer_mat.context.mesh = mesh

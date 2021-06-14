@@ -8,7 +8,7 @@ var material_layer : MaterialLayer
 # warning-ignore:unused_class_variable
 var texture_layer : TextureLayer
 
-var _copied_mask : LayerTexture
+var _copied_mask : TextureLayerStack
 
 var texture_layers := [
 	FillTextureLayer.new(),
@@ -34,13 +34,13 @@ enum Items {
 	DUPLICATE,
 }
 
-const PaintTextureLayer = preload("res://material/texture_layer/paint_texture_layer.gd")
-const FillTextureLayer = preload("res://material/texture_layer/fill_texture_layer.gd")
+const PaintTextureLayer = preload("res://material/paint_texture_layer.gd")
+const FillTextureLayer = preload("res://material/fill_texture_layer.gd")
 const MaterialLayer = preload("res://material/material_layer.gd")
 const LayerAsset = preload("res://asset/assets/layer_asset.gd")
-const JSONTextureLayer = preload("res://material/texture_layer/json_texture_layer.gd")
-const LayerTexture = preload("res://material/layer_texture.gd")
-const TextureLayer = preload("res://material/texture_layer/texture_layer.gd")
+const JSONTextureLayer = preload("res://material/json_texture_layer.gd")
+const TextureLayerStack = preload("res://material/texture_layer_stack.gd")
+const TextureLayer = preload("res://material/texture_layer.gd")
 
 func _on_about_to_show() -> void:
 	clear()
@@ -66,11 +66,11 @@ func _on_id_pressed(id : int) -> void:
 		Items.SAVE_TO_LIBRARY:
 			emit_signal("layer_saved")
 		Items.ADD_EMPTY_MASK:
-			emit_signal("mask_added", LayerTexture.new())
+			emit_signal("mask_added", TextureLayerStack.new())
 		Items.ADD_BLACK_MASK:
-			emit_signal("mask_added", LayerTexture.new())
+			emit_signal("mask_added", TextureLayerStack.new())
 		Items.ADD_WHITE_MASK:
-			emit_signal("mask_added", LayerTexture.new())
+			emit_signal("mask_added", TextureLayerStack.new())
 		Items.REMOVE_MASK:
 			emit_signal("mask_removed")
 		Items.COPY_MASK:

@@ -8,8 +8,8 @@ var dirty := true
 var dirty_icons : Array
 var icons : Dictionary
 
-const TextureLayer = preload("texture_layer/texture_layer.gd")
-const MaterialGenerationContext = preload("res://main/material_generation_context.gd")
+const TextureLayer = preload("texture_layer.gd")
+const MaterialGenerationContext = preload("material_generation_context.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 
 func _init(data := {}) -> void:

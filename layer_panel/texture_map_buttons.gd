@@ -10,11 +10,11 @@ var buttons : Dictionary
 # warning-ignore:unsafe_property_access
 onready var undo_redo : UndoRedo = find_parent("Main").undo_redo
 
-const LayerTexture = preload("res://material/layer_texture.gd")
+const TextureLayerStack = preload("res://material/texture_layer_stack.gd")
 const MaterialLayer = preload("res://material/material_layer.gd")
 const LayerPropertyPanel = preload("res://layer_panel/layer_property_panel.gd")
-const LayerMaterial = preload("res://material/layer_material.gd")
-const TextureLayer = preload("res://material/texture_layer/texture_layer.gd")
+const MaterialLayerStack = preload("res://material/material_layer_stack.gd")
+const TextureLayer = preload("res://material/texture_layer.gd")
 
 onready var layer_property_panel : LayerPropertyPanel = $"../LayerPropertyPanel"
 
@@ -69,8 +69,8 @@ func _set_map_enabled(layer : Reference, map : String, enabled : bool) -> void:
 	elif enabled:
 		tex_layer.enabled_maps[map] = true
 	tex_layer.mark_dirty(true)
-	(((tex_layer.parent as LayerTexture).parent as MaterialLayer).\
-			get_layer_material_in() as LayerMaterial).update()
+	(((tex_layer.parent as TextureLayerStack).parent as MaterialLayer).\
+			get_layer_material_in() as MaterialLayerStack).update()
 	
 	_silently_set_button_pressed(buttons[map], enabled)
 	emit_signal("maps_changed")

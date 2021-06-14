@@ -10,13 +10,13 @@ var path : String
 var model_path : String
 var result_size := Vector2(1024, 1024)
 
-const LayerMaterial = preload("res://material/layer_material.gd")
+const MaterialLayerStack = preload("res://material/material_layer_stack.gd")
 
 func _init(data := {}) -> void:
 	model_path = data.get("model_path", "")
 	result_size = str2var(data.get("result_size", "Vector2(1024, 1024)"))
 	for layer_data in data.get("layer_materials", []):
-		layer_materials.append(LayerMaterial.new(layer_data))
+		layer_materials.append(MaterialLayerStack.new(layer_data))
 
 
 func serialize() -> Dictionary:
