@@ -65,7 +65,7 @@ func get_blending_layer(_context : MaterialGenerationContext,
 func get_properties() -> Array:
 	var properties := []
 	for map in enabled_maps:
-		if not map + "_texture" in settings:
+		if not settings.get(map + "_texture"):
 			# Show the grayscale/color property when no map is set.
 			var property = map_properties[map]
 			if property == Properties.FloatProperty:

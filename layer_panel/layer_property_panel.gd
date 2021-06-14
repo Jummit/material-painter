@@ -16,6 +16,8 @@ const JSONTextureLayer = preload("res://material/texture_layer/json_texture_laye
 const LayerMaterial = preload("res://material/layer_material.gd")
 const LayerTexture = preload("res://material/layer_texture.gd")
 
+const NULL_VALUE := 10101010101010
+
 func _on_LayerTree_layer_selected(layer : Reference) -> void:
 	set_editing_layer(layer)
 
@@ -57,6 +59,8 @@ func _on_property_changed(property : String, value) -> void:
 					update_shader = not property_data.shader_param
 				break
 	undo_redo.create_action("Set Layer Property")
+	if value == null:
+		value = NULL_VALUE
 	undo_redo.add_do_method(self, "set_value_on_layer", layer, property, value)
 	undo_redo.add_do_method(layer, "mark_dirty", update_shader)
 	undo_redo.add_do_method(root, "update")
@@ -68,6 +72,8 @@ func _on_property_changed(property : String, value) -> void:
 
 
 func set_value_on_layer(layer : Reference, property : String, value) -> void:
+	if value is int and value == NULL_VALUE:
+		value = null
 	var mat_layer := layer as MaterialLayer
 	var tex_layer := layer as TextureLayer
 	if mat_layer:
