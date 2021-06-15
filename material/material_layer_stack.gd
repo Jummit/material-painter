@@ -22,7 +22,7 @@ var layers : Array setget set_layers
 var context : MaterialGenerationContext
 var results : Dictionary
 var dirty := true
-var shader_dirty := false
+var shader_dirty := true
 var busy := false
 
 const MaterialLayer = preload("material_layer.gd")
