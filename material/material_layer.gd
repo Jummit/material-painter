@@ -18,7 +18,6 @@ var name : String
 var visible := true
 var folder_results : Dictionary
 var layers : Array
-var enabled_maps : Dictionary
 var opacities : Dictionary
 var is_folder := false
 var blend_modes : Dictionary
@@ -42,7 +41,6 @@ func _init(data := {}) -> void:
 	name = data.get("name", "Untitled Folder" if is_folder else "Untitled Layer")
 	visible = data.get("visible", true)
 	opacities = data.get("opacities", {})
-	enabled_maps = data.get("enabled_maps", {})
 	blend_modes = data.get("blend_modes", {})
 	is_folder = data.get("is_folder", false)
 	main = TextureLayerStack.new(data.get("main", {}))
@@ -73,7 +71,6 @@ func serialize() -> Dictionary:
 			main.layers.pop_front()
 			data.base = base_texture_layer.serialize()
 		data.main = main.serialize()
-		data.enabled_maps = enabled_maps
 		data.opacities = opacities
 		data.blend_modes = blend_modes
 	return data
