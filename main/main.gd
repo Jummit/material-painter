@@ -197,6 +197,10 @@ func _on_AddFolderLayerButton2_pressed() -> void:
 func do_add_layer(layer : MaterialLayer) -> void:
 	var onto
 	var selected_mat : MaterialLayer = layer_tree.get_selected_layer() as MaterialLayer
+	var maps : Dictionary = layer.main.layers.front().enabled_maps
+	maps.albedo = true
+	maps.metallic = true
+	maps.roughness = true
 	if selected_mat and selected_mat.is_folder:
 		onto = selected_mat
 	else:
