@@ -13,6 +13,7 @@ var _copied_mask : TextureLayerStack
 var texture_layers := [
 	FillTextureLayer.new(),
 	PaintTextureLayer.new(),
+	EffectTextureLayer.new(),
 ]
 
 signal layer_selected(layer)
@@ -37,8 +38,8 @@ enum Items {
 const PaintTextureLayer = preload("res://material/paint_texture_layer.gd")
 const FillTextureLayer = preload("res://material/fill_texture_layer.gd")
 const MaterialLayer = preload("res://material/material_layer.gd")
-const LayerAsset = preload("res://asset/assets/layer_asset.gd")
-const JSONTextureLayer = preload("res://material/json_texture_layer.gd")
+const EffectAsset = preload("res://asset/assets/effect_asset.gd")
+const EffectTextureLayer = preload("res://material/effect_texture_layer.gd")
 const TextureLayerStack = preload("res://material/texture_layer_stack.gd")
 const TextureLayer = preload("res://material/texture_layer.gd")
 
@@ -87,11 +88,11 @@ func _on_index_pressed(index : int) -> void:
 
 
 func _on_AssetStore_asset_loaded(asset) -> void:
-	if asset is LayerAsset and asset.data is JSONTextureLayer and\
+	if asset is EffectAsset and asset.data is EffectTextureLayer and\
 			asset.data.show_in_menu():
 		texture_layers.append(asset.data)
 
 
 func _on_AssetStore_asset_unloaded(asset) -> void:
-	if asset is LayerAsset and asset.data in texture_layers:
+	if asset is EffectAsset and asset.data in texture_layers:
 		texture_layers.erase(asset.data)

@@ -52,7 +52,7 @@ const MaterialLayer = preload("res://material/material_layer.gd")
 const TextureLayer = preload("res://material/texture_layer.gd")
 const TextureAsset = preload("res://asset/assets/texture_asset.gd")
 const SmartMaterialAsset = preload("res://asset/assets/smart_material_asset.gd")
-const LayerAsset = preload("res://asset/assets/layer_asset.gd")
+const EffectAsset = preload("res://asset/assets/effect_asset.gd")
 const ProjectFile = preload("res://main/project_file.gd")
 const LayerPopupMenu = preload("res://layer_panel/layer_popup_menu.gd")
 const PaintTextureLayer = preload("res://material/paint_texture_layer.gd")
@@ -319,9 +319,7 @@ func _emit_select_signal(layer : Reference) -> void:
 
 func _get_layers_of_drop_data(data, _position : Vector2) -> Dictionary:
 	var layers : Array
-	if data is LayerAsset:
-		layers = [data.data.duplicate()]
-	elif data is SmartMaterialAsset:
+	if data is SmartMaterialAsset:
 		layers = [data.data.duplicate()]
 	elif data is Dictionary and "type" in data and data.type == "layers":
 		layers = data.layers

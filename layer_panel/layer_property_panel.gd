@@ -12,7 +12,7 @@ onready var undo_redo : UndoRedo = find_parent("Main").undo_redo
 const TextureLayer = preload("res://material/texture_layer.gd")
 const MaterialLayer = preload("res://material/material_layer.gd")
 const Properties = preload("res://addons/property_panel/properties.gd")
-const JSONTextureLayer = preload("res://material/json_texture_layer.gd")
+const EffectTextureLayer = preload("res://material/effect_texture_layer.gd")
 const MaterialLayerStack = preload("res://material/material_layer_stack.gd")
 const TextureLayerStack = preload("res://material/texture_layer_stack.gd")
 
@@ -41,7 +41,7 @@ func _on_property_changed(property : String, value) -> void:
 	var update_shader : bool = property == "blend_mode"
 	var layer := editing_layer
 	# don't update the shader if the changed value is a shader parameter
-	var json_layer := layer as JSONTextureLayer
+	var effect_layer := layer as EffectTextureLayer
 	var mat_layer := layer as MaterialLayer
 	var tex_layer := layer as TextureLayer
 	var root : MaterialLayerStack
@@ -53,12 +53,8 @@ func _on_property_changed(property : String, value) -> void:
 		settings = tex_layer.settings
 		root = ((tex_layer.parent as TextureLayerStack).parent as MaterialLayer)\
 				.get_layer_material_in()
-	if json_layer:
-		for property_data in json_layer.layer_data.properties:
-			if property_data.name == property:
-				if "shader_param" in property_data:
-					update_shader = not property_data.shader_param
-				break
+	if effect_layer:
+		update_shader = effect_layer.does_property_update_shader(property)
 	undo_redo.create_action("Set Layer Property")
 	if value == null:
 		value = NULL_VALUE

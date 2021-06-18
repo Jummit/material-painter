@@ -46,6 +46,8 @@ func _on_property_changed(_property : String, _value) -> void:
 
 func _on_AssetBrowser_asset_activated(asset : Asset) -> void:
 	if asset is BrushAsset:
+# warning-ignore:unsafe_property_access
+# warning-ignore:unsafe_property_access
 		load_values(asset.data)
 
 

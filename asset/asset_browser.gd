@@ -29,7 +29,7 @@ var _modifying_assets : Array
 var _adding_tags : bool
 
 const TextureAsset = preload("assets/texture_asset.gd")
-const LayerAsset = preload("assets/layer_asset.gd")
+const EffectAsset = preload("assets/effect_asset.gd")
 const AssetStore = preload("asset_store.gd")
 
 onready var asset_store : AssetStore = $"../../../../../../../AssetStore"
@@ -55,7 +55,7 @@ func update_asset_list() -> void:
 	if _current_tag != "all":
 		filter += " " + _current_tag
 	for asset in asset_store.search(filter):
-		if asset is LayerAsset and asset.data.show_in_menu():
+		if asset is EffectAsset and asset.show_in_menu():
 			continue
 		var item := asset_list.get_item_count()
 		asset_list.add_item(asset.name, asset_store.thumbnails[asset.path])

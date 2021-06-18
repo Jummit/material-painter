@@ -62,6 +62,7 @@ const TextureLayerStack = preload("res://material/texture_layer_stack.gd")
 const KeymapScreen = preload("res://addons/third_party/keymap_screen/keymap_screen.gd")
 const FillTextureLayer = preload("res://material/fill_texture_layer.gd")
 const PaintTextureLayer = preload("res://material/paint_texture_layer.gd")
+const EffectTextureLayer = preload("res://material/effect_texture_layer.gd")
 
 onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/FileMenuButton
 onready var edit_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/EditMenuButton
@@ -185,6 +186,12 @@ func _on_AddPaintLayerButton_pressed() -> void:
 func _on_AddFillLayerButton_pressed() -> void:
 	var new_layer := MaterialLayer.new()
 	new_layer.base_texture_layer = FillTextureLayer.new()
+	do_add_layer(new_layer)
+
+
+func _on_AddEffectLayerButton_pressed() -> void:
+	var new_layer := MaterialLayer.new()
+	new_layer.base_texture_layer = EffectTextureLayer.new()
 	do_add_layer(new_layer)
 
 

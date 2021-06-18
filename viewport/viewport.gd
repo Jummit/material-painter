@@ -219,8 +219,11 @@ func _on_ToolSettingsPropertyPanel_brush_changed(brush : Brush) -> void:
 func _on_AssetBrowser_asset_activated(asset : Asset) -> void:
 	if asset is BrushAsset:
 # warning-ignore:unsafe_property_access
+# warning-ignore:unsafe_property_access
 		get_painter().brush = asset.data
 	elif asset is HdriAsset:
+# warning-ignore:unsafe_property_access
+# warning-ignore:unsafe_property_access
 		set_hdri(asset.data)
 
 
@@ -342,6 +345,8 @@ func can_drop_data(_position : Vector2, data) -> bool:
 
 
 func drop_data(_position : Vector2, data : HdriAsset) -> void:
+# warning-ignore:unsafe_property_access
+# warning-ignore:unsafe_property_access
 	set_hdri(data.data)
 
 

@@ -14,7 +14,7 @@ var asset_tags : Dictionary
 var asset_types := [
 	preload("assets/brush_asset.gd"),
 	preload("assets/hdri_asset.gd"),
-	preload("assets/layer_asset.gd"),
+	preload("assets/effect_asset.gd"),
 	preload("assets/material_asset.gd"),
 	preload("assets/smart_material_asset.gd"),
 	preload("assets/texture_asset.gd"),
@@ -86,6 +86,8 @@ func load_asset(path : String, type : GDScript) -> void:
 		(thumbnail as ImageTexture).create_from_image(image)
 	elif thumbnail_renderer.has_method("get_thumbnail_for_" + asset.get_type()):
 		var result = thumbnail_renderer.call(
+# warning-ignore:unsafe_property_access
+# warning-ignore:unsafe_property_access
 				"get_thumbnail_for_" + asset.get_type(), asset.data,
 				Vector2(128, 128))
 		while result is GDScriptFunctionState:
