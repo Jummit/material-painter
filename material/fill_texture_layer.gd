@@ -12,7 +12,7 @@ var map_properties := {
 
 const SHADERS := {
 	TYPE_COLOR : "{value}",
-	TYPE_REAL : "vec4({value})",
+	TYPE_REAL : "vec4(vec3({value}), 1.0)",
 	TYPE_OBJECT : "texture({value}, uv)",
 }
 
