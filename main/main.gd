@@ -189,12 +189,6 @@ func _on_AddFillLayerButton_pressed() -> void:
 	do_add_layer(new_layer)
 
 
-func _on_AddEffectLayerButton_pressed() -> void:
-	var new_layer := MaterialLayer.new()
-	new_layer.base_texture_layer = EffectTextureLayer.new()
-	do_add_layer(new_layer)
-
-
 func _on_AddFolderLayerButton2_pressed() -> void:
 	var new_layer := MaterialLayer.new()
 	new_layer.is_folder = true
