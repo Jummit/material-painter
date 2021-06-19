@@ -305,10 +305,6 @@ func _on_SaveButton_pressed() -> void:
 	file_dialog.popup_centered()
 
 
-func _on_MaterialOptionButton_item_selected(index : int) -> void:
-	set_current_layer_material(current_file.layer_materials[index])
-
-
 func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 	if not current_file.path:
 		bake_error_dialog.popup()
@@ -577,3 +573,7 @@ func _on_ToolButtonContainer_tool_selected(selected : int) -> void:
 
 func _on_TextureMapButtons_maps_changed() -> void:
 	current_layer_material.update()
+
+
+func _on_SurfaceList_surface_selected(surface : int) -> void:
+	set_current_layer_material(current_file.layer_materials[surface])

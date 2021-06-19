@@ -180,10 +180,6 @@ half_res={
 "deadzone": 0.5,
 "events": [  ]
 }
-select_material={
-"deadzone": 0.5,
-"events": [  ]
-}
 add_layer={
 "deadzone": 0.5,
 "events": [  ]
