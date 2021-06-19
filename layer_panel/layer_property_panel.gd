@@ -21,8 +21,8 @@ const NULL_VALUE := 10101010101010
 func _on_LayerTree_layer_selected(layer : Reference) -> void:
 	var mat_layer := layer as MaterialLayer
 	var tex_layer := layer as TextureLayer
-	if mat_layer and mat_layer.base_texture_layer:
-		set_editing_layer(mat_layer.base_texture_layer)
+	if mat_layer and mat_layer.hide_first_layer:
+		set_editing_layer(mat_layer.main.layers.front())
 	elif tex_layer:
 		set_editing_layer(layer)
 

@@ -18,7 +18,7 @@ var result_size : Vector2
 var current_surface := 0
 var light_rotation := 0.0 setget set_light_rotation
 
-var blur_amount := 0 setget set_blur_amount
+var blur_amount := 0.0 setget set_blur_amount
 var background_visible := false setget set_background_visible
 var hdri : Image setget set_hdri
 
@@ -127,7 +127,7 @@ func set_background_visible(to) -> void:
 		world_environment.environment.background_mode = Environment.BG_COLOR_SKY
 
 
-func set_hdri(to):
+func set_hdri(to : Image) -> void:
 	if hdri == to:
 		return
 	hdri = to
@@ -144,7 +144,7 @@ func set_hdri(to):
 			world_environment.environment.background_sky.radiance_size
 
 
-func set_blur_amount(to):
+func set_blur_amount(to : float) -> void:
 	if blur_amount == to:
 		return
 	blur_amount = to
@@ -344,10 +344,10 @@ func can_drop_data(_position : Vector2, data) -> bool:
 	return data is Asset and data is HdriAsset
 
 
-func drop_data(_position : Vector2, data : HdriAsset) -> void:
+func drop_data(_position : Vector2, asset : HdriAsset) -> void:
 # warning-ignore:unsafe_property_access
 # warning-ignore:unsafe_property_access
-	set_hdri(data.data)
+	set_hdri(asset.data)
 
 
 # warning-ignore:shadowed_variable

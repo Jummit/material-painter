@@ -179,13 +179,15 @@ func _on_AddButton_pressed() -> void:
 
 func _on_AddPaintLayerButton_pressed() -> void:
 	var new_layer := MaterialLayer.new()
-	new_layer.base_texture_layer = PaintTextureLayer.new()
+	new_layer.hide_first_layer = true
+	new_layer.main.add_layer(PaintTextureLayer.new())
 	do_add_layer(new_layer)
 
 
 func _on_AddFillLayerButton_pressed() -> void:
 	var new_layer := MaterialLayer.new()
-	new_layer.base_texture_layer = FillTextureLayer.new()
+	new_layer.hide_first_layer = true
+	new_layer.main.add_layer(FillTextureLayer.new())
 	do_add_layer(new_layer)
 
 

@@ -6,3 +6,8 @@ func _init(_path).(_path) -> void:
 
 static func get_type() -> String:
 	return "hdri"
+
+
+func _load_data() -> void:
+	var image := Image.new()
+	data = image.load(path)

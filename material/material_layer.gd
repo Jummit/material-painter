@@ -23,7 +23,8 @@ var is_folder := false
 var blend_modes : Dictionary
 var mask : TextureLayerStack
 var main : TextureLayerStack
-var base_texture_layer : TextureLayer setget set_base_texture_layer
+# warning-ignore:unused_class_variable
+var hide_first_layer : bool
 
 # warning-ignore:unused_class_variable
 var settings : Dictionary
@@ -43,13 +44,12 @@ func _init(data := {}) -> void:
 	opacities = data.get("opacities", {})
 	blend_modes = data.get("blend_modes", {})
 	is_folder = data.get("is_folder", false)
+	hide_first_layer = data.get("has_base", false)
 	main = TextureLayerStack.new(data.get("main", {}))
 	main.parent = self
 	if "mask" in data:
 		mask = TextureLayerStack.new(data.mask)
 		mask.parent = self
-	if "base" in data:
-		set_base_texture_layer(TextureLayerLoader.load_layer(data.base))
 	for layer in data.get("layers", []):
 		add_layer(get_script().new(layer))
 
@@ -59,6 +59,7 @@ func serialize() -> Dictionary:
 		name = name,
 		visible = visible,
 		is_folder = is_folder,
+		has_base = hide_first_layer,
 	}
 	if mask:
 		data.mask = mask.serialize()
@@ -67,21 +68,10 @@ func serialize() -> Dictionary:
 		for layer in layers:
 			data.layers.append(layer.serialize())
 	else:
-		if base_texture_layer:
-			main.layers.pop_front()
-			data.base = base_texture_layer.serialize()
 		data.main = main.serialize()
 		data.opacities = opacities
 		data.blend_modes = blend_modes
 	return data
-
-
-func set_base_texture_layer(to : TextureLayer) -> void:
-	if base_texture_layer:
-		main.layers.pop_front()
-	main.layers.push_front(to)
-	base_texture_layer = to
-	base_texture_layer.parent = main
 
 
 func get_result(map : String, context : MaterialGenerationContext) -> Texture:

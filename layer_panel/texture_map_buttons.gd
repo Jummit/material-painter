@@ -76,6 +76,6 @@ func _set_map_enabled(layer : Reference, map : String, enabled : bool) -> void:
 
 func get_texture_layer(layer : Reference) -> TextureLayer:
 	var mat_layer := layer as MaterialLayer
-	if mat_layer:
-		return mat_layer.base_texture_layer
+	if mat_layer and mat_layer.hide_first_layer:
+		return mat_layer.main.layers.front()
 	return layer as TextureLayer

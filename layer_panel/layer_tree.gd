@@ -45,6 +45,7 @@ enum LayerState {
 enum Column {
 	ICONS,
 	NAME,
+	OPACITY,
 }
 
 const MaterialLayerStack = preload("res://material/material_layer_stack.gd")
@@ -161,6 +162,8 @@ func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
 
 
 func _on_item_edited() -> void:
+	if get_edited_column() != 1:
+		return
 	undo_redo.create_action("Rename Layer")
 	var edited_layer = get_edited().get_meta("layer")
 	undo_redo.add_do_property(edited_layer, "name", get_edited().get_text(1))
@@ -200,12 +203,12 @@ func get_drag_data(_position : Vector2):
 			label.text = selected.get_meta("layer").name
 			preview.add_child(label)
 		selected = get_next_selected(selected)
-	set_drag_preview(preview)
-	drop_mode_flags = DROP_MODE_INBETWEEN | DROP_MODE_ON_ITEM
-	return {
-		type = "layers",
-		layers = selected_layers,
-	}
+#	set_drag_preview(preview)
+#	drop_mode_flags = DROP_MODE_INBETWEEN | DROP_MODE_ON_ITEM
+#	return {
+#		type = "layers",
+#		layers = selected_layers,
+#	}
 
 
 func can_drop_data(position : Vector2, data) -> bool:
@@ -359,7 +362,11 @@ func _setup_material_layer_item(layer : MaterialLayer, parent_item : TreeItem,
 		Buttons.VISIBILITY)
 	item.set_custom_draw(Column.ICONS, self, "_draw_layer_item")
 	item.set_cell_mode(Column.ICONS, TreeItem.CELL_MODE_CUSTOM)
-	item.set_text_align(0, TreeItem.ALIGN_LEFT)
+	
+	item.set_cell_mode(Column.OPACITY, TreeItem.CELL_MODE_RANGE)
+	item.set_range_config(Column.OPACITY, 0, 1, 0.01)
+	item.set_editable(Column.OPACITY, true)
+	item.set_tooltip(Column.OPACITY, "Layer opacity")
 	
 	if not layer in _layer_states:
 		_layer_states[layer] = LayerState.CLOSED
@@ -376,7 +383,10 @@ func _setup_material_layer_item(layer : MaterialLayer, parent_item : TreeItem,
 	elif state == LayerState.MASK_EXPANDED:
 		_layer_states[layer] = LayerState.CLOSED
 	if state in [LayerState.MAP_EXPANDED, LayerState.MASK_EXPANDED]:
-		for texture_layer in layer.main.layers if state ==\
+		var main_layers := layer.main.layers.duplicate()
+		if layer.hide_first_layer:
+			main_layers.pop_front()
+		for texture_layer in main_layers if state ==\
 				LayerState.MAP_EXPANDED else layer.mask.layers:
 			_setup_texture_layer_item(texture_layer, item, selected_layer)
 	if layer.is_folder:

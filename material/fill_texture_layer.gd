@@ -22,10 +22,6 @@ const TextureAsset = preload("res://asset/assets/texture_asset.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 
 func _init(data := {}).(data) -> void:
-	for map in enabled_maps:
-		if settings.get(map + "_texture"):
-			var image := load_png(settings[map + "_texture"])
-			settings[map + "_texture"] = image
 	for setting in settings:
 		var value = settings[setting]
 		if value is String:
@@ -42,10 +38,6 @@ func load_png(path : String) -> ImageTexture:
 
 func serialize() -> Dictionary:
 	var data := .serialize()
-	for map in enabled_maps:
-		if settings.get(map + "_texture"):
-			var path : String = settings[map + "_texture"].path
-			settings[map + "_texture"] = path
 	return data
 
 
@@ -55,15 +47,20 @@ func get_type() -> String:
 
 func get_blending_layer(_context : MaterialGenerationContext,
 		map : String) -> Layer:
-	var value = settings.get(map)
-	if settings.get(map + "_texture"):
-		value = settings[map + "_texture"].texture
+	var value = get_value(map)
 	if value == null:
 		return null
 	var layer := BlendingLayer.new(SHADERS[typeof(value)],
 			blend_modes.get(map, "normal"), opacities.get(map, 1.0))
 	layer.uniforms.value = value
 	return layer
+
+
+func get_value(map):
+	var value = settings.get(map)
+	if not value and settings.get(map + "_texture"):
+		return load_png(settings.get(map + "_texture"))
+	return value
 
 
 func get_properties() -> Array:

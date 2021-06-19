@@ -41,7 +41,9 @@ func load_dir(path : String) -> void:
 		var file_name := dir.get_next()
 		while file_name:
 			if not "thumbnail.png" in file_name:
-				load_asset(type_path.plus_file(file_name), asset)
+				var result = load_asset(type_path.plus_file(file_name), asset)
+				while result is GDScriptFunctionState:
+					result = yield(result, "completed")
 			file_name = dir.get_next()
 		dir.list_dir_end()
 	save_asset_tags()
