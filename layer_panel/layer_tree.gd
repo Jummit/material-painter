@@ -2,14 +2,6 @@ extends Tree
 
 """
 An interactive representation of a `MaterialLayerStack` as a tree
-
-The tree consists of a list of `MaterialLayer`s with the `TextureLayer`s
-of the selected `TextureLayerStack` below. The selected `TextureLayer`,
-which could be a map or a mask, is stored in `_selected_layer_textures`.
-Shows previews of maps and masks as buttons, which can be clicked to select the
-`TextureLayerStack`.
-When a `MaterialLayer` has multiple maps enabled, the current map can be selected
-with a dropdown. The selected maps are stored in `_selected_maps`.
 """
 
 signal layer_selected(layer)
@@ -19,11 +11,14 @@ var project : ProjectFile
 var update_icons := true
 var context : MaterialGenerationContext
 
+# Used to decide which icons to display.
 var _selected_map := "albedo"
 var _root : TreeItem
-var _lastly_edited_layer : TreeItem
+var _last_edited_layer : TreeItem
+# A map of layers to `LayerState`s.
 var _layer_states : Dictionary
-var _painting := false
+# If true, the user is painting and icons are not updated.
+var _is_painting := false
 
 # warning-ignore:unsafe_property_access
 onready var undo_redo : UndoRedo = find_parent("Main").undo_redo
@@ -85,9 +80,9 @@ func _gui_input(event : InputEvent) -> void:
 		if get_selected():
 			get_selected().set_editable(Column.NAME, true)
 			# If a layer was set editable reset it to not editable again.
-			if is_instance_valid(_lastly_edited_layer):
-				_lastly_edited_layer.set_editable(Column.NAME, false)
-			_lastly_edited_layer = get_selected()
+			if is_instance_valid(_last_edited_layer):
+				_last_edited_layer.set_editable(Column.NAME, false)
+			_last_edited_layer = get_selected()
 	elif key_ev and key_ev.pressed and key_ev.scancode == KEY_DELETE:
 		var layer : Reference = get_selected_layer()
 		if not layer:
@@ -100,7 +95,7 @@ func _gui_input(event : InputEvent) -> void:
 # warning-ignore:unsafe_property_access
 # warning-ignore:unsafe_property_access
 			layer, layer.parent)
-		undo_redo.add_undo_method(self, "_emit_select_signal", layer)
+		undo_redo.add_undo_method(self, "_do_select_layer", layer)
 		undo_redo.add_undo_method(self, "reload")
 		undo_redo.commit_action()
 
@@ -120,7 +115,7 @@ func collapse_layer(layer):
 
 
 func _on_cell_selected() -> void:
-	_emit_select_signal(get_selected().get_meta("layer"))
+	_do_select_layer(get_selected().get_meta("layer"))
 
 
 func _on_button_pressed(item : TreeItem, _column : int, id : int) -> void:
@@ -172,7 +167,7 @@ func _on_item_edited() -> void:
 	undo_redo.add_undo_property(edited_layer, "name", edited_layer.name)
 	undo_redo.add_undo_method(self, "reload")
 	undo_redo.commit_action()
-	_lastly_edited_layer = null
+	_last_edited_layer = null
 
 
 func _draw_layer_item(item : TreeItem, item_rect : Rect2) -> void:
@@ -315,8 +310,8 @@ func _get_layer_at_position(position : Vector2):
 		return get_item_at_position(position).get_meta("layer")
 
 
-func _emit_select_signal(layer : Reference) -> void:
-	_painting = layer is PaintTextureLayer
+func _do_select_layer(layer : Reference) -> void:
+	_is_painting = layer is PaintTextureLayer
 	emit_signal("layer_selected", layer)
 
 
@@ -455,7 +450,7 @@ func _select_item(item : TreeItem) -> void:
 
 
 func _get_layer_texture_icon(layer : TextureLayerStack) -> Texture:
-	if update_icons and not _painting:
+	if update_icons and not _is_painting:
 		var result = layer.get_icon(_selected_map, context)
 		while result is GDScriptFunctionState:
 			result = yield(result, "completed")
@@ -466,7 +461,7 @@ func _get_layer_texture_icon(layer : TextureLayerStack) -> Texture:
 
 
 func _get_texture_layer_icon(layer : TextureLayer) -> Texture:
-	if update_icons and not _painting:
+	if update_icons and not _is_painting:
 		var result = layer.get_icon(_selected_map, context)
 		while result is GDScriptFunctionState:
 			result = yield(result, "completed")
