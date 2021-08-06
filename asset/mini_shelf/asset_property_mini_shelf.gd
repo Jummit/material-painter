@@ -10,7 +10,8 @@ func _ready() -> void:
 
 
 func _on_SceneTree_node_added(node : Node) -> void:
-	if node is AssetProperty:
+	if node is AssetProperty and not node.is_connected("minishelf_opened", self,
+				"_on_AssetProperty_minishelf_opened"):
 		node.connect("minishelf_opened", self,
 				"_on_AssetProperty_minishelf_opened", [node])
 
