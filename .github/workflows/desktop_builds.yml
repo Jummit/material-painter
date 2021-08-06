@@ -22,14 +22,14 @@ jobs:
       image: docker://barichello/godot-ci:3.3.2
     steps:
       - name: Checkout
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
         with:
           submodules: true
       - name: Install Packages
         run: |
           apt update
           apt-get -y install python3.9
-          ./package_manager/package_manager.py --update
+          ./package_manager/package_manager.py update
       - name: Setup
         run: |
           mkdir -v -p build/${NAME}_${VERSION}_windows build/${NAME}_${VERSION}_linux build/${NAME}_${VERSION}_macosx ~/.local/share/godot/templates
