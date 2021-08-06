@@ -213,7 +213,7 @@ func _on_ToolSettingsPropertyPanel_brush_changed(brush : Brush) -> void:
 		yield(self, "ready")
 	var brushes := []
 	for map in _painting_layer.enabled_maps:
-		brushes.append(brush.get_brush(map))
+		brushes.append(brush.get_painter_brush(map))
 	get_painter().brushes = brushes
 
 

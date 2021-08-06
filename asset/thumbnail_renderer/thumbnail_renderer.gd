@@ -63,7 +63,7 @@ func get_thumbnail_for_brush(brush : Brush, result_size : Vector2) -> ImageTextu
 	
 	var brushes := []
 	for map in Constants.TEXTURE_MAP_TYPES:
-		brushes.append(brush.get_brush(map))
+		brushes.append(brush.get_painter_brush(map))
 	painter.brushes = brushes
 	yield(painter.clear(), "completed")
 	var last_point := paint_line.points[0]

@@ -8,7 +8,7 @@ var stamp_mode : bool
 var material : MaterialLayerStack
 
 const MaterialLayerStack = preload("res://material/material_layer_stack.gd")
-const Brush = preload("res://addons/painter/brush.gd")
+const PainterBrush = preload("res://addons/painter/brush.gd")
 
 func _init(data := {}) -> void:
 	size = data.get("size", 10.0)
@@ -30,8 +30,8 @@ func serialize() -> Dictionary:
 	}
 
 
-func get_brush(map : String) -> Brush:
-	var brush := Brush.new()
+func get_painter_brush(map : String) -> PainterBrush:
+	var brush := PainterBrush.new()
 	brush.size = size
 	brush.strength = strength
 	brush.pattern_scale = pattern_scale
