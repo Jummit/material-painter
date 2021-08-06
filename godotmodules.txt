@@ -1,6 +1,6 @@
 https://github.com/jummit/curvature-baker.git master
 https://github.com/jummit/navigation-camera.git master
-https://github.com/jummit/customizable-ui.git master
+https://github.com/jummit/customizable-ui.git 6b6c7ca
 https://github.com/jummit/godot-obj-parser.git master
 https://github.com/jummit/node-referencer-addon.git master
 https://github.com/jummit/mesh-utils.git master
