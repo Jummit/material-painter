@@ -14,23 +14,14 @@ signal current_layer_material_changed(to, id)
 signal mesh_changed(to)
 signal context_changed(to)
 
-# The current project file.
 var current_file : ProjectFile setget set_current_file
-# The currently editing `MaterialLayerStack`.
 var current_layer_material : MaterialLayerStack setget set_current_layer_material
 var undo_redo := UndoRedo.new()
 var context : MaterialGenerationContext
 
-const MeshMapsGenerator = preload("res://main/mesh_maps_generator.gd")
-const Constants = preload("res://main/constants.gd")
-
-onready var mesh_maps_generator : MeshMapsGenerator = $MeshMapsGenerator
-
 # To avoid https://github.com/godotengine/godot/issues/36895, this is passed to
 # `add_do_action` instead of null.
 var NO_MASK := TextureLayerStack.new()
-
-const LAYOUTS_FOLDER := "user://layouts"
 
 enum FILE_MENU_ITEMS {
 	NEW,
@@ -42,6 +33,10 @@ enum FILE_MENU_ITEMS {
 	QUIT,
 }
 
+const LAYOUTS_FOLDER := "user://layouts"
+const MeshMapsGenerator = preload("res://main/mesh_maps_generator.gd")
+const Constants = preload("res://main/constants.gd")
+const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
 const ProjectFile = preload("res://main/project_file.gd")
 const MaterialLayer = preload("res://material/material_layer.gd")
 const MaterialLayerStack = preload("res://material/material_layer_stack.gd")
@@ -85,8 +80,7 @@ onready var layer_blend_viewport_manager : Node = $LayerBlendViewportManager
 onready var asset_store : AssetStore = $AssetStore
 onready var keymap_screen : KeymapScreen = $SettingsDialog/TabContainer/KeymapScreen
 onready var load_file_error_dialog : AcceptDialog = $LoadFileErrorDialog
-
-const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
+onready var mesh_maps_generator : MeshMapsGenerator = $MeshMapsGenerator
 
 func _ready() -> void:
 	context = MaterialGenerationContext.new(layer_blend_viewport_manager,
