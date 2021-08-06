@@ -20,10 +20,7 @@ user directory.
 Assets can be searched using the search bar.
 """
 
-signal asset_activated(asset)
-
 var _tag_list := ["all", "texture", "material", "brush", "effect"]
-var _current_tag := "all"
 var _progress_dialog
 var _modifying_assets : Array
 var _adding_tags : bool
@@ -31,52 +28,31 @@ var _adding_tags : bool
 const TextureAsset = preload("assets/texture_asset.gd")
 const EffectAsset = preload("assets/effect_asset.gd")
 const AssetStore = preload("asset_store.gd")
+const AssetList = preload("asset_list/asset_list.gd")
 
 onready var asset_store : AssetStore = $"../../../../../../../AssetStore"
 onready var tag_name_edit : LineEdit = $VBoxContainer/HBoxContainer/TagNameEdit
-onready var asset_list : ItemList = $VBoxContainer2/AssetList
-onready var search_edit : LineEdit = $VBoxContainer2/SearchEdit
+onready var asset_list : AssetList = $AssetList
 onready var tag_list : Tree = $VBoxContainer/TagList
 onready var delete_asset_confirmation_dialog : ConfirmationDialog = $"../../../../../../../DeleteAssetConfirmationDialog"
-onready var asset_popup_menu : PopupMenu = $"VBoxContainer2/AssetList/AssetPopupMenu"
+onready var asset_popup_menu : PopupMenu = $AssetList/AssetPopupMenu
 onready var tag_modification_dialog : ConfirmationDialog = $"../../../../../../../TagModificationDialog"
 onready var tag_edit : LineEdit = $"../../../../../../../TagModificationDialog/TagEdit"
 
 func _ready():
-	asset_list.set_drag_forwarding(self)
 	get_tree().connect("files_dropped", self, "_on_SceneTree_files_dropped")
-	update_asset_list()
+	asset_list.update_list()
+	asset_list.asset_store = asset_store
 	_update_tag_list()
-
-
-func update_asset_list() -> void:
-	asset_list.clear()
-	var filter := search_edit.text
-	if _current_tag != "all":
-		filter += " " + _current_tag
-	for asset in asset_store.search(filter):
-		if asset is EffectAsset and asset.show_in_menu():
-			continue
-		var item := asset_list.get_item_count()
-		asset_list.add_item(asset.name, asset_store.thumbnails[asset.path])
-		asset_list.set_item_tooltip(item, "%s\n\n%s\nTags: %s" % [asset.name,
-# warning-ignore:unsafe_cast
-				asset.path, (asset_store.asset_tags[asset.path] as PoolStringArray
-				).join(", ")])
-		asset_list.set_item_metadata(item, asset)
-
-
-func _on_AssetList_item_activated(index : int) -> void:
-	emit_signal("asset_activated", asset_list.get_item_metadata(index))
 
 
 func _on_RemoveTagButton_pressed() -> void:
 	if not tag_list.get_selected():
 		return
 	var tag := tag_list.get_selected().get_text(0)
-	_current_tag = "all"
+	asset_list.filter = "all"
 	_tag_list.erase(tag)
-	update_asset_list()
+	asset_list.update_list()
 	_update_tag_list()
 
 
@@ -85,26 +61,20 @@ func _on_AddTagButton_pressed() -> void:
 
 
 func _on_TagList_cell_selected() -> void:
-	_current_tag = tag_list.get_selected().get_text(0)
-	update_asset_list()
+	asset_list.filter = tag_list.get_selected().get_text(0)
 
 
 func get_layout_data():
 	return _tag_list
 
-
-func _on_SearchEdit_text_changed(_new_text: String) -> void:
-	update_asset_list()
-
-
 func _on_DeleteAssetConfirmationDialog_confirmed():
-	for item in delete_asset_confirmation_dialog.get_meta("items"):
-		asset_store.remove_asset(item)
+	for asset in delete_asset_confirmation_dialog.get_meta("assets"):
+		asset_store.remove_asset(asset)
 
 
 func _on_AssetList_gui_input(event : InputEvent) -> void:
 	if event.is_action_pressed("delete_asset") and\
-			asset_list.is_anything_selected():
+			asset_list.get_selected_assets().size():
 		_show_delete_confirmation_popup()
 
 
@@ -119,15 +89,15 @@ func _on_AssetPopupMenu_id_pressed(id : int) -> void:
 		2:
 			_show_delete_confirmation_popup()
 	if id < 2:
-		tag_modification_dialog.set_meta("items",
-				asset_popup_menu.get_meta("items"))
+		tag_modification_dialog.set_meta("assets",
+				asset_popup_menu.get_meta("assets"))
 		tag_modification_dialog.popup()
 		tag_edit.grab_focus()
 		tag_edit.select_all()
 
 
 func _on_AssetList_item_rmb_selected(_index : int, at_position : Vector2) -> void:
-	asset_popup_menu.set_meta("items", asset_list.get_selected_items())
+	asset_popup_menu.set_meta("assets", asset_list.get_selected_assets())
 	asset_popup_menu.popup()
 	asset_popup_menu.rect_position = asset_list.rect_global_position + at_position
 
@@ -159,22 +129,8 @@ func _on_SceneTree_files_dropped(files : PoolStringArray, _screen : int) -> void
 					file.get_file())
 			dir.copy(file, destination)
 			asset_store.load_asset(destination, TextureAsset)
-			update_asset_list()
+			asset_list.update_list()
 	_progress_dialog.complete_task()
-
-
-func get_drag_data_fw(position : Vector2, _from : Control):
-	var item := asset_list.get_item_at_position(position, true)
-	if item != -1:
-		var preview := Control.new()
-		var preview_texture := TextureRect.new()
-		preview_texture.rect_size = Vector2(100, 100)
-		preview_texture.expand = true
-		preview_texture.texture = asset_list.get_item_icon(item)
-		preview.add_child(preview_texture)
-		preview_texture.rect_position = - preview_texture.rect_size / 2
-		set_drag_preview(preview)
-		return asset_list.get_item_metadata(item)
 
 
 func _update_tag_list() -> void:
@@ -189,21 +145,20 @@ func _add_tag() -> void:
 	var new_tag := tag_name_edit.text.to_lower()
 	if new_tag and not new_tag in _tag_list:
 		_tag_list.append(new_tag)
-		_current_tag = new_tag
+		asset_list.filter = new_tag
 		tag_name_edit.text = ""
 		_update_tag_list()
-		update_asset_list()
 
 
 func _show_delete_confirmation_popup() -> void:
-	var items := asset_list.get_selected_items()
+	var assets := asset_list.get_selected_assets()
 	var names : PoolStringArray = []
-	for item in items:
-		names.append(asset_list.get_item_metadata(item).name)
+	for asset in assets:
+		names.append(asset)
 	delete_asset_confirmation_dialog.dialog_text =\
 			"Delete %s?" % names.join(", ")
 	delete_asset_confirmation_dialog.popup()
-	delete_asset_confirmation_dialog.set_meta("items", items)
+	delete_asset_confirmation_dialog.set_meta("assets", assets)
 
 
 func _modify_tags() -> void:
@@ -213,22 +168,10 @@ func _modify_tags() -> void:
 			asset_store.add_asset_tag(asset, tag)
 		else:
 			asset_store.remove_asset_tag(asset, tag)
-	update_asset_list()
+	asset_list.update_list()
 
 
 func _on_layout_changed(meta) -> void:
 	if meta is Dictionary and not meta.empty():
 		_tag_list = meta
-		update_asset_list()
-
-
-func _on_Main_current_file_changed(_to) -> void:
-	pass
-
-
-func _on_AssetStore_dir_loaded() -> void:
-	update_asset_list()
-
-
-func _on_AssetStore_dir_unloaded() -> void:
-	update_asset_list()
+		asset_list.update_list()

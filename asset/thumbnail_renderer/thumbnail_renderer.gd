@@ -20,6 +20,7 @@ const MaterialLayer = preload("res://material/material_layer.gd")
 const LayerBlendViewportManager = preload("res://addons/layer_blending_viewport/layer_blend_viewport_manager.gd")
 const TriplanarTextureGenerator = preload("res://addons/triplanar_texture_generator/triplanar_texture_generator.gd")
 const NormalMapGenerationViewport = preload("res://addons/normal_map_generation_viewport/normal_map_generation_viewport.gd")
+const Constants = preload("res://main/constants.gd")
 
 onready var material_viewport : Viewport = $MaterialViewport
 onready var model : MeshInstance = $MaterialViewport/Model

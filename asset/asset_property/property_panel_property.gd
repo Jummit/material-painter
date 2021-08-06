@@ -10,10 +10,11 @@ func _init(_name : String, _accepted_assets : Array, _default := null).(
 
 
 func _get_control() -> Control:
-	var texture_property : AssetProperty = preload(\
+	var asset_property : AssetProperty = preload(\
 			"asset_property.tscn").instance()
-	texture_property.text = name
-	return texture_property
+	asset_property.text = name
+	asset_property.allowed_assets = accepted_assets
+	return asset_property
 
 
 func _can_drop_data(_control : Control, data) -> bool:

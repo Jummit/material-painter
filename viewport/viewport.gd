@@ -49,6 +49,7 @@ const BrushAsset = preload("res://asset/assets/brush_asset.gd")
 const Asset = preload("res://asset/assets/asset.gd")
 const Model = preload("res://viewport/model.gd")
 const PaintTextureLayer = preload("res://material/paint_texture_layer.gd")
+const Constants = preload("res://main/constants.gd")
 
 onready var texture_rect : TextureRect = $Viewport/SkyViewport/TextureRect
 onready var sky_viewport : Viewport = $Viewport/SkyViewport

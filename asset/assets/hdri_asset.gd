@@ -10,4 +10,5 @@ static func get_type() -> String:
 
 func _load_data() -> void:
 	var image := Image.new()
-	data = image.load(path)
+	image.load(path)
+	data = image

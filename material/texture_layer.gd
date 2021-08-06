@@ -13,7 +13,7 @@ var visible : bool
 var enabled_maps : Dictionary setget set_enabled_maps
 var opacities : Dictionary
 var blend_modes : Dictionary
-var settings := {} setget set_settings
+var settings := {}
 
 var parent : Reference
 var dirty := true
@@ -78,12 +78,13 @@ func get_name() -> String:
 	return get_type().capitalize()
 
 
-func set_settings(to : Dictionary) -> void:
-	settings = to
-
-
 func get_properties() -> Array:
 	return []
+
+
+func set_property(property : String, value) -> void:
+	settings[property] = value
+
 
 
 func get_blending_layer(_context : MaterialGenerationContext,

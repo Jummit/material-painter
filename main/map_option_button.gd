@@ -2,6 +2,8 @@ extends OptionButton
 
 signal map_selected(map)
 
+const Constants = preload("res://main/constants.gd")
+
 func _ready() -> void:
 	for map in Constants.TEXTURE_MAP_TYPES:
 		add_item(map)

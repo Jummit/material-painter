@@ -29,6 +29,7 @@ const MaterialLayer = preload("material_layer.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 const TextureLayer = preload("texture_layer.gd")
 const MaterialGenerationContext = preload("res://material/material_generation_context.gd")
+const Constants = preload("res://main/constants.gd")
 
 func _init(data := []) -> void:
 	for layer in data:

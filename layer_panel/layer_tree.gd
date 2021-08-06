@@ -83,10 +83,10 @@ func _gui_input(event : InputEvent) -> void:
 		# `get_selected` returns null the first time a layer is clicked.
 		# If it doesn't, in thin case it means the layer was "double clicked".
 		if get_selected():
-			get_selected().set_editable(1, true)
+			get_selected().set_editable(Column.NAME, true)
 			# If a layer was set editable reset it to not editable again.
 			if is_instance_valid(_lastly_edited_layer):
-				_lastly_edited_layer.set_editable(1, false)
+				_lastly_edited_layer.set_editable(Column.NAME, false)
 			_lastly_edited_layer = get_selected()
 	elif key_ev and key_ev.pressed and key_ev.scancode == KEY_DELETE:
 		var layer : Reference = get_selected_layer()

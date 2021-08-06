@@ -37,6 +37,7 @@ const TextureLayerLoader = preload("texture_layer_loader.gd")
 const MaterialGenerationContext = preload("material_generation_context.gd")
 const TextureLayerStack = preload("texture_layer_stack.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
+const Constants = preload("res://main/constants.gd")
 
 func _init(data := {}) -> void:
 	name = data.get("name", "Untitled Folder" if is_folder else "Untitled Layer")

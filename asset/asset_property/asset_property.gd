@@ -1,8 +1,11 @@
 extends Button
 
 signal changed
+signal minishelf_opened
 
 var value : Asset setget set_value
+# warning-ignore:unused_class_variable
+var allowed_assets : Array = []
 
 const Asset = preload("res://asset/assets/asset.gd")
 
@@ -18,3 +21,7 @@ func _gui_input(event : InputEvent) -> void:
 	var button_ev := event as InputEventMouseButton
 	if button_ev and button_ev.button_index == BUTTON_RIGHT:
 		set_value(null)
+
+
+func _on_pressed() -> void:
+	emit_signal("minishelf_opened")

@@ -11,20 +11,18 @@ modification.
 signal current_file_changed(to)
 signal layer_materials_changed(to)
 signal current_layer_material_changed(to, id)
-signal selected_tool_changed(to)
 signal mesh_changed(to)
 signal context_changed(to)
 
 # The current project file.
-var current_file : SaveFile setget set_current_file
+var current_file : ProjectFile setget set_current_file
 # The currently editing `MaterialLayerStack`.
 var current_layer_material : MaterialLayerStack setget set_current_layer_material
-# The currently selected painting/selection tool.
-var selected_tool : int = Constants.Tools.PAINT
 var undo_redo := UndoRedo.new()
 var context : MaterialGenerationContext
 
 const MeshMapsGenerator = preload("res://main/mesh_maps_generator.gd")
+const Constants = preload("res://main/constants.gd")
 
 onready var mesh_maps_generator : MeshMapsGenerator = $MeshMapsGenerator
 
@@ -44,7 +42,7 @@ enum FILE_MENU_ITEMS {
 	QUIT,
 }
 
-const SaveFile = preload("res://main/project_file.gd")
+const ProjectFile = preload("res://main/project_file.gd")
 const MaterialLayer = preload("res://material/material_layer.gd")
 const MaterialLayerStack = preload("res://material/material_layer_stack.gd")
 const TextureLayer = preload("res://material/texture_layer.gd")
@@ -64,15 +62,15 @@ const FillTextureLayer = preload("res://material/fill_texture_layer.gd")
 const PaintTextureLayer = preload("res://material/paint_texture_layer.gd")
 const EffectTextureLayer = preload("res://material/effect_texture_layer.gd")
 
-onready var file_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/FileMenuButton
-onready var edit_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/EditMenuButton
-onready var about_menu_button : MenuButton = $VBoxContainer/Panel/TopButtons/AboutMenuButton
-onready var view_menu_button : ViewMenuButton = $VBoxContainer/Panel/TopButtons/ViewMenuButton
+onready var file_menu_button : MenuButton = $VBoxContainer/MenuBar/HBoxContainer/FileMenuButton
+onready var edit_menu_button : MenuButton = $VBoxContainer/MenuBar/HBoxContainer/EditMenuButton
+onready var about_menu_button : MenuButton = $VBoxContainer/MenuBar/HBoxContainer/AboutMenuButton
+onready var view_menu_button : ViewMenuButton = $VBoxContainer/MenuBar/HBoxContainer/ViewMenuButton
 onready var file_dialog : FileDialog = $FileDialog
-onready var layer_property_panel : Panel = $"VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/TabContainer2/PropertiesWindow/VBoxContainer/LayerPropertyPanel"
-onready var texture_map_buttons : GridContainer = $"VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/TabContainer2/PropertiesWindow/VBoxContainer/TextureMapButtons"
-onready var layer_tree : LayerTree = $VBoxContainer/Control/HBoxContainer/HSplitContainer/LayerPanelContainer/TabContainer/LayersWindow/VBoxContainer/LayerTree
-onready var asset_browser : AssetBrowser = $VBoxContainer/Control/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser
+onready var layer_property_panel : Panel = $"VBoxContainer/Root/HBoxContainer/HSplitContainer/LayerPanelContainer/TabContainer2/PropertiesWindow/VBoxContainer/LayerPropertyPanel"
+onready var texture_map_buttons : GridContainer = $"VBoxContainer/Root/HBoxContainer/HSplitContainer/LayerPanelContainer/TabContainer2/PropertiesWindow/VBoxContainer/TextureMapButtons"
+onready var layer_tree : LayerTree = $VBoxContainer/Root/HBoxContainer/HSplitContainer/LayerPanelContainer/TabContainer/LayersWindow/VBoxContainer/LayerTree
+onready var asset_browser : AssetBrowser = $VBoxContainer/Root/HBoxContainer/HSplitContainer/VBoxContainer/AssetBrowserWindow/AssetBrowser
 onready var save_layout_dialog : ConfirmationDialog = $SaveLayoutDialog
 onready var license_dialog : AcceptDialog = $LicenseDialog
 onready var about_dialog : AcceptDialog = $AboutDialog
@@ -80,7 +78,7 @@ onready var export_error_dialog : AcceptDialog = $ExportErrorDialog
 onready var bake_error_dialog : AcceptDialog = $BakeErrorDialog
 onready var quit_confirmation_dialog : ConfirmationDialog = $QuitConfirmationDialog
 onready var layout_name_edit : LineEdit = $SaveLayoutDialog/LayoutNameEdit
-onready var root : Control = $VBoxContainer/Control
+onready var root : Control = $VBoxContainer/Root
 onready var triplanar_texture_generator : Viewport = $TriplanarTextureGenerator
 onready var normal_map_generation_viewport : Viewport = $NormalMapGenerationViewport
 onready var layer_blend_viewport_manager : Node = $LayerBlendViewportManager
@@ -93,8 +91,6 @@ const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
 func _ready() -> void:
 	context = MaterialGenerationContext.new(layer_blend_viewport_manager,
 			normal_map_generation_viewport, triplanar_texture_generator)
-	
-	asset_store.load_dir("res://assets")
 	
 # warning-ignore:unsafe_property_access
 	ProgressDialogManager.theme = theme
@@ -165,7 +161,7 @@ func _on_FileDialog_file_selected(path : String) -> void:
 						load_file_error_dialog.dialog_text = "Can't parse json: Content is corrupted.\n At line %s:\n%s" % [result.error_line, result.error_string]
 						load_file_error_dialog.popup_centered()
 						return
-					var project := SaveFile.new(result.result)
+					var project := ProjectFile.new(result.result)
 					file.close()
 					project.path = path
 					set_current_file(project)
@@ -266,7 +262,6 @@ func _on_MaterialLayerPopupMenu_layer_saved() -> void:
 	file.store_string(to_json(material_layer.serialize()))
 	file.close()
 	asset_store.load_asset(save_path, SmartMaterialAsset)
-	asset_browser.update_asset_list()
 
 
 func _on_MaterialLayerPopupMenu_mask_added(mask : TextureLayerStack) -> void:
@@ -335,7 +330,7 @@ func _on_EditMenuButton_bake_mesh_maps_pressed() -> void:
 			result.get_data().save_png(file)
 			asset_store.load_asset(file, TextureAsset)
 	
-	asset_browser.update_asset_list()
+	asset_browser.asset_list.update_list()
 	progress_dialog.complete_task()
 
 
@@ -508,7 +503,7 @@ func load_mesh(path : String) -> void:
 
 
 func start_empty_project() -> void:
-	set_current_file(SaveFile.new({
+	set_current_file(ProjectFile.new({
 		model_path = "res://misc/cube.obj"
 	}))
 
@@ -545,7 +540,7 @@ func initialise_layouts() -> void:
 	view_menu_button.update_layout_options()
 
 
-func set_current_file(save_file : SaveFile) -> void:
+func set_current_file(save_file : ProjectFile) -> void:
 	current_file = save_file
 	context.result_size = current_file.result_size
 	for layer_material in current_file.layer_materials:
@@ -566,11 +561,6 @@ func set_current_layer_material(to) -> void:
 	current_layer_material.context = context
 	emit_signal("current_layer_material_changed", to,
 			current_file.layer_materials.find(current_layer_material))
-
-
-func _on_ToolButtonContainer_tool_selected(selected : int) -> void:
-	selected_tool = selected
-	emit_signal("selected_tool_changed", selected)
 
 
 func _on_TextureMapButtons_maps_changed() -> void:

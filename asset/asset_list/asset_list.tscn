@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://asset/asset_list/asset_list.gd" type="Script" id=1]
+
+[node name="AssetList" type="VBoxContainer"]
+margin_right = 366.0
+margin_bottom = 221.0
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="SearchEdit" type="LineEdit" parent="."]
+margin_right = 366.0
+margin_bottom = 24.0
+clear_button_enabled = true
+placeholder_text = "search..."
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="ItemList" type="ItemList" parent="."]
+margin_top = 28.0
+margin_right = 366.0
+margin_bottom = 221.0
+size_flags_vertical = 3
+select_mode = 1
+allow_rmb_select = true
+max_columns = 100
+same_column_width = true
+fixed_column_width = 128
+icon_mode = 0
+fixed_icon_size = Vector2( 128, 128 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[connection signal="text_changed" from="SearchEdit" to="." method="_on_SearchEdit_text_changed"]
+[connection signal="text_entered" from="SearchEdit" to="." method="_on_SearchEdit_text_entered"]
+[connection signal="item_activated" from="ItemList" to="." method="_on_ItemList_item_activated"]

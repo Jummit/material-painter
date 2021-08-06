@@ -19,7 +19,7 @@ signal update_icons_toggled
 
 const ShortcutUtils = preload("res://utils/shortcut_utils.gd")
 
-onready var results_item_list_window : Panel = $"../../../Control/HBoxContainer/ResultsWindow"
+onready var results_window : Panel = $"../../../Root/HBoxContainer/ResultsWindow"
 
 func _ready() -> void:
 	var popup := get_popup()
@@ -57,8 +57,8 @@ func _on_Popup_id_pressed(id : int) -> void:
 			OS.window_fullscreen = not OS.window_fullscreen
 			get_popup().set_item_checked(Item.FULLSCREEN, OS.window_fullscreen)
 		Item.VIEW_RESULTS:
-			results_item_list_window.visible = not results_item_list_window.visible
-			get_popup().set_item_checked(Item.VIEW_RESULTS, results_item_list_window.visible)
+			results_window.visible = not results_window.visible
+			get_popup().set_item_checked(Item.VIEW_RESULTS, results_window.visible)
 		Item.UPDATE_ICONS:
 			get_popup().set_item_checked(Item.UPDATE_ICONS,
 					not get_popup().is_item_checked(Item.UPDATE_ICONS))

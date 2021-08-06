@@ -28,12 +28,6 @@ func _init(data := {}).(data) -> void:
 		set_effect(EffectAsset.new(data.get("file", "")))
 
 
-func set_settings(to : Dictionary) -> void:
-	settings = to
-	if to.effect != effect:
-		set_effect(to.effect)
-
-
 func set_effect(to):
 	effect = to
 	if not effect:

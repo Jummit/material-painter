@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://asset/mini_shelf/mini_shelf.gd" type="Script" id=1]
+[ext_resource path="res://asset/asset_list/asset_list.tscn" type="PackedScene" id=2]
+
+[node name="MiniShelf" type="Popup"]
+margin_right = 300.0
+margin_bottom = 150.0
+rect_min_size = Vector2( 300, 150 )
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Panel" type="Panel" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="AssetList" parent="Panel" instance=ExtResource( 2 )]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 0.0
+margin_bottom = 0.0
+size_flags_vertical = 3
+thumbnail_size = 64
+
+[connection signal="about_to_show" from="." to="." method="_on_about_to_show"]
+[connection signal="asset_selected" from="Panel/AssetList" to="." method="_on_AssetList_asset_selected"]

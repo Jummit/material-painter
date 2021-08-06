@@ -12,12 +12,12 @@ var assets : Array
 var assets_by_tags : Dictionary
 var asset_tags : Dictionary
 var asset_types := [
-	preload("assets/brush_asset.gd"),
-	preload("assets/hdri_asset.gd"),
-	preload("assets/effect_asset.gd"),
-	preload("assets/material_asset.gd"),
-	preload("assets/smart_material_asset.gd"),
-	preload("assets/texture_asset.gd"),
+	load("res://asset/assets/brush_asset.gd"),
+	load("res://asset/assets/hdri_asset.gd"),
+	load("res://asset/assets/effect_asset.gd"),
+	load("res://asset/assets/material_asset.gd"),
+	load("res://asset/assets/smart_material_asset.gd"),
+	load("res://asset/assets/texture_asset.gd"),
 ]
 
 const Asset = preload("assets/asset.gd")

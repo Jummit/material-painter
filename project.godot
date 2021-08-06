@@ -58,7 +58,6 @@ config/version="1.0"
 [autoload]
 
 Settings="*res://main/settings.gd"
-Constants="*res://main/constants.gd"
 ProgressDialogManager="*res://addons/progress_dialog/progress_dialog_manager.tscn"
 
 [debug]
@@ -79,7 +78,7 @@ window/vsync/use_vsync=false
 
 [editor_plugins]
 
-enabled=PoolStringArray( "res://addons/third_party/navigation_camera/plugin.cfg", "res://addons/third_party/node_referencer/plugin.cfg" )
+enabled=PoolStringArray( "res://addons/third_party/WAT/plugin.cfg", "res://addons/third_party/navigation_camera/plugin.cfg", "res://addons/third_party/node_referencer/plugin.cfg" )
 
 [input]
 

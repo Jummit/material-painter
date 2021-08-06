@@ -15,6 +15,7 @@ const MaterialLayer = preload("res://material/material_layer.gd")
 const LayerPropertyPanel = preload("res://layer_panel/layer_property_panel.gd")
 const MaterialLayerStack = preload("res://material/material_layer_stack.gd")
 const TextureLayer = preload("res://material/texture_layer.gd")
+const Constants = preload("res://main/constants.gd")
 
 onready var layer_property_panel : LayerPropertyPanel = $"../LayerPropertyPanel"
 
