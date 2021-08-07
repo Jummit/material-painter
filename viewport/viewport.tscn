@@ -6,12 +6,12 @@
 [ext_resource path="res://viewport/blur.shader" type="Shader" id=5]
 [ext_resource path="res://viewport/model.gd" type="Script" id=7]
 
-[sub_resource type="ShaderMaterial" id=3]
+[sub_resource type="ShaderMaterial" id=1]
 shader = ExtResource( 5 )
 shader_param/strength = 8.0
 shader_param/quality = 3.0
 
-[sub_resource type="StyleBoxEmpty" id=1]
+[sub_resource type="StyleBoxEmpty" id=2]
 
 [node name="Viewport" type="ViewportContainer"]
 anchor_right = 1.0
@@ -28,6 +28,9 @@ __meta__ = {
 size = Vector2( 1280, 720 )
 own_world = true
 handle_input_locally = false
+msaa = 1
+fxaa = true
+render_target_update_mode = 3
 shadow_atlas_size = 4096
 
 [node name="Model" type="MeshInstance" parent="Viewport"]
@@ -52,7 +55,7 @@ render_target_update_mode = 1
 gui_disable_input = true
 
 [node name="TextureRect" type="TextureRect" parent="Viewport/SkyViewport"]
-material = SubResource( 3 )
+material = SubResource( 1 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_right = -1920.0
@@ -70,12 +73,12 @@ anchor_bottom = 1.0
 margin_left = -180.0
 margin_top = -42.0
 hint_tooltip = "Enable this if performance drops when the viewport is large."
-custom_styles/hover = SubResource( 1 )
-custom_styles/pressed = SubResource( 1 )
-custom_styles/focus = SubResource( 1 )
-custom_styles/disabled = SubResource( 1 )
-custom_styles/hover_pressed = SubResource( 1 )
-custom_styles/normal = SubResource( 1 )
+custom_styles/hover = SubResource( 2 )
+custom_styles/pressed = SubResource( 2 )
+custom_styles/focus = SubResource( 2 )
+custom_styles/disabled = SubResource( 2 )
+custom_styles/hover_pressed = SubResource( 2 )
+custom_styles/normal = SubResource( 2 )
 text = "Half Resolution"
 align = 2
 __meta__ = {

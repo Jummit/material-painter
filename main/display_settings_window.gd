@@ -20,7 +20,7 @@ func _ready() -> void:
 				0.168627, 0.168627)),
 		Properties.EnumProperty.new("camera_mode", ["Perspective", "Orthogonal"]),
 		Properties.BoolProperty.new("shadows"),
-		Properties.BoolProperty.new("antialiasing"),
+		Properties.BoolProperty.new("antialiasing", true),
 		Properties.BoolProperty.new("show_environment"),
 		AssetProperty.new("hdri", [HDRIAsset]),
 	])
