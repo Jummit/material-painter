@@ -83,6 +83,8 @@ onready var load_file_error_dialog : AcceptDialog = $LoadFileErrorDialog
 onready var mesh_maps_generator : MeshMapsGenerator = $MeshMapsGenerator
 
 func _ready() -> void:
+	OS.window_maximized = true
+	
 	_generation_context = MaterialGenerationContext.new(
 			layer_blend_viewport_manager, normal_map_generation_viewport,
 			triplanar_texture_generator)
