@@ -1,17 +1,19 @@
 extends Node
 
+signal changed
+
 const Properties = preload("res://addons/property_panel/properties.gd")
 
 var config := ConfigFile.new() setget set_config
 
-# warning-ignore:unused_class_variable
-var settings = [
+var settings := [
 	Properties.EnumProperty.new("generate_utility_maps", ["On Use", "On Startup"]),
-	Properties.BoolProperty.new("enable_antialiasing"),
+	Properties.BoolProperty.new("enable_vsync", true),
 ]
 
 func _ready() -> void:
 	config.load("user://settings.cfg")
+	emit_signal("changed")
 
 
 func get_setting(setting : String):
@@ -25,3 +27,4 @@ func get_setting(setting : String):
 func set_config(to) -> void:
 	config = to
 	config.save("user://settings.cfg")
+	emit_signal("changed")

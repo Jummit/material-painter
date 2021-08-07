@@ -95,6 +95,7 @@ func _ready() -> void:
 			"_on_FileMenu_id_pressed")
 	about_menu_button.get_popup().connect("id_pressed", self,
 			"_on_AboutMenuButton_id_pressed")
+	Settings.connect("changed", self, "_on_Settings_changed")
 	
 	keymap_screen.register_listeners({
 		file_menu_button : [
@@ -588,3 +589,7 @@ func _on_FileMenu_id_pressed(id : int) -> void:
 func _on_UndoRedo_version_changed() -> void:
 	if undo_redo.get_current_action_name():
 		print(undo_redo.get_current_action_name())
+
+
+func _on_Settings_changed() -> void:
+	OS.vsync_enabled = Settings.get_setting("enable_vsync")
