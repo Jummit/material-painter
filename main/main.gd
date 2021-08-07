@@ -207,6 +207,8 @@ func _start_empty_project() -> void:
 func _set_current_file(to : ProjectFile) -> void:
 	current_file = to
 	_generation_context.result_size = current_file.result_size
+	if current_file.path:
+		GlobalProjectSettings.load_config(current_file.get_config())
 	for layer_material in current_file.layer_materials:
 		layer_material.context = _generation_context
 		var result = layer_material.update()
@@ -272,6 +274,10 @@ func _request_save_file() -> void:
 	if not current_file.path:
 		_open_save_project_dialog()
 		yield(file_dialog, "file_selected")
+	
+	var dir := Directory.new()
+	dir.make_dir_recursive(current_file.get_config().get_base_dir())
+	GlobalProjectSettings.save(current_file.get_config())
 	var file := File.new()
 	file.open(current_file.path, File.WRITE)
 	file.store_string(to_json(current_file.serialize()))

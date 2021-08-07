@@ -60,6 +60,7 @@ onready var layer_popup_menu : LayerPopupMenu = $LayerPopupMenu
 func _ready() -> void:
 	set_column_expand(Column.NAME, false)
 	set_column_min_width(Column.NAME, 100)
+	GlobalProjectSettings.connect("changed", self, "_on_ProjectSettings_changed")
 
 
 func _gui_input(event : InputEvent) -> void:
@@ -491,3 +492,9 @@ func _on_Main_context_changed(to : MaterialGenerationContext) -> void:
 func _on_MapOptionButton_map_selected(map : String) -> void:
 	_selected_map = map
 	reload()
+
+
+func _on_ProjectSettings_changed() -> void:
+#	var selected = GlobalProjectSettings.get_setting("selected_layer")
+	# TODO: Load and save tree folding/selection
+	pass

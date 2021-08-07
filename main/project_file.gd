@@ -28,3 +28,7 @@ func serialize() -> Dictionary:
 	for layer in layer_materials:
 		data.layer_materials.append(layer.serialize())
 	return data
+
+
+func get_config() -> String:
+	return "user://projects/".plus_file(path.get_file().get_basename()) + ".cfg"

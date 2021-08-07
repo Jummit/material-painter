@@ -40,6 +40,9 @@ var RADIANCES := {
 	"2048": Sky.RADIANCE_SIZE_2048,
 }
 
+const CAMERA_VALUES := ["horizontal_rotation", 'vertical_rotation', "zoom",
+		"focus_point"]
+
 const HdriAsset = preload("res://asset/assets/hdri_asset.gd")
 const Brush = preload("res://main/brush.gd")
 const SelectionUtils = preload("res://addons/selection_utils/selection_utils.gd")
@@ -69,10 +72,15 @@ func _ready() -> void:
 # warning-ignore:unsafe_property_access
 	world_environment.environment.background_sky.panorama = sky_viewport.get_texture()
 	set_hdri(preload("res://viewport/cannon.hdr").get_data())
+	GlobalProjectSettings.connect("changed", self, "_on_ProjectSettings_changed")
 
 
 func _gui_input(event : InputEvent) -> void:
 	navigation_camera._input(event)
+	for member in CAMERA_VALUES:
+		GlobalProjectSettings.set_setting(get_parent().name + member,
+				navigation_camera.get(member))
+	navigation_camera.update_transform()
 	var button_ev := event as InputEventMouseButton
 	var motion_ev := event as InputEventMouseMotion
 	var from : Vector2
@@ -240,6 +248,14 @@ func _on_ResultsItemList_map_selected(map : String) -> void:
 func _on_layout_changed(meta) -> void:
 	if meta != null:
 		half_resolution_button.pressed = meta
+
+
+func _on_ProjectSettings_changed() -> void:
+	for member in CAMERA_VALUES:
+		var value = GlobalProjectSettings.get_setting(
+				get_parent().name + member)
+		if value:
+			navigation_camera.set(member, value)
 
 
 func _on_visibility_changed() -> void:

@@ -1,5 +1,11 @@
 extends ConfirmationDialog
 
+"""
+Dialog to change Project-wide Material Painter settings
+
+Changes get applied to `Settings`.
+"""
+
 const PropertyPanel = preload("res://addons/property_panel/property_panel.gd")
 const KeymapScreen = preload("res://addons/third_party/keymap_screen/keymap_screen.gd")
 

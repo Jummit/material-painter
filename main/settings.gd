@@ -1,5 +1,11 @@
 extends Node
 
+"""
+Project-independent Material Painter settings
+
+Get saved to settings.cfg when changed in the settings dialog.
+"""
+
 signal changed
 
 const Properties = preload("res://addons/property_panel/properties.gd")
