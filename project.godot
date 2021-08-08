@@ -25,7 +25,7 @@ _global_script_classes=[ {
 "path": "res://addons/third_party/WAT/core/test/test.gd"
 } ]
 _global_script_class_icons={
-"NavigationCamera": "res://addons/third_party/navigation_camera/navigation_camera_icon.svg",
+"NavigationCamera": "",
 "WAT": "",
 "WATTest": ""
 }
@@ -59,6 +59,7 @@ config/version="1.0"
 
 Settings="*res://main/settings.gd"
 ProgressDialogManager="*res://addons/progress_dialog/progress_dialog_manager.tscn"
+GlobalProjectSettings="*res://main/project_settings.gd"
 
 [debug]
 

@@ -41,7 +41,7 @@ func get_result(context : MaterialGenerationContext, map : String,
 		if not layer.visible:
 			continue
 		var blending_layer = layer.get_blending_layer(context, map)
-		if blending_layer is GDScriptFunctionState:
+		while blending_layer is GDScriptFunctionState:
 			blending_layer = yield(blending_layer, "completed")
 		if blending_layer:
 			blending_layers.append(blending_layer)

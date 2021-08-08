@@ -117,7 +117,6 @@ func update() -> void:
 	dirty = false
 	shader_dirty = false
 	busy = false
-#	results.albedo.get_data().save_png("res://albedo.png")
 	emit_signal("results_changed")
 
 

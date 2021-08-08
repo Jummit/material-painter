@@ -86,6 +86,10 @@ func set_property(property : String, value) -> void:
 	settings[property] = value
 
 
+func _get(property : String):
+	if property in settings:
+		return settings.get(property)
+
 
 func get_blending_layer(_context : MaterialGenerationContext,
 		_map : String) -> Layer:

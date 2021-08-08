@@ -26,9 +26,6 @@ var main : TextureLayerStack
 # warning-ignore:unused_class_variable
 var hide_first_layer : bool
 
-# warning-ignore:unused_class_variable
-var settings : Dictionary
-
 var parent : Reference
 var dirty := true
 
@@ -119,11 +116,6 @@ func get_result(map : String, context : MaterialGenerationContext) -> Texture:
 		while result is GDScriptFunctionState:
 			result = yield(result, "completed")
 		return result
-
-
-func get_properties() -> Array:
-	var properties := []
-	return properties
 
 
 func add_layer(layer) -> void:
