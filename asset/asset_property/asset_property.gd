@@ -1,5 +1,11 @@
 extends Button
 
+"""
+A `Button` to select an asset to be used in a `PropertyPanel`
+
+Clicking opens a mini shelf, right-clicking clears the asset.
+"""
+
 signal changed
 signal minishelf_opened
 

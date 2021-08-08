@@ -1,23 +1,17 @@
 extends HBoxContainer
 
 """
-A list of assets that can be drag-and dropped onto different UI elements
-
-Each `AssetType` defines how to load the asset file and how to generate a
-thumbnail for it.
+A panel used used to browse, add, delete and modify assets
 
 Stored assets are sorted in folders by their type. They can be loaded from the
-global asset library located in the user directory or from the asset library
+global asset library located in the user directory, or from the asset library
 local to the project.
 
-Built-in effect assets are loaded from res://material/json.
+Built-in assets are loaded from res://assets.
 
-A list of tags can be modified by the user.
-Assets are automatically tagged using their name and type. The user can
-add and remove tags of assets. Tag metadata is stored in a json file in the
-user directory.
-
-Assets can be searched using the search bar.
+The tags assigned to an assets can be modified by the user. Assets are
+automatically tagged using their name and type. The user can add and remove
+tags of assets. Tag metadata is stored in a json file in the user directory.
 """
 
 var _tag_list := ["all", "texture", "material", "brush", "effect"]
@@ -46,6 +40,37 @@ func _ready():
 	_update_tag_list()
 
 
+# Tag editing
+
+func _update_tag_list() -> void:
+	tag_list.clear()
+	var root := tag_list.create_item()
+	for tag in _tag_list:
+		var tag_item := tag_list.create_item(root)
+		tag_item.set_text(0, tag)
+
+
+func _add_tag() -> void:
+	var new_tag := tag_name_edit.text.to_lower()
+	if new_tag and not new_tag in _tag_list:
+		_tag_list.append(new_tag)
+		asset_list.filter = new_tag
+		tag_name_edit.text = ""
+		_update_tag_list()
+
+
+func _modify_tags() -> void:
+	var tag := tag_edit.text
+	for asset in _modifying_assets:
+		if _adding_tags:
+			asset_store.add_asset_tag(asset, tag)
+		else:
+			asset_store.remove_asset_tag(asset, tag)
+	asset_list.update_list()
+
+
+# Signal callbacks
+
 func _on_RemoveTagButton_pressed() -> void:
 	if not tag_list.get_selected():
 		return
@@ -63,9 +88,6 @@ func _on_AddTagButton_pressed() -> void:
 func _on_TagList_cell_selected() -> void:
 	asset_list.filter = tag_list.get_selected().get_text(0)
 
-
-func get_layout_data():
-	return _tag_list
 
 func _on_DeleteAssetConfirmationDialog_confirmed():
 	for asset in delete_asset_confirmation_dialog.get_meta("assets"):
@@ -96,7 +118,8 @@ func _on_AssetPopupMenu_id_pressed(id : int) -> void:
 		tag_edit.select_all()
 
 
-func _on_AssetList_item_rmb_selected(_index : int, at_position : Vector2) -> void:
+func _on_AssetList_item_rmb_selected(_index : int,
+		at_position : Vector2) -> void:
 	asset_popup_menu.set_meta("assets", asset_list.get_selected_assets())
 	asset_popup_menu.popup()
 	asset_popup_menu.rect_position = asset_list.rect_global_position + at_position
@@ -115,7 +138,8 @@ func _on_TagNameEdit_text_entered(_new_text : String) -> void:
 	_add_tag()
 
 
-func _on_SceneTree_files_dropped(files : PoolStringArray, _screen : int) -> void:
+func _on_SceneTree_files_dropped(files : PoolStringArray,
+		_screen : int) -> void:
 # warning-ignore:unsafe_method_access
 	_progress_dialog = ProgressDialogManager.create_task("Import Assets",
 			files.size())
@@ -133,22 +157,13 @@ func _on_SceneTree_files_dropped(files : PoolStringArray, _screen : int) -> void
 	_progress_dialog.complete_task()
 
 
-func _update_tag_list() -> void:
-	tag_list.clear()
-	var root := tag_list.create_item()
-	for tag in _tag_list:
-		var tag_item := tag_list.create_item(root)
-		tag_item.set_text(0, tag)
+func _on_layout_changed(meta) -> void:
+	if meta is Dictionary and not meta.empty():
+		_tag_list = meta
+		asset_list.update_list()
 
 
-func _add_tag() -> void:
-	var new_tag := tag_name_edit.text.to_lower()
-	if new_tag and not new_tag in _tag_list:
-		_tag_list.append(new_tag)
-		asset_list.filter = new_tag
-		tag_name_edit.text = ""
-		_update_tag_list()
-
+# Misc
 
 func _show_delete_confirmation_popup() -> void:
 	var assets := asset_list.get_selected_assets()
@@ -161,17 +176,5 @@ func _show_delete_confirmation_popup() -> void:
 	delete_asset_confirmation_dialog.set_meta("assets", assets)
 
 
-func _modify_tags() -> void:
-	var tag := tag_edit.text
-	for asset in _modifying_assets:
-		if _adding_tags:
-			asset_store.add_asset_tag(asset, tag)
-		else:
-			asset_store.remove_asset_tag(asset, tag)
-	asset_list.update_list()
-
-
-func _on_layout_changed(meta) -> void:
-	if meta is Dictionary and not meta.empty():
-		_tag_list = meta
-		asset_list.update_list()
+func get_layout_data():
+	return _tag_list

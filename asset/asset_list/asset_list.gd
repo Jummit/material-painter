@@ -1,9 +1,17 @@
 extends VBoxContainer
 
+"""
+A searchable list of assets displayed in a grid
+
+Used for browsing and selecting assets.
+"""
+
 signal asset_selected(asset)
 
 export var thumbnail_size := 128
 
+# An additional filter that is combined with the content of the search field.
+# This can be used to display only a specific type of asset.
 var filter : String setget set_filter
 var asset_store : AssetStore setget set_asset_store
 

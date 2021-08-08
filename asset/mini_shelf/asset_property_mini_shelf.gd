@@ -1,5 +1,9 @@
 extends "res://asset/mini_shelf/mini_shelf.gd"
 
+"""
+A mini shelf that shows when an `AssetProperty` is clicked
+"""
+
 var current_property : AssetProperty
 
 const AssetProperty = preload("res://asset/asset_property/asset_property.gd")

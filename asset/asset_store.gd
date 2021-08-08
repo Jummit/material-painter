@@ -1,5 +1,9 @@
 extends Node
 
+"""
+Node that loads and organizes assets at runtime
+"""
+
 signal asset_loaded(asset)
 signal asset_unloaded(asset)
 signal dir_loaded
@@ -30,6 +34,8 @@ func _ready() -> void:
 	dir.make_dir_recursive("user://assets")
 	load_dir("user://assets")
 
+
+# Asset loading / unloading
 
 func load_dir(path : String) -> void:
 	for asset in asset_types:
@@ -103,22 +109,26 @@ func load_asset(path : String, type : GDScript) -> void:
 
 func unload_asset(asset : Asset) -> void:
 	assets.erase(asset)
+	for tag in asset_tags[asset]:
+		assets_by_tags[tag].erase(asset)
 	emit_signal("asset_unloaded", asset)
 
 
-func search(filter : String) -> Array:
-	var search_terms := filter.to_lower().replace(",", " ").split(" ", false)
-	if search_terms.empty():
-		return assets
-	var found := []
-	for asset in assets:
-		found.append(asset)
-		for tag in search_terms:
-			if not tag in PoolStringArray(asset_tags[asset.path]).join(" "):
-				found.pop_back()
-				break
-	return found
+# Delete an asset file from disk.
+func remove_asset(asset : Asset) -> void:
+	# Delete asset files.
+	var dir := Directory.new()
+	dir.remove(asset.path)
+	dir.remove(get_thumbnail_path(asset))
+	
+	# Remove asset from tag data.
+	for tag in asset_tags[asset.path]:
+		remove_asset_tag(asset, tag)
+	asset_tags.erase(asset.path)
+	save_asset_tags()
 
+
+# Tags
 
 func add_asset_tag(asset : Asset, tag : String) -> void:
 	if not tag in assets_by_tags:
@@ -153,18 +163,21 @@ func load_asset_tags() -> void:
 	file.close()
 
 
-func get_thumbnail_path(asset : Asset) -> String:
+# Misc
+
+static func get_thumbnail_path(asset : Asset) -> String:
 	return asset.path.get_base_dir().plus_file(asset.name + "_thumbnail.png")
 
 
-func remove_asset(asset : Asset) -> void:
-	# Delete asset files.
-	var dir := Directory.new()
-	dir.remove(asset.path)
-	dir.remove(get_thumbnail_path(asset))
-	
-	# Remove asset from tag data.
-	for tag in asset_tags[asset.path]:
-		remove_asset_tag(asset, tag)
-	asset_tags.erase(asset.path)
-	save_asset_tags()
+func search(filter : String) -> Array:
+	var search_terms := filter.to_lower().replace(",", " ").split(" ", false)
+	if search_terms.empty():
+		return assets
+	var found := []
+	for asset in assets:
+		found.append(asset)
+		for tag in search_terms:
+			if not tag in PoolStringArray(asset_tags[asset.path]).join(" "):
+				found.pop_back()
+				break
+	return found

@@ -34,7 +34,8 @@ onready var scroll_container : ScrollContainer = $ScrollContainer
 
 func _ready():
 # warning-ignore:incompatible_ternary
-	properties_container = HBoxContainer.new() if orientation == Orientation.HORIZONTAL else VBoxContainer.new()
+	properties_container = HBoxContainer.new() if\
+			orientation == Orientation.HORIZONTAL else VBoxContainer.new()
 	properties_container.size_flags_horizontal = SIZE_EXPAND_FILL
 	properties_container.size_flags_vertical = SIZE_EXPAND_FILL
 	scroll_container.add_child(properties_container)
@@ -42,11 +43,13 @@ func _ready():
 
 
 func get_property_value(property_name : String):
-	return (properties_container.get_node(property_name) as PropertyContainer).get_value()
+	return (properties_container.get_node(property_name) as PropertyContainer)\
+			.get_value()
 
 
 func set_property_value(property_name : String, value):
-	return (properties_container.get_node(property_name) as PropertyContainer).set_value(value)
+	return (properties_container.get_node(property_name) as PropertyContainer)\
+			.set_value(value)
 
 
 # Returns true if the property is exposed.
@@ -60,7 +63,8 @@ func get_property_values() -> Dictionary:
 	var values := {}
 	for property_container in properties_container.get_children():
 		if not property_container is Label:
-			values[property_container.name] = get_property_value(property_container.name)
+			values[property_container.name] = get_property_value(
+					property_container.name)
 	return values
 
 
@@ -107,7 +111,8 @@ func _setup_property_containers() -> void:
 		else:
 			var property_container = _property_container_scene.instance()
 			property_container.name = property.name
-			property_container.connect("property_changed", self, "_on_Property_changed", [property_container])
+			property_container.connect("property_changed", self,
+					"_on_Property_changed", [property_container])
 			
 			properties_container.add_child(property_container)
 			property_container.setup(property)

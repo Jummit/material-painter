@@ -1,5 +1,11 @@
 extends Reference
 
+"""
+The brush representation used in the editor and in `BrushAsset`s
+
+Can be saved to file and converted to a `Painter` brush.
+"""
+
 var size : float
 var strength : float
 var pattern_scale : float

@@ -1,5 +1,9 @@
 extends Viewport
 
+"""
+A `Viewport` that renders the world normal map of a mesh in UV-space
+"""
+
 onready var mesh_instance : MeshInstance = $MeshInstance
 
 func bake_world_normal(mesh : Mesh, result_size : Vector2,

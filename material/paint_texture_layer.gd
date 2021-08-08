@@ -1,5 +1,9 @@
 extends "texture_layer.gd"
 
+"""
+A texture layer whose maps can be painted in the viewport
+"""
+
 # warning-ignore:unused_class_variable
 var paint_textures : Dictionary
 

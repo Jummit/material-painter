@@ -1,9 +1,9 @@
 extends "texture_layer.gd"
 
 """
-A `TextureLayer` that uses a json file to configure the parameters and the shader
+A `TextureLayer` that uses a json file to create a configurable `BlendingLayer`
 
-It is used in the `EffectAssetType` in the `AssetBrowser`.
+Used in `EffectAsset`s.
 """
 
 var effect : EffectAsset
@@ -20,7 +20,7 @@ const DEFAULTS := {
 const Properties = preload("res://addons/property_panel/properties.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 const EffectAsset = preload("res://asset/assets/effect_asset.gd")
-const AssetProperty = preload("res://asset/asset_property/property_panel_property.gd")
+const AssetProperty = preload("res://asset/asset_property/panel_asset_property.gd")
 
 func _init(data := {}).(data) -> void:
 	name = data.get("name", "")

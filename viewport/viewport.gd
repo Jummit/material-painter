@@ -3,8 +3,8 @@ extends ViewportContainer
 """
 The 3D view that contains the loaded model with the generated material applied
 
-Handles face selection and painting using the `SelectionUtils` and `Painter` addon.
-The sun can be rotated by right clicking and dragging.
+Handles face selection and painting using the `SelectionUtils` and `Painter`
+addon. The sun can be rotated by right clicking and dragging.
 Responsible for selecting HDRIs and toggling HDRI visibility.
 """
 

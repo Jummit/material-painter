@@ -1,5 +1,9 @@
 extends "res://addons/property_panel/properties.gd".Property
 
+"""
+A property that exposes an asset
+"""
+
 var accepted_assets : Array
 
 const AssetProperty = preload("res://asset/asset_property/asset_property.gd")

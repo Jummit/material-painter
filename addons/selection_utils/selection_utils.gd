@@ -3,11 +3,10 @@ extends Node
 """
 A utility for performing different mesh selections on the GPU
 
-Selections will be added in white ontop of the given texture.
-There are multiple `SelectionType`s, each preparing the mesh by setting the
-vertex colors of selectable areas the same color.
-The vertex color at the given screen position is then sampled
-and isolated to get the selected area on the texture.
+Selections will be added in white ontop of the given texture. There are
+multiple `SelectionType`s, each preparing the mesh by setting the vertex colors
+of selectable areas the same color. The vertex color at the given screen
+position is then sampled and isolated to get the selected area on the texture.
 """
 
 enum SelectionType {

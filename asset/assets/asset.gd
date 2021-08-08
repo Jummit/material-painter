@@ -1,5 +1,12 @@
 extends Reference
 
+"""
+A loaded asset
+
+Each asset loads a file. There are different asset types that can load
+different files, for example textures, brushes and materials.
+"""
+
 var name : String
 var path : String
 var data

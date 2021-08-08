@@ -1,5 +1,9 @@
 extends Reference
 
+"""
+A generic stack of `TextureLayer`s that should be blended together
+"""
+
 var layers : Array
 
 var results : Dictionary

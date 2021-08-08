@@ -4,6 +4,7 @@ func _ready() -> void:
 	set_components({
 		"Curvature Baker": "MIT License\n\nCopyright 2020 Jummit",
 		"Customizable UI": "MIT License\n\nCopyright 2020 Jummit",
+		"Curvature Generator": "MIT License\nCopyright (c) 2018-2020 Rodolphe Suescun and contributors",
 		"Gaussian Blur From ShaderToy": "Attribution-NonCommercial-ShareAlike 3.0 Unported (CC BY-NC-SA 3.0) ",
 		"Gidole Font": "The MIT License (MIT)\n\nCopyright (c) 2015 Andreas Larsen @larsenwork",
 		"GLSL Blending Modes": "The MIT License (MIT) Copyright (c) 2015 Jamie Owen",

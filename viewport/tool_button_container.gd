@@ -4,7 +4,7 @@ extends GridContainer
 A list of buttons used to select the painting/selection tool
 
 Procedurally adds buttons and loads icons from `res://icons/tools/`.
-Only shows when a paintable layer is selected.
+Only shown when a paintable layer is selected.
 """
 
 signal tool_selected(selected)

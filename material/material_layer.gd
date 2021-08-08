@@ -4,14 +4,16 @@ extends Reference
 A layer of a `MaterialLayerStack`
 
 `mask` is used when blending the layers.
-`maps` is a dictionary which can hold a `TextureLayerStack` for each map, for example
-albedo, metallic or height.
+`maps` is a dictionary which can hold a `TextureLayerStack` for each map, for
+example albedo, metallic or height.
 
 `MaterialLayer`s can be hidden, which excludes them from the result of the
 `MaterialLayerStack`.
 
-It is marked dirty when the child `TextureLayerStack`s change, which will mark the
-parent `MaterialLayerStack` dirty.
+It is marked dirty when the child `TextureLayerStack`s change, which will mark
+the parent `MaterialLayerStack` dirty.
+
+A `MaterialLayer` can be a folder which contains more `MaterialLayer`s.
 """
 
 var name : String

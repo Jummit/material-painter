@@ -16,7 +16,7 @@ const Asset = preload("res://asset/assets/asset.gd")
 const BrushAsset = preload("res://asset/assets/brush_asset.gd")
 const Brush = preload("res://main/brush.gd")
 const PaintTextureLayer = preload("res://material/paint_texture_layer.gd")
-const AssetProperty = preload("res://asset/asset_property/property_panel_property.gd")
+const AssetProperty = preload("res://asset/asset_property/panel_asset_property.gd")
 const TextureAsset = preload("res://asset/assets/texture_asset.gd")
 const Constants = preload("res://main/constants.gd")
 

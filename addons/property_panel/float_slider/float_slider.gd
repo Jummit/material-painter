@@ -13,7 +13,7 @@ export var value : float setget set_value
 export var min_value : float
 # The maximum value allowed.
 export var max_value : float = 10
-# The number the value will be snapped to. Usefull for integer inputs.
+# The number the value will be snapped to. Useful for integer inputs.
 export var step : float
 # The sensitivity while sliding.
 export var sensitivity := 1000.0

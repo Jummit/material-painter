@@ -3,8 +3,8 @@ extends Reference
 """
 A layer of a `TextureLayerStack`
 
-For making the layer editable, `get_properties` is used
-to retrieve a list of `Properties` for the `LayerPropertyPanel`.
+For making the layer editable, `get_properties` is used to retrieve a list of
+`Properties` for the `LayerPropertyPanel`.
 """
 
 # warning-ignore-all:unused_class_variable

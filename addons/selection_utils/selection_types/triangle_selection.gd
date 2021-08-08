@@ -1,5 +1,9 @@
 extends "../selection_type.gd"
 
+"""
+Selection that colors each triangle with a different vertex color
+"""
+
 const MeshUtils = preload("res://addons/third_party/mesh_utils/mesh_utils.gd")
 
 static func prepare_mesh(mesh : Mesh, surface : int) -> Mesh:

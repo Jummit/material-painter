@@ -1,5 +1,9 @@
 extends "texture_layer.gd"
 
+"""
+A texture layer that fills the channels with a solid color, value or texture
+"""
+
 var map_properties := {
 	albedo = Properties.ColorProperty,
 	emission = Properties.ColorProperty,
@@ -22,7 +26,7 @@ const DEFAULTS := {
 }
 
 const Properties = preload("res://addons/property_panel/properties.gd")
-const AssetProperty = preload("res://asset/asset_property/property_panel_property.gd")
+const AssetProperty = preload("res://asset/asset_property/panel_asset_property.gd")
 const TextureAsset = preload("res://asset/assets/texture_asset.gd")
 const BlendingLayer = preload("res://addons/layer_blending_viewport/layer_blending_viewport.gd").BlendingLayer
 

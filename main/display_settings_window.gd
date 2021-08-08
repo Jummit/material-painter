@@ -1,10 +1,14 @@
 extends "res://addons/third_party/customizable_ui/window.gd"
 
+"""
+A `PropertyPanel` that shows the environment and display settings
+"""
+
 signal changed(to)
 
 const Properties = preload("res://addons/property_panel/properties.gd")
 const PropertyPanel = preload("res://addons/property_panel/property_panel.gd")
-const AssetProperty = preload("res://asset/asset_property/property_panel_property.gd")
+const AssetProperty = preload("res://asset/asset_property/panel_asset_property.gd")
 const HDRIAsset = preload("res://asset/assets/hdri_asset.gd")
 
 onready var display_property_panel : PropertyPanel = $DisplayPropertyPanel

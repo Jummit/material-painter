@@ -1,7 +1,7 @@
 extends Viewport
 
 """
-A `Viewport` to render the position map of a mesh in UV-space
+A `Viewport` that renders the position map of a mesh in UV-space
 """
 
 onready var mesh_instance : MeshInstance = $MeshInstance

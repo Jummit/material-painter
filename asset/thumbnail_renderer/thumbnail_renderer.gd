@@ -3,7 +3,7 @@ extends Node
 """
 Utility for rendering thumbnails of `Asset`s used in the `AssetBrowser`
 
-Renders thumbnails of `MaterialAssetTypes`s, `BrushAssetTypes`s and `HDRAssetTypes`.
+Renders thumbnails of `Texture`s, `MaterialLayer`s, `Brush`es and hdri `Image`s.
 
 Replaces all local textures of the material with res://thumbnail_renderer to make
 mesh maps used in the material work.
@@ -40,6 +40,7 @@ onready var triplanar_texture_generator : TriplanarTextureGenerator = $Triplanar
 func get_thumbnail_for_smart_material(material : MaterialLayer,
 		result_size : Vector2) -> ImageTexture:
 	var layer_mat := MaterialLayerStack.new()
+	# TODO: replace paths to make mesh maps work
 	layer_mat.context = MaterialGenerationContext.new(layer_blending_viewport,
 			normal_map_generation_viewport, triplanar_texture_generator)
 	layer_mat.context.mesh = mesh

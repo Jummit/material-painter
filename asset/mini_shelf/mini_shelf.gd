@@ -1,5 +1,9 @@
 extends Popup
 
+"""
+A browsable asset list that pops up when an asset needs to be selected
+"""
+
 signal asset_selected(asset)
 
 var asset_store : AssetStore setget set_asset_store

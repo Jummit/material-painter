@@ -1,7 +1,7 @@
 extends Viewport
 
 """
-A `Viewport` to render a `subject` to a `ViewportTexture` with a given size
+A `Viewport` that renders a `subject` to a `ViewportTexture` with a given size
 """
 
 var busy := false
@@ -17,5 +17,6 @@ func render_texture(subject : Node, result_size : Vector2) -> ViewportTexture:
 	busy = false
 	subject.queue_free()
 	var texture := get_texture()
-	texture.flags = Texture.FLAG_MIPMAPS | Texture.FLAG_REPEAT | Texture.FLAG_FILTER
+	texture.flags = Texture.FLAG_MIPMAPS | Texture.FLAG_REPEAT |\
+			Texture.FLAG_FILTER
 	return texture

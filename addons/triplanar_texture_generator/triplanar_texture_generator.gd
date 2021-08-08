@@ -1,7 +1,7 @@
 extends Viewport
 
 """
-A `Viewport` to render a triplanar texture in UV-space
+A `Viewport` that renders a triplanar texture in UV-space
 """
 
 onready var mesh_instance : MeshInstance = $MeshInstance

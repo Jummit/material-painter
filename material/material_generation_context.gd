@@ -1,5 +1,9 @@
 extends Reference
 
+"""
+Stores generation settings and nodes used in the generation process
+"""
+
 # warning-ignore-all:unused_class_variable
 var mesh : Mesh
 var result_size := Vector2(64, 64)

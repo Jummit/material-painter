@@ -1,5 +1,11 @@
 extends Reference
 
+"""
+Utility that can create a `TextureLayer` from a string identifier
+
+Used for loading serialized materials.
+"""
+
 static func load_layer(data : Dictionary) -> Reference:
 	var types := {
 		"paint": preload("paint_texture_layer.gd"),
